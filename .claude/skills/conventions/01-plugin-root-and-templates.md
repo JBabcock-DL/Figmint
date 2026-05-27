@@ -8,10 +8,10 @@ Nothing here assumes a fixed disk path — each user’s marketplace install and
 
 ## Definitions
 
-| Symbol | Meaning |
-|--------|---------|
-| **`REPO_ROOT`** | Root of the **consumer project** where tickets live (`./.github/Sprint */`, application code). Usually the workspace / working directory for ticket work. |
-| **`PLUGIN_ROOT`** | Root of the **`labs-agent-workflow`** plugin: directory that contains **`skills/`**, **`templates/`**, and **`.claude-plugin/plugin.json`**. |
+| Symbol            | Meaning                                                                                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`REPO_ROOT`**   | Root of the **consumer project** where tickets live (`./.github/Sprint */`, application code). Usually the workspace / working directory for ticket work. |
+| **`PLUGIN_ROOT`** | Root of the **`labs-agent-workflow`** plugin: directory that contains **`skills/`**, **`templates/`**, and **`.claude-plugin/plugin.json`**.              |
 
 When developing **this plugin repo**, **`REPO_ROOT`** and **`PLUGIN_ROOT`** may be the **same** directory — still apply resolution order below so **`workflow.md`** is found under **`templates/`** when **`.github/templates/`** does not exist yet.
 

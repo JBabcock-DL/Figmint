@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.8 FR-IO-4, §10.4.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 Export sheet design lives in the Figmint design file (file_key TBD).
 
@@ -38,17 +38,17 @@ Export sheet design lives in the Figmint design file (file_key TBD).
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-017, WO-018, WO-019
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Component renders in Storybook (or equivalent) with all 5 contract document kinds.
 - [ ] All 5 sinks are reachable; selecting multiple sinks writes to all of them.
@@ -85,32 +85,32 @@ Export sheet design lives in the Figmint design file (file_key TBD).
 
 **Figma source (filled before `/vqa` runs):**
 
-| Field | Value |
-| --- | --- |
-| `file_key` | `<!-- filled during /plan or /vqa -->` |
-| `node_id` | `<!-- filled during /plan or /vqa -->` |
-| Figma deep link | `<!-- filled -->` |
-| Frame / scope | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
-| Captured at | `<!-- ISO date -->` |
+| Field           | Value                                                 |
+| --------------- | ----------------------------------------------------- |
+| `file_key`      | `<!-- filled during /plan or /vqa -->`                |
+| `node_id`       | `<!-- filled during /plan or /vqa -->`                |
+| Figma deep link | `<!-- filled -->`                                     |
+| Frame / scope   | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
+| Captured at     | `<!-- ISO date -->`                                   |
 
-**Assertions** *(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):*
+**Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_
 
-| # | Category | Property | Design (Figma) | Build (implemented) | Result |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Layout | Frame width × height | | | |
-| 2 | Layout | Auto-layout direction / gap | | | |
-| 3 | Layout | Padding (T/R/B/L) | | | |
-| 4 | Typography | Font family / size / weight | | | |
-| 5 | Color | Background fill (token) | | | |
-| 6 | Color | Foreground fill (token) | | | |
-| 7 | Spacing | Margin / gap tokens | | | |
-| 8 | Effects | Border radius / shadow | | | |
-| 9 | Accessibility | Contrast ratio | | | |
-| 10 | Accessibility | Focus ring + hit target | | | |
+| #   | Category      | Property                    | Design (Figma) | Build (implemented) | Result |
+| --- | ------------- | --------------------------- | -------------- | ------------------- | ------ |
+| 1   | Layout        | Frame width × height        |                |                     |        |
+| 2   | Layout        | Auto-layout direction / gap |                |                     |        |
+| 3   | Layout        | Padding (T/R/B/L)           |                |                     |        |
+| 4   | Typography    | Font family / size / weight |                |                     |        |
+| 5   | Color         | Background fill (token)     |                |                     |        |
+| 6   | Color         | Foreground fill (token)     |                |                     |        |
+| 7   | Spacing       | Margin / gap tokens         |                |                     |        |
+| 8   | Effects       | Border radius / shadow      |                |                     |        |
+| 9   | Accessibility | Contrast ratio              |                |                     |        |
+| 10  | Accessibility | Focus ring + hit target     |                |                     |        |
 
 **Per-row deviations:**
 
-- *Filled by `/vqa` with FAIL rationale.*
+- _Filled by `/vqa` with FAIL rationale._
 
 ---
 
@@ -131,5 +131,5 @@ Export sheet design lives in the Figmint design file (file_key TBD).
 
 - PRD: `Docs/PRD.md` §6.8 FR-IO-4, §10.4
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

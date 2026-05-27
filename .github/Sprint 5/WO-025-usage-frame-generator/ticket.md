@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-5.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -36,7 +36,7 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-5.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
@@ -46,7 +46,7 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-5.
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] After scaffolding a Button with `variant × size × disabled`, the usage frame shows representative instances (e.g. 4-6 curated combos, not all 12).
 - [ ] Frame passes audit.

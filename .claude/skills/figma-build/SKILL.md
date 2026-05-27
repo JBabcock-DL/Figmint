@@ -1,7 +1,7 @@
 ---
 name: figma-build
 description: Execute Figma canvas work for a ticket. Use when a work order's plan is ready and it's time to build in Figma.
-argument-hint: "[Sprint N/TICKET-ID-slug]"
+argument-hint: '[Sprint N/TICKET-ID-slug]'
 context: fork
 agent: general-purpose
 ---
@@ -29,6 +29,7 @@ If the calling prompt already contains a `Git strategy:` block (you were spawned
   - `main` — Work on the current branch, leave plan.md changes uncommitted for the user to review. No branch, no PR.
 
 Resolve the values you need:
+
 - **Ticket ID** — the `{TICKET-ID}` portion of the ticket folder (e.g. `WO-001`)
 - **Base branch** — `gh repo view --json defaultBranchRef -q .defaultBranchRef.name`, falling back to the current branch
 - **Branch name** — `{TICKET-ID}/figma` when `branch-per-agent`
@@ -46,18 +47,21 @@ Apply the strategy at the right moments:
   3. In your final report, list the Figma file URL, the node IDs created/modified, and note that plan.md is uncommitted.
 
 Before touching Figma, read these files in order:
+
 1. memory.md (if it exists in the repo root) — project running memory; skip if missing or empty
 2. workflow.md — resolve path per skills/conventions/01-plugin-root-and-templates.md
 3. $ARGUMENTS/ticket.md
 4. $ARGUMENTS/plan.md
 
 Rules:
+
 - Do not modify ticket.md or the remote issue (GitHub or Jira) — your job is Figma work only
 - Do not start if plan.md has no steps defined — report back that the plan needs to be written first
-- Use the Figma MCP tools (mcp__claude_ai_Figma__*) for all canvas operations
+- Use the Figma MCP tools (mcp**claude_ai_Figma**\*) for all canvas operations
 - The Figma file URL lives in ticket.md under References — use it to locate the file
 
 Execution:
+
 1. Read the ticket's Requirements and Success Criteria sections fully
 2. Read plan.md and identify each unchecked step
 3. Execute each step using the Figma MCP

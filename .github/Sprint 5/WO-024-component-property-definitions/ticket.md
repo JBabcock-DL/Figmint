@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-4.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -36,7 +36,7 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-4.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
@@ -47,7 +47,7 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-4.
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] A spec with `props: [{ name: 'loading', type: 'boolean', default: false }]` results in a Boolean component property on the ComponentSet with default false.
 - [ ] Variant matrix axes appear as Variant properties (auto-derived).

@@ -4,17 +4,17 @@
 
 ## Approach
 
-*To be filled during `/plan`. Canonical shape must be locked via promoted CTX-002 first.*
+_To be filled during `/plan`. Canonical shape must be locked via promoted CTX-002 first._
 
 ## Tasks
 
-1. *TBD*
+1. _TBD_
 
 ## Build Agents
 
 ### Phase 1
 
-- *TBD*
+- _TBD_
 
 ## References
 

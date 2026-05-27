@@ -37,6 +37,7 @@ Next ticket ID: {TYPE}-{N}
 Append one of the following after the base prompt above depending on the agent's role:
 
 ### Ticket Creation Agent
+
 ```
 ROLE: Ticket Creation
 
@@ -47,6 +48,7 @@ Type: [bug | work-order | context]
 ```
 
 ### Backlog Triage Agent
+
 ```
 ROLE: Backlog Triage
 
@@ -56,6 +58,7 @@ Sprint: Sprint {N}
 ```
 
 ### Planning Agent
+
 ```
 ROLE: Planning
 
@@ -67,6 +70,7 @@ Research: .github/Sprint {N}/{TICKET-ID}-{slug}/research/ (read if present)
 ```
 
 Planning conventions:
+
 - Each step must be concrete enough for a build agent to execute without interpretation
 - List any MCP servers or external tools the build agent will need
 - plan.md MUST include a `## Build Agents` section defining parallel phases — the `/build` orchestrator requires it
@@ -78,6 +82,7 @@ Planning conventions:
 ---
 
 ### Build Orchestrator Agent
+
 ```
 ROLE: Build Orchestrator
 
@@ -94,6 +99,7 @@ Plan:   .github/Sprint {N}/{TICKET-ID}-{slug}/plan.md
 ---
 
 ### Build Domain Agent
+
 ```
 ROLE: Build — [SPECIFY DOMAIN — spawned by /build orchestrator or run directly for single-domain tickets]
 
@@ -106,16 +112,17 @@ Steps:  [LIST THE SPECIFIC STEP NUMBERS ASSIGNED TO THIS AGENT]
 
 #### Build Domain Variants
 
-| Skill | ROLE value | Scope | Invoke with |
-|---|---|---|---|
-| build | `Build Orchestrator` | Orchestrates all domains via parallel phases | `/build` ← preferred |
-| code-build | `Build — Code` | Write or modify code files | `/code-build` |
-| doc-build | `Build — Docs` | Guides, READMEs, reference documentation | `/doc-build` |
-| script-build | `Build — Scripts` | Bash, PowerShell, Python automation | `/script-build` |
-| api-build | `Build — API` | API integrations, Claude API / Anthropic SDK | `/api-build` |
-| figma-build | `Build — Figma` | Canvas work: frames, components, variables, Code Connect | `/figma-build` |
+| Skill        | ROLE value           | Scope                                                    | Invoke with          |
+| ------------ | -------------------- | -------------------------------------------------------- | -------------------- |
+| build        | `Build Orchestrator` | Orchestrates all domains via parallel phases             | `/build` ← preferred |
+| code-build   | `Build — Code`       | Write or modify code files                               | `/code-build`        |
+| doc-build    | `Build — Docs`       | Guides, READMEs, reference documentation                 | `/doc-build`         |
+| script-build | `Build — Scripts`    | Bash, PowerShell, Python automation                      | `/script-build`      |
+| api-build    | `Build — API`        | API integrations, Claude API / Anthropic SDK             | `/api-build`         |
+| figma-build  | `Build — Figma`      | Canvas work: frames, components, variables, Code Connect | `/figma-build`       |
 
 ### Research Agent
+
 ```
 ROLE: Research
 
@@ -126,6 +133,7 @@ Output: .github/Sprint {N}/{TICKET-ID}-{slug}/research/{topic}.md
 ```
 
 ### Review / VQA Agent
+
 ```
 ROLE: Review / VQA
 

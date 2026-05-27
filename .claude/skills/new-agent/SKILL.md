@@ -11,6 +11,7 @@ You are ramping up a new agent session on this project using the claude-ops hand
 Arguments received: $ARGUMENTS
 
 Before doing anything else, read (Claude: do not require the user to say “read memory” — it is your job):
+
 1. memory.md (if it exists in the repo root) — project running memory; skip if missing or empty
 2. workflow.md — resolve path per skills/conventions/01-plugin-root-and-templates.md
 3. agent-handoff.md — resolve path per skills/conventions/01-plugin-root-and-templates.md
@@ -29,12 +30,12 @@ Questions to ask if missing:
 - **Sprint number** — "Which sprint is this work in? (e.g. 1, 2, 3)"
 - **Ticket** — "Do you have an existing ticket ID (e.g. WO-001, BUG-002), or should I create a new one? If new, what type (bug or work order) and what is the title?"
 - **Role** — "What should this agent do?
-    1. Create a ticket
-    2. Triage the context backlog (bulk-classify CTX-* tickets)
-    3. Research
-    4. Plan
-    5. Build
-    6. Verify (VQA)"
+  1. Create a ticket
+  2. Triage the context backlog (bulk-classify CTX-\* tickets)
+  3. Research
+  4. Plan
+  5. Build
+  6. Verify (VQA)"
 
 Do not proceed to Step 2 until you have all three values confirmed.
 
@@ -43,6 +44,7 @@ Do not proceed to Step 2 until you have all three values confirmed.
 ## Step 2 — Orient using the handoff doc
 
 Using the values collected, compose the handoff context from agent-handoff.md:
+
 - Fill in the sprint number, ticket ID, and role variant
 - If a ticket ID was provided, read `.github/Sprint {N}/{TICKET-ID}-*/ticket.md` to confirm the ticket exists and capture the slug
 - If the ticket does not exist and role is not "ticket", warn the user and ask if they want to create the ticket first
@@ -53,14 +55,14 @@ Using the values collected, compose the handoff context from agent-handoff.md:
 
 Based on the confirmed role, invoke the corresponding skill using the Skill tool:
 
-| Role | Skill to invoke | Arguments |
-|---|---|---|
-| ticket (new) | `create-ticket` | `[bug\|wo\|ctx] "[title]"` |
-| triage | `create-backlog` | `[sprint number]` |
-| research | `research` | ticket path |
-| plan | `plan` | ticket path |
-| build | `build` | ticket path |
-| vqa | `vqa` | ticket path |
+| Role         | Skill to invoke  | Arguments                  |
+| ------------ | ---------------- | -------------------------- |
+| ticket (new) | `create-ticket`  | `[bug\|wo\|ctx] "[title]"` |
+| triage       | `create-backlog` | `[sprint number]`          |
+| research     | `research`       | ticket path                |
+| plan         | `plan`           | ticket path                |
+| build        | `build`          | ticket path                |
+| vqa          | `vqa`            | ticket path                |
 
 If the role is **ticket** and a ticket ID was already provided (ticket exists), skip create-ticket and ask the user what they want to do next — offer research, plan, build, or vqa.
 
@@ -75,6 +77,7 @@ Wait for the invoked skill to complete before reporting back.
 ## Step 4 — Report back
 
 Summarize:
+
 - Sprint and ticket this session is working on
 - Role the agent took
 - Skill(s) invoked and their outcome

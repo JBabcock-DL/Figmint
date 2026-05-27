@@ -33,13 +33,13 @@ Promotion (`/create-ticket promote` or `/create-backlog`) still moves salient co
 
 <!-- Omit this section if there is no visual/design artifact. -->
 
-| | |
-| --- | --- |
-| **Figma** | <!-- deep link --> |
-| **File key** | <!-- optional --> |
-| **Node ID** | <!-- optional --> |
+|                            |                               |
+| -------------------------- | ----------------------------- |
+| **Figma**                  | <!-- deep link -->            |
+| **File key**               | <!-- optional -->             |
+| **Node ID**                | <!-- optional -->             |
 | **Frame / component name** | <!-- e.g. Signup — sample --> |
-| **Type** | <!-- FRAME, COMPONENT, … --> |
+| **Type**                   | <!-- FRAME, COMPONENT, … -->  |
 
 **Screenshot / preview:** <!-- MCP URL, exported PNG link, or “see Figma link” -->
 

@@ -27,7 +27,7 @@ Two thin adapters + one canonical shape (locked in promoted CTX-002) keep token-
 - [ ] As an engine developer, `import { adapt } from '@figmint/io/adapters'` returns `TokensV1` for any supported input.
 - [ ] As a future maintainer, I can add a new format adapter by implementing one function and registering it.
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -59,7 +59,7 @@ Two thin adapters + one canonical shape (locked in promoted CTX-002) keep token-
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Both adapters export and pass unit tests on a fixture of ≥20 tokens each (color, dimension, typography, shadow).
 - [ ] `detectFormat` correctly identifies dtcg vs legacy vs invalid for all fixtures.

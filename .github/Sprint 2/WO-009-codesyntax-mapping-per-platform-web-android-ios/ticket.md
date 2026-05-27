@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-5.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -37,7 +37,7 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-5.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
@@ -47,7 +47,7 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-5.
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Every pushed variable has codeSyntax set for all three platforms.
 - [ ] Spot-check: a `Theme/Primary` token resolves to `--theme-primary` (Web), `R.color.theme_primary` (Android), `Color.themePrimary` (iOS).

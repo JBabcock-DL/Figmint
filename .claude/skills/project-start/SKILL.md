@@ -1,7 +1,7 @@
 ---
 name: project-start
 description: Initialize a new project repo with the full claude-ops workflow structure — folder layout, templates, and either a GitHub Project board or a Jira project as the ticket backend. Use when starting a brand new project that should follow this workflow.
-argument-hint: "[project-name]"
+argument-hint: '[project-name]'
 context: fork
 agent: general-purpose
 ---
@@ -59,24 +59,22 @@ Then scaffold the following in the current working directory:
 
 3a. Write `.claude/settings.json` in the new project root. The permissions list depends on the chosen backend:
 
-   - If `BACKEND` is `github`, pre-authorize all `gh` CLI commands:
-     ```json
-     {
-       "permissions": {
-         "allow": [
-           "Bash(gh *)"
-         ]
-       }
-     }
-     ```
-   - If `BACKEND` is `jira`, write an empty-but-valid permissions file — all Jira work goes through MCP tool calls which follow Claude Code's MCP permission model, not `Bash`:
-     ```json
-     {
-       "permissions": {
-         "allow": []
-       }
-     }
-     ```
+- If `BACKEND` is `github`, pre-authorize all `gh` CLI commands:
+  ```json
+  {
+    "permissions": {
+      "allow": ["Bash(gh *)"]
+    }
+  }
+  ```
+- If `BACKEND` is `jira`, write an empty-but-valid permissions file — all Jira work goes through MCP tool calls which follow Claude Code's MCP permission model, not `Bash`:
+  ```json
+  {
+    "permissions": {
+      "allow": []
+    }
+  }
+  ```
 
 4. Create a `CLAUDE.md` in the new repo root. The user must not need to remind Claude to read `memory.md`—bake the rules in here. Use this exact structure, substituting the project name and `BACKEND`:
 
@@ -120,34 +118,34 @@ Using the `gh` CLI:
 
 5a-A. **Set up custom status columns** on the new project board — the default GitHub Project board has generic options (Todo, In Progress, Done) that do NOT match our workflow. You must replace them with the correct statuses using the GitHub GraphQL API:
 
-   - Run `gh project field-list <PROJECT_NUMBER> --owner <OWNER_LOGIN> --format json` to get the Status field's node ID (`PVTSSF_...`). The Status field has `"type": "ProjectV2SingleSelectField"`.
-   - Call `gh api graphql` with the `updateProjectV2Field` mutation to replace all options with the 6 workflow statuses. Use this exact shape:
+- Run `gh project field-list <PROJECT_NUMBER> --owner <OWNER_LOGIN> --format json` to get the Status field's node ID (`PVTSSF_...`). The Status field has `"type": "ProjectV2SingleSelectField"`.
+- Call `gh api graphql` with the `updateProjectV2Field` mutation to replace all options with the 6 workflow statuses. Use this exact shape:
 
-   ```
-   gh api graphql -f query='
-   mutation {
-     updateProjectV2Field(input: {
-       fieldId: "<STATUS_FIELD_ID>"
-       singleSelectOptions: [
-         { name: "Context Backlog", color: BLUE,   description: "" }
-         { name: "In Research",     color: PURPLE, description: "" }
-         { name: "In Planning",     color: YELLOW, description: "" }
-         { name: "In Build",        color: ORANGE, description: "" }
-         { name: "In Review", color: RED,    description: "" }
-         { name: "Completed",       color: GREEN,  description: "" }
-       ]
-     }) {
-       projectV2Field {
-         ... on ProjectV2SingleSelectField {
-           id
-           options { id name }
-         }
-       }
-     }
-   }'
-   ```
+```
+gh api graphql -f query='
+mutation {
+  updateProjectV2Field(input: {
+    fieldId: "<STATUS_FIELD_ID>"
+    singleSelectOptions: [
+      { name: "Context Backlog", color: BLUE,   description: "" }
+      { name: "In Research",     color: PURPLE, description: "" }
+      { name: "In Planning",     color: YELLOW, description: "" }
+      { name: "In Build",        color: ORANGE, description: "" }
+      { name: "In Review", color: RED,    description: "" }
+      { name: "Completed",       color: GREEN,  description: "" }
+    ]
+  }) {
+    projectV2Field {
+      ... on ProjectV2SingleSelectField {
+        id
+        options { id name }
+      }
+    }
+  }
+}'
+```
 
-   - Parse the returned `options` array from the mutation response. For each option, record its `id` keyed by `name`. These are the IDs you will write into `workflow.md` — do not re-query; use the mutation response directly.
+- Parse the returned `options` array from the mutation response. For each option, record its `id` keyed by `name`. These are the IDs you will write into `workflow.md` — do not re-query; use the mutation response directly.
 
 ### 5 · Option B — Jira backend (`BACKEND == jira`)
 
@@ -169,7 +167,7 @@ All Jira work goes through the **Atlassian MCP server** in Claude Code. Before d
 - **Labels are authoritative.** Workflow phases are tracked via labels on each issue:
   - `phase:context-backlog`, `phase:in-research`, `phase:in-planning`, `phase:in-build`, `phase:in-review`, `phase:completed`
   - Every ticket also gets a `claude-ops` label plus exactly one of `bug`, `work-order`, or `context`
-  No pre-creation of labels is required — Jira creates labels on first use.
+    No pre-creation of labels is required — Jira creates labels on first use.
 
 - **Phase → Transition map (optional, for visible board movement).** Jira boards grouped by Status will not visibly move when only labels change. To make cards physically move on the default Status-grouped Kanban view, capture an optional mapping from each `phase:*` to a Jira workflow transition.
   1. Pick any existing issue in the project (or create a throwaway one) and call **`getTransitionsForJiraIssue`** with `cloudId` and that `issueIdOrKey`. Record the available `transitions[].name` values as **`availableTransitionNames`** (case-preserved as Jira returns them).
@@ -217,11 +215,11 @@ Then execute **only** the sub-branch matching `BACKEND`.
   - `Issue type — Context` → captured `contextIssueType`
   - **Phase → Transition map** rows — write the captured transition values verbatim (or the literal string `skip`):
     - `phase:context-backlog` → `transition_context_backlog`
-    - `phase:in-research`     → `transition_in_research`
-    - `phase:in-planning`     → `transition_in_planning`
-    - `phase:in-build`        → `transition_in_build`
-    - `phase:in-review`       → `transition_in_review`
-    - `phase:completed`       → `transition_completed`
+    - `phase:in-research` → `transition_in_research`
+    - `phase:in-planning` → `transition_in_planning`
+    - `phase:in-build` → `transition_in_build`
+    - `phase:in-review` → `transition_in_review`
+    - `phase:completed` → `transition_completed`
   - The JQL example at the bottom of the section: replace `[CONFIGURE: PROJ]` with the captured `projectKey`.
 - Replace the entire **## Ticket Tracker — GitHub** section body (everything from the first bullet through the end of the **Key Commands (GitHub)** code block) with:
 
@@ -240,6 +238,7 @@ Do this only after step 6 is complete and `workflow.md` has no unresolved `[CONF
 Use the Skill tool exactly as follows — do not invent titles, do not create issues yourself, do not add anything to the board yourself. The `create-ticket` skill handles all of that and will branch on the backend value it reads from `workflow.md`.
 
 First call — pass this argument string exactly:
+
 ```
 wo "Configure project goal in workflow.md"
 ```
@@ -247,6 +246,7 @@ wo "Configure project goal in workflow.md"
 Wait for it to complete and confirm a ticket folder was created under `.github/Sprint 1/` before continuing.
 
 Second call — pass this argument string exactly:
+
 ```
 bug "Sample bug report"
 ```
@@ -254,6 +254,7 @@ bug "Sample bug report"
 Wait for it to complete and confirm a second ticket folder was created before continuing.
 
 Third call — pass this argument string exactly:
+
 ```
 ctx "Sample context capture"
 ```
@@ -275,8 +276,8 @@ Wait for it to complete. All three tickets must appear in `.github/Sprint 1/` wi
 ### Manual step required — board view
 
 - **GitHub backend:** GitHub's API does not expose a mutation for creating project views. After setup is complete, the user must add the Board view manually:
-    1. Open the project on GitHub
-    2. Click **+ New view** (tab row at the top)
-    3. Select **Board**
-    The 6 status columns will appear automatically since the Status field is already configured.
+  1. Open the project on GitHub
+  2. Click **+ New view** (tab row at the top)
+  3. Select **Board**
+     The 6 status columns will appear automatically since the Status field is already configured.
 - **Jira backend:** If the user wants a kanban view grouped by workflow phase, have them create a board in Jira with swimlanes or columns grouped by **Label**, showing the six `phase:*` labels in order: `phase:context-backlog`, `phase:in-research`, `phase:in-planning`, `phase:in-build`, `phase:in-review`, `phase:completed`. A JQL filter of `project = <KEY> AND labels = "claude-ops"` scopes the board to this workflow's tickets.

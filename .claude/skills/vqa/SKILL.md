@@ -1,7 +1,7 @@
 ---
 name: vqa
 description: Run a visual and functional QA pass on a completed ticket. Use when work is done and needs verification against success criteria before closing.
-argument-hint: "[Sprint N/TICKET-ID-slug]"
+argument-hint: '[Sprint N/TICKET-ID-slug]'
 context: fork
 agent: general-purpose
 ---
@@ -19,6 +19,7 @@ If $ARGUMENTS is empty, ask the user using AskUserQuestion before proceeding:
 Do not proceed until confirmed.
 
 Before reviewing anything, read these files in order:
+
 1. memory.md (if it exists in the repo root) — project running memory; skip if missing or empty
 2. workflow.md — resolve path per skills/conventions/01-plugin-root-and-templates.md
 3. $ARGUMENTS/ticket.md
@@ -37,6 +38,7 @@ Every `/vqa` run is **Figma-first**. Read the **Figma VQA Checklist** section in
 - **B) Section body is exactly `**N/A — no Figma artifact (backend / API / infra ticket).**`** (or the bug-template equivalent). Skip Steps 2–4 and jump to **Step 5 — Functional QA only**.
 
 Anything else — missing section, blank `file_key` / `node_id`, half-filled rows, "TODO", or a Figma URL but no parsed `file_key` / `node_id` — is a **hard stop**. Do not proceed. Report back to the user with the exact missing fields and ask them to either:
+
 1. Fill the Figma source block (paste the Figma URL — you can parse `fileKey` from `figma.com/design/<fileKey>/...` and `nodeId` from `?node-id=<nodeId>`, converting `-` to `:`), or
 2. Replace the section body with the explicit N/A sentinel above if this ticket genuinely has no UI surface.
 
@@ -105,6 +107,7 @@ Use the **Backend:** field in `workflow.md` to choose:
 ## Step 8 — Report back
 
 Report to the user:
+
 - Figma assertion pass/fail counts (or "Figma N/A").
 - Functional QA pass/fail counts.
 - Path to the report.

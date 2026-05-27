@@ -12,7 +12,7 @@ This ticket is a **design-handoff scaffold** for an architectural decision that 
 
 ## Goal
 
-Lock the **canonical internal token model** — the TypeScript shape that Figmint's token-input adapters normalize both W3C DTCG and legacy `DesignOps-plugin` formats *into* — before Sprint 2 begins writing those adapters.
+Lock the **canonical internal token model** — the TypeScript shape that Figmint's token-input adapters normalize both W3C DTCG and legacy `DesignOps-plugin` formats _into_ — before Sprint 2 begins writing those adapters.
 
 PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-2 (normalize to canonical internal model), §8.2 (`tokens` hybrid contract).
 
@@ -20,13 +20,13 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-2 (normalize to canonical internal mode
 
 ## Design reference
 
-| | |
-| --- | --- |
-| **Figma** | N/A — schema / architecture decision |
-| **File key** | — |
-| **Node ID** | — |
-| **Frame / component name** | — |
-| **Type** | — |
+|                            |                                      |
+| -------------------------- | ------------------------------------ |
+| **Figma**                  | N/A — schema / architecture decision |
+| **File key**               | —                                    |
+| **Node ID**                | —                                    |
+| **Frame / component name** | —                                    |
+| **Type**                   | —                                    |
 
 **Screenshot / preview:** N/A.
 
@@ -103,7 +103,7 @@ Lock the canonical internal token model before Sprint 2 adapter implementation. 
 
 ## Raw Notes
 
-*Spike findings will land here after WO-005 completes. Currently empty.*
+_Spike findings will land here after WO-005 completes. Currently empty._
 
 ## Assets & Links
 

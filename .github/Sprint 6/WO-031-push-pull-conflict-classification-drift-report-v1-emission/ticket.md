@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.4 FR-DRIFT-3..4, §8.4.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -38,17 +38,17 @@ PRD anchors: `Docs/PRD.md` §6.4 FR-DRIFT-3..4, §8.4.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-029, WO-030, WO-019, WO-020, WO-003
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] End-to-end: drift detected on a sample file produces a `drift-report.v1.json` AND `drift-report.v1.md` with correct counts.
 - [ ] Markdown renders cleanly in GitHub PR preview.
@@ -103,5 +103,5 @@ N/A — no Figma artifact (subsystem ticket)
 
 - PRD: `Docs/PRD.md` §6.4 FR-DRIFT-3..4, §8.4
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

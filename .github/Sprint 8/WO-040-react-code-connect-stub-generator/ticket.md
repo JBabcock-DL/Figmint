@@ -8,19 +8,19 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5Jbk
 
 Implement the React `MappingTemplate` — generates `.figma.tsx` Code Connect stub files for unmapped Figma components. Stubs include Figma node ids + component prop metadata. Engineer reviews + fills implementation references; CI publishes.
 
-PRD anchors: `Docs/PRD.md` §6.7 FR-CC-*.
+PRD anchors: `Docs/PRD.md` §6.7 FR-CC-\*.
 
 ---
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -36,7 +36,7 @@ PRD anchors: `Docs/PRD.md` §6.7 FR-CC-*.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
@@ -46,7 +46,7 @@ PRD anchors: `Docs/PRD.md` §6.7 FR-CC-*.
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Detect 5 unmapped React components on canvas → generate 5 `.figma.tsx` stubs → open a single PR.
 - [ ] Stubs follow `figma.connect()` API correctly.
@@ -100,7 +100,7 @@ N/A — no Figma artifact (subsystem ticket)
 
 ## References
 
-- PRD: `Docs/PRD.md` §6.7 FR-CC-*
+- PRD: `Docs/PRD.md` §6.7 FR-CC-\*
 - Lift reference:
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/conventions/05-code-connect.md` — Code Connect conventions
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

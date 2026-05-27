@@ -49,16 +49,16 @@ The plugin's center of gravity is bootstrap speed (design system setup measured 
 
 ### 2.1 Mission Statement
 
-> **Figmint is a deterministic context bridge between agents.** Zero LLM tokens consumed internally; first-class file I/O in both directions; agents are optional upstream/downstream users that the plugin is designed *for* but does not depend *on*.
+> **Figmint is a deterministic context bridge between agents.** Zero LLM tokens consumed internally; first-class file I/O in both directions; agents are optional upstream/downstream users that the plugin is designed _for_ but does not depend _on_.
 
 ### 2.2 Why now
 
-| Force | Implication |
-|---|---|
-| Figma Agent launched May 2026 (free-form design, translations, quick edits) | Pluggable LLM judgment slices can be deferred to Figma; we stop trying to own them |
-| Figma Plugin API has full parity for variables, components, modes, bindings, Code Connect | Everything DesignOps does via MCP can be done natively |
-| MCP transport layer is the largest source of complexity in the current repo | Removing it deletes whole skill files and convention shards |
-| Figma's Variables REST API gates writes to Enterprise plans | Plugin path avoids the plan gate; plugin sandbox uses free Plugin API |
+| Force                                                                                     | Implication                                                                        |
+| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Figma Agent launched May 2026 (free-form design, translations, quick edits)               | Pluggable LLM judgment slices can be deferred to Figma; we stop trying to own them |
+| Figma Plugin API has full parity for variables, components, modes, bindings, Code Connect | Everything DesignOps does via MCP can be done natively                             |
+| MCP transport layer is the largest source of complexity in the current repo               | Removing it deletes whole skill files and convention shards                        |
+| Figma's Variables REST API gates writes to Enterprise plans                               | Plugin path avoids the plan gate; plugin sandbox uses free Plugin API              |
 
 ### 2.3 Strategic positioning vs. agents
 
@@ -78,41 +78,41 @@ For everything else, the plugin produces context documents (Markdown + JSON) tha
 
 ### 3.1 Goals
 
-| # | Goal | Measurable when… |
-|---|---|---|
-| G1 | Bootstrap a full design system (5 collections, style-guide canvas, 400+ variables) in under 30 seconds | Phase 1 latency benchmark |
-| G2 | Scaffold a single component with full variant matrix in under 5 seconds | Phase 2 benchmark |
-| G3 | Bidirectional drift detection across Figma ↔ repo with 3-way merge semantics (push/pull/conflict) | Phase 3 tests |
-| G4 | Import code components from a connected repo into Figma with deterministic spec extraction | Phase 4 per-framework |
-| G5 | Zero LLM tokens consumed inside the plugin | Architecture audit |
-| G6 | Agents (Claude / Figma Agent / CLI) can consume plugin outputs and produce plugin inputs without plugin changes | Schema versioning + adoption proof |
-| G7 | Designer requires no CLI / Claude Code / MCP setup to use the plugin | Onboarding test with non-engineer designer |
+| #   | Goal                                                                                                            | Measurable when…                           |
+| --- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| G1  | Bootstrap a full design system (5 collections, style-guide canvas, 400+ variables) in under 30 seconds          | Phase 1 latency benchmark                  |
+| G2  | Scaffold a single component with full variant matrix in under 5 seconds                                         | Phase 2 benchmark                          |
+| G3  | Bidirectional drift detection across Figma ↔ repo with 3-way merge semantics (push/pull/conflict)               | Phase 3 tests                              |
+| G4  | Import code components from a connected repo into Figma with deterministic spec extraction                      | Phase 4 per-framework                      |
+| G5  | Zero LLM tokens consumed inside the plugin                                                                      | Architecture audit                         |
+| G6  | Agents (Claude / Figma Agent / CLI) can consume plugin outputs and produce plugin inputs without plugin changes | Schema versioning + adoption proof         |
+| G7  | Designer requires no CLI / Claude Code / MCP setup to use the plugin                                            | Onboarding test with non-engineer designer |
 
 ### 3.2 Non-Goals
 
-| # | Non-goal | Why |
-|---|---|---|
-| N1 | Free-form design generation from prompt | Figma Agent territory |
-| N2 | Translation / localization workflows | Figma Agent territory |
-| N3 | Accessibility audit beyond emitting raw frame metadata | Figma Agent territory; defer |
-| N4 | In-plugin LLM calls of any kind | Violates mission; would add API key handling and cost |
-| N5 | Direct writeback into application source code | Engineer territory; plugin emits specs, engineers update implementations |
-| N6 | Multi-file batch operations in v1 | Requires Variables REST API (Enterprise) or remote orchestration; deferred |
-| N7 | Replacing the engineer-side CLI (shadcn install, `figma connect publish`, ticket creation) | Keep code-side workflows in code-side tooling |
-| N8 | Plugin-to-agent automatic invocation | Platform-gated; designer-mediated handoff is the constraint we accept |
+| #   | Non-goal                                                                                   | Why                                                                        |
+| --- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| N1  | Free-form design generation from prompt                                                    | Figma Agent territory                                                      |
+| N2  | Translation / localization workflows                                                       | Figma Agent territory                                                      |
+| N3  | Accessibility audit beyond emitting raw frame metadata                                     | Figma Agent territory; defer                                               |
+| N4  | In-plugin LLM calls of any kind                                                            | Violates mission; would add API key handling and cost                      |
+| N5  | Direct writeback into application source code                                              | Engineer territory; plugin emits specs, engineers update implementations   |
+| N6  | Multi-file batch operations in v1                                                          | Requires Variables REST API (Enterprise) or remote orchestration; deferred |
+| N7  | Replacing the engineer-side CLI (shadcn install, `figma connect publish`, ticket creation) | Keep code-side workflows in code-side tooling                              |
+| N8  | Plugin-to-agent automatic invocation                                                       | Platform-gated; designer-mediated handoff is the constraint we accept      |
 
 ---
 
 ## 4. Personas & Actors
 
-| Actor | Role | Required? |
-|---|---|---|
-| **Designer** | Primary plugin user; drives all interactions | Yes |
-| **Engineer** | Owns `tokens.json`, reviews PRs from plugin, updates component implementations | Yes (project-side) |
-| **Figmint** | Deterministic execution engine in Figma sandbox | Yes |
-| **Claude (CLI / Cursor / chat)** | Optional pre/post-processing agent for context | Optional |
-| **Figma Agent** | Optional on-canvas agent for free-form, translation, a11y | Optional |
-| **CI (GitHub Actions)** | Validates contracts; runs `figma connect publish` | Yes for Code Connect publish |
+| Actor                            | Role                                                                           | Required?                    |
+| -------------------------------- | ------------------------------------------------------------------------------ | ---------------------------- |
+| **Designer**                     | Primary plugin user; drives all interactions                                   | Yes                          |
+| **Engineer**                     | Owns `tokens.json`, reviews PRs from plugin, updates component implementations | Yes (project-side)           |
+| **Figmint**                      | Deterministic execution engine in Figma sandbox                                | Yes                          |
+| **Claude (CLI / Cursor / chat)** | Optional pre/post-processing agent for context                                 | Optional                     |
+| **Figma Agent**                  | Optional on-canvas agent for free-form, translation, a11y                      | Optional                     |
+| **CI (GitHub Actions)**          | Validates contracts; runs `figma connect publish`                              | Yes for Code Connect publish |
 
 The designer is the **only** human required in every workflow. Every other actor is opt-in.
 
@@ -175,105 +175,105 @@ The designer is the **only** human required in every workflow. Every other actor
 
 ### 6.1 Bootstrap engine (FR-BOOT)
 
-| ID | Requirement |
-|---|---|
-| FR-BOOT-1 | Read tokens from any I/O source (§10) supporting W3C DTCG **or** legacy `.figmint-registry.json` shape (hybrid auto-detect) |
-| FR-BOOT-2 | Normalize input to canonical internal token model |
-| FR-BOOT-3 | Create / update 5 variable collections: Primitives, Theme, Typography, Layout, Effects |
-| FR-BOOT-4 | Support modes per collection (Light/Dark on Theme; type-scale modes on Typography per Detroit Labs Foundations) |
+| ID        | Requirement                                                                                                                        |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| FR-BOOT-1 | Read tokens from any I/O source (§10) supporting W3C DTCG **or** legacy `.figmint-registry.json` shape (hybrid auto-detect)        |
+| FR-BOOT-2 | Normalize input to canonical internal token model                                                                                  |
+| FR-BOOT-3 | Create / update 5 variable collections: Primitives, Theme, Typography, Layout, Effects                                             |
+| FR-BOOT-4 | Support modes per collection (Light/Dark on Theme; type-scale modes on Typography per Detroit Labs Foundations)                    |
 | FR-BOOT-5 | Set `codeSyntax` on every variable per platform (Web/Android/iOS) — no platform alias collections (per locked architecture memory) |
-| FR-BOOT-6 | Optionally use Figma's Extended Variable Collections (Jan 2026) for theme inheritance — spike in Phase 0 |
-| FR-BOOT-7 | Build style-guide canvas pages: color tables, typography specimen, layout grids, effects, token overview |
-| FR-BOOT-8 | Run audit after each build; report issues inline (no silent failures) |
-| FR-BOOT-9 | Emit ops audit log to chosen sink |
+| FR-BOOT-6 | Optionally use Figma's Extended Variable Collections (Jan 2026) for theme inheritance — spike in Phase 0                           |
+| FR-BOOT-7 | Build style-guide canvas pages: color tables, typography specimen, layout grids, effects, token overview                           |
+| FR-BOOT-8 | Run audit after each build; report issues inline (no silent failures)                                                              |
+| FR-BOOT-9 | Emit ops audit log to chosen sink                                                                                                  |
 
 ### 6.2 Component scaffold — forward path (FR-SCAF)
 
-| ID | Requirement |
-|---|---|
-| FR-SCAF-1 | Accept `component-spec.v1.json` from any I/O source |
-| FR-SCAF-2 | Create ComponentSet with variants derived from spec's variant matrix |
-| FR-SCAF-3 | Apply variable bindings (fill, stroke, radius, padding, gap, text styles) per spec |
-| FR-SCAF-4 | Generate component property definitions matching spec props (Boolean, Text, Variant, InstanceSwap) |
-| FR-SCAF-5 | Create a usage frame with example instances |
-| FR-SCAF-6 | Append to `.figmint-registry.json` payload; offer registry export via any sink |
+| ID        | Requirement                                                                                                                                                                               |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-SCAF-1 | Accept `component-spec.v1.json` from any I/O source                                                                                                                                       |
+| FR-SCAF-2 | Create ComponentSet with variants derived from spec's variant matrix                                                                                                                      |
+| FR-SCAF-3 | Apply variable bindings (fill, stroke, radius, padding, gap, text styles) per spec                                                                                                        |
+| FR-SCAF-4 | Generate component property definitions matching spec props (Boolean, Text, Variant, InstanceSwap)                                                                                        |
+| FR-SCAF-5 | Create a usage frame with example instances                                                                                                                                               |
+| FR-SCAF-6 | Append to `.figmint-registry.json` payload; offer registry export via any sink                                                                                                            |
 | FR-SCAF-7 | Encode auto-layout invariants (resize-then-sizing-mode order; counter-axis AUTO for matrix specimens; row counter-axis AUTO; no 1px master heights) as helper functions, not prompt rules |
 
 ### 6.3 Component import — reverse path (FR-IMP)
 
-| ID | Requirement |
-|---|---|
-| FR-IMP-1 | Pull component source file from connected repo via GitHub OAuth |
-| FR-IMP-2 | Detect framework from file extension + project manifest |
-| FR-IMP-3 | Pre-scan dependencies; check registry for sub-components; surface dependency tree before any parse work |
+| ID       | Requirement                                                                                                                                                  |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FR-IMP-1 | Pull component source file from connected repo via GitHub OAuth                                                                                              |
+| FR-IMP-2 | Detect framework from file extension + project manifest                                                                                                      |
+| FR-IMP-3 | Pre-scan dependencies; check registry for sub-components; surface dependency tree before any parse work                                                      |
 | FR-IMP-4 | Per-framework parser produces `component-spec.v1.json`: variants from enum prop types, booleans from boolean props, layout hints from JSX/template structure |
-| FR-IMP-5 | Resolve `className` / CSS variable references to Figma variables via token resolver (§6.9) |
-| FR-IMP-6 | Read existing Code Connect mapping if present to improve prop-mapping fidelity |
-| FR-IMP-7 | Always show preview; never silent-apply; designer edits in preview before scaffold (locked decision) |
-| FR-IMP-8 | Reference existing Figma components for sub-components when registry match exists (locked decision) |
-| FR-IMP-9 | Offer "Also emit Code Connect PR" after successful import for components without mappings |
+| FR-IMP-5 | Resolve `className` / CSS variable references to Figma variables via token resolver (§6.9)                                                                   |
+| FR-IMP-6 | Read existing Code Connect mapping if present to improve prop-mapping fidelity                                                                               |
+| FR-IMP-7 | Always show preview; never silent-apply; designer edits in preview before scaffold (locked decision)                                                         |
+| FR-IMP-8 | Reference existing Figma components for sub-components when registry match exists (locked decision)                                                          |
+| FR-IMP-9 | Offer "Also emit Code Connect PR" after successful import for components without mappings                                                                    |
 
 ### 6.4 Drift detection (FR-DRIFT)
 
-| ID | Requirement |
-|---|---|
-| FR-DRIFT-1 | Maintain a "last synced" snapshot per key, stored in canvas pluginData on a hidden node in the Figmint Output page |
-| FR-DRIFT-2 | On detect: pull current repo state, compare against last-synced snapshot AND Figma current state — 3-way |
-| FR-DRIFT-3 | Classify each drift as `push` (Figma moved), `pull` (Repo moved), or `conflict` (both moved, disagree) |
-| FR-DRIFT-4 | Emit `drift-report.v1.{json,md}` to any chosen sink |
-| FR-DRIFT-5 | On plugin open, run a lightweight comparison and show badge: `Sync · N↑ M↓` (and `·K⚠` if conflicts) |
+| ID         | Requirement                                                                                                          |
+| ---------- | -------------------------------------------------------------------------------------------------------------------- |
+| FR-DRIFT-1 | Maintain a "last synced" snapshot per key, stored in canvas pluginData on a hidden node in the Figmint Output page   |
+| FR-DRIFT-2 | On detect: pull current repo state, compare against last-synced snapshot AND Figma current state — 3-way             |
+| FR-DRIFT-3 | Classify each drift as `push` (Figma moved), `pull` (Repo moved), or `conflict` (both moved, disagree)               |
+| FR-DRIFT-4 | Emit `drift-report.v1.{json,md}` to any chosen sink                                                                  |
+| FR-DRIFT-5 | On plugin open, run a lightweight comparison and show badge: `Sync · N↑ M↓` (and `·K⚠` if conflicts)                 |
 | FR-DRIFT-6 | Cover both variables (tokens.json ↔ Figma local variables) and components (component-spec.json ↔ Figma ComponentSet) |
 
 ### 6.5 Resolution UI (FR-RES)
 
-| ID | Requirement |
-|---|---|
-| FR-RES-1 | Sync tab shows three filter chips: All / Push (↑) / Pull (↓) / Conflicts (⚠) |
-| FR-RES-2 | Per-drift actions: Push / Pull / Skip / (for conflicts) Custom value |
+| ID       | Requirement                                                                                                                 |
+| -------- | --------------------------------------------------------------------------------------------------------------------------- |
+| FR-RES-1 | Sync tab shows three filter chips: All / Push (↑) / Pull (↓) / Conflicts (⚠)                                                |
+| FR-RES-2 | Per-drift actions: Push / Pull / Skip / (for conflicts) Custom value                                                        |
 | FR-RES-3 | Bulk actions: "Push selected → PR" and "Pull selected → apply"; both disabled if any selected row is an unresolved conflict |
-| FR-RES-4 | On successful Push or Pull, update snapshot per-key for touched values |
-| FR-RES-5 | On Skip, no snapshot change — drift resurfaces next detect |
+| FR-RES-4 | On successful Push or Pull, update snapshot per-key for touched values                                                      |
+| FR-RES-5 | On Skip, no snapshot change — drift resurfaces next detect                                                                  |
 
 ### 6.6 Handoff context (FR-HAND)
 
-| ID | Requirement |
-|---|---|
-| FR-HAND-1 | Capture selection metadata: node IDs, frame URL with deep-link, screenshot PNG export |
-| FR-HAND-2 | Enumerate components used; include Code Connect URLs when mapped |
-| FR-HAND-3 | List tokens referenced |
-| FR-HAND-4 | Include auto-layout metadata (direction, gap, padding, sizing modes) |
+| ID        | Requirement                                                                                    |
+| --------- | ---------------------------------------------------------------------------------------------- |
+| FR-HAND-1 | Capture selection metadata: node IDs, frame URL with deep-link, screenshot PNG export          |
+| FR-HAND-2 | Enumerate components used; include Code Connect URLs when mapped                               |
+| FR-HAND-3 | List tokens referenced                                                                         |
+| FR-HAND-4 | Include auto-layout metadata (direction, gap, padding, sizing modes)                           |
 | FR-HAND-5 | Emit `handoff-context.v1.{json,md}` to any chosen sink; default to clipboard (most common use) |
 
 ### 6.7 Code Connect stub generation (FR-CC)
 
-| ID | Requirement |
-|---|---|
-| FR-CC-1 | Detect components without Code Connect mappings |
+| ID      | Requirement                                                                                                                                   |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-CC-1 | Detect components without Code Connect mappings                                                                                               |
 | FR-CC-2 | Per-framework generator produces stub file (React `.figma.tsx`, Vue, WC, SwiftUI, Compose) including Figma node IDs + component prop metadata |
-| FR-CC-3 | Open GitHub PR to consumer repo with all stubs in one branch |
-| FR-CC-4 | Plugin does **not** publish; CI runs `figma connect publish` on merge |
-| FR-CC-5 | Generators share a common `MappingTemplate` interface with the import-side `ImportTemplate` for parser/resolver reuse |
+| FR-CC-3 | Open GitHub PR to consumer repo with all stubs in one branch                                                                                  |
+| FR-CC-4 | Plugin does **not** publish; CI runs `figma connect publish` on merge                                                                         |
+| FR-CC-5 | Generators share a common `MappingTemplate` interface with the import-side `ImportTemplate` for parser/resolver reuse                         |
 
 ### 6.8 I/O subsystem (FR-IO)
 
 See §10 for full spec. Summary:
 
-| ID | Requirement |
-|---|---|
-| FR-IO-1 | Four input ports: paste, file picker, clipboard auto-detect on open, GitHub OAuth pull, frame pluginData |
-| FR-IO-2 | Four output sinks: download file, copy to clipboard, write to Figmint Output page text node, write to frame pluginData, open GitHub PR |
+| ID      | Requirement                                                                                                                             |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-IO-1 | Four input ports: paste, file picker, clipboard auto-detect on open, GitHub OAuth pull, frame pluginData                                |
+| FR-IO-2 | Four output sinks: download file, copy to clipboard, write to Figmint Output page text node, write to frame pluginData, open GitHub PR  |
 | FR-IO-3 | Every contract document serializes as both `.v1.json` AND `.v1.md` (GFM tables + headings); markdown derived from JSON to prevent drift |
-| FR-IO-4 | Designer picks file path + format at export time via a unified export sheet |
+| FR-IO-4 | Designer picks file path + format at export time via a unified export sheet                                                             |
 
 ### 6.9 Connected repo settings (FR-CONF)
 
-| ID | Requirement |
-|---|---|
-| FR-CONF-1 | Single Settings panel: Connected Repo section with all configured paths visible |
+| ID        | Requirement                                                                                                               |
+| --------- | ------------------------------------------------------------------------------------------------------------------------- |
+| FR-CONF-1 | Single Settings panel: Connected Repo section with all configured paths visible                                           |
 | FR-CONF-2 | Auto-detect token resolver source from repo (Tailwind config → tokens.css → Style Dictionary config → Tokens Studio JSON) |
-| FR-CONF-3 | Manual override available; both modes coexist (locked decision) |
-| FR-CONF-4 | Per-project scoping in clientStorage, keyed by repo URL |
-| FR-CONF-5 | Configurable paths: tokens source, registry path, components directory, reports output directory |
+| FR-CONF-3 | Manual override available; both modes coexist (locked decision)                                                           |
+| FR-CONF-4 | Per-project scoping in clientStorage, keyed by repo URL                                                                   |
+| FR-CONF-5 | Configurable paths: tokens source, registry path, components directory, reports output directory                          |
 
 ---
 
@@ -470,29 +470,25 @@ Five document types. Each has a `v1` JSON schema and a derived GFM markdown rend
   "variantMatrix": {
     "variant": ["primary", "secondary", "ghost"],
     "size": ["sm", "md", "lg"],
-    "disabled": [false, true]
+    "disabled": [false, true],
   },
-  "props": [
-    { "name": "loading", "type": "boolean", "default": false }
-  ],
+  "props": [{ "name": "loading", "type": "boolean", "default": false }],
   "bindings": [
     { "selector": "root.fill", "variable": "Theme/Primary" },
-    { "selector": "label.text", "variable": "Typography/Body/medium" }
+    { "selector": "label.text", "variable": "Typography/Body/medium" },
   ],
   "layout": {
     "direction": "horizontal",
     "gap": "Layout/spacing/2",
     "padding": "Layout/spacing/3",
-    "sizing": { "horizontal": "hug", "vertical": "hug" }
+    "sizing": { "horizontal": "hug", "vertical": "hug" },
   },
-  "subComponents": [
-    { "name": "Icon", "registryRef": "Icon" }
-  ],
+  "subComponents": [{ "name": "Icon", "registryRef": "Icon" }],
   "confidence": {
     "layout": "high|medium|low",
     "bindings": "high|medium|low",
-    "unresolved": ["bg-muted/40"]
-  }
+    "unresolved": ["bg-muted/40"],
+  },
 }
 ```
 
@@ -516,15 +512,25 @@ Five document types. Each has a `v1` JSON schema and a derived GFM markdown rend
       "direction": "push",
       "figma": "#2563EB",
       "repo": "#3B82F6",
-      "lastSynced": "#3B82F6"
+      "lastSynced": "#3B82F6",
     },
     {
       "id": "components/Button",
       "kind": "component",
       "direction": "push",
-      "figma": { "variantMatrix": { /* with new "loading" */ } },
-      "repo": { "variantMatrix": { /* without */ } },
-      "lastSynced": { /* matches repo */ }
+      "figma": {
+        "variantMatrix": {
+          /* with new "loading" */
+        },
+      },
+      "repo": {
+        "variantMatrix": {
+          /* without */
+        },
+      },
+      "lastSynced": {
+        /* matches repo */
+      },
     },
     {
       "id": "typography/body/size",
@@ -532,9 +538,9 @@ Five document types. Each has a `v1` JSON schema and a derived GFM markdown rend
       "direction": "conflict",
       "figma": 16,
       "repo": 15,
-      "lastSynced": 14
-    }
-  ]
+      "lastSynced": 14,
+    },
+  ],
 }
 ```
 
@@ -557,14 +563,12 @@ Markdown rendering uses `## Push (4)`, `## Pull (2)`, `## Conflicts (1)` heading
       "nodeId": "12:34",
       "name": "Checkout",
       "deepLink": "https://figma.com/...?node-id=12:34",
-      "screenshot": { "format": "png", "dataUrl": "data:image/png;base64,..." }
-    }
+      "screenshot": { "format": "png", "dataUrl": "data:image/png;base64,..." },
+    },
   ],
-  "components": [
-    { "name": "Button", "instances": 4, "codeConnectUrl": "..." }
-  ],
+  "components": [{ "name": "Button", "instances": 4, "codeConnectUrl": "..." }],
   "tokensUsed": ["Theme/Primary", "Layout/spacing/3"],
-  "autoLayout": { "direction": "vertical", "gap": "Layout/spacing/4" }
+  "autoLayout": { "direction": "vertical", "gap": "Layout/spacing/4" },
 }
 ```
 
@@ -582,22 +586,22 @@ The ops protocol is the contract between any **shell** (UI, agent, CLI) and the 
 
 ### 9.1 Why ops-JSON over direct function calls
 
-| Property | Direct calls | Ops JSON |
-|---|---|---|
-| Replayable / auditable | No | Yes — drop a `.figmint.ops.json` next to the file |
-| Agent-friendly | Moderate — agents write code OK | Best fit — JSON emission is well-trained |
-| Inter-runtime portable | No — TS functions can't cross sandbox | Yes — JSON crosses any boundary |
-| Bridges "external agent can't invoke plugin" gap | No | Yes — agent writes to canvas pluginData, plugin reads on open |
+| Property                                         | Direct calls                          | Ops JSON                                                      |
+| ------------------------------------------------ | ------------------------------------- | ------------------------------------------------------------- |
+| Replayable / auditable                           | No                                    | Yes — drop a `.figmint.ops.json` next to the file             |
+| Agent-friendly                                   | Moderate — agents write code OK       | Best fit — JSON emission is well-trained                      |
+| Inter-runtime portable                           | No — TS functions can't cross sandbox | Yes — JSON crosses any boundary                               |
+| Bridges "external agent can't invoke plugin" gap | No                                    | Yes — agent writes to canvas pluginData, plugin reads on open |
 
 ### 9.2 Op type categories
 
-| Category | Op types |
-|---|---|
-| Bootstrap | `push-tokens`, `build-style-guide` |
-| Components | `scaffold-component`, `import-component` |
-| Drift | `detect-drift`, `apply-resolution` |
-| Handoff | `emit-handoff` |
-| Code Connect | `emit-code-connect-pr` |
+| Category     | Op types                                 |
+| ------------ | ---------------------------------------- |
+| Bootstrap    | `push-tokens`, `build-style-guide`       |
+| Components   | `scaffold-component`, `import-component` |
+| Drift        | `detect-drift`, `apply-resolution`       |
+| Handoff      | `emit-handoff`                           |
+| Code Connect | `emit-code-connect-pr`                   |
 
 Each op has a typed payload (validated against `@detroitlabs/figmint-contracts`) and a typed return result included in the audit log.
 
@@ -614,23 +618,23 @@ Each op has a typed payload (validated against `@detroitlabs/figmint-contracts`)
 
 ### 10.1 Sources (input)
 
-| Source | Use case | Phase |
-|---|---|---|
-| Paste textarea | Designer copy-pastes JSON from anywhere | 1 |
-| File picker / drag-drop | Local file from disk (.json or .md) | 1 |
-| Clipboard auto-detect on open | Plugin sniffs clipboard for valid contract JSON, offers "Load?" banner | 1 |
-| GitHub OAuth pull (read) | Plugin pulls tokens / spec / config from connected repo | 1 (Org) |
-| Frame pluginData | Upstream agent dropped ops via MCP write-to-canvas | 3 |
+| Source                        | Use case                                                               | Phase   |
+| ----------------------------- | ---------------------------------------------------------------------- | ------- |
+| Paste textarea                | Designer copy-pastes JSON from anywhere                                | 1       |
+| File picker / drag-drop       | Local file from disk (.json or .md)                                    | 1       |
+| Clipboard auto-detect on open | Plugin sniffs clipboard for valid contract JSON, offers "Load?" banner | 1       |
+| GitHub OAuth pull (read)      | Plugin pulls tokens / spec / config from connected repo                | 1 (Org) |
+| Frame pluginData              | Upstream agent dropped ops via MCP write-to-canvas                     | 3       |
 
 ### 10.2 Sinks (output)
 
-| Sink | Use case | Phase |
-|---|---|---|
-| Download as `.json` / `.md` | Designer carries file manually | 1 |
-| Copy to clipboard | Most common — paste to chat/ticket/agent | 1 |
-| Figmint Output page text node | Persistent labeled node; agent with file access can read via MCP | 3 |
-| Frame pluginData | Compact machine-readable handoff for round-trips | 3 |
-| GitHub PR (write via OAuth) | Engineer-reviewable, mergeable change to consumer repo | 3 (Org) |
+| Sink                          | Use case                                                         | Phase   |
+| ----------------------------- | ---------------------------------------------------------------- | ------- |
+| Download as `.json` / `.md`   | Designer carries file manually                                   | 1       |
+| Copy to clipboard             | Most common — paste to chat/ticket/agent                         | 1       |
+| Figmint Output page text node | Persistent labeled node; agent with file access can read via MCP | 3       |
+| Frame pluginData              | Compact machine-readable handoff for round-trips                 | 3       |
+| GitHub PR (write via OAuth)   | Engineer-reviewable, mergeable change to consumer repo           | 3 (Org) |
 
 ### 10.3 Dual-format serialization
 
@@ -667,13 +671,13 @@ Single component used across all flows:
 
 ### 11.1 Performance
 
-| Operation | Target | Baseline (current MCP path) |
-|---|---|---|
-| Full bootstrap (5 collections + style guide) | <30s | 5–15 min |
-| Component scaffold (one component) | <5s | 3–8 min |
-| Drift detection | <2s | 2–5 min |
-| Handoff capture | <1s | 1–3 min |
-| Code Connect stub PR (10 components) | <5s + GitHub roundtrip | 10+ min (multi-agent-turn) |
+| Operation                                    | Target                 | Baseline (current MCP path) |
+| -------------------------------------------- | ---------------------- | --------------------------- |
+| Full bootstrap (5 collections + style guide) | <30s                   | 5–15 min                    |
+| Component scaffold (one component)           | <5s                    | 3–8 min                     |
+| Drift detection                              | <2s                    | 2–5 min                     |
+| Handoff capture                              | <1s                    | 1–3 min                     |
+| Code Connect stub PR (10 components)         | <5s + GitHub roundtrip | 10+ min (multi-agent-turn)  |
 
 ### 11.2 Determinism
 
@@ -701,8 +705,8 @@ Never silent-applies a guess.
 ### 11.5 Compatibility
 
 - Figma Plugin API current as of 2026-05-26
-- Targets Extended Variable Collections (Jan 2026) if Phase 0 spike validates
-- Node 20+ for build tooling
+- Targets Extended Variable Collections (Plugin API Update 121, 2025-11-20) **on Enterprise-tier files only** if Phase 0 spike validates (see §13.1; EVC `VariableCollection.extend()` throws on lower plans)
+- **Node 22 LTS** for build tooling (bumped from Node 20 — Node 20 reached EOL 2026-04-30; WO-003's `ts-json-schema-generator@2.x` requires ≥22; WO-004's ESLint 10 + typescript-eslint v8 toolchain prefers Node 22+)
 - TypeScript strict mode
 
 ### 11.6 Internationalization
@@ -716,6 +720,7 @@ Plugin UI text in English only for v1. Designer-facing copy stored centrally to 
 ### Phase 0 — Spike (1–2 days)
 
 **Goal:** Validate platform assumptions before committing
+
 - Single-screen plugin pushes one collection from pasted `tokens.json`
 - Validate Extended Variable Collections semantics vs. current 5-collection design
 - Measure bootstrap latency vs. MCP baseline
@@ -724,6 +729,7 @@ Plugin UI text in English only for v1. Designer-facing copy stored centrally to 
 ### Phase 1 — Bootstrap core + I/O foundation
 
 **Goal:** Headline value — fast bootstrap from any input
+
 - Full 5-collection push with modes + codeSyntax
 - Style-guide canvas builders (color, typography, layout, effects, overview)
 - Auto-layout / resize helpers encoding gotchas as code
@@ -734,6 +740,7 @@ Plugin UI text in English only for v1. Designer-facing copy stored centrally to 
 ### Phase 2 — Component scaffold (forward path)
 
 **Goal:** Add components from spec / registry
+
 - ComponentSet creation with variant matrix
 - Variable bindings applied
 - Component property definitions
@@ -744,6 +751,7 @@ Plugin UI text in English only for v1. Designer-facing copy stored centrally to 
 ### Phase 3 — Context export + drift sync
 
 **Goal:** Bidirectional context flow; the agent-bridge story becomes real
+
 - Drift detector (variables + components)
 - 3-way snapshot mechanism (canvas pluginData)
 - Push / Pull / Conflict resolution UI
@@ -789,19 +797,20 @@ Parallel with Phase 4. See §17.
 
 ### 13.1 Two build targets, one codebase
 
-| Capability | Community | Org |
-|---|---|---|
-| Bootstrap (tokens push, style guide canvas) | ✅ | ✅ |
-| Component scaffold (forward path) | ✅ | ✅ |
-| Drift detection (local snapshot only) | ✅ | ✅ |
-| Handoff capture | ✅ | ✅ |
-| Paste / file / clipboard / pluginData I/O | ✅ | ✅ |
-| Download / clipboard / Output page sinks | ✅ | ✅ |
-| GitHub OAuth (read tokens, write PR) | ❌ | ✅ |
-| Component import from repo | ❌ (no OAuth) | ✅ |
-| Code Connect PR emission | ❌ | ✅ |
-| Multi-file batch via Variables REST | ❌ | ✅ (future) |
-| Pre-configured token templates | ❌ | ✅ |
+| Capability                                                  | Community     | Org                                                                                 |
+| ----------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------- |
+| Bootstrap (tokens push, style guide canvas)                 | ✅            | ✅                                                                                  |
+| Component scaffold (forward path)                           | ✅            | ✅                                                                                  |
+| Drift detection (local snapshot only)                       | ✅            | ✅                                                                                  |
+| Handoff capture                                             | ✅            | ✅                                                                                  |
+| Paste / file / clipboard / pluginData I/O                   | ✅            | ✅                                                                                  |
+| Download / clipboard / Output page sinks                    | ✅            | ✅                                                                                  |
+| GitHub OAuth (read tokens, write PR)                        | ❌            | ✅                                                                                  |
+| Component import from repo                                  | ❌ (no OAuth) | ✅                                                                                  |
+| Code Connect PR emission                                    | ❌            | ✅                                                                                  |
+| Multi-file batch via Variables REST                         | ❌            | ✅ (future)                                                                         |
+| Pre-configured token templates                              | ❌            | ✅                                                                                  |
+| Extended Variable Collections projector (theme inheritance) | ❌            | ✅ (Enterprise-tier Figma files only — `VariableCollection.extend()` is plan-gated) |
 
 ### 13.2 Mechanism
 
@@ -816,47 +825,48 @@ Single TS codebase. Build-time constants injected via `src/config/flags.{communi
 
 ## 14. Success Metrics
 
-| Metric | Target | Measurement |
-|---|---|---|
-| Bootstrap latency p50 | <30s | Telemetry from Phase 1 demo runs |
-| Component scaffold latency p50 | <5s | Same |
-| Drift detection latency p50 | <2s | Same |
-| LLM tokens consumed inside plugin | 0 | Architecture audit |
-| Designer onboarding time to first successful bootstrap | <10 min | User test with non-engineer designer |
-| Time to scaffold a 10-component design system | <5 min | Internal benchmark on Detroit Labs Foundations sample |
-| Client adoption | TBD (3 engagements within 6 months of GA) | Engagement tracking |
-| Reduction in current-repo MCP session token cost | >90% on bootstrap workflows | Compare before/after on equivalent task |
+| Metric                                                 | Target                                    | Measurement                                           |
+| ------------------------------------------------------ | ----------------------------------------- | ----------------------------------------------------- |
+| Bootstrap latency p50                                  | <30s                                      | Telemetry from Phase 1 demo runs                      |
+| Component scaffold latency p50                         | <5s                                       | Same                                                  |
+| Drift detection latency p50                            | <2s                                       | Same                                                  |
+| LLM tokens consumed inside plugin                      | 0                                         | Architecture audit                                    |
+| Designer onboarding time to first successful bootstrap | <10 min                                   | User test with non-engineer designer                  |
+| Time to scaffold a 10-component design system          | <5 min                                    | Internal benchmark on Detroit Labs Foundations sample |
+| Client adoption                                        | TBD (3 engagements within 6 months of GA) | Engagement tracking                                   |
+| Reduction in current-repo MCP session token cost       | >90% on bootstrap workflows               | Compare before/after on equivalent task               |
 
 ---
 
 ## 15. Risks & Mitigations
 
-| Risk | Impact | Likelihood | Mitigation |
-|---|---|---|---|
-| Figma platform API churn during build | Rework | Medium | Decouple ops protocol from Plugin API specifics; absorb breaking changes in one adapter layer |
-| Extended Variable Collections semantics don't match Detroit Labs 5-collection model | Phase 0 redesign | Low–Medium | Phase 0 spike is explicitly scoped to validate this |
-| Component import inference quality poor for complex JSX | Designer rejects feature | Medium | "Always preview, never silent-apply" policy; confidence flags; designer review gate |
-| Code Connect framework cardinality (5 frameworks) too expensive | Phase 4 slips | Medium | Sub-phased per framework; each ships independently; React-first |
-| Plugin parsing performance for large repo files | Slow imports | Low | clientStorage cache keyed by file SHA; sub-second budget; backend escape hatch deferred to v2 |
-| Designer adoption stalls — too unfamiliar | Low usage | Medium | Figma Community distribution; ~10-min onboarding flow; mirror designer's existing mental model (push/pull/conflict) |
-| Snapshot pluginData lost (file forked, plugin uninstalled, etc.) | False drift on reconnect | Low | Plugin handles missing snapshot by treating all repo state as "last synced" (no-op pull); designer reviews on first run after recovery |
-| GitHub OAuth scope creep / privacy concerns | Org install friction | Low | Read-only by default; write scoped to designated repo paths; revocable |
-| Figma Agent ships features that overlap with plugin (translation, a11y) | Plugin becomes confusing | Low | Already in §3 non-goals; plugin doesn't compete on these |
-| Figma Agent ships native sync / handoff | Plugin's Sync/Handoff tabs obsolete | Medium-long-term | Designed for graceful deprecation: contracts versioned, tabs cleanly removable, core capabilities survive |
+| Risk                                                                                                                                     | Impact                                                                                 | Likelihood                                                  | Mitigation                                                                                                                                                                                                                                                                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Figma platform API churn during build                                                                                                    | Rework                                                                                 | Medium                                                      | Decouple ops protocol from Plugin API specifics; absorb breaking changes in one adapter layer                                                                                                                                                                                                                            |
+| Extended Variable Collections is Enterprise-plan-gated at the Plugin API layer (`VariableCollection.extend()` throws on Pro/Org/Starter) | EVC features unavailable on Community build + on non-Enterprise Org client engagements | High (confirmed during Sprint 1 research, not a hypothesis) | Canonical token model stays plan-agnostic (per CTX-002 working assumption); EVC is implemented as an **optional render-time projector** that only kicks in on Enterprise files. 5-collection model is the storage truth; EVC is a layer on top. Document the Enterprise gate prominently in Org-tier onboarding (§13.1). |
+| Component import inference quality poor for complex JSX                                                                                  | Designer rejects feature                                                               | Medium                                                      | "Always preview, never silent-apply" policy; confidence flags; designer review gate                                                                                                                                                                                                                                      |
+| Code Connect framework cardinality (5 frameworks) too expensive                                                                          | Phase 4 slips                                                                          | Medium                                                      | Sub-phased per framework; each ships independently; React-first                                                                                                                                                                                                                                                          |
+| Plugin parsing performance for large repo files                                                                                          | Slow imports                                                                           | Low                                                         | clientStorage cache keyed by file SHA; sub-second budget; backend escape hatch deferred to v2                                                                                                                                                                                                                            |
+| Designer adoption stalls — too unfamiliar                                                                                                | Low usage                                                                              | Medium                                                      | Figma Community distribution; ~10-min onboarding flow; mirror designer's existing mental model (push/pull/conflict)                                                                                                                                                                                                      |
+| Snapshot pluginData lost (file forked, plugin uninstalled, etc.)                                                                         | False drift on reconnect                                                               | Low                                                         | Plugin handles missing snapshot by treating all repo state as "last synced" (no-op pull); designer reviews on first run after recovery                                                                                                                                                                                   |
+| GitHub OAuth scope creep / privacy concerns                                                                                              | Org install friction                                                                   | Low                                                         | Read-only by default; write scoped to designated repo paths; revocable                                                                                                                                                                                                                                                   |
+| Figma Agent ships features that overlap with plugin (translation, a11y)                                                                  | Plugin becomes confusing                                                               | Low                                                         | Already in §3 non-goals; plugin doesn't compete on these                                                                                                                                                                                                                                                                 |
+| Figma Agent ships native sync / handoff                                                                                                  | Plugin's Sync/Handoff tabs obsolete                                                    | Medium-long-term                                            | Designed for graceful deprecation: contracts versioned, tabs cleanly removable, core capabilities survive                                                                                                                                                                                                                |
 
 ---
 
 ## 16. Open Questions
 
-| # | Question | Resolution path |
-|---|---|---|
-| OQ-1 | Does Figma Plugin API support a programmatic auto-launch from a deep link or file annotation? | Test in Phase 0; if yes, revisit clipboard auto-detect priority |
-| OQ-2 | Will Figma Agent eventually expose plugin invocation from Skills? | Track in Figma developer relations; trigger v2 architecture review if shipped |
-| OQ-3 | Should v1 support Tokens Studio JSON as an input format alongside W3C DTCG and legacy? | Phase 1 user research; adapter is cheap to add later |
-| OQ-4 | What's the right cadence for ContractsPackage version bumps? | Resolve during Phase 1 — establish semver discipline on first publish |
-| OQ-5 | Should the Org build offer a backend proxy for teams that don't want GitHub OAuth on the designer's seat? | Defer to v1.x based on client feedback |
-| OQ-6 | Multi-file design system support (foundations split across 3+ files) — Plugin API limit means per-file runs only | Document as known limitation; revisit with Variables REST in v2 if Enterprise customers ask |
-| OQ-7 | How are conflicts surfaced when designer doesn't open the plugin for weeks (snapshot stale)? | UX research in Phase 3 — likely "since last sync (N days ago)" framing |
+| #    | Question                                                                                                               | Resolution path                                                                                                                                              |
+| ---- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| OQ-1 | Does Figma Plugin API support a programmatic auto-launch from a deep link or file annotation?                          | Test in Phase 0; if yes, revisit clipboard auto-detect priority                                                                                              |
+| OQ-2 | Will Figma Agent eventually expose plugin invocation from Skills?                                                      | Track in Figma developer relations; trigger v2 architecture review if shipped                                                                                |
+| OQ-3 | Should v1 support Tokens Studio JSON as an input format alongside W3C DTCG and legacy?                                 | Phase 1 user research; adapter is cheap to add later                                                                                                         |
+| OQ-4 | What's the right cadence for ContractsPackage version bumps?                                                           | Resolve during Phase 1 — establish semver discipline on first publish                                                                                        |
+| OQ-5 | Should the Org build offer a backend proxy for teams that don't want GitHub OAuth on the designer's seat?              | Defer to v1.x based on client feedback                                                                                                                       |
+| OQ-6 | Multi-file design system support (foundations split across 3+ files) — Plugin API limit means per-file runs only       | Document as known limitation; revisit with Variables REST in v2 if Enterprise customers ask                                                                  |
+| OQ-7 | How are conflicts surfaced when designer doesn't open the plugin for weeks (snapshot stale)?                           | UX research in Phase 3 — likely "since last sync (N days ago)" framing                                                                                       |
+| OQ-8 | Is there a cleaner plan-detection API than catching `VariableCollection.extend()`'s throw for EVC plan-gate detection? | File with Figma developer support during Sprint 2. Until answered, gate EVC features behind a one-time `try/catch` probe stored in `clientStorage` per file. |
 
 ---
 
@@ -866,17 +876,17 @@ The current repo enters managed sunset starting at plugin Phase 3 GA. The repo d
 
 ### 17.1 Skill-by-skill disposition
 
-| Skill | Action at Plugin GA |
-|---|---|
-| `new-project` | Replaced. Skill becomes 1-line redirect: "Install the plugin." |
-| `create-design-system` | Replaced. Same redirect. |
-| `create-component` | Forward path replaced by plugin. shadcn-install side stays as CLI / Claude skill until that moves to a dedicated CLI. |
-| `sync-design-system` | Becomes a thin Claude skill consuming `drift-report.v1.md`. Plugin detects; Claude orchestrates `AskUserQuestion` for conflicts. |
-| `dev-handoff` | Becomes thin Claude skill consuming `handoff-context.v1.md` to create the ticket via `gh` / Jira. |
-| `code-connect` | Replaced by plugin's PR-emission flow + CI publish. |
-| `accessibility-check` | Deprecated; pointer to Figma Agent. |
-| `new-language` | Deprecated; pointer to Figma Agent. |
-| `canvas-bundle-runner` | Hard-deleted (no 50k cap inside plugin). |
+| Skill                  | Action at Plugin GA                                                                                                              |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `new-project`          | Replaced. Skill becomes 1-line redirect: "Install the plugin."                                                                   |
+| `create-design-system` | Replaced. Same redirect.                                                                                                         |
+| `create-component`     | Forward path replaced by plugin. shadcn-install side stays as CLI / Claude skill until that moves to a dedicated CLI.            |
+| `sync-design-system`   | Becomes a thin Claude skill consuming `drift-report.v1.md`. Plugin detects; Claude orchestrates `AskUserQuestion` for conflicts. |
+| `dev-handoff`          | Becomes thin Claude skill consuming `handoff-context.v1.md` to create the ticket via `gh` / Jira.                                |
+| `code-connect`         | Replaced by plugin's PR-emission flow + CI publish.                                                                              |
+| `accessibility-check`  | Deprecated; pointer to Figma Agent.                                                                                              |
+| `new-language`         | Deprecated; pointer to Figma Agent.                                                                                              |
+| `canvas-bundle-runner` | Hard-deleted (no 50k cap inside plugin).                                                                                         |
 
 ### 17.2 Hard-delete list
 
@@ -903,23 +913,23 @@ A single dedicated PR after Plugin Phase 3 ships:
 
 ## 18. Glossary
 
-| Term | Definition |
-|---|---|
-| **Bootstrap** | Initial design system setup: variables push + style-guide canvas |
-| **Common ancestor** | The "last synced" snapshot stored in canvas pluginData; baseline for 3-way drift detection |
-| **Conflict** | Drift where both Figma and Repo moved since last sync and now disagree |
-| **Contract document** | One of the 5 versioned JSON documents the plugin produces or consumes |
-| **Deterministic** | Same input → same output; no LLM, no randomness; all behavior reproducible |
-| **Figmint Output page** | Hidden-or-named Figma page where plugin writes labeled text-node outputs and snapshot pluginData |
-| **Forward path** | Component scaffold direction: spec → Figma component |
-| **Org build** | Private Detroit Labs Figma org build with GitHub OAuth + Code Connect + import features gated on |
-| **Pull** | Drift resolution direction: Repo → Figma (apply locally) |
-| **Push** | Drift resolution direction: Figma → Repo (open PR) |
-| **Reverse path** | Component import direction: code source → component-spec → Figma component |
-| **Snapshot** | Per-key record of last-synced values stored in canvas pluginData |
-| **Token resolver** | Subsystem that maps CSS class names / CSS variables to Figma variables via project config (Tailwind, etc.) |
-| **W3C DTCG** | W3C Design Tokens Community Group standard JSON format for tokens |
+| Term                    | Definition                                                                                                 |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Bootstrap**           | Initial design system setup: variables push + style-guide canvas                                           |
+| **Common ancestor**     | The "last synced" snapshot stored in canvas pluginData; baseline for 3-way drift detection                 |
+| **Conflict**            | Drift where both Figma and Repo moved since last sync and now disagree                                     |
+| **Contract document**   | One of the 5 versioned JSON documents the plugin produces or consumes                                      |
+| **Deterministic**       | Same input → same output; no LLM, no randomness; all behavior reproducible                                 |
+| **Figmint Output page** | Hidden-or-named Figma page where plugin writes labeled text-node outputs and snapshot pluginData           |
+| **Forward path**        | Component scaffold direction: spec → Figma component                                                       |
+| **Org build**           | Private Detroit Labs Figma org build with GitHub OAuth + Code Connect + import features gated on           |
+| **Pull**                | Drift resolution direction: Repo → Figma (apply locally)                                                   |
+| **Push**                | Drift resolution direction: Figma → Repo (open PR)                                                         |
+| **Reverse path**        | Component import direction: code source → component-spec → Figma component                                 |
+| **Snapshot**            | Per-key record of last-synced values stored in canvas pluginData                                           |
+| **Token resolver**      | Subsystem that maps CSS class names / CSS variables to Figma variables via project config (Tailwind, etc.) |
+| **W3C DTCG**            | W3C Design Tokens Community Group standard JSON format for tokens                                          |
 
 ---
 
-*End of PRD. Next step: planning breakdown into stories/epics here in the `figmint` repo.*
+_End of PRD. Next step: planning breakdown into stories/epics here in the `figmint` repo._

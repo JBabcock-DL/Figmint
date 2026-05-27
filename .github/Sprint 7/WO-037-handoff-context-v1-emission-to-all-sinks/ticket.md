@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.6 FR-HAND-5, §8.5.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -36,17 +36,17 @@ PRD anchors: `Docs/PRD.md` §6.6 FR-HAND-5, §8.5.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-034, WO-035, WO-036, WO-019, WO-020, WO-003
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Capture a 'Checkout' frame → resulting markdown opens cleanly in Slack / Claude / GitHub PR.
 - [ ] JSON validates against `HandoffContextV1` schema.
@@ -101,5 +101,5 @@ N/A — no Figma artifact (subsystem ticket)
 
 - PRD: `Docs/PRD.md` §6.6 FR-HAND-5, §8.5
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

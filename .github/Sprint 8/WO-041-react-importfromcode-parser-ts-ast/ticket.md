@@ -8,19 +8,19 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5Jcc
 
 Implement the React `ImportTemplate` — parses a `.tsx` component file via TypeScript compiler AST, extracts props/variants/bindings, produces a `ComponentSpecV1` ready for scaffolding (WO-022).
 
-PRD anchors: `Docs/PRD.md` §6.3 FR-IMP-*.
+PRD anchors: `Docs/PRD.md` §6.3 FR-IMP-\*.
 
 ---
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -39,17 +39,17 @@ PRD anchors: `Docs/PRD.md` §6.3 FR-IMP-*.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-039, WO-042
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Parse a sample shadcn Button.tsx → `ComponentSpecV1` with correct variant matrix + props + bindings.
 - [ ] Unresolvable className (e.g. `bg-muted/40` without resolver match) flagged as confidence: low.
@@ -103,7 +103,7 @@ N/A — no Figma artifact (subsystem ticket)
 
 ## References
 
-- PRD: `Docs/PRD.md` §6.3 FR-IMP-*
+- PRD: `Docs/PRD.md` §6.3 FR-IMP-\*
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

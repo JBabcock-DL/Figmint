@@ -28,7 +28,7 @@ A single normalizer behind multiple source ports keeps source code simple and le
 - [ ] As a designer, I can drag-drop or pick a `.json` / `.md` file from disk and have it load.
 - [ ] As a designer, if my clipboard contains a valid contract JSON when I open the plugin, I see a banner offering to load it.
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 A minimal source-picker UI: paste textarea + file button + clipboard banner. Visual polish lives in the Bootstrap tab UI (WO-015).
 
@@ -58,7 +58,7 @@ A minimal source-picker UI: paste textarea + file button + clipboard banner. Vis
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Paste a 10-token W3C DTCG tokens.json → plugin detects it as `tokens` and emits `LoadedDocument<TokensV1WC3DTCG>`.
 - [ ] Pick a `.json` file from disk → same result as paste.

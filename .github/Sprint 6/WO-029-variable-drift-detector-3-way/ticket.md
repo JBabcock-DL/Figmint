@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.4 FR-DRIFT-2..3.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -32,25 +32,25 @@ PRD anchors: `Docs/PRD.md` §6.4 FR-DRIFT-2..3.
 
 1. `src/core/drift/variables.ts` — `detectVariableDrift(repoTokens, figmaVars, snapshot): VariableDrift[]`.
 2. Per-token classification:
-3.   - Figma ≠ snapshot, repo = snapshot → **push**
-4.   - Repo ≠ snapshot, Figma = snapshot → **pull**
-5.   - Both ≠ snapshot and disagree → **conflict**
-6.   - Both = snapshot OR both ≠ snapshot but agree → **synced**
+3. - Figma ≠ snapshot, repo = snapshot → **push**
+4. - Repo ≠ snapshot, Figma = snapshot → **pull**
+5. - Both ≠ snapshot and disagree → **conflict**
+6. - Both = snapshot OR both ≠ snapshot but agree → **synced**
 7. Output integrates into `drift-report.v1` (WO-031).
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-028, WO-008
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Test fixture: 10 variables, 3 pushed in Figma, 2 pulled in repo, 1 conflict — detector classifies all 10 correctly.
 - [ ] Performance: 400-variable comparison <2s.
@@ -107,5 +107,5 @@ N/A — no Figma artifact (subsystem ticket)
 
 - PRD: `Docs/PRD.md` §6.4 FR-DRIFT-2..3
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

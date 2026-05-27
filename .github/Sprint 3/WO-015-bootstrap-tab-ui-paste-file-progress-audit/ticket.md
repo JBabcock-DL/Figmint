@@ -8,19 +8,19 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JBc
 
 Wire up the Bootstrap tab of the plugin UI: paste / file picker / clipboard sources flow into the push engine + canvas builders, with progress reporting and inline audit display. This is the first end-user-visible Sprint 1 → Sprint 3 integration.
 
-PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-*, §6.8 FR-IO-*.
+PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-_, §6.8 FR-IO-_.
 
 ---
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 Bootstrap tab UI mock — first end-user-visible Figmint surface. Design lives in the Figmint design file (file_key to be assigned during /plan).
 
@@ -39,17 +39,17 @@ Bootstrap tab UI mock — first end-user-visible Figmint surface. Design lives i
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-006, WO-007, WO-008, WO-010, WO-011, WO-012, WO-013
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Designer can paste a `tokens.json` and complete a full bootstrap (5 collections + style guide canvas) in one button press.
 - [ ] Progress bar updates in real-time.
@@ -88,32 +88,32 @@ Bootstrap tab UI mock — first end-user-visible Figmint surface. Design lives i
 
 **Figma source (filled before `/vqa` runs):**
 
-| Field | Value |
-| --- | --- |
-| `file_key` | `<!-- filled during /plan or /vqa -->` |
-| `node_id` | `<!-- filled during /plan or /vqa -->` |
-| Figma deep link | `<!-- filled -->` |
-| Frame / scope | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
-| Captured at | `<!-- ISO date -->` |
+| Field           | Value                                                 |
+| --------------- | ----------------------------------------------------- |
+| `file_key`      | `<!-- filled during /plan or /vqa -->`                |
+| `node_id`       | `<!-- filled during /plan or /vqa -->`                |
+| Figma deep link | `<!-- filled -->`                                     |
+| Frame / scope   | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
+| Captured at     | `<!-- ISO date -->`                                   |
 
-**Assertions** *(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):*
+**Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_
 
-| # | Category | Property | Design (Figma) | Build (implemented) | Result |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Layout | Frame width × height | | | |
-| 2 | Layout | Auto-layout direction / gap | | | |
-| 3 | Layout | Padding (T/R/B/L) | | | |
-| 4 | Typography | Font family / size / weight | | | |
-| 5 | Color | Background fill (token) | | | |
-| 6 | Color | Foreground fill (token) | | | |
-| 7 | Spacing | Margin / gap tokens | | | |
-| 8 | Effects | Border radius / shadow | | | |
-| 9 | Accessibility | Contrast ratio | | | |
-| 10 | Accessibility | Focus ring + hit target | | | |
+| #   | Category      | Property                    | Design (Figma) | Build (implemented) | Result |
+| --- | ------------- | --------------------------- | -------------- | ------------------- | ------ |
+| 1   | Layout        | Frame width × height        |                |                     |        |
+| 2   | Layout        | Auto-layout direction / gap |                |                     |        |
+| 3   | Layout        | Padding (T/R/B/L)           |                |                     |        |
+| 4   | Typography    | Font family / size / weight |                |                     |        |
+| 5   | Color         | Background fill (token)     |                |                     |        |
+| 6   | Color         | Foreground fill (token)     |                |                     |        |
+| 7   | Spacing       | Margin / gap tokens         |                |                     |        |
+| 8   | Effects       | Border radius / shadow      |                |                     |        |
+| 9   | Accessibility | Contrast ratio              |                |                     |        |
+| 10  | Accessibility | Focus ring + hit target     |                |                     |        |
 
 **Per-row deviations:**
 
-- *Filled by `/vqa` with FAIL rationale.*
+- _Filled by `/vqa` with FAIL rationale._
 
 ---
 
@@ -132,7 +132,7 @@ Bootstrap tab UI mock — first end-user-visible Figmint surface. Design lives i
 
 ## References
 
-- PRD: `Docs/PRD.md` §6.1 FR-BOOT-*, §6.8 FR-IO-*
+- PRD: `Docs/PRD.md` §6.1 FR-BOOT-_, §6.8 FR-IO-_
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

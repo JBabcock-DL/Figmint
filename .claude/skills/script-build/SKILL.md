@@ -1,7 +1,7 @@
 ---
 name: script-build
 description: Write automation or shell scripts for a ticket. Use when a work order's plan calls for scripting, tooling, or any executable automation (bash, PowerShell, Python, etc.).
-argument-hint: "[Sprint N/TICKET-ID-slug]"
+argument-hint: '[Sprint N/TICKET-ID-slug]'
 context: fork
 agent: general-purpose
 ---
@@ -27,6 +27,7 @@ If the calling prompt already contains a `Git strategy:` block (you were spawned
   - `main` — Work on the current branch, leave changes uncommitted for the user to review. No branch, no PR.
 
 Resolve the values you need:
+
 - **Ticket ID** — the `{TICKET-ID}` portion of the ticket folder (e.g. `WO-001`)
 - **Base branch** — `gh repo view --json defaultBranchRef -q .defaultBranchRef.name`, falling back to the current branch
 - **Branch name** — `{TICKET-ID}/scripts` when `branch-per-agent`
@@ -44,6 +45,7 @@ Apply the strategy at the right moments:
   3. In your final report, list every file path you created or modified so the user can stage them.
 
 Before writing any scripts, read these files in order:
+
 1. memory.md (if it exists in the repo root) — project running memory; skip if missing or empty
 2. workflow.md — resolve path per skills/conventions/01-plugin-root-and-templates.md
 3. $ARGUMENTS/ticket.md
@@ -51,6 +53,7 @@ Before writing any scripts, read these files in order:
 5. Any files in $ARGUMENTS/research/ if they exist
 
 Rules:
+
 - Do not start if plan.md has no steps defined — report back that the plan needs to be written first
 - Do not modify ticket.md or the remote issue (GitHub or Jira) — your job is scripting only
 - Write scripts to $ARGUMENTS/scripts/ unless the plan specifies another location
@@ -60,6 +63,7 @@ Rules:
 - Do not use destructive commands (rm -rf, force push, DROP TABLE) without an explicit --force flag and user confirmation prompt in the script
 
 Execution:
+
 1. Read the ticket's Requirements and Success Criteria fully
 2. Read plan.md and identify each unchecked step
 3. Move the ticket to **In Build**, using the method determined by the **Backend:** field in workflow.md:

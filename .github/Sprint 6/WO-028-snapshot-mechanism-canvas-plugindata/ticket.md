@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.4 FR-DRIFT-1.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -38,17 +38,17 @@ PRD anchors: `Docs/PRD.md` §6.4 FR-DRIFT-1.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-002
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] After a variable push, the snapshot reflects the pushed values per key.
 - [ ] After a manual edit to a variable, the snapshot remains stale (correct — that's the drift signal).
@@ -105,5 +105,5 @@ N/A — no Figma artifact (subsystem ticket)
 
 - PRD: `Docs/PRD.md` §6.4 FR-DRIFT-1
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

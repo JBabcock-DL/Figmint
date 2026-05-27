@@ -8,19 +8,19 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JdY
 
 Implement the token resolver that maps CSS class names / CSS variables to Figma Variables. Auto-detect from connected repo: Tailwind config first, then `tokens.css`, then Style Dictionary config, then Tokens Studio JSON. Manual override available.
 
-PRD anchors: `Docs/PRD.md` §6.9 FR-CONF-*, §6.3 FR-IMP-5.
+PRD anchors: `Docs/PRD.md` §6.9 FR-CONF-\*, §6.3 FR-IMP-5.
 
 ---
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -37,17 +37,17 @@ PRD anchors: `Docs/PRD.md` §6.9 FR-CONF-*, §6.3 FR-IMP-5.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-016
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] `resolve('bg-primary')` against a Tailwind v4 config containing `--theme-primary` → `{ variable: 'Theme/Primary' }`.
 - [ ] `resolve('bg-mystery')` → `{ unresolved: true }`.
@@ -102,7 +102,7 @@ N/A — no Figma artifact (subsystem ticket)
 
 ## References
 
-- PRD: `Docs/PRD.md` §6.9 FR-CONF-*, §6.3 FR-IMP-5
+- PRD: `Docs/PRD.md` §6.9 FR-CONF-\*, §6.3 FR-IMP-5
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

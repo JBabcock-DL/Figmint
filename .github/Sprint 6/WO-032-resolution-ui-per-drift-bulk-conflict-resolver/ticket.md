@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.5.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 Sync tab resolution UI mock lives in the Figmint design file.
 
@@ -38,17 +38,17 @@ Sync tab resolution UI mock lives in the Figmint design file.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-031, WO-008, WO-018, WO-028
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Designer can resolve a 10-drift report (4 push, 3 pull, 3 conflict) end-to-end without leaving the plugin.
 - [ ] Bulk Push action opens a single PR with all push-resolutions committed.
@@ -86,32 +86,32 @@ Sync tab resolution UI mock lives in the Figmint design file.
 
 **Figma source (filled before `/vqa` runs):**
 
-| Field | Value |
-| --- | --- |
-| `file_key` | `<!-- filled during /plan or /vqa -->` |
-| `node_id` | `<!-- filled during /plan or /vqa -->` |
-| Figma deep link | `<!-- filled -->` |
-| Frame / scope | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
-| Captured at | `<!-- ISO date -->` |
+| Field           | Value                                                 |
+| --------------- | ----------------------------------------------------- |
+| `file_key`      | `<!-- filled during /plan or /vqa -->`                |
+| `node_id`       | `<!-- filled during /plan or /vqa -->`                |
+| Figma deep link | `<!-- filled -->`                                     |
+| Frame / scope   | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
+| Captured at     | `<!-- ISO date -->`                                   |
 
-**Assertions** *(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):*
+**Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_
 
-| # | Category | Property | Design (Figma) | Build (implemented) | Result |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Layout | Frame width × height | | | |
-| 2 | Layout | Auto-layout direction / gap | | | |
-| 3 | Layout | Padding (T/R/B/L) | | | |
-| 4 | Typography | Font family / size / weight | | | |
-| 5 | Color | Background fill (token) | | | |
-| 6 | Color | Foreground fill (token) | | | |
-| 7 | Spacing | Margin / gap tokens | | | |
-| 8 | Effects | Border radius / shadow | | | |
-| 9 | Accessibility | Contrast ratio | | | |
-| 10 | Accessibility | Focus ring + hit target | | | |
+| #   | Category      | Property                    | Design (Figma) | Build (implemented) | Result |
+| --- | ------------- | --------------------------- | -------------- | ------------------- | ------ |
+| 1   | Layout        | Frame width × height        |                |                     |        |
+| 2   | Layout        | Auto-layout direction / gap |                |                     |        |
+| 3   | Layout        | Padding (T/R/B/L)           |                |                     |        |
+| 4   | Typography    | Font family / size / weight |                |                     |        |
+| 5   | Color         | Background fill (token)     |                |                     |        |
+| 6   | Color         | Foreground fill (token)     |                |                     |        |
+| 7   | Spacing       | Margin / gap tokens         |                |                     |        |
+| 8   | Effects       | Border radius / shadow      |                |                     |        |
+| 9   | Accessibility | Contrast ratio              |                |                     |        |
+| 10  | Accessibility | Focus ring + hit target     |                |                     |        |
 
 **Per-row deviations:**
 
-- *Filled by `/vqa` with FAIL rationale.*
+- _Filled by `/vqa` with FAIL rationale._
 
 ---
 
@@ -132,5 +132,5 @@ Sync tab resolution UI mock lives in the Figmint design file.
 
 - PRD: `Docs/PRD.md` §6.5
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

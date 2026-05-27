@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.8 FR-IO-2, §10.2.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -38,17 +38,17 @@ PRD anchors: `Docs/PRD.md` §6.8 FR-IO-2, §10.2.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - **Dependencies:** WO-002, WO-003
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Each sink works against a sample drift-report.v1 document.
 - [ ] Output page auto-created on first use; subsequent writes append text nodes (or update by label).
@@ -106,5 +106,5 @@ N/A — no Figma artifact (subsystem ticket)
 
 - PRD: `Docs/PRD.md` §6.8 FR-IO-2, §10.2
 - Lift reference:
-  - *None — new code designed in PRD.*
+  - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

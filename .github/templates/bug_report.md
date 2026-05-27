@@ -23,14 +23,14 @@ One paragraph: acceptable resolution — restored behavior **or** intentional pr
 
 -
 
-## Severity & user impact *(triage hints)*
+## Severity & user impact _(triage hints)_
 
-| | |
-| --- | --- |
-| **Who is affected** | <!-- personas / % of users --> |
-| **Frequency** | <!-- always \| often \| intermittent \| rare --> |
-| **Workaround exists?** | <!-- yes \| no \| partial --> |
-| **Revenue / safety / compliance** | <!-- yes \| no \| note --> |
+|                                   |                                                  |
+| --------------------------------- | ------------------------------------------------ |
+| **Who is affected**               | <!-- personas / % of users -->                   |
+| **Frequency**                     | <!-- always \| often \| intermittent \| rare --> |
+| **Workaround exists?**            | <!-- yes \| no \| partial -->                    |
+| **Revenue / safety / compliance** | <!-- yes \| no \| note -->                       |
 
 ---
 
@@ -50,38 +50,38 @@ One paragraph: acceptable resolution — restored behavior **or** intentional pr
 
 ## Expected vs actual
 
-### Expected *(correct behavior)*
+### Expected _(correct behavior)_
 
 -
 
-### Actual *(defect symptom)*
+### Actual _(defect symptom)_
 
 -
 
-### Environment *(fill what you know)*
+### Environment _(fill what you know)_
 
-| | |
-| --- | --- |
-| **OS / device** | |
-| **Browser / app version** | |
-| **Branch / deployment** | |
-| **Feature flags** | |
-
----
-
-## Design reference *(for UI/visual bugs)*
-
-| | |
-| --- | --- |
-| **Figma** | <!-- intended state — omit if N/A --> |
-| **Node / frame** | |
-| **Regression screenshot** *(optional)* | <!-- attach --> |
-
-*N/A:* say **Does not apply — API / logic / infra bug**.*
+|                           |     |
+| ------------------------- | --- |
+| **OS / device**           |     |
+| **Browser / app version** |     |
+| **Branch / deployment**   |     |
+| **Feature flags**         |     |
 
 ---
 
-## User story *(who loses when we leave this unfixed)*
+## Design reference _(for UI/visual bugs)_
+
+|                                        |                                       |
+| -------------------------------------- | ------------------------------------- |
+| **Figma**                              | <!-- intended state — omit if N/A --> |
+| **Node / frame**                       |                                       |
+| **Regression screenshot** _(optional)_ | <!-- attach -->                       |
+
+_N/A:_ say **Does not apply — API / logic / infra bug**.\*
+
+---
+
+## User story _(who loses when we leave this unfixed)_
 
 <!--
 As a [persona], I expect [behavior] because [business or trust reason].
@@ -89,23 +89,19 @@ As a [persona], I expect [behavior] because [business or trust reason].
 Optional: related analytics or support-volume note.
 -->
 
--
+- ***
 
----
+## Acceptance criteria _(fix verification)_
 
-## Acceptance criteria *(fix verification)*
-
-- [ ] Reproduction succeeds on `main` *(or nominated branch)* before fix
+- [ ] Reproduction succeeds on `main` _(or nominated branch)_ before fix
 - [ ] After fix: expected behavior verified on **[platform list]**
-- [ ] Automated tests *(if feasible)* cover regression at **[layer: unit/integration/e2e]**
+- [ ] Automated tests _(if feasible)_ cover regression at **[layer: unit/integration/e2e]**
 - [ ] Accessibility / localization reviewed if UX surface changed
-- [ ] Observability *(logs/alerts/dashboards)* updated if incidence was silent
+- [ ] Observability _(logs/alerts/dashboards)_ updated if incidence was silent
 
 <!-- Add product-specific bullets below -->
 
--
-
----
+- ***
 
 ## Figma VQA Checklist
 
@@ -118,52 +114,52 @@ If this is a non-visual bug (API / logic / infra), replace the section body with
 
 **Figma source (must be filled before `/vqa` runs):**
 
-| Field | Value |
-| --- | --- |
-| `file_key` | |
-| `node_id` | |
-| Figma deep link | |
-| Frame / scope | |
-| Captured at | |
+| Field           | Value |
+| --------------- | ----- |
+| `file_key`      |       |
+| `node_id`       |       |
+| Figma deep link |       |
+| Frame / scope   |       |
+| Captured at     |       |
 
-**Assertions** *(agent fills `Design (Figma)` and `Build (implemented)` columns):*
+**Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns):_
 
-| # | Category | Property | Design (Figma) | Build (implemented) | Result |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Layout | Frame width × height | | | |
-| 2 | Layout | Auto-layout direction / gap | | | |
-| 3 | Layout | Padding (T/R/B/L) | | | |
-| 4 | Layout | Alignment / distribution | | | |
-| 5 | Typography | Font family | | | |
-| 6 | Typography | Font weight | | | |
-| 7 | Typography | Font size | | | |
-| 8 | Typography | Line height | | | |
-| 9 | Typography | Letter spacing | | | |
-| 10 | Typography | Text token | | | |
-| 11 | Color | Background fill | | | |
-| 12 | Color | Foreground / text fill | | | |
-| 13 | Color | Border / stroke | | | |
-| 14 | Color | State variants (hover / pressed / disabled) | | | |
-| 15 | Spacing | Margin / gap tokens | | | |
-| 16 | Effects | Border radius | | | |
-| 17 | Effects | Shadow / elevation token | | | |
-| 18 | Effects | Opacity | | | |
-| 19 | Iconography | Icon set / size | | | |
-| 20 | Components | Code Connect / shadcn primitive | | | |
-| 21 | Components | Variants present | | | |
-| 22 | Content | Copy matches Figma | | | |
-| 23 | Content | Localization placeholders | | | |
-| 24 | Responsive | Breakpoint variants | | | |
-| 25 | Accessibility | Contrast ratio (WCAG AA) | | | |
-| 26 | Accessibility | Hit target ≥ 44×44 pt | | | |
-| 27 | Accessibility | Focus ring visible & token-based | | | |
-| 28 | Screenshot | Side-by-side overlay diff (path) | | | |
+| #   | Category      | Property                                    | Design (Figma) | Build (implemented) | Result |
+| --- | ------------- | ------------------------------------------- | -------------- | ------------------- | ------ |
+| 1   | Layout        | Frame width × height                        |                |                     |        |
+| 2   | Layout        | Auto-layout direction / gap                 |                |                     |        |
+| 3   | Layout        | Padding (T/R/B/L)                           |                |                     |        |
+| 4   | Layout        | Alignment / distribution                    |                |                     |        |
+| 5   | Typography    | Font family                                 |                |                     |        |
+| 6   | Typography    | Font weight                                 |                |                     |        |
+| 7   | Typography    | Font size                                   |                |                     |        |
+| 8   | Typography    | Line height                                 |                |                     |        |
+| 9   | Typography    | Letter spacing                              |                |                     |        |
+| 10  | Typography    | Text token                                  |                |                     |        |
+| 11  | Color         | Background fill                             |                |                     |        |
+| 12  | Color         | Foreground / text fill                      |                |                     |        |
+| 13  | Color         | Border / stroke                             |                |                     |        |
+| 14  | Color         | State variants (hover / pressed / disabled) |                |                     |        |
+| 15  | Spacing       | Margin / gap tokens                         |                |                     |        |
+| 16  | Effects       | Border radius                               |                |                     |        |
+| 17  | Effects       | Shadow / elevation token                    |                |                     |        |
+| 18  | Effects       | Opacity                                     |                |                     |        |
+| 19  | Iconography   | Icon set / size                             |                |                     |        |
+| 20  | Components    | Code Connect / shadcn primitive             |                |                     |        |
+| 21  | Components    | Variants present                            |                |                     |        |
+| 22  | Content       | Copy matches Figma                          |                |                     |        |
+| 23  | Content       | Localization placeholders                   |                |                     |        |
+| 24  | Responsive    | Breakpoint variants                         |                |                     |        |
+| 25  | Accessibility | Contrast ratio (WCAG AA)                    |                |                     |        |
+| 26  | Accessibility | Hit target ≥ 44×44 pt                       |                |                     |        |
+| 27  | Accessibility | Focus ring visible & token-based            |                |                     |        |
+| 28  | Screenshot    | Side-by-side overlay diff (path)            |                |                     |        |
 
 **Per-row deviations:**
 
 -
 
-## Suspected cause *(optional)*
+## Suspected cause _(optional)_
 
 <!-- Engineer / agent hypothesis — avoids duplicate spelunking -->
 
@@ -173,9 +169,7 @@ If this is a non-visual bug (API / logic / infra), replace the section body with
 
 <!-- Data migration, caches, CDN, downstream services, correlated features -->
 
--
-
----
+- ***
 
 ## 🔍 Ready for `/research`
 
@@ -208,17 +202,15 @@ Dependencies blocking fix:
 
 -->
 
--
+- ***
 
----
-
-## Additional context *(optional)*
+## Additional context _(optional)_
 
 <!-- Stack traces (**redacted**), HAR excerpts, Slack threads -->
 
 -
 
-## References *(optional)*
+## References _(optional)_
 
 <!-- Related BUG/WO/Jira, incident links, RCA docs -->
 

@@ -24,7 +24,7 @@ We believe a single documented goal in `workflow.md` for Figmint will reduce rep
 
 - [ ] As an agent, I can read the project goal from `workflow.md` at session start.
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact**
 
@@ -46,7 +46,7 @@ We believe a single documented goal in `workflow.md` for Figmint will reduce rep
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] `workflow.md` → Project Goal is filled (no `[ADD YOUR GOAL HERE]` placeholder)
 - [ ] `memory.md` Quick reference one-liner aligns with the same goal
@@ -67,11 +67,11 @@ We believe a single documented goal in `workflow.md` for Figmint will reduce rep
 
 - N/A
 
-### Accessibility *(WCAG AA where applicable)*
+### Accessibility _(WCAG AA where applicable)_
 
 - N/A
 
-### Telemetry / observability *(if needed)*
+### Telemetry / observability _(if needed)_
 
 - N/A
 

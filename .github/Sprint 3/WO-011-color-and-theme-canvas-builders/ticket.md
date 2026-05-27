@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-7.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -38,7 +38,7 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-7.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
@@ -50,7 +50,7 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-7.
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] Running both builders against a sample design system produces visually correct Primitives and Theme canvas pages matching the DesignOps-plugin reference output.
 - [ ] Output frames pass the audit (WO-010) — no 1px masters, correct counter-axis behavior per `00-gotchas.md`.

@@ -14,13 +14,13 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-1..2.
 
 ## Problem story
 
-*Derived from Goal — see ticket-level scope.*
+_Derived from Goal — see ticket-level scope._
 
 ## User stories
 
-- [ ] *See Requirements section below.*
+- [ ] _See Requirements section below._
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (subsystem ticket).**
 
@@ -37,7 +37,7 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-1..2.
 
 ### Visual / UX
 
-*See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket.*
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
 
 ### Technical / architectural
 
@@ -56,7 +56,7 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-1..2.
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] A spec with 3 variant axes (3 × 2 × 2) produces a ComponentSet with 12 component children, correctly named per Figma convention.
 - [ ] Each archetype passes its own integration test against a sample spec.

@@ -1,7 +1,7 @@
 ---
 name: research
 description: Run a research agent on a ticket. Use when a ticket needs investigation, discovery, or background knowledge before work can begin.
-argument-hint: "[Sprint N/TICKET-ID-slug] [topic in quotes]"
+argument-hint: '[Sprint N/TICKET-ID-slug] [topic in quotes]'
 context: fork
 agent: general-purpose
 ---
@@ -21,6 +21,7 @@ Parse $ARGUMENTS for ticket path ($0) and research topic ($1). For any value not
 Do not proceed until both values are confirmed.
 
 Before starting, read these files in order:
+
 1. memory.md (if it exists in the repo root) — project running memory; skip if missing or empty
 2. workflow.md — resolve path per skills/conventions/01-plugin-root-and-templates.md
 3. $0/ticket.md
@@ -30,6 +31,7 @@ Before starting, read these files in order:
 First, read the **Backend:** field in `workflow.md` to determine whether this project uses the `github` or `jira` backend. Use that to select the correct phase-transition and sync method below.
 
 Then execute these steps in order:
+
 1. Move the ticket to **In Research**:
    - **GitHub backend:** update the Status field on the project board using the option ID from workflow.md (GraphQL mutation in the **Key Commands (GitHub)** block) and the `project_item_id` from ticket.md frontmatter.
    - **Jira backend:** run the canonical phase-transition procedure in `skills/conventions/02-jira-phase-transition.md` with `TARGET_PHASE = phase:in-research`. In short: `getJiraIssue` → drop existing `phase:*` and append `phase:in-research` while preserving `claude-ops` + the type label → `editJiraIssue` with the **full** new labels array (never call `editJiraIssue` with only the phase label — it replaces the array) → re-read and verify exactly one `phase:*` plus `claude-ops` + type label remain → then optionally fire the configured transition from the **Phase → Transition map**.

@@ -1,7 +1,7 @@
 ---
 name: create-backlog
 description: Bulk-triage every unpromoted context ticket (CTX-*) in a sprint, classifying each into a bug or work-order based on its contents. Use when a sprint has accumulated raw designer / research / meeting context that now needs to become an actionable backlog.
-argument-hint: "[sprint number]"
+argument-hint: '[sprint number]'
 context: fork
 agent: general-purpose
 ---
@@ -70,7 +70,7 @@ Do **not** scaffold the full `/project-start` structure (no `.claude/skills/`, n
 Parse `$ARGUMENTS` for a sprint number.
 
 - If `TRIAGE_MODE` is `remote-only`: the sprint number is informational only — used for the report and for any local mirror the user opts into later. AskUserQuestion only if multiple sprint contexts make sense; otherwise default to `1`.
-- If `TRIAGE_MODE` is `mirror` or `hybrid`: list every `.github/Sprint */` directory. If none exist, AskUserQuestion: "No local sprint folders exist. Create `.github/Sprint 1/` for triage output?" → 1. Yes  2. Switch to remote-only.
+- If `TRIAGE_MODE` is `mirror` or `hybrid`: list every `.github/Sprint */` directory. If none exist, AskUserQuestion: "No local sprint folders exist. Create `.github/Sprint 1/` for triage output?" → 1. Yes 2. Switch to remote-only.
 - If exactly one sprint folder exists, use it without asking.
 - Otherwise AskUserQuestion to pick.
 
@@ -95,9 +95,9 @@ Combine local and remote results into a unified list, categorizing each entry:
 - **local + remote** — normal case; use the local `ticket.md` for body.
 - **remote only** — body comes from the issue description. Behavior depends on `TRIAGE_MODE`:
   - `remote-only`: process in place.
-  - `mirror`: AskUserQuestion: "Mirror N remote-only CTX issues into `.github/Sprint {N}/`?" → 1. Yes  2. No, process remote-only.
+  - `mirror`: AskUserQuestion: "Mirror N remote-only CTX issues into `.github/Sprint {N}/`?" → 1. Yes 2. No, process remote-only.
   - `hybrid`: process in place; offer mirror at promotion time per ticket (Step 5).
-- **local only** — remote issue not found (closed, deleted, or never synced). Flag as orphan; AskUserQuestion per orphan: 1. Skip  2. Re-create remote issue  3. Delete local folder.
+- **local only** — remote issue not found (closed, deleted, or never synced). Flag as orphan; AskUserQuestion per orphan: 1. Skip 2. Re-create remote issue 3. Delete local folder.
 
 If the merged unpromoted set is empty, report "No context tickets to triage" and stop.
 
@@ -126,9 +126,9 @@ For each unpromoted entry, pre-classify:
 For each ticket, in order, one at a time — AskUserQuestion:
 
 - "Triage `{ID} — {title}`?
-   **Your summary:** {one-or-two-sentence agent summary}
-   **Suggested type:** `{bug|work-order}` ({high|low} confidence)
-   **Proposed refined title:** `{cleaned action-oriented title}`"
+  **Your summary:** {one-or-two-sentence agent summary}
+  **Suggested type:** `{bug|work-order}` ({high|low} confidence)
+  **Proposed refined title:** `{cleaned action-oriented title}`"
   Options:
   1. Promote to `bug` with the proposed title
   2. Promote to `work-order` with the proposed title
@@ -147,7 +147,7 @@ Handle the choices:
   - If the entry has a local folder (mirror or hybrid), delete it.
   - Record as a deletion in the final report.
 
-If `TRIAGE_MODE` is `hybrid` and the entry is remote-only, after the user picks Option 1/2/3, AskUserQuestion: "Mirror this ticket locally before promotion so `/research` `/plan` `/build` `/vqa` can run?" → 1. Mirror  2. Promote remote-only.
+If `TRIAGE_MODE` is `hybrid` and the entry is remote-only, after the user picks Option 1/2/3, AskUserQuestion: "Mirror this ticket locally before promotion so `/research` `/plan` `/build` `/vqa` can run?" → 1. Mirror 2. Promote remote-only.
 
 Do **not** promote yet. Just collect decisions.
 
