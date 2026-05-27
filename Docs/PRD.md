@@ -5,6 +5,8 @@
 **Date:** 2026-05-26
 **Repo:** `figmint`
 **Supersedes:** Agent-driven workflow in `DesignOps-plugin`
+**Sprint roadmap & ticket breakdown:** [breakdown-the-plan-and-mellow-whale.md](file:///C:/Users/jbabc/.claude/plans/breakdown-the-plan-and-mellow-whale.md) — multi-sprint plan + per-ticket lift-source pointers (canonical companion to this PRD; lives at `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`)
+**Legacy lift source:** `c:\Users\jbabc\Documents\GitHub\DesignOps-plugin\` — port working deterministic logic, do not rebuild from scratch
 
 > Figmint is a native Figma plugin for design system management, component architecture, and design token workflows. This document is its canonical scope artifact. The legacy `DesignOps-plugin` repo enters managed sunset (see §17).
 
