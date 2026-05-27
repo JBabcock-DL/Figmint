@@ -28,7 +28,7 @@ A shared contracts package — published from figmint and consumed by both the p
 - [ ] As an external consumer (CLI / CI / agent), I can read a JSON Schema artifact and validate a document without TypeScript.
 - [ ] As a maintainer, I can bump a contract's `v1` → `v2` by adding `v2` alongside `v1` (versions coexist; never breaking).
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (schema / library ticket).**
 
@@ -47,7 +47,7 @@ A shared contracts package — published from figmint and consumed by both the p
    - `src/handoffContext.v1.ts`
    - `src/registry.v1.ts`
 3. `src/index.ts` re-exports every contract type.
-4. Build script generates both `.d.ts` declaration files AND JSON Schema artifacts (e.g. via `ts-json-schema-generator` or equivalent) under `packages/contracts/dist/`.
+4. Build script generates both `.d.ts` declaration files AND JSON Schema artifacts via `ts-json-schema-generator@~2.9.0` (Node ≥22), invoked from `packages/contracts/scripts/build-schemas.mjs`. Emits one `*.schema.json` per contract type plus `tokens.v1.input.schema.json` for the input-adapter union, all written to `packages/contracts/dist/`. See [json-schema-generator.md](research/json-schema-generator.md).
 5. Each contract type's required field set matches the PRD §8 example bodies (at minimum: every field shown in `Docs/PRD.md` §8 must be present in the type).
 6. Package is configured for internal publish but NOT actually published yet (set `private: true` or `publishConfig` pointing at internal registry).
 
@@ -68,7 +68,7 @@ A shared contracts package — published from figmint and consumed by both the p
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] WO-002 plugin can `import { OpsProgramV1, TokensV1, ComponentSpecV1, DriftReportV1, HandoffContextV1, RegistryV1 } from '@detroitlabs/figmint-contracts'` and TS resolves with strict mode.
 - [ ] `npm run build` in `packages/contracts/` emits both `.d.ts` and `.schema.json` files for each contract under `packages/contracts/dist/`.
@@ -116,7 +116,7 @@ A shared contracts package — published from figmint and consumed by both the p
 
 ## 🔍 Ready for `/research`
 
-- Confirm choice of JSON Schema generation tool (`ts-json-schema-generator` vs `typescript-json-schema` vs `typia`) — pick within 1 day, document in `research/json-schema-generator.md`.
+- [x] JSON Schema generator chosen — see [json-schema-generator.md](research/json-schema-generator.md).
 
 ## 📋 Ready for `/plan`
 
@@ -133,3 +133,4 @@ A shared contracts package — published from figmint and consumed by both the p
 - PRD: `Docs/PRD.md` §7.4, §8.1–§8.6
 - Lift reference: `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/registry.schema.json`, `shadcn-props.schema.json`, `conventions/01-config-schema.md`, `conventions/07-token-paths.md`, and `create-design-system/conventions/01-collections.md`, `02-codesyntax.md`
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
+- [JSON Schema generator research](research/json-schema-generator.md)

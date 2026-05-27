@@ -1,30 +1,103 @@
-# WO-003 — plan.md (stub)
-
-> Stub — fill before `/build` runs. Reference `ticket.md` for full scope.
+# Plan — WO-003: Set up `@detroitlabs/figmint-contracts` workspace package
 
 ## Approach
 
-*To be filled during `/plan`.*
+Stand up `packages/contracts/` as a private workspace package (`@detroitlabs/figmint-contracts`) inside the Figmint monorepo. Every PRD §8 contract document — `ops-program.v1`, `tokens.v1`, `component-spec.v1`, `drift-report.v1`, `handoff-context.v1`, `registry.v1` — gets a hand-authored pure-TS interface file under `src/` with a `v: 1` literal and a `kind: "<contract-name>"` literal as the discriminator pair. A single `src/index.ts` re-exports every type. The build pipeline is two stages: `build:types` runs `tsc --emitDeclarationOnly` to produce `dist/*.d.ts`, then `build:schemas` runs the Node script `scripts/build-schemas.mjs` (using `ts-json-schema-generator@~2.9.0` — locked by `research/json-schema-generator.md`) to emit one Draft 2020-12 `*.schema.json` per type into `dist/`. The plugin runtime never imports the generator; JSON Schema is for external consumers only (PRD §10.3 — locked). `TokensV1` ships as a stub (`{ v: 1; kind: "tokens"; /* TODO Sprint 2 */ }`) until the promoted CTX-002 work order fills the canonical shape in Sprint 2; the two input-adapter shapes (`TokensV1WC3DTCG`, `TokensV1Legacy`) ship fully typed now since they are derived from existing standards / the legacy `DesignOps-plugin` token conventions. After the package builds clean, a cross-package smoke test inside the WO-002 plugin scaffold imports every contract type and runs `tsc --noEmit` in strict mode to prove the contract surface resolves. Finally, each emitted schema is hand-validated against the PRD §8 example body for that contract; durable CI coverage is deferred to WO-004.
 
-## Tasks
+## Steps
 
-1. *TBD*
+- [ ] Step 1 — Create `packages/contracts/package.json` with `name: "@detroitlabs/figmint-contracts"`, `private: true`, `type: "module"`, `engines.node: ">=22"`, `main: "./dist/index.js"`, `types: "./dist/index.d.ts"`, an `exports` map exposing `./` (root), `./schemas/<name>` for each of the 9 `*.schema.json` files under `dist/`, and scripts `build`, `build:types`, `build:schemas`, `clean`. Declare workspace membership from the repo root `package.json` (`workspaces: ["packages/*"]`) if WO-002 has not already done so — verify first; do not duplicate.
+- [ ] Step 2 — Create `packages/contracts/tsconfig.json` extending the repo root tsconfig with `compilerOptions.declaration: true`, `emitDeclarationOnly: true`, `outDir: "./dist"`, `rootDir: "./src"`, `composite: false`, `strict: true` (inherited), and `include: ["src/**/*.ts"]`. No build emit of JS — declarations only; JSON Schemas come from the separate generator script.
+- [ ] Step 3 — Author `packages/contracts/src/opsProgram.v1.ts`. Export `OpsProgramV1` (root envelope: `v: 1`, `kind: "ops-program"`, `meta: { generatedAt: string; generatedBy: "claude" | "designer" | "cli" | "figma-agent" }`, `ops: OpsProgramOp[]`). `OpsProgramOp` is a discriminated union on `type` over the eight op variants listed in PRD §8.1: `push-tokens`, `build-style-guide`, `scaffold-component`, `import-component`, `detect-drift`, `apply-resolution`, `emit-handoff`, `emit-code-connect-pr`. Each variant carries the payload shape from PRD §8.1 verbatim (e.g. `scaffold-component` payload references `ComponentSpecV1` via import; `apply-resolution.decisions[*].action` is a literal `"push" | "pull" | "skip"`; `emit-code-connect-pr.framework` is `"react" | "vue" | "wc" | "swiftui" | "compose"`). Pure interfaces — no class instances, no methods.
+- [ ] Step 4 — Author `packages/contracts/src/tokens.v1.ts` with three exported interfaces plus one union type, per the research file:
+  - `TokensV1` — canonical internal shape. **Stub now**: `interface TokensV1 { v: 1; kind: "tokens"; /* TODO Sprint 2 — canonical shape locked by promoted CTX-002. MUST stay plan-agnostic; EVC projection (extendedFrom / parentCollection) lives outside the canonical shape, optionally as a future themes[] field. */ }`. The generator emits a placeholder schema for this; that is intentional.
+  - `TokensV1WC3DTCG` — W3C DTCG input-adapter shape: recursive groups of leaves carrying `$value` + `$type` keys (`$type` enum covers DTCG primitives: `"color" | "dimension" | "fontFamily" | "fontWeight" | "duration" | "cubicBezier" | "number" | "shadow" | "typography" | "border" | "transition" | "gradient"` per DTCG spec) plus optional `$description`, `$extensions`. Top-level optional `$schema: string`.
+  - `TokensV1Legacy` — Detroit Labs Foundations legacy adapter shape. Port from `DesignOps-plugin/skills/create-design-system/conventions/01-collections.md` + `02-codesyntax.md` + `07-token-paths.md`: the five-collection model (`primitives`, `theme`, `typography`, `layout`, `effects`), per-collection mode strategy (Theme = Light/Dark; Typography = 8 Android-curve scale modes per memory.md; others single-mode), and per-variable `codeSyntax` triple (`WEB`, `ANDROID`, `iOS`).
+  - `TokensInput` — `type TokensInput = TokensV1 | TokensV1WC3DTCG | TokensV1Legacy`. The normalizer's entry point (the normalizer itself is Sprint 2 — out of scope here).
+- [ ] Step 5 — Author `packages/contracts/src/componentSpec.v1.ts`. Export `ComponentSpecV1` matching PRD §8.3 example field set verbatim: `v: 1`, `kind: "component-spec"`, `name: string`, `framework: "react" | "vue" | "wc" | "swiftui" | "compose"`, `variantMatrix: Record<string, Array<string | boolean>>`, `props: ComponentSpecProp[]`, `bindings: ComponentSpecBinding[]`, `layout: ComponentSpecLayout`, `subComponents?: Array<{ name: string; registryRef: string }>`, `confidence?: { layout: "high" | "medium" | "low"; bindings: "high" | "medium" | "low"; unresolved?: string[] }`. Port the prop / archetype field set from `DesignOps-plugin/skills/create-component/shadcn-props.schema.json` `$defs/componentEntry`: the `layout` archetype enum (`"chip" | "surface-stack" | "field" | "row-item" | "tiny" | "container" | "control"`), the per-archetype config objects (`surface`, `field`, `row`, `tiny`, `container`, `control`) typed as `Record<string, unknown>` for now (Sprint 5 narrows these), `iconSlots`, `componentProps`, `category` enum, `usageDo` / `usageDont`, and `composes: Array<{ component: string; slot: string; cardinality: "one" | "many"; count?: number; defaultProps?: Record<string, string | number | boolean> }>`. Pure interfaces.
+- [ ] Step 6 — Author `packages/contracts/src/driftReport.v1.ts`. Export `DriftReportV1` matching PRD §8.4: `v: 1`, `kind: "drift-report"`, `meta: { generatedAt: string; figmaFileKey: string; repoUrl: string }`, `summary: { push: number; pull: number; conflict: number; synced: number }`, `drifts: DriftEntry[]`. `DriftEntry` is a discriminated union on `direction: "push" | "pull" | "conflict"` and a secondary discriminator `kind: "variable" | "component"`. Each variant carries `id: string`, `figma: unknown`, `repo: unknown`, `lastSynced: unknown` (the inner payload shape stays loose at v1 since variables vs. components carry different value types — see PRD §8.4 example bodies for the difference between a primitive hex string and a `variantMatrix` object).
+- [ ] Step 7 — Author `packages/contracts/src/handoffContext.v1.ts`. Export `HandoffContextV1` matching PRD §8.5: `v: 1`, `kind: "handoff-context"`, `meta: { capturedAt: string; figmaFileKey: string; frameUrl: string }`, `frames: Array<{ nodeId: string; name: string; deepLink: string; screenshot: { format: "png"; dataUrl: string } }>`, `components: Array<{ name: string; instances: number; codeConnectUrl?: string }>`, `tokensUsed: string[]`, `autoLayout: { direction: "vertical" | "horizontal"; gap: string; padding?: string }`.
+- [ ] Step 8 — Author `packages/contracts/src/registry.v1.ts`. Export `RegistryV1` matching PRD §8.6 + `DesignOps-plugin/skills/create-component/registry.schema.json`: `v: 1`, `kind: "registry"`, `fileKey: string`, `components: Record<string, RegistryComponentEntry>`. `RegistryComponentEntry`: `nodeId: string`, `key: string`, `pageName: string`, `publishedAt: string`, `version: number` (integer ≥ 1 — enforced in schema via JSDoc `@minimum`), `cvaHash?: string | null`, `composedChildVersions?: Record<string, number | null>`. JSDoc on `composedChildVersions` carries the description from the legacy schema ("Present on composites: maps composed child kebab-name → registry version captured at last composite draw — Axis B stale detection").
+- [ ] Step 9 — Author `packages/contracts/src/index.ts` re-exporting every type from Steps 3–8: `OpsProgramV1`, `OpsProgramOp`, `TokensV1`, `TokensV1WC3DTCG`, `TokensV1Legacy`, `TokensInput`, `ComponentSpecV1`, `DriftReportV1`, `HandoffContextV1`, `RegistryV1`, plus any helper sub-types each contract file exports (e.g. `ComponentSpecProp`, `ComponentSpecBinding`, `DriftEntry`, `RegistryComponentEntry`). Re-exports are `export type { … } from "./<file>";`.
+- [ ] Step 10 — Add `ts-json-schema-generator@~2.9.0` and `rimraf@^6.0.1` as `devDependencies` in `packages/contracts/package.json`. Author `packages/contracts/scripts/build-schemas.mjs` per the research file's build-script outline §"Build-script outline": ESM (`.mjs`), iterates a `CONTRACTS` array of 9 entries (`{ file, type, out }` — one per generated schema, including the four tokens variants `tokens.v1`, `tokens.v1.w3c-dtcg`, `tokens.v1.legacy`, `tokens.v1.input`), calls `createGenerator({ path, tsconfig, type, skipTypeCheck: false, additionalProperties: false, expose: "export", jsDoc: "extended", sortProps: true, topRef: true })`, post-sets `schema.$schema = "https://json-schema.org/draft/2020-12/schema"` and `schema.$id = "https://figmint.detroitlabs.com/schemas/<out>"`, writes each as pretty-printed JSON under `dist/`. Logs `✓ <out>` per file. Exits non-zero on generator error.
+- [ ] Step 11 — Wire `packages/contracts/package.json` scripts: `"build:types": "tsc --emitDeclarationOnly"`, `"build:schemas": "node scripts/build-schemas.mjs"`, `"build": "npm run build:types && npm run build:schemas"`, `"clean": "rimraf dist"`. Order matters: `build:types` first emits declarations + does the full strict typecheck so the schema generator runs against typecheck-clean source.
+- [ ] Step 12 — Cross-package smoke test. In the WO-002 plugin scaffold (`src/` of the root figmint package), add a throwaway file `src/_contracts-smoke.ts` (gitignored OR deleted after verification — script-build agent decides) containing `import type { OpsProgramV1, TokensV1, TokensV1WC3DTCG, TokensV1Legacy, TokensInput, ComponentSpecV1, DriftReportV1, HandoffContextV1, RegistryV1 } from "@detroitlabs/figmint-contracts";` plus one trivial type-level use of each (e.g. `const _check: OpsProgramV1 = …` or `type _T1 = OpsProgramV1["kind"];`). Run `npm run typecheck` (or `tsc --noEmit`) at the repo root and confirm every type resolves under strict mode. Delete the smoke file after verification — it is not a shipping artifact.
+- [ ] Step 13 — Manually validate each emitted `dist/*.schema.json` against the example body in the matching PRD §8 section (8.1 → ops-program, 8.3 → component-spec, 8.4 → drift-report, 8.5 → handoff-context; for tokens, fabricate a minimal `{ v: 1, kind: "tokens" }` body since `TokensV1` is stubbed; for registry, fabricate a `{ v: 1, kind: "registry", fileKey: "abc", components: { Button: { nodeId: "1:2", key: "k", pageName: "Components", publishedAt: "2026-05-27T00:00:00Z", version: 1 } } }` body). Validation can be run via `npx ajv-cli validate -s dist/<name>.schema.json -d <fixture>.json` or the equivalent AJV 8 programmatic call. Capture pass/fail per contract in plan.md notes (or a `research/schema-validation.md` follow-up). Durable CI coverage of this validation step is deferred to WO-004.
 
 ## Build Agents
 
-*Required section for `/build` orchestration — define parallel phases before invoking `/build`.*
+### Phase 1 (parallel)
 
-### Phase 1
+- `code-build` — Steps 1, 2, 3, 4, 5, 6, 7, 8, 9: All workspace package config (`package.json`, `tsconfig.json`) + per-contract TypeScript authoring (`opsProgram.v1.ts`, `tokens.v1.ts`, `componentSpec.v1.ts`, `driftReport.v1.ts`, `handoffContext.v1.ts`, `registry.v1.ts`) + `index.ts` re-export barrel. Pure TS / JSON work; no scripts.
+- `script-build` — Steps 10, 11: Schema generator script (`scripts/build-schemas.mjs`) + `package.json` build pipeline wiring (`build`, `build:types`, `build:schemas`, `clean`). Pure JS / JSON. Can land in parallel with the contract authoring because the script only references contract types by string name — actual generator invocation is a Phase 2 check.
 
-- *TBD*
+### Phase 2 (sequential, after Phase 1)
 
-## Open questions
+- `code-build` — Step 12: Cross-package smoke test importing every contract type from `@detroitlabs/figmint-contracts` into the WO-002 plugin scaffold and verifying strict-mode `tsc --noEmit` resolves them. Requires Phase 1 contract sources to exist.
+- `script-build` — Step 13: Run the schema generator (`npm run build` in `packages/contracts/`) and validate each emitted `dist/*.schema.json` against the PRD §8 example body for its contract. Requires Phase 1 build pipeline to be wired and contract sources to compile.
 
-- Which JSON Schema generator? (Time-boxed `/research` task — see ticket.)
-- Should `TokensV1` canonical land in this WO or wait for CTX-002 promotion in Sprint 2?
+## Dependencies & Tools
 
-## References
+**Ticket dependencies:**
 
-- Ticket: `./ticket.md`
-- PRD anchors: `Docs/PRD.md` §7.4, §8.1–§8.6
+- **WO-002 (Bootstrap Figmint TypeScript + Vite plugin scaffold)** — MUST exist before Step 12. The plugin's `src/` + root `package.json` + workspace declaration + root `tsconfig.json` are all WO-002 deliverables. If WO-002 has not landed when `/build` runs on WO-003, defer Phase 2 Step 12 until it does (Step 13 is independent of WO-002 and can still run).
+- **CTX-002 (Canonical internal token model — decision capture)** — informs the eventual filled body of `TokensV1`. **Not blocking** this WO; `TokensV1` ships as a stub per locked decision (research OQ #2 → locked). Sprint 2 work order promoted from CTX-002 fills the stub.
+
+**New dev dependencies (added by Step 10):**
+
+- `ts-json-schema-generator@~2.9.0` — pinned per `research/json-schema-generator.md` recommendation
+- `rimraf@^6.0.1` — for `clean` script
+
+**Runtime / build environment:**
+
+- **Node ≥22** — required by `ts-json-schema-generator@2.x`; aligns with the Node 22 LTS baseline locked in `memory.md` Quick reference + PRD §11.5 (Node 20 EOL 2026-04-30)
+- TypeScript ≥5.x — inherited from root tsconfig (WO-002)
+
+**No MCPs required.** No GitHub API. No Figma API. Pure local TypeScript + Node tooling.
+
+**No external APIs.** The contracts package is pure data shapes; nothing calls out.
+
+## Open Questions
+
+- **Future Phase 3 plugin-runtime validation.** Currently OUT OF SCOPE (PRD §10.3 — JSON Schema is for external consumers, not for the plugin to runtime-validate). If a future sprint (likely Sprint 7+, when ops programs cross the agent → canvas `pluginData` trust boundary per PRD §10.1 / FR-IO-1) requires the plugin to AJV-validate incoming ops programs at the dispatcher, the migration target is `@sinclair/typebox@1.x` (same authoring repo, `Type.Object` replaces TS interface, `TypeCompiler.Compile` adds the runtime validator). Schemas emitted now stay valid under TypeBox — postponement is safe. Track as a separate ticket when triggered; do not pre-emptively switch.
+- **AJV strict-mode schema validation result.** Step 13 will surface whether the emitted Draft 2020-12 schemas pass AJV 8 strict mode (`{ strict: true, discriminator: true }`). If any fail strict (e.g. unrecognized keyword from `additionalProperties: false` + `patternProperties` interaction), either (a) switch the generator config to a non-strict-friendly variant, (b) post-process the offending keywords out of the emitted JSON, or (c) accept non-strict validation and document it. Captured here as a known risk; resolution is a Step 13 follow-up, not a Phase 1 blocker.
+- **`$schema` URI post-processing — Draft 2020-12 vs default Draft 7.** The generator's default output is Draft 7 with `definitions`; the build script overrides `$schema` to 2020-12 (and the canonical 2020-12 idiom is `$defs`). For consumers that strictly validate the `$schema`-vs-keyword combination, a one-line rename of `definitions` → `$defs` is the safest post-process. Decide during Step 10 whether to ship the rename now or accept the mixed-draft output (AJV 8 handles both).
+
+## Notes
+
+### Locked decisions (do not relitigate during `/build`)
+
+- **JSON Schema generator: `ts-json-schema-generator@~2.9.0`.** Pure-TS-interface generator; zero plugin runtime cost; native `anyOf` + `const` discriminator output; explicit successor to maintenance-mode `typescript-json-schema`. Full rationale + rejected alternatives (`typia`, `@sinclair/typebox`, Zod, Valibot) live in [`research/json-schema-generator.md`](research/json-schema-generator.md).
+- **Plugin-runtime validation is OUT OF SCOPE** (PRD §10.3). JSON Schemas in `dist/` are for external consumers — CI validators, agents, the sunsetting `DesignOps-plugin` skills. The Figmint plugin itself trusts upstream-validated inputs and runs no validator at the dispatcher.
+- **`TokensV1` ships as a stub** (research OQ #2 → locked): `interface TokensV1 { v: 1; kind: "tokens"; /* TODO Sprint 2 — canonical shape locked by promoted CTX-002 */ }`. The promoted CTX-002 work order in Sprint 2 fills the stub. `TokensV1WC3DTCG` + `TokensV1Legacy` ship fully typed now since they are derived from external standards / existing legacy conventions.
+- **CTX-002 tentative direction** (memory.md changelog 2026-05-27, "Locked tentatively"): canonical token model stays plan-agnostic; EVC is an optional render-time projector. When the Sprint 2 WO promoted from CTX-002 fills `TokensV1`, it MUST NOT bake in `extendedFrom` / `parentCollection` fields as required keys. EVC projection lives outside the canonical shape (most likely an optional `themes?: TokensV1Theme[]` field on the canonical interface). Confirmed by WO-005 spike findings.
+- **Node 22+ workspace baseline** (research OQ #3 → locked). Memory.md Quick reference already records this; matches WO-002.
+- **Workspace package name `@detroitlabs/figmint-contracts`, `private: true`.** Not published to a real registry yet — internal consumption only. Publishing is gated behind a manual `npm publish` post-Sprint-1 (see ticket §Out of scope #2).
+- **Discriminator pattern: `v: 1` literal + `kind: "<contract-name>"` literal on every contract envelope.** Inner unions (e.g. `OpsProgramOp.type`, `DriftEntry.direction`) use a literal-typed `type`/`direction` field. Emitted JSON Schema is Draft 2020-12 with `anyOf` + `const` branches — AJV-strict + OpenAPI-aware compatible.
+- **Output layout** (PRD §7.3): `packages/contracts/dist/*.d.ts` (one per `src/*.v1.ts` file plus `index.d.ts`) + `packages/contracts/dist/*.schema.json` (9 files — one per contract, plus three for the `tokens.v1` adapter shapes and one for the `TokensInput` union).
+- **Git strategy: `main`, uncommitted.** Build agents leave files uncommitted on the current branch for user review (memory.md "Default git strategy for this repo: `main`"). No worktrees, no per-agent branches.
+
+### Build pattern
+
+Two-stage build inside `packages/contracts/`:
+
+1. `npm run build:types` → `tsc --emitDeclarationOnly` → `dist/*.d.ts`
+2. `npm run build:schemas` → `node scripts/build-schemas.mjs` → `dist/*.schema.json`
+
+`npm run build` chains both. `npm run clean` removes `dist/` via `rimraf`. Output files are committed under `dist/` so external consumers can read schemas without rebuilding — confirm with the user during `/build` whether `dist/` should be `.gitignore`d (build-on-demand) or committed (zero-friction external consumption). Default recommendation: commit `dist/` until the package is actually published; revisit when first `npm publish` lands.
+
+### Lift sources
+
+- **`RegistryV1` field set:** `c:\Users\jbabc\Documents\GitHub\DesignOps-plugin\skills\create-component\registry.schema.json` (33 lines, Draft 2020-12) — port verbatim, add `v: 1` + `kind: "registry"` envelope.
+- **`ComponentSpecV1` field set:** `c:\Users\jbabc\Documents\GitHub\DesignOps-plugin\skills\create-component\shadcn-props.schema.json` `$defs/componentEntry` (~100 lines) — port the archetype enum, per-archetype config objects, `composes[]`, `componentProps`, `iconSlots`, `category`.
+- **`TokensV1Legacy` shape:** `DesignOps-plugin/skills/create-design-system/conventions/01-collections.md` (5-collection model + mode strategy) + `02-codesyntax.md` (WEB/ANDROID/iOS codeSyntax triple) + `07-token-paths.md` (canonical token paths).
+- **Research file:** [`research/json-schema-generator.md`](research/json-schema-generator.md) — full tool comparison, build-script outline, three-shape `tokens.v1.ts` rationale.
+
+### References
+
+- Ticket: [`./ticket.md`](ticket.md)
+- Research: [`./research/json-schema-generator.md`](research/json-schema-generator.md)
+- PRD anchors: `Docs/PRD.md` §7.3 (repo layout), §7.4 (cross-repo contract package), §8.1–§8.6 (5 contracts), §10.3 (dual-format serialization)
+- Lift map: `Docs/lift-sources.md` §5 (schemas to lift)
+- Cross-ticket memory: `memory.md` Quick reference + 2026-05-27 changelog
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
