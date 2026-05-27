@@ -1,3 +1,5 @@
+import { Bootstrap } from '@/ui/tabs/Bootstrap';
+
 import { flags } from '@/config/flags';
 
 export function App() {
@@ -20,10 +22,40 @@ export function App() {
           v{import.meta.env.PACKAGE_VERSION} · {flags.buildTarget} build
         </p>
       </header>
-      <p style={{ color: '#333', fontSize: '12px', lineHeight: 1.4, margin: 0 }}>
-        Sprint 1 scaffold. The bootstrap tab, components tab, sync tab, and handoff tab arrive in
-        upcoming sprints — see <code>Docs/PRD.md</code> for the phasing.
-      </p>
+
+      <nav
+        aria-label="Figmint tabs"
+        style={{ borderBottom: '1px solid #ddd', paddingBottom: '6px' }}
+      >
+        <button
+          type="button"
+          aria-current="page"
+          style={{
+            background: '#f0f0f0',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            fontSize: '11px',
+            fontWeight: 600,
+            padding: '4px 10px',
+          }}
+        >
+          Bootstrap
+        </button>
+        <button
+          type="button"
+          disabled
+          style={{
+            fontSize: '11px',
+            marginLeft: '6px',
+            opacity: 0.45,
+            padding: '4px 10px',
+          }}
+        >
+          Sync (soon)
+        </button>
+      </nav>
+
+      <Bootstrap />
     </main>
   );
 }

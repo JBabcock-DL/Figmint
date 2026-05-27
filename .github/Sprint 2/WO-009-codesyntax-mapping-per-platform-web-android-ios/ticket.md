@@ -30,10 +30,17 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/variables/codeSyntax.ts` — pure mapper from `TokensV1` token → `{ WEB, ANDROID, iOS }` codeSyntax triple.
-2. Naming conventions per platform (CSS custom property / Android resource / iOS asset) — match Detroit Labs Foundations precedent.
-3. Applied as part of the variable push (WO-008) via `setVariableCodeSyntax`.
-4. Unit tests for each platform's naming transformation.
+1. `src/core/variables/codeSyntax.ts` exports:
+   - `mapCodeSyntax(token)` — pure hybrid mapper: stored `token.codeSyntax` wins; derive missing platforms via collection rules (except Theme — stored only, no path derivation).
+   - `applyCodeSyntax(variable, token)` — calls `mapCodeSyntax`, then `setVariableCodeSyntax` for each present platform (`WEB`, `ANDROID`, `iOS` literal casing).
+2. **Hybrid source-of-truth (locked):** stored canonical `codeSyntax` when present; derive fallback for Primitives / Typography / Layout / Effects when absent. Theme tokens **must** carry stored triples (from legacy adapter / role tables) — never derive from Figma path.
+3. **Per-platform conventions (Detroit Labs Foundations):**
+   - **WEB:** `var(--kebab-path)` for derivable collections; Theme uses role-table strings (e.g. `var(--color-primary)`, not path-derived).
+   - **ANDROID:** kebab-case M3 resource **basename** only (no `R.color.` / `R.dimen.` prefix in codeSyntax); Theme uses M3 role names (`primary`, `surface-container-high`).
+   - **iOS:** dot-separated semantic paths; Theme uses stored values (e.g. `.Primary.default`); derivable collections use domain prefixes (`.Palette.*`, `.Typography.*`, `.Layout.*`, `.Effect.*`).
+4. Alias tokens carry codeSyntax on the **alias row**, not inherited from alias target.
+5. Integrated into WO-008 push: per variable, after all `setValueForMode` calls → `applyCodeSyntax`.
+6. Vitest unit tests per research test matrix (`research/platform-codesyntax-mapping.md` §6).
 
 ### Visual / UX
 
@@ -43,20 +50,25 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 - **Lift reference (DesignOps-plugin):**
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md` — per-platform mapping conventions
+  - `…/data/theme-aliases.json`, `primitives-baseline.json`, `layout-effects.json`, `typography-slots.json` — authoritative examples + derivation rules
 - **Dependencies:** WO-008
 
 ---
 
 ## Acceptance criteria _(definition of done)_
 
-- [ ] Every pushed variable has codeSyntax set for all three platforms.
-- [ ] Spot-check: a `Theme/Primary` token resolves to `--theme-primary` (Web), `R.color.theme_primary` (Android), `Color.themePrimary` (iOS).
+- [ ] Every pushed variable has codeSyntax set for all three platforms (stored or derived per collection rules).
+- [ ] Spot-check: Theme `color/primary/default` → `var(--color-primary)` (Web), `primary` (Android basename), `.Primary.default` (iOS).
+- [ ] Theme token with missing stored codeSyntax → no platforms set (no path-derived fallback).
+- [ ] Primitives `color/primary/500` → `var(--color-primary-500)` / `color-primary-500` / `.Palette.primary.500` (derived).
+- [ ] Platform keys use exact Figma API casing: `WEB`, `ANDROID`, `iOS` — never `IOS`.
 - [ ] `tsc --noEmit` clean.
 
 ## Out of scope
 
 - Per-component codeSyntax (Code Connect handles that — Sprint 8).
 - Platform-specific value adaptation (e.g. iOS color profiles).
+- Adding `R.color.` / `R.dimen.` prefixes to ANDROID codeSyntax strings (consumer codegen concern).
 
 ---
 
@@ -102,6 +114,7 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.1 FR-BOOT-5
+- [Platform codeSyntax mapping research](research/platform-codesyntax-mapping.md)
 - Lift reference:
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md` — per-platform mapping conventions
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

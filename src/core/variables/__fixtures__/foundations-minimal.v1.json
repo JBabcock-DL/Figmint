@@ -1,0 +1,78 @@
+{
+  "v": 1,
+  "kind": "tokens",
+  "collections": [
+    { "id": "primitives", "modes": ["Default"] },
+    { "id": "theme", "modes": ["Light", "Dark"] },
+    {
+      "id": "typography",
+      "modes": ["85", "100", "110", "120", "130", "150", "175", "200"]
+    },
+    { "id": "layout", "modes": ["Default"] },
+    { "id": "effects", "modes": ["Light", "Dark"] }
+  ],
+  "tokens": [
+    {
+      "collection": "primitives",
+      "name": "color/neutral/100",
+      "type": "COLOR",
+      "valuesByMode": {
+        "Default": { "r": 0.96, "g": 0.96, "b": 0.96, "a": 1 }
+      }
+    },
+    {
+      "collection": "primitives",
+      "name": "typeface/display",
+      "type": "STRING",
+      "valuesByMode": {
+        "Default": "Inter"
+      }
+    },
+    {
+      "collection": "theme",
+      "name": "color/background/default",
+      "type": "COLOR",
+      "valuesByMode": {
+        "Light": { "aliasOf": { "collection": "primitives", "name": "color/neutral/100" } },
+        "Dark": { "r": 0.1, "g": 0.1, "b": 0.1, "a": 1 }
+      },
+      "codeSyntax": {
+        "WEB": "var(--color-background-default)",
+        "ANDROID": "backgroundDefault",
+        "iOS": ".Background.default"
+      }
+    },
+    {
+      "collection": "typography",
+      "name": "Display/LG/font-family",
+      "type": "STRING",
+      "valuesByMode": {
+        "85": { "aliasOf": { "collection": "primitives", "name": "typeface/display" } },
+        "100": { "aliasOf": { "collection": "primitives", "name": "typeface/display" } },
+        "110": { "aliasOf": { "collection": "primitives", "name": "typeface/display" } },
+        "120": { "aliasOf": { "collection": "primitives", "name": "typeface/display" } },
+        "130": { "aliasOf": { "collection": "primitives", "name": "typeface/display" } },
+        "150": { "aliasOf": { "collection": "primitives", "name": "typeface/display" } },
+        "175": { "aliasOf": { "collection": "primitives", "name": "typeface/display" } },
+        "200": { "aliasOf": { "collection": "primitives", "name": "typeface/display" } }
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "space/md",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": 16
+      }
+    },
+    {
+      "collection": "effects",
+      "name": "shadow/md/blur",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Light": 8,
+        "Dark": 12
+      }
+    }
+  ]
+}

@@ -1,64 +1,120 @@
-export type DtcgTokenType =
-  | 'color'
-  | 'dimension'
-  | 'fontFamily'
-  | 'fontWeight'
-  | 'duration'
-  | 'cubicBezier'
-  | 'number'
-  | 'shadow'
-  | 'typography'
-  | 'border'
-  | 'transition'
-  | 'gradient';
+// =============================================================================
+// Branded identifier types
+// =============================================================================
 
-export interface DtcgTokenLeaf {
-  $value: string | number | boolean | Record<string, unknown> | unknown[];
-  $type: DtcgTokenType;
-  $description?: string;
-  $extensions?: Record<string, unknown>;
+/** One of the five canonical collections. */
+export type CollectionId = 'primitives' | 'theme' | 'typography' | 'layout' | 'effects';
+
+/**
+ * Figma Plugin API codeSyntax platforms — literal casing matches
+ * `CodeSyntaxPlatform` exactly. The third value is `iOS` (i + OS), NOT `IOS`.
+ *
+ * @see https://developers.figma.com/docs/plugins/api/CodeSyntaxPlatform/
+ */
+export type CodeSyntaxPlatform = 'WEB' | 'ANDROID' | 'iOS';
+
+/**
+ * Mode name as it appears in the variables panel. Collection-scoped:
+ *   - Primitives, Layout: 'Default'
+ *   - Theme, Effects: 'Light' | 'Dark'
+ *   - Typography: '85' | '100' | '110' | '120' | '130' | '150' | '175' | '200'
+ * Storage uses names (stable across files), not runtime mode IDs.
+ */
+export type ModeName = string;
+
+// =============================================================================
+// Value types
+// =============================================================================
+
+/** Color in 0..1 RGBA (matches Figma Plugin API). */
+export interface ColorValue {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
 }
 
-export type TokensV1WC3DTCGNode = DtcgTokenLeaf | TokensV1WC3DTCGGroup;
-
-export interface TokensV1WC3DTCGGroup {
-  [tokenName: string]: TokensV1WC3DTCGNode;
+/**
+ * Structured cross-collection alias reference.
+ * Field name is `aliasOf` (not `$ref`) to avoid JSON Schema reserved-word collision.
+ */
+export interface TokenAliasRef {
+  aliasOf: {
+    collection: CollectionId;
+    name: string;
+  };
 }
 
-export interface TokensV1WC3DTCG {
-  $schema?: string;
-  [group: string]: TokensV1WC3DTCGNode | string | undefined;
-}
+// =============================================================================
+// Token variants — discriminated union by `type`
+// =============================================================================
 
-export type LegacyCodeSyntaxPlatform = 'WEB' | 'ANDROID' | 'iOS';
-
-export interface LegacyCodeSyntaxTriple {
-  WEB?: string;
-  ANDROID?: string;
-  iOS?: string;
-}
-
-export interface LegacyTokenVariable {
+interface TokenBase {
+  collection: CollectionId;
+  /** Slash-separated path, e.g. 'color/primary/default'. Never use dots (Figma throws). */
   name: string;
-  type: 'COLOR' | 'FLOAT' | 'STRING' | 'BOOLEAN';
-  valuesByMode: Record<string, string | number | boolean>;
-  codeSyntax?: LegacyCodeSyntaxTriple;
+  description?: string;
+  scopes?: readonly string[];
+  codeSyntax?: Partial<Record<CodeSyntaxPlatform, string>>;
+  extensions?: Record<string, unknown>;
+  deprecated?: boolean | string;
 }
 
-export interface LegacyTokenCollection {
-  name: 'Primitives' | 'Theme' | 'Typography' | 'Layout' | 'Effects';
-  modes: string[];
-  variables: LegacyTokenVariable[];
+export interface TokenColor extends TokenBase {
+  type: 'COLOR';
+  valuesByMode: Record<ModeName, ColorValue | TokenAliasRef>;
 }
 
-export interface TokensV1Legacy {
-  collections: LegacyTokenCollection[];
+export interface TokenFloat extends TokenBase {
+  type: 'FLOAT';
+  valuesByMode: Record<ModeName, number | TokenAliasRef>;
 }
 
-/** Canonical internal shape — stub until Sprint 2 CTX-002 promotion fills the body. */
+export interface TokenString extends TokenBase {
+  type: 'STRING';
+  valuesByMode: Record<ModeName, string | TokenAliasRef>;
+}
+
+export interface TokenBoolean extends TokenBase {
+  type: 'BOOLEAN';
+  valuesByMode: Record<ModeName, boolean | TokenAliasRef>;
+}
+
+export type Token = TokenColor | TokenFloat | TokenString | TokenBoolean;
+
+/** Alias used by core mappers (WO-009+) — same shape as {@link Token}. */
+export type CanonicalToken = Token;
+
+// =============================================================================
+// Collection metadata
+// =============================================================================
+
+export interface Collection {
+  id: CollectionId;
+  modes: readonly ModeName[];
+}
+
+// =============================================================================
+// Optional EVC projection (Enterprise plan only — render-time, not storage)
+// =============================================================================
+
+export interface ThemeExtension {
+  name: string;
+  parentCollection: 'theme' | 'effects';
+  overrides: readonly {
+    name: string;
+    valuesByMode: Record<ModeName, ColorValue | number | string | boolean | TokenAliasRef>;
+  }[];
+}
+
+// =============================================================================
+// Top-level document
+// =============================================================================
+
 export interface TokensV1 {
   v: 1;
   kind: 'tokens';
+  collections: readonly Collection[];
+  tokens: readonly Token[];
+  themes?: readonly ThemeExtension[];
 }
-
-export type TokensInput = TokensV1 | TokensV1WC3DTCG | TokensV1Legacy;

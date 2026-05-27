@@ -71,13 +71,12 @@ Research: .github/Sprint {N}/{TICKET-ID}-{slug}/research/ (read if present)
 
 Planning conventions:
 
-- Each step must be concrete enough for a build agent to execute without interpretation
-- List any MCP servers or external tools the build agent will need
-- plan.md MUST include a `## Build Agents` section defining parallel phases — the `/build` orchestrator requires it
-- Every step must be assigned to exactly one build domain in the `## Build Agents` section
-- Independent steps can be parallelized across phases; steps with dependencies on earlier output must be in a later phase
-- Move the ticket to In Planning when plan.md is written (GitHub: update the Status field; Jira: swap the `phase:*` label)
-- A build agent should not start until all open questions are resolved
+- **Read first:** `.github/templates/plan-quality-bar.md` — **mandatory**
+- **Read the parent ticket:** `ticket.md` Goal, Requirements, Acceptance criteria, Out of scope, Dependencies — the plan must reflect these exactly; every requirement/AC → at least one step
+- Write for **build sub-agents**: each step self-contained (paths, signatures, **Done when**); sub-agents should execute from `plan.md` without re-reading ticket or research
+- Stub / outline plans are **reject** — expand until traceability and sub-agent slices are complete
+- `plan.md` MUST include `## Build Agents` with phased parallel domains — every step assigned exactly once
+- Move to In Planning only after verification checklist in plan-quality-bar.md passes; report `wc -l plan.md` in handoff
 
 ---
 

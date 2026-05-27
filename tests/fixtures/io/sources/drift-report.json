@@ -1,0 +1,11 @@
+{
+  "v": 1,
+  "kind": "drift-report",
+  "meta": {
+    "generatedAt": "2026-01-01T00:00:00.000Z",
+    "figmaFileKey": "abc",
+    "repoUrl": "https://example.com/repo"
+  },
+  "summary": { "push": 0, "pull": 0, "conflict": 0, "synced": 0 },
+  "drifts": []
+}

@@ -1,0 +1,10 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Button",
+  "framework": "react",
+  "props": [],
+  "bindings": [],
+  "sizing": { "horizontal": "hug", "vertical": "hug" },
+  "layout": { "direction": "horizontal", "gap": "8" }
+}

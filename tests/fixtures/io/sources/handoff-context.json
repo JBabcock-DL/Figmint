@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "kind": "handoff-context",
+  "meta": {
+    "capturedAt": "2026-01-01T00:00:00.000Z",
+    "figmaFileKey": "abc",
+    "frameUrl": "https://figma.com/file/abc"
+  },
+  "frames": [],
+  "components": [],
+  "tokensUsed": [],
+  "autoLayout": { "direction": "vertical", "gap": "16" }
+}

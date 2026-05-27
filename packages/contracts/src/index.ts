@@ -17,18 +17,33 @@ export type {
 } from './opsProgram.v1';
 
 export type {
+  CanonicalToken,
+  Collection,
+  CollectionId,
+  CodeSyntaxPlatform,
+  ColorValue,
+  ModeName,
+  ThemeExtension,
+  Token,
+  TokenAliasRef,
+  TokenBoolean,
+  TokenColor,
+  TokenFloat,
+  TokenString,
+  TokensV1,
+} from './tokens.v1';
+
+export type {
   DtcgTokenLeaf,
   DtcgTokenType,
-  LegacyCodeSyntaxTriple,
   LegacyTokenCollection,
   LegacyTokenVariable,
   TokensInput,
-  TokensV1,
   TokensV1Legacy,
   TokensV1WC3DTCG,
   TokensV1WC3DTCGGroup,
   TokensV1WC3DTCGNode,
-} from './tokens.v1';
+} from './tokensInput.v1';
 
 export type {
   ComponentFramework,
@@ -55,6 +70,15 @@ export type {
   DriftReportV1,
   VariableDriftEntry,
 } from './driftReport.v1';
+
+export type {
+  AuditReportMeta,
+  AuditReportSummary,
+  AuditReportV1,
+  AuditRuleResult,
+  AuditScope,
+  AuditSeverity,
+} from './auditReport.v1';
 
 export type {
   HandoffAutoLayout,

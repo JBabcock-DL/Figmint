@@ -6,3 +6,4 @@ coverage
 manifest.*.json
 packages/*/dist
 packages/contracts/dist/*.schema.json
+tests/fixtures/io/sources/invalid.json

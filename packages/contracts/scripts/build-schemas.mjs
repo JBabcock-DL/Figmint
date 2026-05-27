@@ -11,15 +11,23 @@ const distDir = join(pkgRoot, 'dist');
 const CONTRACTS = [
   { file: 'src/opsProgram.v1.ts', type: 'OpsProgramV1', out: 'ops-program.v1.schema.json' },
   { file: 'src/tokens.v1.ts', type: 'TokensV1', out: 'tokens.v1.schema.json' },
-  { file: 'src/tokens.v1.ts', type: 'TokensV1WC3DTCG', out: 'tokens.v1.w3c-dtcg.schema.json' },
-  { file: 'src/tokens.v1.ts', type: 'TokensV1Legacy', out: 'tokens.v1.legacy.schema.json' },
-  { file: 'src/tokens.v1.ts', type: 'TokensInput', out: 'tokens.v1.input.schema.json' },
+  {
+    file: 'src/tokensInput.v1.ts',
+    type: 'TokensV1WC3DTCG',
+    out: 'tokens.v1.w3c-dtcg.schema.json',
+  },
+  {
+    file: 'src/tokensInput.v1.ts',
+    type: 'TokensV1Legacy',
+    out: 'tokens.v1.legacy.schema.json',
+  },
   {
     file: 'src/componentSpec.v1.ts',
     type: 'ComponentSpecV1',
     out: 'component-spec.v1.schema.json',
   },
   { file: 'src/driftReport.v1.ts', type: 'DriftReportV1', out: 'drift-report.v1.schema.json' },
+  { file: 'src/auditReport.v1.ts', type: 'AuditReportV1', out: 'audit-report.v1.schema.json' },
   {
     file: 'src/handoffContext.v1.ts',
     type: 'HandoffContextV1',

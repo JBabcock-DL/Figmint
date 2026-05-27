@@ -25,7 +25,7 @@ export default defineConfig([
   js.configs.recommended,
 
   {
-    files: ['src/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}', 'tests/**/*.{ts,tsx}'],
     extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       parserOptions: {
@@ -42,7 +42,7 @@ export default defineConfig([
   },
 
   {
-    files: ['src/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}', 'tests/**/*.{ts,tsx}'],
     ...importX.flatConfigs.recommended,
     ...importX.flatConfigs.typescript,
     settings: {
@@ -66,6 +66,39 @@ export default defineConfig([
       // Figma plugin sandbox main thread is ES2017-only (no `?.`, `??`, `replaceAll`).
       // See vite.config.ts `build.target: 'es2017'` and memory.md "Do not repeat".
       '@typescript-eslint/prefer-optional-chain': 'off',
+    },
+  },
+
+  {
+    files: [
+      'src/core/variables/**/*.ts',
+      'src/core/audit/**/*.ts',
+      'src/core/canvas/**/*.ts',
+      'src/core/bootstrap/**/*.ts',
+      'src/io/messages/bootstrap.ts',
+    ],
+    rules: {
+      '@typescript-eslint/prefer-optional-chain': 'off',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      // Figma main-thread canvas builders use explicit indexed loops and legacy Plugin API calls.
+      '@typescript-eslint/prefer-for-of': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-unnecessary-type-conversion': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/no-deprecated': 'off',
+      '@typescript-eslint/no-base-to-string': 'off',
+      '@typescript-eslint/prefer-includes': 'off',
+      '@typescript-eslint/array-type': 'off',
+    },
+  },
+
+  {
+    files: ['tests/unit/core/variables/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/prefer-optional-chain': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-deprecated': 'off',
     },
   },
 

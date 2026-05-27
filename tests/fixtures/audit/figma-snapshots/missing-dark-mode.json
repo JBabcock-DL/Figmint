@@ -1,0 +1,119 @@
+[
+  {
+    "id": "col-primitives",
+    "name": "Primitives",
+    "modes": [{ "modeId": "mode-prim-default", "name": "Default" }],
+    "variables": [
+      {
+        "id": "var-prim-neutral-100",
+        "name": "color/neutral/100",
+        "collectionId": "col-primitives",
+        "collectionName": "Primitives",
+        "resolvedType": "COLOR",
+        "valuesByMode": {
+          "Default": { "r": 0.96, "g": 0.96, "b": 0.96, "a": 1 }
+        },
+        "codeSyntax": {
+          "WEB": "var(--color-neutral-100)",
+          "ANDROID": "color-neutral-100",
+          "iOS": ".Palette.neutral.100"
+        }
+      }
+    ]
+  },
+  {
+    "id": "col-theme",
+    "name": "Theme",
+    "modes": [
+      { "modeId": "mode-theme-light", "name": "Light" },
+      { "modeId": "mode-theme-dark", "name": "Dark" }
+    ],
+    "variables": [
+      {
+        "id": "var-theme-bg-default",
+        "name": "color/background/default",
+        "collectionId": "col-theme",
+        "collectionName": "Theme",
+        "resolvedType": "COLOR",
+        "valuesByMode": {
+          "Light": { "r": 0.96, "g": 0.96, "b": 0.96, "a": 1 }
+        },
+        "codeSyntax": {
+          "WEB": "var(--color-background-default)",
+          "ANDROID": "backgroundDefault",
+          "iOS": ".background.default"
+        }
+      }
+    ]
+  },
+  {
+    "id": "col-typography",
+    "name": "Typography",
+    "modes": [{ "modeId": "mode-typo-100", "name": "100" }],
+    "variables": [
+      {
+        "id": "var-typo-display-lg-font-size",
+        "name": "Display/LG/font-size",
+        "collectionId": "col-typography",
+        "collectionName": "Typography",
+        "resolvedType": "FLOAT",
+        "valuesByMode": {
+          "100": 16
+        },
+        "codeSyntax": {
+          "WEB": "var(--display-lg-font-size)",
+          "ANDROID": "display-lg-font-size",
+          "iOS": ".Typography.display.lg.font.size"
+        }
+      }
+    ]
+  },
+  {
+    "id": "col-layout",
+    "name": "Layout",
+    "modes": [{ "modeId": "mode-layout-default", "name": "Default" }],
+    "variables": [
+      {
+        "id": "var-layout-space-md",
+        "name": "space/md",
+        "collectionId": "col-layout",
+        "collectionName": "Layout",
+        "resolvedType": "FLOAT",
+        "valuesByMode": {
+          "Default": 16
+        },
+        "codeSyntax": {
+          "WEB": "var(--space-md)",
+          "ANDROID": "space-md",
+          "iOS": ".Layout.space.md"
+        }
+      }
+    ]
+  },
+  {
+    "id": "col-effects",
+    "name": "Effects",
+    "modes": [
+      { "modeId": "mode-effects-light", "name": "Light" },
+      { "modeId": "mode-effects-dark", "name": "Dark" }
+    ],
+    "variables": [
+      {
+        "id": "var-effects-shadow-md-blur",
+        "name": "shadow/md/blur",
+        "collectionId": "col-effects",
+        "collectionName": "Effects",
+        "resolvedType": "FLOAT",
+        "valuesByMode": {
+          "Light": 8,
+          "Dark": 12
+        },
+        "codeSyntax": {
+          "WEB": "var(--shadow-md-blur)",
+          "ANDROID": "shadow-md-blur",
+          "iOS": ".Effect.shadow.md.blur"
+        }
+      }
+    ]
+  }
+]

@@ -47,15 +47,15 @@ We'll know we're right when WO-007's W3C DTCG and legacy adapters both consume `
 
 ### Functional
 
-1. Produce a written decision document (committed as this ticket's `decisions/canonical-token-model.md` OR inlined in the final ticket body) that captures the canonical TS shape. The shape must support:
-   - W3C DTCG round-trip (lossless from input → canonical → output).
-   - Legacy `DesignOps-plugin` format round-trip (lossless — `theme-aliases.json`, per-collection variable lists, codeSyntax-per-platform).
+1. Produce a written decision document at `research/canonical-token-model.md` that captures the canonical TS shape. ✅ Done — see `research/canonical-token-model.md`. The locked shape supports:
+   - W3C DTCG round-trip (lossless from input → canonical → output) — `aliasOf` structured ref ↔ DTCG `{group.token}` curly-brace string round-trip is defined; `$extensions.figmint.modes` + `$extensions.figmint.codeSyntax` carry mode + platform data on DTCG export. See research §"Side-by-side worked example".
+   - Legacy `DesignOps-plugin` format round-trip (lossless — `theme-aliases.json`, per-collection variable lists, codeSyntax-per-platform). 1:1 field mapping with no transformation beyond the alias-string → structured-ref pass.
    - All 5 collections from PRD §6.1 (Primitives, Theme, Typography, Layout, Effects).
-   - Per-collection modes (1 mode on Primitives/Layout; 2 modes Light/Dark on Theme + Effects; 8 Android-curve modes on Typography).
-   - codeSyntax per platform (Web / Android / iOS) on every token.
-   - Variable aliasing — one token references another's resolved value (e.g. Theme `color/primary` aliases Primitives `color/blue/500`).
-2. The decision document must include a worked example showing the same Theme `color/primary` token in (a) W3C DTCG input form, (b) legacy `theme-aliases.json` row form, (c) canonical `TokensV1` form, side by side.
-3. The canonical interface must round-trip through `ts-json-schema-generator` (WO-003's tooling) without manual schema editing. If it requires `@ts-json-schema-generator/*` annotations to resolve discriminated unions or branded types, document those annotations inline.
+   - Per-collection modes (1 mode on Primitives/Layout; 2 modes Light/Dark on Theme + Effects; 8 Android-curve modes on Typography). Mode storage: `Record<ModeName, Value>` keyed by stable name, not runtime ID.
+   - codeSyntax per platform (Web / Android / iOS) on every token, with literal casing `'WEB' | 'ANDROID' | 'iOS'` matching the Figma Plugin API `CodeSyntaxPlatform` exactly.
+   - Variable aliasing — structured `{ aliasOf: { collection, name } }` cross-collection refs; resolution is a runtime concern (not cached in storage).
+2. The decision document includes a worked example showing the same `Theme color/primary/default` token in (a) W3C DTCG input form, (b) legacy `theme-aliases.json` row form, (c) canonical `TokensV1` form, side by side. ✅ See research §"Side-by-side worked example".
+3. The canonical interface round-trips through `ts-json-schema-generator` (WO-003's tooling) without manual schema editing. ✅ Confirmed viable in research §"`ts-json-schema-generator` viability"; no annotations required (one defensive `@TJS-type string` on `CollectionId` flagged for verification during `/build`).
 
 ### Visual / UX
 
@@ -63,16 +63,16 @@ We'll know we're right when WO-007's W3C DTCG and legacy adapters both consume `
 
 ### Technical / architectural
 
-The decision must address all of these six dimensions explicitly. Each gets a chosen answer + 1-paragraph rationale:
+All six dimensions are **locked** below. Rationale + side-by-side legacy / DTCG validation in `research/canonical-token-model.md` §"Key Findings".
 
-1. **Shape:** flat (every token has a fully-qualified path key) vs nested (tree of nested objects)? _Working preference (per Hypothesis): flat._
-2. **Mode storage:** `Record<ModeId, Value>` per token vs array indexed by ordered mode list? _Working preference: `Record<ModeId, Value>` — explicit mode IDs survive reordering._
-3. **Alias representation:** string reference (`{Theme/Primary}`), resolved value, or both? _Working preference: both — keep the string reference for round-trip, cache the resolved value for fast reads._
-4. **codeSyntax storage:** flat field on each token (`codeSyntax: { WEB, ANDROID, iOS }`) vs separate map keyed by token path? _Working preference: flat on the token._
-5. **Collection identity:** explicit `collection: "Primitives"` field on each token vs scope inferred from path prefix? _Working preference: explicit field — path prefixes can collide across collections, especially with codeSyntax-derived names._
-6. **Mode inheritance (post-EVC):** WO-005 confirmed EVC is Enterprise-only and gated; the canonical model stays **plan-agnostic**. EVC is expressed as a **render-time projection** by the push engine when `isEnterprise()` returns true — not a schema field. Document the projection algorithm at a high level (Theme + Effects each become 1 parent collection + N extended collections per brand; Typography never extends).
+1. **LOCKED: flat shape.** Every token is a self-contained object with `collection` + `name` + `type` + `valuesByMode` + `codeSyntax`. Legacy storage is flat 1:1; DTCG nesting is handled by the WO-007 ↔ canonical adapter. See research §1.
+2. **LOCKED: `Record<ModeName, Value>` (keyed by stable mode _name_, not runtime ID).** Runtime mode IDs only exist after `createVariableCollection` returns; the canonical document is storage, not a runtime cache. Mode display order lives on `Collection.modes[]`. See research §2.
+3. **LOCKED: structured reference only, no resolved cache.** Refined from the working "both" preference — caching resolved values creates drift risk + storage bloat + JSON Schema friction. A separate `resolveTokens()` helper (Sprint 2 WO-008 / WO-010 owns) provides the runtime resolved view. See research §3.
+4. **LOCKED: flat `codeSyntax?: Partial<Record<CodeSyntaxPlatform, string>>` on each token.** Literal casing `'WEB' | 'ANDROID' | 'iOS'` matches Figma Plugin API exactly. WO-005 spike measured `setVariableCodeSyntax` at 0.23 ms / call (n=400) — no performance reason to prefer a separate-map shape. See research §4.
+5. **LOCKED: explicit `collection: CollectionId` field**, where `CollectionId = 'primitives' | 'theme' | 'typography' | 'layout' | 'effects'` (kebab-case lowercase). Mandatory on every token; `(collection, name)` is the global uniqueness key. See research §5.
+6. **LOCKED: EVC = render-time projection only** (per WO-005 spike §2.4 + §5). Canonical model carries an _optional_ `themes?: ThemeExtension[]` field; non-Enterprise files ignore it. Projection algorithm: detect plan via `try { collection.extend('probe'); } catch` → if Enterprise + `themes[]` non-empty, push base collections first, then `parent.extend(brandName)` + `setValueForMode(extendedModeId, value)` for each override. Typography never extends. See research §6.
 
-These working preferences are **not** the locked answer — they're the seed the decision pass starts from. The pass must validate each against the legacy `DesignOps-plugin` data shape (`theme-aliases.json`, `data/typography.json` if it exists, per-collection variable lists in `phases/02-steps5-9.md`) and a representative W3C DTCG fixture before locking.
+**Cross-collection alias encoding (the open question flagged in §"🔍 Ready for `/research`"):** **LOCKED: structured `{ aliasOf: { collection: CollectionId, name: string } }`.** Rejected the colon-separated string form (parsing required at every consumer) and the DTCG-style `{primitives/color/blue/500}` curly-brace form (ambiguous boundary between collection and name segments; slash/dot separator conflict). The structured form is TS-narrow friendly, schema-safe (avoids JSON Schema `$ref` reserved-word collision via the `aliasOf` field name), and round-trips losslessly to DTCG `{group.token}` curly-brace syntax via slash-→-dot substitution. See research §7.
 
 ---
 
@@ -172,6 +172,7 @@ Build artifacts:
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md` — codeSyntax-per-platform pattern
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/conventions/07-token-paths.md` — token path / naming conventions
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
+- [Canonical token model decision](research/canonical-token-model.md)
 
 ---
 

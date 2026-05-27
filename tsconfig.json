@@ -14,11 +14,18 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types", "./node_modules/@figma"],
+    "types": ["node"],
     "paths": {
       "@/*": ["./src/*"],
       "@/config/flags": ["./src/config/flags.community.ts"]
     }
   },
-  "include": ["src/**/*", "scripts/**/*", "packages/contracts/src/**/*"],
+  "include": [
+    "src/**/*",
+    "scripts/**/*",
+    "packages/contracts/src/**/*",
+    "tests/**/*",
+    "vitest.config.ts"
+  ],
   "exclude": ["dist", "node_modules"]
 }

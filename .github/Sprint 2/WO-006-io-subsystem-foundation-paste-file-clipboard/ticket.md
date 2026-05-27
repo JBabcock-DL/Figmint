@@ -38,11 +38,11 @@ A minimal source-picker UI: paste textarea + file button + clipboard banner. Vis
 
 ### Functional
 
-1. `src/io/sources/paste.ts` — accepts pasted string, attempts contract detection (5 types), returns `LoadedDocument | ValidationError`.
-2. `src/io/sources/file.ts` — file picker + drag-drop handler; accepts `.json` and `.md` files.
-3. `src/io/sources/clipboard.ts` — on plugin open, reads clipboard via `navigator.clipboard.readText()` (UI iframe scope), runs same contract detection; surfaces a banner if valid.
-4. `src/io/sources/index.ts` — re-exports + a shared `detectContract(input: string): ContractKind | null` helper.
-5. Normalization: every source returns a `LoadedDocument<T>` with `{ kind: ContractKind, payload: T, sourceMeta: {...} }` — downstream features depend only on this shape.
+1. `src/io/sources/paste.ts` — `loadFromPaste(input: string): Promise<LoadedDocument<unknown> | ValidationError>`. Wraps the shared `detectContract` helper, builds a `PasteSourceMeta`, enforces the 1 MB `PASTE_MAX` cap (returns `ValidationError { kind: 'oversize' }` over the cap).
+2. `src/io/sources/file.ts` — `loadFromFile(file: File): Promise<LoadedDocument<unknown> | ValidationError>`. Accepts `.json` and `.md` files via `<input type="file">` (picker) and drag-drop on a dedicated drop zone; reads via `file.text()`, builds a `FileSourceMeta { via: 'picker' | 'dragdrop' }`. **`.md` files are currently rejected with `ValidationError { kind: 'unsupported-type', hint: 'Markdown parsing lands in WO-019.' }`** — plumbing only, no parser.
+3. `src/io/sources/clipboard.ts` — two functions: (a) `probeClipboard(): Promise<ClipboardProbeResult>` best-effort `navigator.clipboard.readText()` on plugin open (expected to return `{ available: false }` in the Figma iframe — banner stays hidden); (b) `loadFromPasteEvent(event: ClipboardEvent): Promise<LoadedDocument<unknown> | ValidationError | null>` consumes `event.clipboardData.getData('text/plain')` from a `document.addEventListener('paste', ...)` listener — this is the path that actually works in Figma.
+4. `src/io/sources/detect.ts` — pure `detectContract(input: string): ContractKind | null` helper covering all **7 detection branches across 6 contract type files** (see Acceptance criteria below). Re-exported from `src/io/sources/index.ts` alongside the three port loaders.
+5. `src/io/sources/types.ts` — locks `ContractKind` (7-member union), `LoadedDocument<T>` (`{ kind, payload, sourceMeta, rawSnippet }`), `SourceMeta` (`PasteSourceMeta | FileSourceMeta | ClipboardSourceMeta` discriminated union), `ValidationError` (with port-tagged `location`). Downstream features depend ONLY on this file.
 
 ### Visual / UX
 
@@ -52,19 +52,26 @@ A minimal source-picker UI: paste textarea + file button + clipboard banner. Vis
 
 ### Technical / architectural
 
-- **Lift reference (DesignOps-plugin):** no direct lift — this is new code designed in the PRD.
-- Contract detection rules from PRD §8 (`$value`/`$type` keys → tokens W3C DTCG, `kind: "ops-program"` → ops-program, etc.).
-- Pure functions where possible; UI components live in `src/ui/` and call into `src/io/sources/`.
+- **Lift reference (DesignOps-plugin):** no direct lift — this is new code designed in the PRD (`Docs/lift-sources.md` §0 confirms).
+- **LOCKED:** `navigator.clipboard.readText()` is unavailable / blocked in the Figma plugin UI iframe (Permissions-Policy gate on the parent document; Figma forum confirms; manifest has no `clipboard-read` permission to grant). `clipboard.ts` ships as a two-function module: `probeClipboard()` (best-effort, expected to fail silently) + `loadFromPasteEvent()` (the canonical clipboard path, fed by `document.addEventListener('paste', ...)`). No manifest change required — clipboard is a Permissions-Policy concern, not a Figma-grantable permission. See `research/io-subsystem-design.md` §Q1.
+- **LOCKED:** Contract detector runs in 3 stages, first match wins: (1) `v: 1` + known-kind discriminator (5 versioned kinds); (2) legacy tokens shape (`Array.isArray(collections) && collections[0].name ∈ {Primitives, Theme, Typography, Layout, Effects}`); (3) recursive walk for at least one DTCG leaf (`$value` + `$type ∈ DtcgTokenType` 12-value enum, max depth 12). Discriminator-per-kind table + ready-to-drop TS implementation in `research/io-subsystem-design.md` §Q2.
+- **LOCKED:** `LoadedDocument<T> = { kind: ContractKind, payload: T, sourceMeta: SourceMeta, rawSnippet: string }` with `ContractKind` = `'ops-program' | 'tokens-dtcg' | 'tokens-legacy' | 'component-spec' | 'drift-report' | 'handoff-context' | 'registry'` (7 branches; supersedes the original "5 contract kinds" wording). `SourceMeta` is a `port`-tagged discriminated union (paste / file / clipboard) carrying port-specific diagnostics. Full interface in `research/io-subsystem-design.md` §Q3.
+- Pure functions where possible; UI components live in `src/ui/` and call into `src/io/sources/`. All three port loaders return the uniform `Promise<LoadedDocument<unknown> | ValidationError>` envelope; paste is wrapped in `Promise.resolve` for symmetry even though it's internally synchronous.
 
 ---
 
 ## Acceptance criteria _(definition of done)_
 
-- [ ] Paste a 10-token W3C DTCG tokens.json → plugin detects it as `tokens` and emits `LoadedDocument<TokensV1WC3DTCG>`.
-- [ ] Pick a `.json` file from disk → same result as paste.
-- [ ] Place a valid `ops-program.v1.json` in OS clipboard, open plugin → banner appears and "Load" populates the loaded document.
-- [ ] Invalid input → validation error message inline; no crash.
-- [ ] Unit tests cover all three sources + the shared detector for each of the 5 contract kinds.
+- [ ] Paste a 10-token W3C DTCG tokens.json into the textarea → `loadFromPaste` returns `LoadedDocument<unknown>` with `kind === 'tokens-dtcg'` and a `PasteSourceMeta`.
+- [ ] Paste a legacy `{ collections: [{ name: 'Primitives', ... }] }` document → returns `kind === 'tokens-legacy'`.
+- [ ] Pick a `.json` file containing a valid `ops-program.v1` document → `loadFromFile` returns `kind === 'ops-program'` with a `FileSourceMeta { via: 'picker' }`.
+- [ ] Drag-drop the same `.json` file onto the drop zone → same result with `via: 'dragdrop'`.
+- [ ] Pick a `.md` file → returns `ValidationError { kind: 'unsupported-type', hint: 'Markdown parsing lands in WO-019.' }`.
+- [ ] Place a valid `ops-program.v1.json` text on the OS clipboard, open the plugin in **Figma desktop** → on plugin open, `probeClipboard()` either returns `{ available: true, doc: {...} }` (banner appears with Load/Dismiss) OR `{ available: false }` (no banner — expected when the iframe Permissions-Policy blocks `clipboard-read`). Either branch is a PASS — the banner is best-effort, not required.
+- [ ] With the same clipboard contents, focus the plugin UI and hit Ctrl/Cmd+V → `loadFromPasteEvent` fires, banner appears with the detected `ops-program` document. This path is the contract for AC #6.
+- [ ] Invalid JSON pasted → `ValidationError { kind: 'invalid-json' }` rendered inline; no crash.
+- [ ] Unit tests cover the detector against all **7 ContractKinds** (`ops-program`, `tokens-dtcg`, `tokens-legacy`, `component-spec`, `drift-report`, `handoff-context`, `registry`) plus rejection cases (top-level array, top-level scalar, malformed JSON, empty object, unknown `v: 1` kind, unknown `v: 2`, generic `{ collections: [...] }` not matching legacy names).
+- [ ] Unit tests cover `loadFromPaste`, `loadFromFile`, `loadFromPasteEvent` with one fixture per detected kind plus the size / type / empty failure modes.
 
 ## Out of scope
 
@@ -106,7 +113,7 @@ A minimal source-picker UI: paste textarea + file button + clipboard banner. Vis
 
 ## 🔍 Ready for `/research`
 
-- Confirm `navigator.clipboard.readText()` availability in Figma plugin UI iframe + permission model (1-day spike if uncertain).
+- ✅ Resolved 2026-05-27. Verdict in `research/io-subsystem-design.md` §Q1: `navigator.clipboard.readText()` is blocked by the parent-document Permissions-Policy in the Figma plugin UI iframe (no manifest opt-in available). Fallback locked: `clipboard.ts` exposes `probeClipboard()` (best-effort) + `loadFromPasteEvent()` (the canonical clipboard path, driven by `document.addEventListener('paste', ...)`).
 
 ## 📋 Ready for `/plan`
 
@@ -121,3 +128,4 @@ A minimal source-picker UI: paste textarea + file button + clipboard banner. Vis
 
 - PRD: `Docs/PRD.md` §6.8 FR-IO-1, §10.1
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
+- [IO subsystem design](research/io-subsystem-design.md)

@@ -1,0 +1,390 @@
+{
+  "v": 1,
+  "kind": "tokens",
+  "collections": [
+    { "id": "primitives", "modes": ["Default"] },
+    { "id": "layout", "modes": ["Default"] },
+    { "id": "effects", "modes": ["Light", "Dark"] }
+  ],
+  "tokens": [
+    {
+      "collection": "primitives",
+      "name": "Space/100",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 4 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Space/200",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 8 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Space/300",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 12 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Space/400",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 16 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Space/600",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 24 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Space/800",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 32 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Space/1200",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 48 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Space/1600",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 64 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Corner/None",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 0 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Corner/Extra-small",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 2 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Corner/Small",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 4 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Corner/Medium",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 8 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Corner/Large",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 16 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Corner/Extra-large",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 24 }
+    },
+    {
+      "collection": "primitives",
+      "name": "Corner/Full",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 9999 }
+    },
+    {
+      "collection": "primitives",
+      "name": "elevation/100",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 2 }
+    },
+    {
+      "collection": "primitives",
+      "name": "elevation/200",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 4 }
+    },
+    {
+      "collection": "primitives",
+      "name": "elevation/400",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 8 }
+    },
+    {
+      "collection": "primitives",
+      "name": "elevation/800",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 16 }
+    },
+    {
+      "collection": "primitives",
+      "name": "elevation/1600",
+      "type": "FLOAT",
+      "valuesByMode": { "Default": 32 }
+    },
+    {
+      "collection": "layout",
+      "name": "space/xs",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Space/100" } }
+      },
+      "codeSyntax": { "WEB": "var(--space-xs)", "ANDROID": "space-xs", "iOS": ".Layout.space.xs" }
+    },
+    {
+      "collection": "layout",
+      "name": "space/sm",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Space/200" } }
+      },
+      "codeSyntax": { "WEB": "var(--space-sm)", "ANDROID": "space-sm", "iOS": ".Layout.space.sm" }
+    },
+    {
+      "collection": "layout",
+      "name": "space/md",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Space/300" } }
+      },
+      "codeSyntax": { "WEB": "var(--space-md)", "ANDROID": "space-md", "iOS": ".Layout.space.md" }
+    },
+    {
+      "collection": "layout",
+      "name": "space/lg",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Space/400" } }
+      },
+      "codeSyntax": { "WEB": "var(--space-lg)", "ANDROID": "space-lg", "iOS": ".Layout.space.lg" }
+    },
+    {
+      "collection": "layout",
+      "name": "space/xl",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Space/600" } }
+      },
+      "codeSyntax": { "WEB": "var(--space-xl)", "ANDROID": "space-xl", "iOS": ".Layout.space.xs" }
+    },
+    {
+      "collection": "layout",
+      "name": "space/2xl",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Space/800" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--space-2xl)",
+        "ANDROID": "space-2xl",
+        "iOS": ".Layout.space.2xl"
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "space/3xl",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Space/1200" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--space-3xl)",
+        "ANDROID": "space-3xl",
+        "iOS": ".Layout.space.3xl"
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "space/4xl",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Space/1600" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--space-4xl)",
+        "ANDROID": "space-4xl",
+        "iOS": ".Layout.space.4xl"
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "radius/none",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Corner/None" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--radius-none)",
+        "ANDROID": "radius-none",
+        "iOS": ".Layout.radius.none"
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "radius/xs",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Corner/Extra-small" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--radius-xs)",
+        "ANDROID": "radius-xs",
+        "iOS": ".Layout.radius.xs"
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "radius/sm",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Corner/Small" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--radius-sm)",
+        "ANDROID": "radius-sm",
+        "iOS": ".Layout.radius.sm"
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "radius/md",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Corner/Medium" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--radius-md)",
+        "ANDROID": "radius-md",
+        "iOS": ".Layout.radius.md"
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "radius/lg",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Corner/Large" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--radius-lg)",
+        "ANDROID": "radius-lg",
+        "iOS": ".Layout.radius.lg"
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "radius/xl",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Corner/Extra-large" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--radius-xl)",
+        "ANDROID": "radius-xl",
+        "iOS": ".Layout.radius.xl"
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "radius/full",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": { "aliasOf": { "collection": "primitives", "name": "Corner/Full" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--radius-full)",
+        "ANDROID": "radius-full",
+        "iOS": ".Layout.radius.full"
+      }
+    },
+    {
+      "collection": "effects",
+      "name": "shadow/color",
+      "type": "COLOR",
+      "valuesByMode": {
+        "Light": { "r": 0, "g": 0, "b": 0, "a": 0.1 },
+        "Dark": { "r": 0, "g": 0, "b": 0, "a": 0.3 }
+      },
+      "codeSyntax": {
+        "WEB": "var(--shadow-color)",
+        "ANDROID": "shadow",
+        "iOS": ".Effect.shadow.color"
+      }
+    },
+    {
+      "collection": "effects",
+      "name": "shadow/sm/blur",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Light": { "aliasOf": { "collection": "primitives", "name": "elevation/100" } },
+        "Dark": { "aliasOf": { "collection": "primitives", "name": "elevation/100" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--shadow-sm-blur)",
+        "ANDROID": "shadow-sm-blur",
+        "iOS": ".Effect.shadow.sm.blur"
+      }
+    },
+    {
+      "collection": "effects",
+      "name": "shadow/md/blur",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Light": { "aliasOf": { "collection": "primitives", "name": "elevation/200" } },
+        "Dark": { "aliasOf": { "collection": "primitives", "name": "elevation/200" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--shadow-md-blur)",
+        "ANDROID": "shadow-md-blur",
+        "iOS": ".Effect.shadow.md.blur"
+      }
+    },
+    {
+      "collection": "effects",
+      "name": "shadow/lg/blur",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Light": { "aliasOf": { "collection": "primitives", "name": "elevation/400" } },
+        "Dark": { "aliasOf": { "collection": "primitives", "name": "elevation/400" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--shadow-lg-blur)",
+        "ANDROID": "shadow-lg-blur",
+        "iOS": ".Effect.shadow.lg.blur"
+      }
+    },
+    {
+      "collection": "effects",
+      "name": "shadow/xl/blur",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Light": { "aliasOf": { "collection": "primitives", "name": "elevation/800" } },
+        "Dark": { "aliasOf": { "collection": "primitives", "name": "elevation/800" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--shadow-xl-blur)",
+        "ANDROID": "shadow-xl-blur",
+        "iOS": ".Effect.shadow.xl.blur"
+      }
+    },
+    {
+      "collection": "effects",
+      "name": "shadow/2xl/blur",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Light": { "aliasOf": { "collection": "primitives", "name": "elevation/1600" } },
+        "Dark": { "aliasOf": { "collection": "primitives", "name": "elevation/1600" } }
+      },
+      "codeSyntax": {
+        "WEB": "var(--shadow-2xl-blur)",
+        "ANDROID": "shadow-2xl-blur",
+        "iOS": ".Effect.shadow.2xl.blur"
+      }
+    }
+  ]
+}

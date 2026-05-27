@@ -1,0 +1,11 @@
+{
+  "collections": [
+    {
+      "name": "Primitives",
+      "modes": ["Default"],
+      "variables": [
+        { "name": "color/primary", "type": "COLOR", "valuesByMode": { "Default": "#000000" } }
+      ]
+    }
+  ]
+}

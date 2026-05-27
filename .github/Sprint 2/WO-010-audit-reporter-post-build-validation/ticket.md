@@ -30,29 +30,35 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/audit/runAudit.ts` — accepts an audit scope (`variables` | `canvas` | `component`) + the post-operation Figma state, returns `AuditReport` JSON.
-2. Audit rules encoded as code (not prompt rules) — port from DesignOps-plugin convention shards.
-3. Each rule returns pass/fail + a one-line diagnostic.
-4. Audit is called from `push.ts` (WO-008) and surfaces results back to the caller.
+1. **`packages/contracts/src/auditReport.v1.ts`** — versioned output contract (`v: 1`, `kind: 'audit-report'`) with `AuditRuleResult`, `AuditReportSummary`, and `AuditReportV1`. Export from `@detroitlabs/figmint-contracts`; regenerate JSON Schema via WO-003 wiring.
+2. **`src/core/audit/runAudit.ts`** — `runAudit('variables', { canonical, pushResult, figmaCollections })` returns `AuditReportV1`. Sprint 2 implements `variables` scope only; `canvas` / `component` throw until later sprints.
+3. **`src/core/audit/readFigmaVariableState.ts`** — main-thread Plugin API read → normalized `FigmaCollectionSnapshot[]` (mode IDs mapped to mode names). Rules consume snapshots, not live Figma handles.
+4. **Rule engine** — one module per rule under `src/core/audit/rules/` (pure functions). Port Sprint 2 rules from `14-audit.md` Variables & codeSyntax section + WO-055 canonical integrity checks (see research rule catalog — 16 rules).
+5. **`resolveTokens()` integration** — import from `src/core/variables/resolveTokens.ts` (WO-008) for alias-graph and literal value-equality rules only; do not re-implement alias walking.
+6. **Push hook** — WO-008 `push.ts` calls audit synchronously after commit; returns `{ ...PushResult, audit: AuditReportV1 }`. Callers bubble failures via `audit.passed === false` (push `errors[]` stays operational-only).
+7. **Summary fields** — `AuditReportSummary` includes `variablesCreated/Updated/Skipped`, `modeCoverage` per collection, and `codeSyntaxCoverage` per platform (`WEB` / `ANDROID` / `iOS`).
 
 ### Visual / UX
 
-_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
+_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket (WO-015 reads `audit` JSON)._
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
-  - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/14-audit.md` — audit checklist + rule set to port as code
-  - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/conventions/06-audit-checklist.md` — component-scaffold audit rules (reused in Sprint 5)
-- **Dependencies:** WO-008
+  - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/14-audit.md` — Variables & codeSyntax bullets only (Sprint 2); canvas rules defer to Sprint 3
+  - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md` — iOS dot-segment format rule
+  - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/conventions/06-audit-checklist.md` — component-scaffold audit rules (Sprint 5)
+- **Not the same as drift:** `driftReport.v1.ts` is 3-way Figma ↔ repo diff; audit validates post-operation correctness vs canonical input.
+- **Dependencies:** WO-008 (push hook + `resolveTokens`), WO-055 (canonical `TokensV1` shape), WO-009 (shared codeSyntax derivation for match rules)
 
 ---
 
 ## Acceptance criteria _(definition of done)_
 
-- [ ] After a variable push, audit returns at minimum: total variables created/updated, mode coverage per collection, codeSyntax coverage per platform.
-- [ ] A simulated rule failure (e.g. missing mode value) shows up as FAIL with diagnostic.
-- [ ] Audit output serializes via the standard JSON+Markdown formatter (Sprint 4 WO-019).
+- [ ] After a variable push, `AuditReportV1.summary` reports variables created/updated/skipped, mode coverage per collection, and codeSyntax coverage per platform.
+- [ ] A simulated rule failure (fixture: canonical token missing a mode value) produces `audit.passed === false` with `var/mode-value-present` FAIL and a one-line diagnostic naming the mode.
+- [ ] Sprint 2 ships JSON serialization of `AuditReportV1` only; GFM markdown rendering deferred to WO-019 (add WO-010 as dependency when planning WO-019).
+- [ ] Vitest unit tests cover rule logic with fixture JSON (no live Figma in CI).
 - [ ] `tsc --noEmit` clean.
 
 ## Out of scope
@@ -60,6 +66,7 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 - Component-scaffold audit (Sprint 5 WO-022..WO-027 reuses this engine).
 - Canvas audit (Sprint 3 reuses this).
 - Realtime audit while building — runs only at the end of an operation.
+- GFM markdown formatter (Sprint 4 WO-019).
 
 ---
 
@@ -67,7 +74,7 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 ### Functional QA
 
-- Vitest unit + integration tests cover the acceptance criteria above.
+- Vitest unit tests cover the acceptance criteria above (`tests/fixtures/audit/`, `tests/unit/audit/`).
 
 ### Visual / design QA
 
@@ -91,12 +98,12 @@ N/A — no Figma artifact (subsystem ticket)
 
 ## 🔍 Ready for `/research`
 
-- Optional, time-boxed.
+- ✅ Complete — see [Post-push audit rules](research/post-push-audit-rules.md).
 
 ## 📋 Ready for `/plan`
 
-- Dependencies: WO-008.
-- `plan.md` should lock implementation details before `/build`.
+- Dependencies: WO-008, WO-055, WO-009 (codeSyntax derivation for match rules).
+- `plan.md` should lock rule module list, contract shape, and push integration before `/build`.
 
 ## 🛠️ Ready for `/build`
 
@@ -105,6 +112,7 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.1 FR-BOOT-8
+- [Post-push audit rules](research/post-push-audit-rules.md)
 - Lift reference:
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/14-audit.md` — audit checklist + rule set to port as code
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/conventions/06-audit-checklist.md` — component-scaffold audit rules (reused in Sprint 5)

@@ -40,6 +40,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Test
+        run: npm test
+
       - name: Build contracts
         run: npm run build --workspace=@detroitlabs/figmint-contracts
 
