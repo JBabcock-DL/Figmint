@@ -1,0 +1,8 @@
+dist
+build
+node_modules
+coverage
+*.min.js
+manifest.*.json
+packages/*/dist
+packages/contracts/dist/*.schema.json

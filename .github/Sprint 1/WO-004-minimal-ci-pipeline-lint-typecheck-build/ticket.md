@@ -29,7 +29,7 @@ A lightweight ESLint + Prettier + `tsc --noEmit` + dual `npm run build` workflow
 - [ ] As a developer, a `prettier --check` failure fails the workflow.
 - [ ] As a reviewer, the CI status badge tells me at-a-glance whether to start review.
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 **N/A — no Figma artifact (CI / infra ticket).**
 
@@ -39,18 +39,20 @@ A lightweight ESLint + Prettier + `tsc --noEmit` + dual `npm run build` workflow
 
 ### Functional
 
-1. ESLint config (`.eslintrc.cjs` or flat config `eslint.config.mjs`) covers `src/` and `packages/`.
-2. Prettier config (`.prettierrc`) defines formatting (2-space indent, single-quote, trailing comma, etc. — confirm exact rules during `/plan`).
-3. `.github/workflows/ci.yml` runs on `pull_request` against `main` with these steps:
-   - Checkout
-   - Setup Node 20+
-   - `npm ci`
+1. **Flat ESLint config (`eslint.config.mjs`)** covers `src/` and `packages/`. Uses `defineConfig()` from `eslint/config` with `@eslint/js` recommended, `typescript-eslint` `strictTypeChecked` + `stylisticTypeChecked` (typed linting via `projectService: true`), `eslint-plugin-react-hooks` flat `recommended` for `src/ui/**`, `eslint-plugin-import-x` for module hygiene, and `eslint-config-prettier/flat` last. Legacy `.eslintrc.*` is **not** an option — ESLint 10 (Feb 2026) removed legacy config support and ESLint 9 EOL is 2026-08-06. See [research/eslint-and-ci-config.md](research/eslint-and-ci-config.md).
+2. Prettier config (`.prettierrc.json`) defines formatting: `singleQuote: true`, `trailingComma: "all"`, `printWidth: 100`, `tabWidth: 2`, `semi: true`, `arrowParens: "always"`, `endOfLine: "lf"`. Companion `.prettierignore` covers `dist`, `build`, `node_modules`, `coverage`, `*.min.js`, `manifest.*.json`. Exact final values may be reconfirmed during `/plan`.
+3. `.github/workflows/ci.yml` runs on `pull_request` and `push` against `main` with these steps (paste-ready skeleton in [research/eslint-and-ci-config.md](research/eslint-and-ci-config.md)):
+   - `actions/checkout@v6`
+   - `actions/setup-node@v6` with `node-version: '24'` and `cache: 'npm'`
+   - `npm ci --no-audit --no-fund`
    - `npm run lint`
+   - `npm run prettier:check`
    - `npm run typecheck` (`tsc --noEmit`)
    - `npm run build:community`
    - `npm run build:org`
-4. Workflow uses GitHub-hosted ubuntu-latest runner.
-5. `package.json` exposes the four scripts above (`lint`, `typecheck`, `build:community`, `build:org`).
+4. Workflow uses GitHub-hosted `ubuntu-latest` runner.
+5. `package.json` exposes the scripts: `lint`, `lint:fix`, `prettier:check`, `prettier:write`, `typecheck`. (`build:community`, `build:org`, `dev` remain WO-002's responsibility.) Also adds top-level `"packageManager": "npm@<pin>"` so `setup-node@v6` auto-caches `~/.npm`.
+6. Workflow declares `concurrency.group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}` with `cancel-in-progress: ${{ github.event_name == 'pull_request' }}` — PR pushes cancel stale runs; `main` runs are never cancelled.
 
 ### Visual / UX
 
@@ -59,14 +61,14 @@ A lightweight ESLint + Prettier + `tsc --noEmit` + dual `npm run build` workflow
 ### Technical / architectural
 
 - **Lift reference (steal patterns):**
-  - `DesignOps-plugin/package.json` `verify` / `qa:*` script naming pattern (e.g. `qa:assemble-component-code`) — adapt naming for figmint contexts where similar QA scripts emerge in Sprint 2+
-  - `DesignOps-plugin` existing ESLint/Prettier rules — port what survives, drop MCP-specific lint patterns (no more `use_figma` payload checks)
-- Workflow concurrency: cancel in-progress runs on the same branch when a new push lands.
-- Cache `~/.npm` between runs for faster CI.
+  - `DesignOps-plugin/package.json` colon-namespaced script convention (e.g. `build:docs:check`, `qa:assembled-size`) — adopt the colon style for Figmint scripts where QA / verify variants emerge in Sprint 2+.
+  - ~~`DesignOps-plugin` existing ESLint/Prettier rules~~ — **none exist in the legacy repo** (confirmed by research 2026-05-27). Toolchain is designed fresh on 2026-current versions.
+- Workflow concurrency: cancel in-progress runs on the same branch when a new push lands (pattern locked in research doc).
+- Cache `~/.npm` between runs for faster CI — accomplished by setting `packageManager` in `package.json` so `setup-node@v6` auto-caches (no explicit `actions/cache@v4` step needed).
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
 - [ ] `.github/workflows/ci.yml` exists and is syntactically valid (`gh workflow view` returns it).
 - [ ] A trivial PR runs the workflow end-to-end and goes green.
@@ -115,12 +117,17 @@ A lightweight ESLint + Prettier + `tsc --noEmit` + dual `npm run build` workflow
 
 ## 🔍 Ready for `/research`
 
-- Optional: flat ESLint config (`eslint.config.mjs`) vs legacy `.eslintrc.cjs` — pick during `/plan`.
+- [x] ESLint flat config + GHA workflow patterns locked — see [eslint-and-ci-config.md](research/eslint-and-ci-config.md).
 
 ## 📋 Ready for `/plan`
 
-- Dependencies: WO-002 (needs `npm run build:community` / `build:org` scripts to exist), WO-003 (typecheck must include the contracts workspace).
-- `plan.md` should lock the exact lint rule set and workflow.yml structure.
+- Dependencies: WO-002 (needs `npm run build:community` / `build:org` scripts to exist + `package.json` / `tsconfig.json` foundations), WO-003 (typecheck must include the contracts workspace; lint resolver must find `packages/*/tsconfig.json`).
+- `plan.md` should:
+  - Lock the project-specific rule overrides (no-LLM-import block, no-default-export Y/N, type-import enforcement Y/N — see Open Questions in research doc).
+  - Resolve the **Node 20 EOL issue** flagged in research: bump `engines.node` to `>=22` (or `>=24`) and align with PRD §11.5 + WO-002 Functional #1 (currently both say "Node 20+"). Node 20 reached EOL on 2026-04-30.
+  - Pin exact `packageManager` version (e.g. `npm@10.9.0`) once the dev machine's Node 24 LTS image is confirmed.
+  - Decide whether `npm run lint` aggregates ESLint + Prettier or stays ESLint-only with `prettier:check` as a separate CI step.
+  - Decide whether to add a follow-up note about enabling `Require status checks` branch protection on `main` (CI alone does not block merges).
 
 ## 🛠️ Ready for `/build`
 
@@ -128,6 +135,7 @@ A lightweight ESLint + Prettier + `tsc --noEmit` + dual `npm run build` workflow
 
 ## References
 
-- PRD: `Docs/PRD.md` §11.5
-- Lift reference: `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/package.json` (scripts), repo-root ESLint/Prettier configs
+- PRD: `Docs/PRD.md` §11.5 (Compatibility / Node 20+ / TS strict) — **flag:** Node 20 EOL 2026-04-30; research recommends bumping to Node 22+ (LTS maintenance) or Node 24 (LTS active).
+- Research: [`research/eslint-and-ci-config.md`](research/eslint-and-ci-config.md) — paste-ready `eslint.config.mjs`, `.prettierrc.json`, and `.github/workflows/ci.yml` skeletons + pinned-versions table (May 2026).
+- Lift reference: `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/package.json` (script naming convention — colon-namespaced like `build:docs:check`, `qa:assembled-size`; **no ESLint / Prettier / TS / CI configs present in legacy repo** — toolchain is designed fresh).
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
