@@ -1,41 +1,97 @@
-# WO-005 — plan.md (stub)
-
-> Stub — fill before `/build` runs. Reference `ticket.md` for full scope.
+# Plan — WO-005: Phase 0 spike — variable push + EVC validation + latency benchmark
 
 ## Approach
 
-*To be filled during `/plan`.*
+Build one throwaway spike plugin on a `spike/phase-0` branch off `main` (the single locked exception to the repo's `main` git strategy) that lands the three Phase 0 deliverables from `ticket.md`: (1) a Plugin-API-only variable push for the **Primitives** collection from pasted **W3C DTCG** JSON, (2) live verification of the EVC `extend()` plan gate against a Pro/Org-tier sandbox (inheritance / override / revert tests stay marked **untested on this plan** with rationale), and (3) a latency benchmark across **10 / 100 / 400** variable inputs that proves whether PRD §14 G1 (<30s full bootstrap) is viable. The implementation lifts from `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` (corrected source per `Docs/lift-sources.md` §0 — NOT `step-15a-primitives.mcp.js`), drops the legacy two-layer (Plugin API + REST) split because that was an MCP payload-budget artifact, and applies `codeSyntax` exclusively through `figma.variables.setVariableCodeSyntax`. All findings land in the three existing `research/*.md` files (PENDING slots) plus a new `research/spike-execution-log.md`; helper scripts get copied into `.github/Sprint 1/WO-005-…/scripts/`; the `spike/phase-0` branch is **not** merged to `main` — Sprint 2 (WO-007/008/009) reimplements canonical variable code under `src/core/variables/` from scratch.
 
-Recommended skeleton:
+## Steps
 
-1. Strip MCP wrapper from `step-15a-primitives.mcp.js` → distill to plain Plugin API code.
-2. Drop into a `spike/` directory in the plugin scaffold (WO-002 product).
-3. Wire up paste UI → push → instrumented latency capture.
-4. Run EVC verification script as a separate plugin run; record findings.
-5. Capture baseline MCP latency from DesignOps-plugin (separate session or committed logs).
-6. Write three research docs.
-
-## Tasks
-
-1. *TBD*
+- [ ] Step 1 — Pre-flight: confirm WO-002 plugin scaffold is in place (`npm run build:community` produces a valid bundle); create branch `spike/phase-0` off `main` (`git checkout -b spike/phase-0`); **sandbox Figma file is locked — use [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox?node-id=0-1) (`file_key=cVdPraIafWFBRZnzMPhtrW`, page `node_id=0:1`, Pro/Org tier per user decision 2026-05-27)**; read `research/spike-runbook.md` §0 and `phases/04-step11-push.md` for the lifted push sequence shape.
+- [ ] Step 2 — Build a minimal spike UI: single `<textarea>` for pasted W3C DTCG JSON + a **Push** button + an **EVC Tests** button + a result-summary `<pre>` block. UI thread lives at `src/ui/App.tsx`; plugin sandbox thread at `src/main.ts` listens for `figma.ui.onmessage` with a typed message (`{ kind: 'push' | 'evc-tests', tokensJson?: string }`) and parses the JSON inside the sandbox. No design polish; no contracts package wire-up (Sprint 2 owns adapters).
+- [ ] Step 3 — Implement variable push (Primitives only): in `src/main.ts`, call `figma.variables.createVariableCollection('Primitives')`, rename the default mode to `Default` (per ticket Step 3 scope — single mode for the 10/100/400 latency runs; the runbook's two-mode `Light/Dark` shape is reserved for the smoke fixture only). For each parsed token, `figma.variables.createVariable(name, collection, 'COLOR')`, then `setValueForMode(modeId, { r, g, b, a })` after hex→`{r,g,b,a}` 0–1 normalization (helper composed from `research/spike-runbook.md` §1.2), then `setVariableCodeSyntax('WEB', …)` / `setVariableCodeSyntax('ANDROID', …)` / `setVariableCodeSyntax('iOS', …)` from each token's `$extensions.figmint.codeSyntax`. Single `figma.commitUndo()` at the end of the batch — never per-variable.
+- [ ] Step 4 — Add timing instrumentation per `research/latency-benchmark.md` §5.2: wrap the push in `performance.now()` markers and emit a `BenchRecord` (`parseMs`, `collectionMs`, `createMs`, `valuesMs`, `codeSyntaxMs`, `commitMs`, `totalMs`). Report the breakdown in the UI result-summary block and `console.log` it inside the sandbox. Keep `console.log` outside the timed region; cap UI progress messages to ≤ 5 per push.
+- [ ] Step 5 — Smoke test push: paste the 10-variable W3C DTCG sample from `research/spike-runbook.md` §1.1 (two-mode `Light/Dark` shape) → click **Push** → confirm in the Figma variables panel that the `Primitives` collection appears with `Default` mode (or `Light`/`Dark` if the smoke fixture is used) and the variable count matches → spot-check `codeSyntax` per platform on ≥ 1 variable. **Capture a screenshot and the sandbox file's `file_key` + `node_id` for `research/spike-execution-log.md`.**
+- [ ] Step 6 — EVC Test 1 (plan-gate verification — IN-SCOPE for Pro/Org): create a parent collection (`figma.variables.createVariableCollection('Spike Theme Parent')`); attempt `parent.extend('Spike Theme Brand A')`; expect a throw containing `"enterprise plan"`. Wrap in `try { … } catch (e) { … }` and record the **exact** thrown error message verbatim. **PASS** = throw observed with the expected text (this confirms the plan gate behaves as documented and validates the runtime probe pattern Sprint 2 needs for OQ-8).
+- [ ] Step 7 — EVC Tests 2–4 (inheritance + override + revert — **MARK AS "untested on this plan"** with rationale "Pro/Org tier; requires Enterprise sandbox per user decision 2026-05-27"). The full Plugin API sequences are pre-composed in `research/extended-collections.md` §3 — do not run them, but record the rationale verbatim in each Test 2/3/4 PASS/FAIL slot and copy the sequences into a placeholder follow-up note (parked under `research/spike-execution-log.md` §"Enterprise follow-up — UNTESTED-ON-PLAN scope" for a future Enterprise-tier ticket).
+- [ ] Step 8 — Latency benchmark: generate three W3C DTCG fixtures under `scripts/fixtures/` — `spike-10.json` (10 color vars, single mode), `spike-100.json` (100), and `spike-400.json` (400). For each size, follow `research/latency-benchmark.md` §5.4 run hygiene: open a fresh empty Figma file, paste the fixture, click **Push**, record the printed `BenchRecord`, close-without-save, repeat **3 times**, report `min / median / max`. If a single sample is > 2× the median, repeat that size (likely a GC pause, not a real signal).
+- [ ] Step 9 — Update `research/latency-benchmark.md` PENDING cells with measurements: §6.1 (per-run + median), §6.2 (phase breakdown for the median run of each size), §6.4 final comparison table. Recompute the `Speedup` column as `(midpoint of MCP extrapolated range) / (plugin-sandbox median)` per size; do NOT alter the §1 / §3 baseline extrapolation prose.
+- [ ] Step 10 — Update `research/extended-collections.md` §3 PASS/FAIL slots: Test 1 = **PASS** (or document the actual throw behavior + verbatim error message if it deviates from the documented `"in extend: Cannot create extended collections outside of enterprise plan."`); Tests 2–4 = **UNTESTED-ON-PLAN** with the captured rationale from Step 7. Do NOT modify §1 / §2 / §4 / §5 / §6 of the research file — those are locked.
+- [ ] Step 11 — Write `research/spike-execution-log.md` capturing: branch hash (`git rev-parse spike/phase-0`), sandbox Figma file URL + `file_key`, screenshots from Step 5, exact ISO timestamps per latency run, any unexpected errors, the verbatim Test 1 throw, and the "Enterprise follow-up — UNTESTED-ON-PLAN scope" parking lot from Step 7.
+- [ ] Step 12 — Phase 0 exit-criteria assessment: per `research/latency-benchmark.md` §6.5 rule of thumb against the 400-var median — `<6 s` → "comfortable headroom"; `6–15 s` → "tight but plausible, escalate per-collection measurement to Sprint 2"; `>15 s` → "G1 at risk, halt Sprint 2 architecture commit". Document an explicit **YES** / **NO** for G1 viability in `research/spike-execution-log.md` with the median number that drove the verdict.
+- [ ] Step 13 — Confirm the CTX-002 working assumption from `research/extended-collections.md` §2.4: does the spike's behavior (Test 1 plan-gate throw + canonical 5-collection push working on a non-Enterprise file) align with "canonical token model stays plan-agnostic, EVC = optional render-time projector"? If YES, mark CTX-002 ready for promotion in `research/spike-execution-log.md`. If NO, document the schema change CTX-002 needs (and surface as a blocker for Sprint 2).
+- [ ] Step 14 — Cleanup: copy any helper scripts written during Steps 3, 4, 8 (hex normalizer, fixture generator, bench harness) from `src/` into `.github/Sprint 1/WO-005-…/scripts/` for posterity. Confirm `spike/phase-0` branch is **NOT** merged to `main`; optionally `git push -u origin spike/phase-0` for remote backup only after asking the user (do NOT push silently — per `research/spike-runbook.md` §6.4). Add one new "Do not repeat" entry to `memory.md` if the spike surfaced a new platform gotcha (e.g. "EVC plan probe must wrap `extend()` in try/catch — Figma exposes no `figma.plan`").
+- [ ] Step 15 — Fill the **Figma VQA Checklist** in `ticket.md` with the actual `file_key`, `node_id`, deep link, frame / scope ("Spike sandbox file — Primitives collection"), and captured-at ISO timestamp. The 28-row assertion table stays as **N/A — spike ticket; variable-push correctness verified via `research/` outputs** per the existing ticket text.
 
 ## Build Agents
 
-*Required section for `/build` orchestration — define parallel phases before invoking `/build`.*
+### Phase 1 (sequential, single domain — spike code is monolithic)
 
-### Phase 1
+- `code-build` — Steps 1–4: branch setup, spike UI (`src/ui/App.tsx`), plugin sandbox handler (`src/main.ts`), Primitives variable-push implementation, `performance.now()` timing instrumentation.
 
-- *TBD — likely a single `/code-build` for the spike + `/doc-build` for research outputs in parallel.*
+### Phase 2 (sequential, after Phase 1 — execution)
 
-## Open questions
+- `code-build` — Steps 5–8: smoke-test push against the sandbox file, EVC Test 1 plan-gate verification, EVC Tests 2–4 mark-as-untested-on-plan with rationale capture, latency benchmark runs across 10 / 100 / 400 fixtures (3 runs each). All require the Phase 1 spike code to exist and be loadable in Figma.
 
-- Which Figma sandbox file should the spike target? (Designer to provide a fresh test file URL during `/plan`.)
-- Should the spike's latency capture be automated or manual stopwatch? (Console.time recommended.)
-- Where does the MCP baseline come from — fresh DesignOps-plugin session or existing logs?
+### Phase 3 (parallel, after Phase 2 — documentation + closeout)
 
-## References
+- `doc-build` — Steps 9, 10, 11: populate `research/latency-benchmark.md` §6 PENDING cells, populate `research/extended-collections.md` §3 PASS/FAIL slots, author `research/spike-execution-log.md`.
+- `code-build` — Steps 12, 13, 14, 15: exit-criteria assessment, CTX-002 confirmation, cleanup (copy helper scripts into `scripts/`; leave `spike/phase-0` dangling; optional remote backup only after user OK), ticket VQA checklist fill.
 
-- Ticket: `./ticket.md`
-- PRD anchors: `Docs/PRD.md` §12 (Phase 0), §6.1 FR-BOOT-3..6, §14 (G1), §16 OQ-1 / OQ-2
-- **Critical lift source:** `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/canvas-templates/bundles/step-15a-primitives.mcp.js`
+## Dependencies & Tools
+
+- **Hard dependency:** WO-002 (plugin scaffold) MUST be built and loadable before Step 1 — the spike code lives inside the scaffold's `src/` tree.
+- **Figma desktop app** with an account that has access to the locked **Pro/Org-tier** sandbox file: [**Plugin Sandbox**](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox?node-id=0-1) — `file_key=cVdPraIafWFBRZnzMPhtrW`, root page `node_id=0:1` (Enterprise NOT required and NOT used — locked decision; EVC inheritance/override tests stay UNTESTED-ON-PLAN).
+- **Figma Plugin API only** — no MCPs (no `use_figma`), no external APIs, no REST hops. `codeSyntax` flows through `figma.variables.setVariableCodeSyntax` in the Plugin API, NOT through the legacy REST `PUT /v1/files/.../variables` path (that path is an MCP payload-budget artifact per `Docs/lift-sources.md` §0 and stays dead inside Figmint).
+- **Throwaway branch** `spike/phase-0` — the ONE locked exception to the repo's default `main` git strategy. Build agents create the branch, do all spike work on it, do NOT merge to `main`, and copy artifacts that should survive into the ticket folder (`research/`, `scripts/`).
+- **Input format:** W3C DTCG only (`$value` / `$type` keys, plus `$extensions.figmint.{modes,codeSyntax}` per the spike-runbook §1.1 shape). The legacy `DesignOps-plugin` token-shape adapter is Sprint 2 (WO-007).
+- **Lift sources** (read-only — do NOT copy line-by-line; lift the _shape_ of the call sequence):
+  - **Primary:** `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` (Plugin API mode setup + `setValueForMode` + value normalization rules).
+  - `DesignOps-plugin/skills/create-design-system/phases/02-steps5-9.md` (per-collection variable lists — for shape reference only; spike scope is Primitives).
+  - `DesignOps-plugin/skills/create-design-system/conventions/01-collections.md` (5-collection structure).
+  - `DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md` (per-platform codeSyntax mapping).
+  - `DesignOps-plugin/skills/create-design-system/data/theme-aliases.json` (theme alias data — not used in spike scope; cited for Sprint 2 continuity).
+  - **DO NOT lift from** `canvas-templates/bundles/step-15a-primitives.mcp.js` — it is a canvas-table builder that reads existing variables, NOT a push engine (`Docs/lift-sources.md` §0).
+
+## Open Questions
+
+- **OQ-1 (existing, escalated to PRD OQ-8):** Is there a cleaner Figma plan-detection API than catching `VariableCollection.extend()`'s throw? **Resolution path:** file with Figma developer support during Sprint 2; until answered, gate EVC features behind a one-time `try { collection.extend('probe'); } catch { /* non-Enterprise */ }` probe whose boolean result is persisted in `clientStorage` per file (per PRD §16 OQ-8).
+- **OQ-2 (existing):** Chained-extension behavior — does `extension.extend(name)` produce a third-level EVC with `rootVariableCollectionId` resolving to the original parent? **Resolution path:** UNTESTED on this plan (Pro/Org sandbox; requires Enterprise seat); flag for Enterprise follow-up ticket (parked under `research/spike-execution-log.md` §"Enterprise follow-up" per Step 7).
+- **OQ-3 (existing):** Cross-collection alias resolution across EVC extensions — if Theme aliases into Primitives and Theme is extended, does `valuesByModeForCollectionAsync(extension)` resolve the alias correctly? **Resolution path:** UNTESTED on this plan; same Enterprise follow-up bucket as OQ-2.
+- **OQ-4 (new):** If Step 12 finds G1 (<30s full bootstrap) at risk based on extrapolated 5-collection numbers (Primitives + Theme + Typography + Layout + Effects, with Typography's 8 modes × ~135 vars dominating), what's the recovery path? **Resolution path:** Sprint 2 architecture review — likely candidates are progressive disclosure (collection-at-a-time UI), `Promise.all`-batching the `setVariableCodeSyntax` calls (currently the dominant cost per `research/latency-benchmark.md` §3.2), or deferring Typography to a second push wave.
+- **OQ-5 (new):** Should the helper scripts captured in `scripts/` during Step 14 (hex normalizer, fixture generator, bench harness) be promoted to actual lift-source pointers for Sprint 2's `src/core/variables/`, or stay strictly as throwaway spike artifacts? **Resolution path:** Sprint 2 planning — decide alongside WO-007/008/009 plan.md authoring.
+
+## Notes
+
+### Locked decisions (honored by every step above)
+
+- **Spike sandbox plan: Pro/Org tier (NOT Enterprise)** — user decision 2026-05-27 captured in `memory.md`. EVC inheritance/override/revert tests (`research/extended-collections.md` §3 Tests 2–4) stay marked **untested on this plan** with rationale captured verbatim. The `collection.extend()` throw verification (Test 1) IS still in scope and counts as a **PASS** because it confirms the plan-gate works exactly as the Figma docs and `research/extended-collections.md` §1.3 describe.
+- **EVC API names** (correction from earlier ticket draft and PRD §15 risk-row): `collection.extend(name)`, `extension.variableOverrides`, `extension.rootVariableCollectionId`, `variable.removeOverrideForMode(extendedModeId)`, `extension.removeOverridesForVariable(variableId)`. **`removeVariableValueOverride` does NOT exist** — earlier ticket prose has been corrected; build agents must not lift the bad name.
+- **Plugin API for `codeSyntax`** — `figma.variables.setVariableCodeSyntax(platform, value)` per-variable, per-platform. **Do NOT** preserve the legacy two-layer (Plugin API + REST `PUT`) split; that existed solely because MCP `use_figma.code` had a 50 kB payload cap, which the plugin sandbox does not have (`Docs/lift-sources.md` §0; `memory.md` "Do not repeat").
+- **Variable push source of truth:** `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` + `phases/02-steps5-9.md` + `data/theme-aliases.json`. **NOT** `canvas-templates/bundles/step-15a-primitives.mcp.js` — that file is a **canvas-table builder** for the Primitives style-guide page; it reads variables via `ensureLocalVariableMapOnCtx` and binds paints, it does NOT create them (`Docs/lift-sources.md` §0; `memory.md` "Do not repeat").
+- **Spike scope (one collection only):** Primitives. The other four collections (Theme, Typography, Layout, Effects) are Sprint 2 (WO-007 / WO-008 / WO-009). The runbook's `Light`/`Dark` two-mode smoke fixture is Primitives-with-two-modes — not Theme.
+- **Throwaway code:** branch `spike/phase-0` is **NOT** merged to `main`. Findings + helper scripts under `research/` and `scripts/` survive; the `src/` code on the branch does not. Sprint 2's WO-007/008/009 re-implements canonical variable code under `src/core/variables/` from scratch with proper tests, audit hooks, and contract-package wire-up.
+- **Input format:** W3C DTCG only (`$value` / `$type` keys, plus the `$extensions.figmint.{modes,codeSyntax}` envelope from `research/spike-runbook.md` §1.1). Legacy `DesignOps-plugin` Detroit Labs Foundations token-format adapter is Sprint 2 (WO-007).
+- **Latency baseline:** **PENDING** — no committed runtime telemetry exists in `DesignOps-plugin` (verified by `research/latency-benchmark.md` §1.1 grep audit). The MCP baseline is extrapolated from `phases/04-step11-push.md` pre-announce ranges (~48–114s for full bootstrap, ~10–25s for Primitives at ~80 vars). Plugin sandbox measurements happen during BUILD (Phase 2 Step 8 → recorded in Phase 3 Step 9).
+- **Git strategy:** repo default is `main` with uncommitted-changes-for-user-review (`memory.md`, locked 2026-05-27). **Exception:** `spike/phase-0` is throwaway and IS its own branch — locked by `ticket.md` and `research/spike-runbook.md` §0. Build agents create the branch, work on it, do NOT auto-PR, do NOT merge to `main`, and copy persistent artifacts into the ticket folder.
+
+### CTX-002 implication
+
+`research/extended-collections.md` §5 "EVC implication for CTX-002" provides the working assumption that the **canonical token model stays plan-agnostic** and EVC acts as an optional render-time projector emitted only on Enterprise files. This is **tentatively locked** (`memory.md` 2026-05-27 sign-off). Sprint 2 adapter work (WO-007) may proceed under this assumption, but **CTX-002 promotion is subject to spike confirmation** during Step 13 of this WO's BUILD. If the spike's Test 1 throw matches the documented gating behavior and the Pro/Org-tier Primitives push works without EVC, CTX-002 is cleared for promotion; if anything in the spike contradicts the projector model, Step 13 documents the schema change CTX-002 needs and surfaces a blocker for Sprint 2.
+
+### Sprint 2 scheduling note
+
+After this plan + BUILD complete, Sprint 2 _can_ begin in parallel with the residual WO-005 BUILD work if the user wants — but because **CTX-002 confirmation depends on spike findings (Step 13)**, Sprint 2 adapter work (WO-007: token-format adapter; WO-008: push engine; WO-009: codeSyntax) should land **after** CTX-002 is confirmed-promoted. The safer schedule is WO-005 BUILD → Step 13 verdict → CTX-002 promote → Sprint 2 starts.
+
+### References
+
+- Ticket: [`./ticket.md`](./ticket.md)
+- PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-3..6, §11.5 (compatibility), §12 (Phase 0 exit criteria), §13.1 (EVC Enterprise-only — Org build), §14 (G1 latency), §15 (EVC risk row), §16 OQ-1 / OQ-2 / OQ-8
+- Lift-source corrections (READ FIRST): [`Docs/lift-sources.md`](../../../Docs/lift-sources.md) §0
+- Cross-ticket memory + locked decisions: [`memory.md`](../../../memory.md)
+- Workflow / status IDs: [`.github/templates/workflow.md`](../../templates/workflow.md)
+- Research outputs (all locked; do NOT edit §1–§5 / §1–§4 cells — only fill PENDING slots per Steps 9–10):
+  - [`research/extended-collections.md`](research/extended-collections.md)
+  - [`research/latency-benchmark.md`](research/latency-benchmark.md)
+  - [`research/spike-runbook.md`](research/spike-runbook.md)
+- Lift sources (read-only): `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md`, `phases/02-steps5-9.md`, `conventions/01-collections.md`, `conventions/02-codesyntax.md`, `conventions/14-audit.md`
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

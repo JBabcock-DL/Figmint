@@ -2,6 +2,8 @@
 type: work-order
 github_issue: 7
 project_item_id: PVTI_lAHOD9B30s4BY4aYzgt4CLw
+phase: build-complete
+verdict: G1=YES (spike-400 median 606ms ÷ 10× headroom; EVC Test 1 PASS; Tests 2–4 UNTESTED-ON-PLAN)
 ---
 
 ## Goal
@@ -32,11 +34,11 @@ The variable-push sequence is already specified in `DesignOps-plugin/skills/crea
 
 ## User stories
 
-- [ ] As a Sprint 2 lead, I can read `research/extended-collections.md` and know whether the 5-collection theming model is viable as-is or needs adjustment.
-- [ ] As a Sprint 2 lead, I can read `research/latency-benchmark.md` and know whether G1 is realistic.
-- [ ] As a Sprint 2 lead, I can re-run the spike's variable push manually in a fresh Figma file and observe variables appearing.
+- [x] As a Sprint 2 lead, I can read `research/extended-collections.md` and know whether the 5-collection theming model is viable as-is or needs adjustment. _(Confirmed: model viable as-is; EVC = render-time projector on Enterprise; Pro/Org bootstraps work without EVC. CTX-002 ready for promotion.)_
+- [x] As a Sprint 2 lead, I can read `research/latency-benchmark.md` and know whether G1 is realistic. _(Confirmed: G1 = YES with ~10× headroom. Variables = ~3% of G1 budget; Sprint 3 canvas + Sprint 5 components are the new "watch the latency" candidates.)_
+- [x] As a Sprint 2 lead, I can re-run the spike's variable push manually in a fresh Figma file and observe variables appearing. _(Reproducible: load fixture in the UI dropdown → click Push → variables appear in the Variables panel. Procedure recorded in `research/spike-execution-log.md` §1.)_
 
-## Design reference *(when UI work applies)*
+## Design reference _(when UI work applies)_
 
 A spike-grade UI exists (paste textarea + "Push" button). Real `file_key` / `node_id` populated when the spike is run against a Detroit Labs sandbox file (recorded in `research/extended-collections.md`).
 
@@ -55,11 +57,11 @@ A spike-grade UI exists (paste textarea + "Push" button). Real `file_key` / `nod
    - Sets `codeSyntax` per platform via `setVariableCodeSyntax`.
    - Reports completion (count, latency) inline in the UI.
 
-2. **EVC validation:**
-   - Create a parent collection + an extended collection via Plugin API.
+2. **EVC validation** _(Enterprise plan required — `VariableCollection.extend()` throws on lower tiers per [`research/extended-collections.md`](research/extended-collections.md))_:
+   - Create a parent collection + an extended collection via Plugin API (`collection.extend(name)` — Plugin API Update 121, 2025-11-20).
    - Verify: extended collection inherits modes from parent.
    - Verify: extended collection can override individual variable values without breaking the inheritance link.
-   - Verify: a `removeVariableValueOverride` (or equivalent) reverts back to parent value.
+   - Verify: `variable.removeOverrideForMode(extendedModeId)` reverts back to parent value (per-mode revert); `extension.removeOverridesForVariable(variableId)` reverts all overrides for one variable. **API-name correction:** earlier ticket text cited a non-existent `removeVariableValueOverride` — see research file §2 for the real API surface.
    - Document each verification with explicit `PASS` / `FAIL` notes plus the exact API call sequence used.
 
 3. **Latency benchmark:**
@@ -68,10 +70,10 @@ A spike-grade UI exists (paste textarea + "Push" button). Real `file_key` / `nod
    - Output a comparison table:
 
      | Input size | MCP baseline (s) | Plugin sandbox (s) | Speedup |
-     |---|---|---|---|
-     | 10 vars | … | … | …× |
-     | 100 vars | … | … | …× |
-     | 400 vars | … | … | …× |
+     | ---------- | ---------------- | ------------------ | ------- |
+     | 10 vars    | …                | …                  | …×      |
+     | 100 vars   | …                | …                  | …×      |
+     | 400 vars   | …                | …                  | …×      |
 
 ### Visual / UX
 
@@ -93,14 +95,14 @@ A spike-grade UI exists (paste textarea + "Push" button). Real `file_key` / `nod
 
 ---
 
-## Acceptance criteria *(definition of done)*
+## Acceptance criteria _(definition of done)_
 
-- [ ] All three criteria above complete with explicit pass/fail notes recorded in `research/`.
-- [ ] `research/extended-collections.md` exists with EVC verification results.
-- [ ] `research/latency-benchmark.md` exists with the comparison table populated.
-- [ ] Phase 0 exit criteria (PRD §12) met: G1 latency target looks achievable; no platform blockers.
-- [ ] Findings feed CTX-002 (canonical token model) — at minimum, a one-paragraph "EVC implication for token model" note in `research/extended-collections.md`.
-- [ ] Spike branch is **not** merged to `main`; no production code change from this ticket.
+- [x] All three criteria above complete with explicit pass/fail notes recorded in `research/`. _(Variable push: PASS. EVC Test 1: PASS; Tests 2–4: UNTESTED-ON-PLAN with documented rationale. Latency: PASS — G1 = YES.)_
+- [x] `research/extended-collections.md` exists with EVC verification results. _(Test 1 PASS slot populated 2026-05-27; Tests 2–4 marked UNTESTED-ON-PLAN with pre-composed Enterprise follow-up sequences preserved.)_
+- [x] `research/latency-benchmark.md` exists with the comparison table populated. _(§6.1 raw runs, §6.2 phase breakdown, §6.4 final comparison, §6.5 verdict all filled.)_
+- [x] Phase 0 exit criteria (PRD §12) met: G1 latency target looks achievable; no platform blockers. _(spike-400 median = 606 ms; 10% of YES threshold. No platform blockers surfaced — six new gotchas captured as "Do not repeat" entries in `memory.md`, all bandwidth-of-life resolved during build.)_
+- [x] Findings feed CTX-002 (canonical token model) — at minimum, a one-paragraph "EVC implication for token model" note in `research/extended-collections.md`. _(See `research/extended-collections.md` §2.4 — canonical model stays plan-agnostic; EVC = render-time projector. CTX-002 ready for promotion to Sprint 2 WO.)_
+- [x] Spike branch is **not** merged to `main`; no production code change from this ticket. _(Per `Docs/lift-sources.md` §0 and the disposition rule in `research/spike-runbook.md` §6: code under `src/spike/**` and the UI dropdown block in `src/ui/App.tsx` are throwaway; the deliverables are the three populated research docs and the execution log under this ticket folder.)_
 
 ## Out of scope
 
@@ -135,15 +137,15 @@ A spike-grade UI exists (paste textarea + "Push" button). Real `file_key` / `nod
 
 ## Figma VQA Checklist
 
-**Figma source (filled when spike runs):**
+**Figma source (sandbox locked 2026-05-27; per-run timestamps filled when spike executes):**
 
-| Field | Value |
-| --- | --- |
-| `file_key` | `<!-- filled by spike runner against sandbox file -->` |
-| `node_id` | `<!-- filled by spike runner -->` |
-| Figma deep link | `<!-- filled by spike runner -->` |
-| Frame / scope | Spike sandbox file (Primitives collection) |
-| Captured at | `<!-- ISO date -->` |
+| Field           | Value                                                                                          |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| `file_key`      | `cVdPraIafWFBRZnzMPhtrW`                                                                       |
+| `node_id`       | `0:1` (root page; per-run frame `node_id` recorded during execution)                           |
+| Figma deep link | https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox?node-id=0-1                 |
+| Frame / scope   | Spike Sandbox file — Primitives collection (Pro/Org tier; EVC tests 2–4 stay UNTESTED-ON-PLAN) |
+| Captured at     | `<!-- ISO date — filled per spike run -->`                                                     |
 
 Spike acceptance is checked **via research findings**, not via 1:1 UI assertions — populate the 28-row table only if a Sprint 2 follow-up demands it. For this spike, mark the table:
 
@@ -151,21 +153,26 @@ Spike acceptance is checked **via research findings**, not via 1:1 UI assertions
 
 ---
 
-## 🔍 Ready for `/research`
+## 🔍 Research complete (2026-05-27)
 
-- This whole ticket IS the research. Write outputs as you go:
-  - `research/extended-collections.md` — EVC findings + pass/fail per assumption + token-model implications
-  - `research/latency-benchmark.md` — comparison table vs MCP baseline
-  - `research/spike-runbook.md` (optional) — exact reproduction steps for the next person
+This ticket IS the research. The first research pass landed three deliverables; live in-file verification + measurements completed during BUILD on 2026-05-27:
 
-## 📋 Ready for `/plan`
+- [Extended Collections findings + 5-collection model mapping + token-model implication for CTX-002](research/extended-collections.md) — EVC is **Enterprise-only**; canonical token model stays plan-agnostic with EVC as a render-time projector. **Test 1: PASS** (Pro/Org sandbox, 2026-05-27). Tests 2–4: UNTESTED-ON-PLAN with pre-composed Enterprise follow-up sequences preserved.
+- [Latency benchmark methodology + measured results](research/latency-benchmark.md) — **G1 = YES.** spike-400 median = 606 ms vs <6000 ms threshold. Per-call rates at n=400 captured; ~144× speedup against extrapolated MCP baseline; full-bootstrap variable push extrapolates to ~904 ms (~3% of G1 budget).
+- [Spike runbook for the BUILD agent](research/spike-runbook.md) — step-by-step reproducible play-by-play covering branch, Figma file selection, variable push, EVC tests, latency capture, acceptance checklist, throwaway disposition. _Source of truth used by the BUILD pass; no edits made — runbook prescribed the procedure that was followed verbatim._
+- [Spike execution log](research/spike-execution-log.md) — durable record of the 2026-05-27 spike execution; full BenchRecord JSON for every run, phase breakdown, G1 verdict, CTX-002 confirmation, and Enterprise follow-up parking lot.
 
-- Dependencies: WO-002 (plugin scaffold).
-- `plan.md` should enumerate the three deliverables + which Figma file the spike targets.
+## ✅ Build phase complete (2026-05-27)
 
-## 🛠️ Ready for `/build`
+- BUILD pass executed on `spike/phase-0` branch off `main`.
+- All four CI legs green (typecheck, lint, format, dual build).
+- Six new "Do not repeat" entries promoted to `memory.md` (`code.js` ES2017 ceiling, `ui.html` script-placement rule, `String.prototype.replace` `$`-pattern footgun, `performance.now()` unavailable in main thread, `figma.showUI('')` empty-string footgun, slash-vs-dot variable-name grammar).
+- Sprint 2 architecture commitment is unblocked. CTX-002 ready for promotion to a concrete Sprint 2 work order.
 
-- After WO-002: `/code-build` (the spike code itself) + `/figma-build` is **not** applicable here (no canvas authoring beyond variables). `/doc-build` writes `research/*.md`.
+## 🛠️ Ready for `/vqa` and ticket closure
+
+- `/vqa` is **N/A** for this ticket — acceptance is checked via the research deliverables, not a UI assertion grid (see `## Figma VQA Checklist` below).
+- After user confirms the verdict, this ticket can move to Completed. The `spike/phase-0` branch stays unmerged per the disposition rule in `research/spike-runbook.md` §6.
 
 ## References
 
@@ -179,3 +186,6 @@ Spike acceptance is checked **via research findings**, not via 1:1 UI assertions
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/14-audit.md`
   - Secondary (large; inspect-only): `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/canvas-templates/bundles/step-15a-primitives.mcp.js`
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
+- [Extended Collections research](research/extended-collections.md)
+- [Latency benchmark](research/latency-benchmark.md)
+- [Spike runbook](research/spike-runbook.md)
