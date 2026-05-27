@@ -8,7 +8,7 @@ import {
 } from '../constants';
 import type { BodyCellLayoutMode } from '../types';
 import { createHugFrame, reassertHug } from './autoLayout';
-import { bindStrokeToVar } from './bindings';
+import { bindPaintToVar, bindStrokeToVar } from './bindings';
 import { configureTableText } from './textCell';
 
 /**
@@ -18,6 +18,8 @@ export function createHeaderCell(
   colWidth: number,
   labelText: string,
   columnId?: string,
+  mutedTextVar?: Variable | null,
+  codeStyleId?: string | null,
 ): FrameNode {
   const cell = figma.createFrame();
   const cellId =
@@ -37,6 +39,16 @@ export function createHeaderCell(
   const text = figma.createText();
   text.characters = labelText;
   configureTableText(text, colWidth);
+  if (codeStyleId !== null && codeStyleId !== undefined && codeStyleId !== '') {
+    try {
+      text.textStyleId = codeStyleId;
+    } catch {
+      /* style may be missing on scratch files */
+    }
+  }
+  if (mutedTextVar !== null && mutedTextVar !== undefined) {
+    bindPaintToVar(text, mutedTextVar);
+  }
   cell.appendChild(text);
   return cell;
 }

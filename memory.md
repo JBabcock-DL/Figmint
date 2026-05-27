@@ -24,7 +24,7 @@ You **must** do this without the user having to ask:
 - **Project goal (one line):** Native Figma plugin for design system management, component architecture, and design token workflows — a **deterministic context bridge between agents** (zero LLM tokens inside the plugin)
 - **Ticket backend:** `github` — from `workflow.md` **## Ticket Backend** → Backend
 - **Default branch / PR target:** `main`
-- **Current sprint folder:** `.github/Sprint 3/` — WO-011..015 **In Planning** (research + sub-agent-ready `plan.md` with requirement traceability; **1,467 lines** total). Build order: **WO-014 → WO-011 → WO-012/013 (parallel) → WO-015** (Phase 1 bootstrap UI can start before canvas). WO-014 may have partial unverified `src/core/canvas/` from aborted build — reconcile on `/build`.
+- **Current sprint folder:** `.github/Sprint 3/` — **WO-014 Completed** (VQA 2026-05-27). WO-011/012/013/015 back in **In Build** pending Plugin Sandbox manual VQA + bench timings.
 - **Stack / runtimes:** Figma Plugin API, TypeScript strict, **Node 22 LTS** (`engines.node: ">=22.0.0"` — bumped from 20 during Sprint 1 research reconciliation; Node 20 EOL'd 2026-04-30; WO-003's JSON Schema generator + WO-004's ESLint 10 / typescript-eslint v8 both require ≥22), Vite (raw — locked WO-002); React 19 UI shell; planned workspace package `@detroitlabs/figmint-contracts`
 - **This repo is:** Figmint application codebase — native Figma plugin that supersedes the agent-driven `DesignOps-plugin` workflow
 - **PRD (full product spec):** `Docs/PRD.md` (18 sections, ~900 lines — read §6 functional reqs, §8 contracts, §12 phasing, §17 sunset first)
@@ -122,6 +122,8 @@ Sprints 2–11 ticket bodies (WO-006..054) live in `.github/Sprint {N}/`. Bootst
 - **No LLM calls inside the plugin runtime** (PRD G5 / §11.2). This is a plugin-architecture goal, not a hard ban on user inputs — designers may freely paste in JSON / Markdown that they generated via Claude or any other LLM upstream. The constraint is that the plugin itself never consumes LLM tokens on the user's behalf. If a feature seems to need an LLM call from inside the plugin, it belongs in an agent-side skill consuming a Figmint contract document instead.
 - **Always preview, never silent-apply** (PRD §11.4) — any deterministic-uncertainty case requires explicit designer confirmation; record decisions in the audit log.
 - **No third-party network calls beyond GitHub API + Figma Plugin API.** `manifest.networkAccess.allowedDomains` is GitHub-only.
+- **Dev UI stays visible early** (2026-05-27): Bootstrap tab keeps bundled sample-token dropdown, bench helpers, etc. **always on** — do not gate behind `import.meta.env.DEV` or per-build flags until a dedicated pre-release cleanup ticket strips them.
+- **Bootstrap sample tokens:** default dropdown = **`bootstrap-complete`** (`src/core/variables/__fixtures__/bootstrap-complete.v1.json`, regenerate via `node scripts/generate-bootstrap-fixture.mjs`) — **167 tokens across all 5 collections**. **`spike-400`** is push-latency bench only (400 primitive colors). Figma file still needs style-guide **pages** + **Effect/shadow-*** styles for canvas steps (separate from token fixture).
 
 ---
 

@@ -23,23 +23,14 @@ import {
 } from '@/core/canvas/lib/pages';
 import { buildTable, type TableRowDeps } from '@/core/canvas/lib/table';
 import { bindPaintToVar, bindStrokeToVar } from '@/core/canvas/helpers/bindings';
-import { ensureLocalVariableMap, resolveChromeVariables } from '@/core/canvas/lib/variables';
+import { resolveTableChromeVariables } from '@/core/canvas/lib/docChromeVariables';
+import { ensureLocalVariableMap } from '@/core/canvas/lib/variables';
 import { hexToRgb } from '@/core/canvas/lib/colorFormats';
 import {
   projectColorRampsFromTokens,
   projectPrimitiveFloatRows,
   projectPrimitiveStringRows,
 } from '@/core/canvas/projectRows/primitivesRows';
-
-const CHROME_PATHS = [
-  'color/border/subtle',
-  'color/background/default',
-  'color/background/variant',
-  'color/background/content',
-  'color/background/content-muted',
-  'color/neutral/100',
-  'color/primary/200',
-];
 
 const RAMP_DEFAULTS: Record<string, { title: string; caption: string }> = {
   primary: {
@@ -102,7 +93,7 @@ async function buildColorRow(
         rect.cornerRadius = 10;
         rect.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 1 }];
         rect.strokeWeight = 1;
-        const borderVar = variables['color/border/subtle'];
+        const borderVar = variables['doc/preview/swatch-stroke'];
         if (borderVar !== null && borderVar !== undefined) {
           bindStrokeToVar(rect, borderVar);
         }
@@ -255,7 +246,7 @@ async function buildRadiusRow(
         sq.cornerRadius = Math.min(data.resolvedPx || 0, 32);
         sq.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 1 }];
         sq.strokeWeight = 1;
-        const borderVar = variables['color/border/subtle'];
+        const borderVar = variables['doc/preview/swatch-stroke'];
         if (borderVar !== null && borderVar !== undefined) {
           bindStrokeToVar(sq, borderVar);
         }
@@ -421,7 +412,7 @@ export async function buildPrimitivesPage(
 
   await loadFontsForCanvas();
   const variableMap = await ensureLocalVariableMap();
-  const chromeVars = await resolveChromeVariables(CHROME_PATHS, variableMap);
+  const chromeVars = resolveTableChromeVariables(variableMap);
   const docStyles = await resolveDocStyles();
 
   const page = findStyleGuidePage('primitives', target.pageId);

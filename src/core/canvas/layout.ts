@@ -17,7 +17,8 @@ import {
   suspendPageContentAutoLayout,
 } from '@/core/canvas/lib/pages';
 import { buildTable, type TableRowDeps } from '@/core/canvas/lib/table';
-import { ensureLocalVariableMap, resolveChromeVariables } from '@/core/canvas/lib/variables';
+import { resolveTableChromeVariables } from '@/core/canvas/lib/docChromeVariables';
+import { ensureLocalVariableMap } from '@/core/canvas/lib/variables';
 import {
   countLayoutRows,
   resolveLayoutRows,
@@ -25,16 +26,6 @@ import {
 } from '@/core/canvas/resolveLayoutRows';
 import { isRadiusGroupKey, orderLayoutGroupKeys } from '@/core/canvas/resolveShared';
 import type { CanvasBuildContext, CanvasBuildResult } from '@/core/canvas/types';
-
-const CHROME_PATHS = [
-  'color/border/subtle',
-  'color/background/default',
-  'color/background/variant',
-  'color/background/content',
-  'color/background/content-muted',
-  'color/neutral/100',
-  'color/primary/200',
-];
 
 export const LAYOUT_GROUP_META: Record<
   string,
@@ -192,7 +183,7 @@ async function buildLayoutRadiusRow(
         sq.cornerRadius = raw;
         sq.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 1 }];
         sq.strokeWeight = 1;
-        const borderVar = variables['color/border/subtle'];
+        const borderVar = variables['doc/preview/swatch-stroke'];
         if (borderVar !== null && borderVar !== undefined) {
           bindStrokeToVar(sq, borderVar);
         }
@@ -234,7 +225,7 @@ export async function buildLayoutPage(ctx: CanvasBuildContext): Promise<CanvasBu
 
   await loadFontsForCanvas();
   const variableMap = await ensureLocalVariableMap();
-  const chromeVars = await resolveChromeVariables(CHROME_PATHS, variableMap);
+  const chromeVars = resolveTableChromeVariables(variableMap);
   const docStyles = await resolveDocStyles();
 
   const page = findStyleGuidePage('layout', ctx.pageId);

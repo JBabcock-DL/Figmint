@@ -43,7 +43,7 @@ function formatAdaptError(error: FormatError): string {
     message = `${message} (${error.path})`;
   }
   if (message.includes('Unknown top-level DTCG group')) {
-    message = `${message} — Figmint expects either five collection roots (primitives, theme, …) or a generic palette where groups like color live at the top level (wrapped into primitives automatically). Try **Load bench fixture** for a known-good sample.`;
+    message = `${message} — Figmint expects either five collection roots (primitives, theme, …) or a generic palette where groups like color live at the top level (wrapped into primitives automatically). Try **Load sample** for a known-good token file.`;
   }
   return message;
 }
@@ -89,7 +89,7 @@ export function Bootstrap() {
     next: BenchFixtureId,
   ) {
     return next;
-  }, 'foundations-minimal' as BenchFixtureId);
+  }, 'bootstrap-complete' as BenchFixtureId);
 
   const applyLoadedDocument = useCallback(function (doc: LoadedDocument) {
     setLastResult(doc);
@@ -215,8 +215,6 @@ export function Bootstrap() {
 
   const wireFormat = lastResult !== null && 'payload' in lastResult ? lastResult.kind : null;
 
-  const showDevBench = import.meta.env.DEV;
-
   return (
     <>
       <section aria-label="Sources">
@@ -230,35 +228,33 @@ export function Bootstrap() {
         <SourceFilePicker onLoad={handleSourceResult} />
         <SourceDropZone onLoad={handleSourceResult} />
 
-        {showDevBench ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
-            <label style={{ fontSize: '11px' }}>
-              Bench fixture{' '}
-              <select
-                value={benchFixtureId}
-                onChange={function (event) {
-                  setBenchFixtureId(event.target.value as BenchFixtureId);
-                }}
-                style={{ fontSize: '11px' }}
-              >
-                {BENCH_FIXTURE_OPTIONS.map(function (option) {
-                  return (
-                    <option key={option.id} value={option.id}>
-                      {option.label}
-                    </option>
-                  );
-                })}
-              </select>
-            </label>
-            <button
-              type="button"
-              onClick={handleLoadBenchFixture}
-              style={{ fontSize: '11px', padding: '4px 8px' }}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
+          <label style={{ fontSize: '11px' }}>
+            Sample tokens{' '}
+            <select
+              value={benchFixtureId}
+              onChange={function (event) {
+                setBenchFixtureId(event.target.value as BenchFixtureId);
+              }}
+              style={{ fontSize: '11px' }}
             >
-              Load bench fixture
-            </button>
-          </div>
-        ) : null}
+              {BENCH_FIXTURE_OPTIONS.map(function (option) {
+                return (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
+          <button
+            type="button"
+            onClick={handleLoadBenchFixture}
+            style={{ fontSize: '11px', padding: '4px 8px' }}
+          >
+            Load sample
+          </button>
+        </div>
 
         {lastResult ? (
           <p

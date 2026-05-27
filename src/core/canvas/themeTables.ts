@@ -17,20 +17,13 @@ import {
   suspendPageContentAutoLayout,
 } from '@/core/canvas/lib/pages';
 import { buildTable, type TableRowDeps } from '@/core/canvas/lib/table';
-import { ensureLocalVariableMap, resolveChromeVariables } from '@/core/canvas/lib/variables';
+import { resolveTableChromeVariables } from '@/core/canvas/lib/docChromeVariables';
+import { ensureLocalVariableMap } from '@/core/canvas/lib/variables';
 import {
   countThemeSwatches,
   projectThemeGroupsFromTokens,
   THEME_GROUP_META,
 } from '@/core/canvas/projectRows/themeRows';
-
-const CHROME_PATHS = [
-  'color/border/subtle',
-  'color/background/default',
-  'color/background/variant',
-  'color/background/content',
-  'color/background/content-muted',
-];
 
 export interface ThemeCollectionIds {
   themeCollectionId: string;
@@ -234,7 +227,7 @@ export async function buildThemePage(
 
   await loadFontsForCanvas();
   const variableMap = await ensureLocalVariableMap();
-  const chromeVars = await resolveChromeVariables(CHROME_PATHS, variableMap);
+  const chromeVars = resolveTableChromeVariables(variableMap);
   const docStyles = await resolveDocStyles();
   const themeIds = await resolveThemeCollectionIds();
 

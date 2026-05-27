@@ -2,6 +2,7 @@
 
 import type { AuditReportV1, TokensV1 } from '@detroitlabs/figmint-contracts';
 
+import { ensureStyleGuideScaffold } from '@/core/bootstrap/ensureStyleGuideScaffold';
 import { runAudit } from '@/core/audit/runAudit';
 import { buildEffectsPage } from '@/core/canvas/effects';
 import { buildPrimitivesPage } from '@/core/canvas/colorTables';
@@ -14,6 +15,7 @@ import { buildTokenOverviewPage } from '@/core/canvas/tokenOverview';
 import type { CanvasBuildContext } from '@/core/canvas/types';
 import { pluginLog } from '@/core/pluginLog';
 import { pushTokens } from '@/core/variables';
+import { publishDocumentationChrome } from '@/core/variables/documentationChrome';
 import type { PushResult } from '@/core/variables/types';
 import {
   getBootstrapStepLabel,
@@ -141,6 +143,7 @@ async function runCanvasStep(
 
 function skipCanvasSteps(skipDetail: string): void {
   const canvasStepIds: BootstrapStepId[] = [
+    'prepare-style-guide',
     'build-primitives',
     'build-theme',
     'build-typography',
@@ -221,6 +224,14 @@ export async function runBootstrap(
   postProgress('publish-typography', 'running');
   const typographyStarted = Date.now();
   try {
+    await publishDocumentationChrome();
+    pluginLog('[bootstrap] publish-documentation-chrome done');
+  } catch (error) {
+    const message = extractErrorMessage(error);
+    pluginLog('[bootstrap] publish-documentation-chrome warning', message);
+  }
+
+  try {
     await publishTypographyStyles(tokens);
     postProgress('publish-typography', 'done', { elapsedMs: Date.now() - typographyStarted });
     pluginLog('[bootstrap] publish-typography done');
@@ -236,6 +247,34 @@ export async function runBootstrap(
   if (skipCanvas) {
     skipCanvasSteps(getCanvasSkipDetail());
   } else if (pushResult !== null) {
+    postProgress('prepare-style-guide', 'running');
+    const scaffoldStarted = Date.now();
+    try {
+      const scaffold = await ensureStyleGuideScaffold();
+      const detailParts: string[] = [];
+      if (scaffold.pagesCreated.length > 0) {
+        detailParts.push('Created ' + String(scaffold.pagesCreated.length) + ' page(s)');
+      }
+      if (scaffold.effectStylesPublished.length > 0) {
+        detailParts.push(
+          'Published ' + String(scaffold.effectStylesPublished.length) + ' effect style(s)',
+        );
+      }
+      postProgress('prepare-style-guide', 'done', {
+        elapsedMs: Date.now() - scaffoldStarted,
+        detail: detailParts.length > 0 ? detailParts.join('; ') : undefined,
+      });
+      pluginLog('[bootstrap] prepare-style-guide done', scaffold);
+    } catch (error) {
+      const message = extractErrorMessage(error);
+      canvasErrors.push({ step: 'prepare-style-guide', message: message });
+      postProgress('prepare-style-guide', 'error', {
+        detail: message,
+        elapsedMs: Date.now() - scaffoldStarted,
+      });
+      pluginLog('[bootstrap] prepare-style-guide error', message);
+    }
+
     const ctx: CanvasBuildContext = { tokens: tokens, pushResult: pushResult };
 
     await runCanvasStep(

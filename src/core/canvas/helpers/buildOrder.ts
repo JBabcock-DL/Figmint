@@ -27,28 +27,28 @@ export enum TableBuildStep {
 }
 
 /**
- * §12 table chrome → variable path map (Theme · Light unless noted).
- * Builders resolve paths to `Variable` instances before calling bind helpers.
+ * §12 table chrome → Documentation collection paths (Default mode).
+ * v60 reference: Figma node 401:14. Product-token previews stay on Primitives.
  */
 export const TABLE_CHROME_BINDINGS: Record<
   string,
   { path: string; collection: string; mode?: string }
 > = {
-  tableFill: { path: 'color/background/default', collection: 'Theme', mode: 'Light' },
-  tableStroke: { path: 'color/border/subtle', collection: 'Theme', mode: 'Light' },
+  tableFill: { path: 'doc/table/surface', collection: 'Documentation' },
+  tableStroke: { path: 'doc/table/border', collection: 'Documentation' },
   tableShadow: { path: 'Effect/shadow-sm', collection: 'Effects', mode: 'Light' },
-  headerFill: { path: 'color/background/variant', collection: 'Theme', mode: 'Light' },
-  headerStroke: { path: 'color/border/subtle', collection: 'Theme', mode: 'Light' },
-  headerText: { path: 'color/background/content-muted', collection: 'Theme', mode: 'Light' },
-  rowStroke: { path: 'color/border/subtle', collection: 'Theme', mode: 'Light' },
-  primaryText: { path: 'color/background/content', collection: 'Theme', mode: 'Light' },
-  mutedText: { path: 'color/background/content-muted', collection: 'Theme', mode: 'Light' },
-  swatchStroke: { path: 'color/border/subtle', collection: 'Theme', mode: 'Light' },
+  headerFill: { path: 'doc/table/header-surface', collection: 'Documentation' },
+  headerStroke: { path: 'doc/table/border', collection: 'Documentation' },
+  headerText: { path: 'doc/text/muted', collection: 'Documentation' },
+  rowStroke: { path: 'doc/table/border', collection: 'Documentation' },
+  primaryText: { path: 'doc/text/primary', collection: 'Documentation' },
+  mutedText: { path: 'doc/text/muted', collection: 'Documentation' },
+  swatchStroke: { path: 'doc/preview/swatch-stroke', collection: 'Documentation' },
   radiusPreviewFill: { path: 'color/neutral/100', collection: 'Primitives' },
-  radiusPreviewStroke: { path: 'color/border/subtle', collection: 'Theme', mode: 'Light' },
+  radiusPreviewStroke: { path: 'doc/preview/swatch-stroke', collection: 'Documentation' },
   spacingPreviewFill: { path: 'color/primary/200', collection: 'Primitives' },
-  effectsPreviewFill: { path: 'color/background/default', collection: 'Theme', mode: 'Light' },
-  categoryRowFill: { path: 'color/background/variant', collection: 'Theme', mode: 'Light' },
+  effectsPreviewFill: { path: 'doc/table/surface', collection: 'Documentation' },
+  categoryRowFill: { path: 'doc/table/header-surface', collection: 'Documentation' },
 };
 
 /**

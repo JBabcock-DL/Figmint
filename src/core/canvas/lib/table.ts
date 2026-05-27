@@ -1,6 +1,5 @@
 import { TABLE_WIDTH } from '@/core/canvas/constants';
 import { bindPaintToVar, bindStrokeToVar } from '@/core/canvas/helpers/bindings';
-import { getColumnSpec } from '@/core/canvas/helpers/columnSpec';
 import { shouldApplyTableShadow } from '@/core/canvas/helpers/buildOrder';
 import { reassertHug } from '@/core/canvas/helpers/autoLayout';
 import {
@@ -17,6 +16,7 @@ import {
   makeTableText,
   type DocStyleIds,
 } from '@/core/canvas/lib/cells';
+import { getColumnSpec } from '@/core/canvas/helpers/columnSpec';
 
 const CATEGORY_ROW_HEIGHT = 40;
 
@@ -73,6 +73,22 @@ function rowTokenPath(rowData: unknown): string {
   return 'unknown';
 }
 
+function resolveTableChrome(variables: Record<string, Variable | null>): BuildTableChrome {
+  return {
+    borderVar:
+      variables['doc/table/border'] !== undefined ? variables['doc/table/border'] : null,
+    bgDefault:
+      variables['doc/table/surface'] !== undefined ? variables['doc/table/surface'] : null,
+    bgVariant:
+      variables['doc/table/header-surface'] !== undefined
+        ? variables['doc/table/header-surface']
+        : null,
+    contentVar:
+      variables['doc/text/primary'] !== undefined ? variables['doc/text/primary'] : null,
+    mutedVar: variables['doc/text/muted'] !== undefined ? variables['doc/text/muted'] : null,
+  };
+}
+
 async function appendCategoryRow(
   body: FrameNode,
   label: string,
@@ -99,29 +115,6 @@ async function appendCategoryRow(
   reassertHug(catCell);
   catRow.appendChild(catCell);
   body.appendChild(catRow);
-}
-
-function resolveTableChrome(variables: Record<string, Variable | null>): BuildTableChrome {
-  return {
-    borderVar:
-      variables['color/border/subtle'] !== undefined ? variables['color/border/subtle'] : null,
-    bgDefault:
-      variables['color/background/default'] !== undefined
-        ? variables['color/background/default']
-        : null,
-    bgVariant:
-      variables['color/background/variant'] !== undefined
-        ? variables['color/background/variant']
-        : null,
-    contentVar:
-      variables['color/background/content'] !== undefined
-        ? variables['color/background/content']
-        : null,
-    mutedVar:
-      variables['color/background/content-muted'] !== undefined
-        ? variables['color/background/content-muted']
-        : null,
-  };
 }
 
 /**
@@ -168,7 +161,7 @@ export async function buildTable(
     table.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
   }
 
-  const header = createHeaderRow(table, columns);
+  const header = createHeaderRow(table, columns, chrome.mutedVar, docStyles.Code);
   header.name = 'doc/table/' + manifest.slug + '/header';
   if (chrome.bgVariant !== null) {
     bindPaintToVar(header, chrome.bgVariant);

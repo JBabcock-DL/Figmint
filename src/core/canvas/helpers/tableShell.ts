@@ -34,7 +34,12 @@ export function createTableRoot(slug: string): FrameNode {
 /**
  * §13 step 2 — `header` row + header cells (FIXED/FIXED species).
  */
-export function createHeaderRow(table: FrameNode, columns: ColumnDef[]): FrameNode {
+export function createHeaderRow(
+  table: FrameNode,
+  columns: ColumnDef[],
+  mutedTextVar?: Variable | null,
+  codeStyleId?: string | null,
+): FrameNode {
   const header = figma.createFrame();
   header.name = 'header';
   header.layoutMode = 'HORIZONTAL';
@@ -42,7 +47,7 @@ export function createHeaderRow(table: FrameNode, columns: ColumnDef[]): FrameNo
   header.counterAxisSizingMode = 'FIXED';
   header.resize(TABLE_WIDTH, TABLE_HEADER_HEIGHT);
   for (const col of columns) {
-    const cell = createHeaderCell(col.width, col.id, col.id);
+    const cell = createHeaderCell(col.width, col.id, col.id, mutedTextVar, codeStyleId);
     header.appendChild(cell);
   }
   table.appendChild(header);

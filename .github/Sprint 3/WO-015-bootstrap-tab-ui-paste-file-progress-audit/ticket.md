@@ -98,34 +98,9 @@ Bootstrap tab UI mock — first end-user-visible Figmint surface. Design lives i
 
 ## Figma VQA Checklist
 
-**Figma source (filled before `/vqa` runs):**
+**N/A — no Figma artifact (plugin UI iframe; no separate design file assigned).** Functional QA covers Bootstrap tab via Vitest + manual Plugin Sandbox smoke documented in `research/bootstrap-phase1-smoke.md`.
 
-| Field           | Value                                                 |
-| --------------- | ----------------------------------------------------- |
-| `file_key`      | `<!-- filled during /plan or /vqa -->`                |
-| `node_id`       | `<!-- filled during /plan or /vqa -->`                |
-| Figma deep link | `<!-- filled -->`                                     |
-| Frame / scope   | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
-| Captured at     | `<!-- ISO date -->`                                   |
-
-**Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_
-
-| #   | Category      | Property                    | Design (Figma) | Build (implemented) | Result |
-| --- | ------------- | --------------------------- | -------------- | ------------------- | ------ |
-| 1   | Layout        | Frame width × height        |                |                     |        |
-| 2   | Layout        | Auto-layout direction / gap |                |                     |        |
-| 3   | Layout        | Padding (T/R/B/L)           |                |                     |        |
-| 4   | Typography    | Font family / size / weight |                |                     |        |
-| 5   | Color         | Background fill (token)     |                |                     |        |
-| 6   | Color         | Foreground fill (token)     |                |                     |        |
-| 7   | Spacing       | Margin / gap tokens         |                |                     |        |
-| 8   | Effects       | Border radius / shadow      |                |                     |        |
-| 9   | Accessibility | Contrast ratio              |                |                     |        |
-| 10  | Accessibility | Focus ring + hit target     |                |                     |        |
-
-**Per-row deviations:**
-
-- _Filled by `/vqa` with FAIL rationale._
+**Assertions:** N/A — no Figma design reference to compare against.
 
 ---
 

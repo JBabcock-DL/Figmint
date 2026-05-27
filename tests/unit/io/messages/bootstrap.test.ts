@@ -119,8 +119,8 @@ describe('bootstrap message guards', () => {
 });
 
 describe('BOOTSTRAP_STEPS manifest', () => {
-  it('defines 11 ordered steps ending with complete', () => {
-    expect(BOOTSTRAP_STEPS.length).toBe(11);
+  it('defines 12 ordered steps ending with complete', () => {
+    expect(BOOTSTRAP_STEPS.length).toBe(12);
     expect(BOOTSTRAP_STEPS[0].id).toBe('adapt');
     expect(BOOTSTRAP_STEPS[BOOTSTRAP_STEPS.length - 1].id).toBe('complete');
   });
@@ -130,6 +130,8 @@ describe('BOOTSTRAP_STEPS manifest', () => {
     expect(ids.includes('adapt')).toBe(false);
     expect(ids.includes('complete')).toBe(false);
     expect(ids[0]).toBe('push-variables');
+    expect(ids[1]).toBe('publish-typography');
+    expect(ids[2]).toBe('prepare-style-guide');
   });
 
   it('skipCanvas shortens main thread steps', () => {

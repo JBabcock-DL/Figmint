@@ -19,7 +19,8 @@ import {
   suspendPageContentAutoLayout,
 } from '@/core/canvas/lib/pages';
 import { buildTable, type TableRowDeps } from '@/core/canvas/lib/table';
-import { ensureLocalVariableMap, resolveChromeVariables } from '@/core/canvas/lib/variables';
+import { resolveTableChromeVariables } from '@/core/canvas/lib/docChromeVariables';
+import { ensureLocalVariableMap } from '@/core/canvas/lib/variables';
 import {
   resolveEffectsRows,
   type ShadowColorRow,
@@ -27,16 +28,6 @@ import {
 } from '@/core/canvas/resolveEffectsRows';
 import { resolveThemeCollectionIds } from '@/core/canvas/themeTables';
 import type { CanvasBuildContext, CanvasBuildResult } from '@/core/canvas/types';
-
-const CHROME_PATHS = [
-  'color/border/subtle',
-  'color/background/default',
-  'color/background/variant',
-  'color/background/content',
-  'color/background/content-muted',
-  'color/background/container-highest',
-  'color/background/inverse',
-];
 
 export interface EffectsCollectionIds {
   effectsCollectionId: string;
@@ -184,12 +175,8 @@ async function buildShadowTierRow(
   const contentVar = deps.contentVar;
   const mutedVar = deps.mutedVar;
   const tier = data.tier || 'sm';
-  const bgDefaultVar = variables['color/background/default'];
-  const cellTintVar =
-    variables['color/background/container-highest'] !== undefined &&
-    variables['color/background/container-highest'] !== null
-      ? variables['color/background/container-highest']
-      : variables['color/background/variant'];
+  const cardSurfaceVar = variables['doc/table/surface'];
+  const cellTintVar = variables['doc/table/header-surface'];
 
   const previewDeps: ShadowPreviewDeps = {
     effectsCollectionId: String(deps.effectsCollectionId || ''),
@@ -207,7 +194,7 @@ async function buildShadowTierRow(
         col.width,
         tier,
         col.id === 'DARK',
-        bgDefaultVar !== undefined ? bgDefaultVar : null,
+        cardSurfaceVar !== undefined ? cardSurfaceVar : null,
         cellTintVar !== undefined ? cellTintVar : null,
         previewDeps,
       );
@@ -386,7 +373,7 @@ export async function buildEffectsPage(ctx: CanvasBuildContext): Promise<CanvasB
 
   await loadFontsForCanvas();
   const variableMap = await ensureLocalVariableMap();
-  const chromeVars = await resolveChromeVariables(CHROME_PATHS, variableMap);
+  const chromeVars = resolveTableChromeVariables(variableMap);
   const docStyles = await resolveDocStyles();
   const effectsIds = await resolveEffectsCollectionIds();
   const themeIds = await resolveThemeCollectionIds();

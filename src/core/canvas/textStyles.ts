@@ -25,17 +25,9 @@ import {
 import { buildTable, type TableRowDeps } from '@/core/canvas/lib/table';
 import { bindPaintToVar } from '@/core/canvas/helpers/bindings';
 import { configureTableText } from '@/core/canvas/helpers/textCell';
-import { ensureLocalVariableMap, resolveChromeVariables } from '@/core/canvas/lib/variables';
+import { resolveTableChromeVariables } from '@/core/canvas/lib/docChromeVariables';
+import { ensureLocalVariableMap, resolvePath } from '@/core/canvas/lib/variables';
 import type { CanvasBuildContext, CanvasBuildResult } from '@/core/canvas/types';
-
-const CHROME_PATHS = [
-  'color/border/subtle',
-  'color/background/default',
-  'color/background/variant',
-  'color/background/content',
-  'color/background/content-muted',
-  'color/primary/default',
-];
 
 function typoCellSlug(colId: string): string {
   return (
@@ -221,7 +213,8 @@ export async function buildTextStylesPage(ctx: CanvasBuildContext): Promise<Canv
 
   await loadFontsForCanvas();
   const variableMap = await ensureLocalVariableMap();
-  const chromeVars = await resolveChromeVariables(CHROME_PATHS, variableMap);
+  const chromeVars = resolveTableChromeVariables(variableMap);
+  chromeVars['color/primary/default'] = resolvePath(variableMap, 'color/primary/default');
   const docStyles = await resolveDocStyles();
 
   const textStyleIndex = await indexLocalTextStyles();

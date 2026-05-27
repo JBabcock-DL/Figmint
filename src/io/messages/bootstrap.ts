@@ -7,6 +7,7 @@ export type BootstrapStepId =
   | 'adapt'
   | 'push-variables'
   | 'publish-typography'
+  | 'prepare-style-guide'
   | 'build-primitives'
   | 'build-theme'
   | 'build-typography'
@@ -62,6 +63,7 @@ export const BOOTSTRAP_STEPS: Array<{ id: BootstrapStepId; label: string; fr: st
   { id: 'adapt', label: 'Adapt tokens', fr: 'FR-BOOT-1' },
   { id: 'push-variables', label: 'Push variables', fr: 'FR-BOOT-3' },
   { id: 'publish-typography', label: 'Publish typography styles', fr: 'FR-BOOT-6' },
+  { id: 'prepare-style-guide', label: 'Prepare style-guide pages', fr: 'FR-BOOT-7' },
   { id: 'build-primitives', label: 'Build Primitives page', fr: 'FR-BOOT-7' },
   { id: 'build-theme', label: 'Build Theme page', fr: 'FR-BOOT-7' },
   { id: 'build-typography', label: 'Build Typography page', fr: 'FR-BOOT-7' },
@@ -225,6 +227,7 @@ export function isBootstrapUiMessage(message: unknown): message is BootstrapUiMe
 export const MAIN_BOOTSTRAP_STEP_IDS: BootstrapStepId[] = [
   'push-variables',
   'publish-typography',
+  'prepare-style-guide',
   'build-primitives',
   'build-theme',
   'build-typography',
