@@ -24,7 +24,9 @@ As Sprint 2 leads, we need three platform facts confirmed before we commit Sprin
 
 ## Hypothesis (optional)
 
-The variable-push logic in `DesignOps-plugin/skills/create-design-system/canvas-templates/bundles/step-15a-primitives.mcp.js` is already correct Plugin API code — wrapped in MCP transport. Stripping the wrapper and running it directly in the plugin sandbox will (a) succeed without modification and (b) finish in <2s for the small input sizes we test.
+The variable-push sequence is already specified in `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` (Plugin API mode setup + `setValueForMode` + `setVariableCodeSyntax`). Translating that prose into TypeScript and running it directly in the plugin sandbox will (a) succeed without redesign and (b) finish in <2s for the small input sizes we test. The legacy two-layer split (Plugin API for structure + REST PUT for `codeSyntax`) is an MCP payload-budget artifact — Figmint can use Plugin API end-to-end.
+
+> **Lift-source correction (see `Docs/lift-sources.md` §0):** Earlier ticket drafts cited `canvas-templates/bundles/step-15a-primitives.mcp.js` as the source for the push sequence. That file is actually a **canvas-table builder** that reads variables back to draw the Primitives style-guide page — it does NOT create variables. The real Plugin API push sequence lives in `phases/04-step11-push.md`.
 
 ---
 
@@ -77,11 +79,15 @@ A spike-grade UI exists (paste textarea + "Push" button). Real `file_key` / `nod
 
 ### Technical / architectural
 
-- **Lift reference (the variable push IS already written, just MCP-wrapped):**
-  - `DesignOps-plugin/skills/create-design-system/canvas-templates/bundles/step-15a-primitives.mcp.js` — **read it**. Inside the MCP wrapper is the actual `figma.variables.createVariableCollection` / `setValueForMode` / `setVariableCodeSyntax` sequence. Strip the wrapper, drop into the spike plugin. **Most of acceptance criterion 1 already exists.**
-  - `DesignOps-plugin/skills/create-design-system/conventions/01-collections.md` — 5-collection structure
-  - `DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md` — per-platform mapping pattern
-  - `DesignOps-plugin/skills/create-design-system/conventions/14-audit.md` — what to assert after the push
+- **Lift reference — primary (the variable-push sequence specified for the legacy MCP path):**
+  - `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` — **read it first**. Contains the exact mode-setup table per collection, the `setValueForMode` rules (COLOR / FLOAT / STRING / BOOLEAN / VARIABLE_ALIAS), the codeSyntax payload shape, and the dependency order. **The legacy two-layer split (Plugin API + REST PUT) is an MCP payload artifact — Figmint should use Plugin API for both, including `figma.variables.setVariableCodeSyntax`.**
+  - `DesignOps-plugin/skills/create-design-system/phases/02-steps5-9.md` — per-collection variable lists (what to create).
+  - `DesignOps-plugin/skills/create-design-system/conventions/01-collections.md` — 5-collection structure.
+  - `DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md` — per-platform codeSyntax mapping.
+  - `DesignOps-plugin/skills/create-design-system/conventions/14-audit.md` — what to assert after the push.
+
+- **Lift reference — secondary (canvas-table builder; for shape inspection only, not for push logic):**
+  - `DesignOps-plugin/skills/create-design-system/canvas-templates/bundles/step-15a-primitives.mcp.js` (~57 KB / 1314 lines) — Primitives **canvas-table** builder. Reads variables via `ensureLocalVariableMapOnCtx` and binds paints. Useful to inspect the in-memory token shape used downstream (informs CTX-002), but does NOT contain `createVariableCollection` / `setValueForMode` push calls. **Sub-agent warning:** large file — load only if needed.
 - Spike runs on a fresh Figma file; do NOT push against any client / production file.
 - **Throwaway:** spike branch `spike/phase-0` is **not** merged to `main`. Findings + scripts are kept under this ticket folder; code is discarded.
 
@@ -164,9 +170,12 @@ Spike acceptance is checked **via research findings**, not via 1:1 UI assertions
 ## References
 
 - PRD: `Docs/PRD.md` §12 (Phase 0), §6.1 FR-BOOT-3..6, §14 (latency target G1), §16 OQ-1 / OQ-2
+- Lift-source map: `Docs/lift-sources.md` — read §0 (drift corrections) and §3 (canvas bundle sizes) before opening any `.mcp.js` file.
 - Lift reference (CRITICAL — read before writing code):
-  - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/canvas-templates/bundles/step-15a-primitives.mcp.js`
+  - **Primary:** `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md`
+  - **Primary:** `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/phases/02-steps5-9.md`
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/01-collections.md`
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md`
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/14-audit.md`
+  - Secondary (large; inspect-only): `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/canvas-templates/bundles/step-15a-primitives.mcp.js`
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

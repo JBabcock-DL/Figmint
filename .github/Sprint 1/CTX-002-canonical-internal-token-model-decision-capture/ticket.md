@@ -84,13 +84,16 @@ The decision must address all of:
 This is a **decision capture**, not a build task. The agent promoting CTX-002 should:
 
 1. Read WO-005 `research/extended-collections.md` and `research/latency-benchmark.md`.
-2. Read these DesignOps-plugin sources for prior art:
-   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/canvas-templates/bundles/step-15a-primitives.mcp.js` — in-memory token shape used during the push
+2. Read `Docs/lift-sources.md` §0 (drift corrections) and §4 (convention shards) for the corrected lift map.
+3. Read these DesignOps-plugin sources for prior art:
+   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` — Plugin API push prose + value rules (COLOR / FLOAT / STRING / BOOLEAN / VARIABLE_ALIAS); the de-facto canonical shape used during creation
+   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/phases/02-steps5-9.md` — per-collection variable lists (what every token looks like)
+   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/data/theme-aliases.json` — Theme `rows` + `rawLiterals` shape (codeSyntax-per-token already encoded)
    - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/01-collections.md` — 5-collection model
    - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md` — codeSyntax-per-platform pattern
    - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/conventions/07-token-paths.md` — token path / naming conventions
-3. Sketch the canonical TS type inline; record in this ticket's body OR a `decisions/canonical-token-model.md`.
-4. Run `/create-ticket promote CTX-002` once decision is locked → becomes WO-### in Sprint 2.
+4. Sketch the canonical TS type inline; record in this ticket's body OR a `decisions/canonical-token-model.md`.
+5. Run `/create-ticket promote CTX-002` once decision is locked → becomes WO-### in Sprint 2.
 
 ---
 

@@ -10,8 +10,9 @@
 
 ## Where to look
 
-- `memory.md` — short cross-ticket running memory
+- `memory.md` — short cross-ticket running memory (read first; includes sprint-state snapshot + "do not repeat" entries)
 - `Docs/PRD.md` — full product spec for Figmint (mission, contracts, phasing, sunset plan for legacy DesignOps-plugin)
-- [Sprint roadmap & PRD breakdown](file:///C:/Users/jbabc/.claude/plans/breakdown-the-plan-and-mellow-whale.md) — canonical multi-sprint plan; per-ticket lift-source pointers from `DesignOps-plugin`; locked Sprint 1 decisions. **Read this before starting any Sprint 1 ticket.** Lives outside the repo at `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`.
+- `Docs/lift-sources.md` — **canonical sub-agent reference** for any port work from `DesignOps-plugin`. Contains drift corrections (§0), file-by-file lift map with sizes, hard-sunset list, and skill disposition table. **Read before opening any legacy `.mcp.js` file.**
+- [Sprint roadmap & PRD breakdown](file:///C:/Users/jbabc/.claude/plans/breakdown-the-plan-and-mellow-whale.md) — canonical multi-sprint plan; per-ticket lift-source pointers from `DesignOps-plugin`; locked Sprint 1 decisions. **Read this before starting any Sprint 1 ticket.** Lives outside the repo at `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`. **If this plan disagrees with `Docs/lift-sources.md` §0, the lift-sources doc wins** (it captures corrections made after the plan was authored).
 - `.github/templates/workflow.md` — after this scaffold, configured **`workflow.md`** lives here (agents should still resolve via **`skills/conventions/01-plugin-root-and-templates.md`** when templates are missing from cwd)
 - `.github/templates/agent-handoff.md` — copy-paste prompt for new agent sessions
