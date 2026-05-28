@@ -16,6 +16,10 @@ _To be filled during `/plan`._
 
 - _TBD_
 
+## Notes
+
+- **2026-05-28 `/research`:** Mostly integration — `DriftReportV1` contract + MD renderer + Export sinks already shipped. Add thin `buildDriftReport` aggregator only. See [research/drift-report-v1-emission.md](./research/drift-report-v1-emission.md).
+
 ## References
 
 - Ticket: `./ticket.md`

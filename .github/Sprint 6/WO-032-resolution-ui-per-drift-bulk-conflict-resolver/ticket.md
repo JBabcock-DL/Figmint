@@ -30,11 +30,15 @@ Sync tab resolution UI mock lives in the Figmint design file.
 
 ### Functional
 
-1. `src/ui/components/DriftList.tsx` — list + chips + filters.
-2. `src/ui/components/ConflictResolver.tsx` — 3-column compare + 'Keep Figma' / 'Keep Repo' / 'Custom value' / 'Skip' actions.
-3. Per-row actions update an in-memory `resolutions` map keyed by drift id.
-4. Bulk actions: 'Push selected → PR' (invokes WO-018 PR sink), 'Pull selected → apply' (invokes WO-008 push engine or component scaffold with the repo values).
-5. Snapshot updates per-resolved drift (WO-028).
+1. **`src/ui/components/DriftList.tsx`** — filter chips (All / Push ↑ / Pull ↓ / Conflict ⚠) + per-row Push / Pull / Skip.
+2. **`src/ui/components/ConflictResolver.tsx`** — 3-column compare (Last synced / Figma / Repo) + Keep Figma / Keep Repo / Custom value / Skip.
+3. **`src/ui/drift/resolutionReducer.ts`** — in-memory `resolutions: Map<driftId, ResolutionAction>` (session only).
+4. **Host surface:** expandable drift panel on **Settings repo card** (WO-058) — **not** a separate Sync tab (WO-033 absorbed).
+5. Bulk **Push selected → PR** — aggregates push resolutions → WO-018 PR sink (single PR, multi-file).
+6. Bulk **Pull selected → apply** — variables via WO-008 push engine; components via surgical props/bindings patch OR full re-scaffold when matrix hash changes.
+7. Bulk actions **disabled** while any selected conflict row is unresolved (FR-RES-3).
+8. Snapshot updates via WO-058 `updateSnapshotKey(s)` after successful Pull; after PR open success for Push.
+9. **`src/io/messages/drift.ts`** — typed UI↔main resolution messages.
 
 ### Visual / UX
 
@@ -44,7 +48,7 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 - **Lift reference (DesignOps-plugin):**
   - _None — new code designed in PRD._
-- **Dependencies:** WO-031, WO-008, WO-018, WO-028
+- **Dependencies:** WO-031, WO-008, WO-018, WO-058 (snapshot updates)
 
 ---
 
@@ -131,6 +135,9 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 ## References
 
 - PRD: `Docs/PRD.md` §6.5
+- [Resolution UI research](research/resolution-ui-per-drift-bulk-conflict-resolver.md)
+- [Sync tab UX (absorbed WO-033)](../WO-033-sync-tab-ui-on-open-badge/research/sync-tab-ui-on-open-badge.md)
+- [Sprint 6 research index](../research/sprint-6-drift-sync-research-index.md)
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

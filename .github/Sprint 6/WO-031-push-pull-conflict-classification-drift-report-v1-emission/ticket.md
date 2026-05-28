@@ -30,11 +30,14 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/drift/report.ts` — aggregator: takes variable + component drifts, builds `DriftReportV1`.
-2. Summary fields: total push, total pull, total conflicts, total synced.
-3. Markdown rendering via WO-019: three sections (`## Push (N)`, `## Pull (N)`, `## Conflicts (N)`), each with table of drifts.
-4. JSON form per `DriftReportV1` schema (WO-003).
-5. Markdown PR title pattern: `DesignOps drift: N push, M pull, K conflicts (sprint X)`.
+1. **`src/core/drift/report.ts`** — `buildDriftReport({ variableDrifts, componentDrifts, meta, syncedCount }): DriftReportV1`.
+2. Summary fields: `push`, `pull`, `conflict`, `synced` — invariant: first three match `drifts[]` filter; `synced` count only.
+3. Sort `drifts[]` by `id` ascending for deterministic output.
+4. Markdown rendering via **existing** WO-019 `renderDriftReportMarkdown` — sections `## ↑ Push (N)`, `## ↓ Pull (N)`, `## ⚠ Conflicts (N)`.
+5. JSON validates against `DriftReportV1` in `@detroitlabs/figmint-contracts` (WO-003).
+6. **Main message:** `drift/build-report` orchestrates WO-029 + WO-030 → report → optional sink.
+7. **PR emission:** extend PR title pattern `DesignOps drift: N push, M pull, K conflicts`; body = rendered markdown; files `docs/figmint/drift-{date}.{json,md}` via WO-018 sink.
+8. Wire `detect-drift` op from `opsProgram.v1` in `main.ts`.
 
 ### Visual / UX
 
@@ -102,6 +105,9 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.4 FR-DRIFT-3..4, §8.4
+- [Drift report emission research](research/drift-report-v1-emission.md)
+- [Sprint 6 research index](../research/sprint-6-drift-sync-research-index.md)
+- Existing: `src/io/formats/markdown/driftReport.ts`, `src/io/formats/__fixtures__/drift-report-ac.json`
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

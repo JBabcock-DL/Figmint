@@ -16,6 +16,10 @@ _To be filled during `/plan`._
 
 - _TBD_
 
+## Notes
+
+- **2026-05-28 `/research`:** Ticket closed — absorbed by WO-058. No Sync tab; badge + on-open detect on Settings repo card. See [research/sync-tab-ui-on-open-badge.md](./research/sync-tab-ui-on-open-badge.md).
+
 ## References
 
 - Ticket: `./ticket.md`

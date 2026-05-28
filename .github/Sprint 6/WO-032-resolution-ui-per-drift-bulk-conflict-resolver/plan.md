@@ -16,6 +16,10 @@ _To be filled during `/plan`._
 
 - _TBD_
 
+## Notes
+
+- **2026-05-28 `/research`:** Host in Settings repo card (WO-033 absorbed). Session-only resolution state. Bulk disabled on unresolved conflicts. See [research/resolution-ui-per-drift-bulk-conflict-resolver.md](./research/resolution-ui-per-drift-bulk-conflict-resolver.md).
+
 ## References
 
 - Ticket: `./ticket.md`

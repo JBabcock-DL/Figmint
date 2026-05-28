@@ -56,17 +56,35 @@ The Settings tab redesign should evoke [GitHub Desktop](https://desktop.github.c
 
 ### Functional
 
-1. **Delete `.figmint-registry.json` emission path.** Remove every code path that writes a registry envelope to the repo. The single source of truth is canvas pluginData on the hidden Figmint Output node (PRD §6.4 FR-DRIFT-1).
-2. **Drop audit rules `comp/registry-envelope` and `comp/registry-filekey`** from `runAudit.ts` and the contracts package. If drift detection still wants envelope / fileKey validation, repurpose against the pluginData snapshot — not the file system.
-3. **Revert WO-026 code.** All code emitted under WO-026 (registry update emission) is removed; the WO-026 GitHub issue (#29) is closed as "Won't Do (superseded by WO-058)".
-4. **Add `figmint.json` schema** to `packages/contracts/src/` as a versioned literal (`{ v: 1, tokensPath, specsPath, designSystemBranch? }`). Schema enforces `v: 1` discriminator per Figmint contracts convention.
-5. **Add `src/io/formats/figmintJson.ts` parser.** Accepts JSON text, returns `{ ok: true, value }` | `{ ok: false, error }`. Absent file is **not** an error; missing-file caller falls back to conventional defaults.
-6. **Probe repo root on GitHub connect.** When the user connects a repo via the Settings tab, fetch `figmint.json` at the default branch HEAD. Parse + cache result; surface a non-blocking warning if malformed.
-7. **Collapse Settings tab UI.** Drop tokens-path + Figma-sync-file-path inputs. Replace with: a `Connect GitHub` action (already shipped via WO-016/017/018/019/020), then a per-repo card showing { repo name, last-synced timestamp, Fetch button, Pull button, Push button }.
-8. **Drop "Load sync registry" from Components tab.** Sync is implicit from the active repo card. Registry data comes from canvas pluginData reads.
-9. **Migrate WO-022..027 callers off `.figmint-registry.json` reads** to canvas pluginData snapshot reads. No caller in the codebase may read or write the deleted registry file path after this WO lands.
-10. **Wire Push.** Plugin writes specs / Code Connect mappings back to the active repo as a PR via the GitHub OAuth relay. Reuse the WO-016 SPK-016-1 relay endpoint; reverse-path WO-040..046 may share this push code.
-11. **Update audit gate WO-057** (`doc-pipeline/required-tokens`) to **also** fail-fast if `figmint.json` is **malformed**. Absent `figmint.json` is **not** a failure — defaults apply.
+#### Phase 1 — Snapshot + registry migration (absorbs WO-028)
+
+1. **Add `packages/contracts/src/snapshot.v1.ts`** — envelope with `keys`, `registry.components`, `fileKey`, `updatedAt` (see WO-028 research).
+2. **Add `src/core/sync/snapshotStore.ts`** — `getSnapshot()`, `persistSnapshot()`, `getRegistryFromSnapshot()`, `upsertSnapshotRegistryEntry()`, hidden frame `_FigmintSnapshotStore` on Figmint Output page, pluginData key `figmint:snapshot:v1`.
+3. **Delete `.figmint-registry.json` read/write paths** — no GitHub fetch or ExportSheet emission of registry to repo.
+4. **Delete audit rules `comp/registry-envelope` and `comp/registry-filekey`** from `registryAuditRows.ts`; keep entry-level rows (present, nodeId, key, version).
+5. **Revert WO-026 production path** — remove registry PR flow from Components tab; Export sandbox sample may remain dev-only.
+6. **Migrate scaffold** — `runScaffold.ts` upserts snapshot registry; `Components.tsx` loads registry from snapshot on mount (no "Load sync registry").
+
+#### Phase 2 — `figmint.json` + Settings collapse
+
+7. **Add `packages/contracts/src/figmintJson.v1.ts`** — `{ v: 1, kind: 'figmint-config', tokensPath?, specsPath?, designSystemBranch?, exportBasePath? }`.
+8. **Add `src/io/formats/figmintJson.ts`** — parse + `FIGMINT_JSON_DEFAULTS` (`design/tokens.json`, `components/`, `docs/figmint/`); absent file → defaults; malformed → `{ ok: false }` + non-blocking warning.
+9. **Fetch on connect** — `github/repo/fetch` loads `figmint.json` at default branch HEAD, resolves branch, caches config + `lastFetchedAt`.
+10. **Collapse Settings UI** — replace path inputs with repo card: repo name, last-synced, **Fetch latest**, **Pull design system**, **Push updates**; keep Connect/Disconnect OAuth.
+11. **Remove from session/storage/messages:** `tokensPath`, `registryPath` user-editable fields — paths resolved only from `figmint.json` defaults.
+12. **Pull** — download tokens from resolved `tokensPath`; cache per repo; update `lastPulledAt`.
+
+#### Phase 3 — Push + gates
+
+13. **Push** — stage files under resolved `exportBasePath`; open PR via OAuth relay (`createPullRequestFlow`); PR body via `buildPrBody()`; commit author = authenticated user.
+14. **Extend WO-057 preflight** — fail on **malformed** `figmint.json`; pass on absent file.
+15. **Drift badge placeholder** on repo card (WO-033 tail) — stub counts until WO-029 lands.
+16. **Close WO-026 (#29)** as Won't Do when this WO ships.
+
+#### Cross-cutting
+
+17. All Sprint 5 callers read registry from canvas snapshot, not repo file.
+18. No reference to `.figmint-registry.json` in `src/` or `packages/contracts/src/` after merge.
 
 ### Visual / UX
 
@@ -77,12 +95,13 @@ The Settings tab redesign should evoke [GitHub Desktop](https://desktop.github.c
 
 ### Technical / architectural
 
-- New file: `src/io/formats/figmintJson.ts` (parser + defaults).
-- New contract: `packages/contracts/src/figmintJson.v1.ts` (schema).
-- Edits: `src/io/github/storage.ts`, `src/io/github/githubUiBridge.ts`, `src/io/messages/github.ts`, `src/ui/tabs/Settings.tsx`, `src/ui/tabs/Components.tsx`, `src/ui/components/AuditPanel.tsx`, `src/core/audit/runAudit.ts`, `src/core/components/registry.ts`, `src/core/components/registryAuditRows.ts`.
-- Removes: WO-026's emission code path + the `.figmint-registry.json` write path + `comp/registry-envelope` + `comp/registry-filekey` audit rules.
-- Push uses the existing GitHub OAuth relay (`scripts/github-oauth-relay.mjs` dev, `FIGMINT_OAUTH_RELAY_URL` prod). Branch strategy = main-only for this WO (branch-aware sync is a separate Sprint 6+ WO).
-- PRD G5 (zero-LLM in plugin runtime) preserved; no LLM call is added.
+- **Phase 1:** `packages/contracts/src/snapshot.v1.ts`, `src/core/sync/snapshotStore.ts`, `src/io/messages/snapshot.ts`
+- **Phase 2:** `packages/contracts/src/figmintJson.v1.ts`, `src/io/formats/figmintJson.ts`, `src/ui/components/RepoSyncCard.tsx`, `src/ui/sync/useRepoSync.ts`
+- **Edits:** `src/io/github/storage.ts`, `src/io/github/githubUiBridge.ts`, `src/io/messages/github.ts`, `src/ui/tabs/Settings.tsx`, `src/ui/tabs/Components.tsx`, `src/core/components/registryAuditRows.ts`, `src/core/components/scaffold/runScaffold.ts`, `src/ui/components/registryExport.ts` (rewrite → snapshot-only)
+- **Deletes:** `src/ui/components/scaffold/loadRegistryFromRepo.ts` GitHub registry fetch (or gut to snapshot loader)
+- **Removes:** `.figmint-registry.json` paths, `comp/registry-envelope`, `comp/registry-filekey`, Settings path inputs, Components "Load sync registry"
+- Push uses OAuth relay; branch `figmint/push-{date}`; main-only
+- PRD G5 preserved
 
 ---
 
@@ -148,7 +167,7 @@ The downstream BUG/WO that polishes the visual design of the Settings repo card 
 
 ## Dependencies / blocks
 
-- **BLOCKED BY WO-057** (full doc pipeline parity, #60) **Ship**. Do not start `/research`, `/plan`, or `/build` on this WO until WO-057's `vqa-report.md` says **Ship** and the designer signs off on Plugin Sandbox parity. This ticket is **vision capture only** at this stage.
+- **BLOCKED BY WO-057** — **Shipped 2026-05-28.** `/research` complete; ready for `/plan`.
 - **BLOCKS** designer workflow simplification milestone (designer-facing UX rework).
 - **SUPERSEDES WO-026** (#29) — that ticket will be closed Won't Do once WO-058 lands.
 
@@ -156,30 +175,15 @@ The downstream BUG/WO that polishes the visual design of the Settings repo card 
 
 ## 🔍 Ready for `/research`
 
-**Hold — do not run `/research` until WO-057 Ships.**
-
-Once unblocked, research must consult:
-
-- `src/io/github/*` (existing OAuth + storage paths from WO-016/017/018/019/020).
-- `src/core/components/registry.ts` + `src/core/components/registryAuditRows.ts` (current registry envelope to delete).
-- `src/io/messages/github.ts` (current sync message contract).
-- `src/ui/tabs/Settings.tsx` + `src/ui/tabs/Components.tsx` (current 3-field UI to collapse).
-- Snapshot architecture spec (PRD §6.4 FR-DRIFT-1) — locate the pluginData key + envelope shape on the hidden Figmint Output node.
-- GitHub Desktop UX reference: [desktop.github.com](https://desktop.github.com/) — Fetch / Pull / Push affordance.
-
-Open questions:
-
-- Final `figmint.json` schema fields beyond the locked minimum — designer/dev to confirm during research.
-- Push flow PR title + body conventions (Figmint signs commits as itself? as the user?).
-- Whether `comp/registry-envelope` / `comp/registry-filekey` should be **repurposed** against pluginData or **deleted outright** (current default = delete; revisit if drift detection wants them).
+**Complete (2026-05-28).** See [github-desktop-style-sync.md](research/github-desktop-style-sync.md).
 
 ## 📋 Ready for `/plan`
 
-Hold — see Dependencies / blocks. After WO-057 Ships and research is signed off, `/plan` writes the full execution contract to `plan.md` per `.github/templates/plan-quality-bar.md`.
+WO-057 shipped. Research signed off. `/plan` writes three-phase execution contract per `.github/templates/plan-quality-bar.md` (target ≥350 lines).
 
 ## 🛠️ Ready for `/build`
 
-Hold — WO-057 Ship + research sign-off + planning gate first.
+After `/plan` — phased: Phase 1 snapshot → Phase 2 UI + figmint.json → Phase 3 Push.
 
 ---
 
@@ -195,12 +199,13 @@ Hold — WO-057 Ship + research sign-off + planning gate first.
 
 ## References
 
-- Supersedes: **WO-026 Registry update emission** (#29) — close as Won't Do once this lands.
-- Blocked by: **WO-057 DesignOps doc-pipeline parity** (#60).
-- Related: **WO-016/017/018/019/020** (GitHub OAuth + storage path) — `src/io/github/*`.
-- Related: **WO-022..027** (Sprint 5 component scaffold) — callers to migrate.
-- Related: **WO-040..046** (Sprint 7 reverse-path Code Connect) — may share Push code.
-- PRD §6.4 FR-DRIFT-1 (Snapshot architecture, canvas pluginData on hidden Figmint Output node).
-- PRD G5 / §11.2 (zero-LLM in plugin runtime).
-- GitHub Desktop UX reference: https://desktop.github.com/
+- [GitHub-Desktop-style sync research](research/github-desktop-style-sync.md)
+- [Snapshot mechanism (WO-028 absorbed)](../Sprint%206/WO-028-snapshot-mechanism-canvas-plugindata/research/snapshot-mechanism-canvas-plugindata.md)
+- [Sprint 6 drift/sync index](../Sprint%206/research/sprint-6-drift-sync-research-index.md)
+- [Sync tab UX absorbed (WO-033)](../Sprint%206/WO-033-sync-tab-ui-on-open-badge/research/sync-tab-ui-on-open-badge.md)
+- Supersedes: **WO-026 Registry update emission** (#29)
+- Related: **WO-016/017/018/019/020** — `src/io/github/*`
+- Related: **WO-022..027** — scaffold callers to migrate
+- PRD §6.4 FR-DRIFT-1, PRD G5 / §11.2
+- GitHub Desktop UX: https://desktop.github.com/
 - Plugin Sandbox: https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox?node-id=0-1

@@ -108,6 +108,9 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.4 FR-DRIFT-1
+- **Absorbed by:** [WO-058 GitHub-Desktop sync](../../Sprint%205/WO-058-github-desktop-style-sync/ticket.md) Phase 1
+- [Snapshot mechanism research](research/snapshot-mechanism-canvas-plugindata.md) — canonical spec retained for WO-058 / WO-029–032
+- [Sprint 6 research index](../research/sprint-6-drift-sync-research-index.md)
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

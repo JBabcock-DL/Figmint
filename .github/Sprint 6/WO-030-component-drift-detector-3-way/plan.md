@@ -16,6 +16,10 @@ _To be filled during `/plan`._
 
 - _TBD_
 
+## Notes
+
+- **2026-05-28 `/research`:** Repo side = spec files via `figmint.json` paths, not `.figmint-registry.json`. Use `cvaHash` fast path + granular diff on mismatch. New `figmaComponent.ts` extractor. See [research/component-drift-detector-3-way.md](./research/component-drift-detector-3-way.md).
+
 ## References
 
 - Ticket: `./ticket.md`

@@ -132,6 +132,10 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 ## References
 
 - PRD: `Docs/PRD.md` §6.4 FR-DRIFT-5
+- **Absorbed by:** [WO-058 GitHub-Desktop sync](../../Sprint%205/WO-058-github-desktop-style-sync/ticket.md) — repo card badge + drift panel
+- [Sync tab / badge research](research/sync-tab-ui-on-open-badge.md)
+- [Resolution UI (WO-032)](../WO-032-resolution-ui-per-drift-bulk-conflict-resolver/research/resolution-ui-per-drift-bulk-conflict-resolver.md)
+- [Sprint 6 research index](../research/sprint-6-drift-sync-research-index.md)
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
