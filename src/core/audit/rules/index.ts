@@ -63,3 +63,9 @@ export {
   checkVarTokenNamesMatch,
   checkVarValueMatchesCanonical,
 };
+
+export {
+  buildDocRequiredTokensRow,
+  runDocPipelinePreflightRules,
+} from './doc-required-tokens';
+export type { DocPipelinePreflightRulesInput } from './doc-required-tokens';

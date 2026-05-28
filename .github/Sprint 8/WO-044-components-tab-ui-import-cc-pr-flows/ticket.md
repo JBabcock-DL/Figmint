@@ -60,6 +60,19 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 ---
 
+## Deferred designer intent _(related WO-027 feedback 2026-05-28)_
+
+Manual VQA surfaced a mental model overlap with **WO-056** (committed roadmap) and this ticket:
+
+- Designers expect **browse repo → multiselect → batch scaffold** without paste — **WO-056** owns catalog discovery + batch queue (Phase 4a).
+- **Load sync registry** (WO-027) remains the **re-scaffold / linked components** path only.
+
+**When planning WO-044:** coordinate UI layout with WO-056 — import-from-source for un-specced code; catalog for on-disk specs.
+
+**Roadmap:** [component-catalog-roadmap](../../Sprint%205/research/component-catalog-roadmap.md)
+
+---
+
 ## Testing & verification
 
 ### Functional QA

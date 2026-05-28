@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "kind": "registry",
+  "fileKey": "mock-file-key",
+  "components": {
+    "Button": {
+      "nodeId": "CS:1",
+      "key": "abc123",
+      "pageName": "↳ Buttons",
+      "publishedAt": "2026-05-28T00:00:00.000Z",
+      "version": 1,
+      "cvaHash": "expected-from-test"
+    }
+  }
+}

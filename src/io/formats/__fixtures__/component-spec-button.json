@@ -4,55 +4,46 @@
   "name": "Button",
   "framework": "react",
   "category": "Form & Input",
-  "archetype": "control",
+  "archetype": "chip",
   "variantMatrix": {
-    "size": ["sm", "md", "lg"],
-    "variant": ["primary", "secondary", "ghost"]
+    "variant": ["default", "destructive", "outline", "secondary", "ghost", "link"],
+    "size": ["sm", "default", "lg", "icon"]
   },
   "props": [
     {
-      "name": "disabled",
-      "type": "boolean",
-      "default": false
+      "name": "variant",
+      "type": "enum",
+      "default": "default",
+      "enum": ["default", "destructive", "outline", "secondary", "ghost", "link"]
     },
     {
       "name": "size",
       "type": "enum",
-      "default": "md",
-      "enum": ["sm", "md", "lg"]
+      "default": "default",
+      "enum": ["sm", "default", "lg", "icon"]
     },
+    { "name": "disabled", "type": "boolean", "default": false },
+    { "name": "asChild", "type": "boolean", "default": false },
     {
-      "name": "variant",
+      "name": "type",
       "type": "enum",
-      "default": "primary",
-      "enum": ["primary", "secondary", "ghost"]
-    }
+      "default": "button",
+      "enum": ["button", "submit", "reset"]
+    },
+    { "name": "className", "type": "string", "default": "" }
   ],
   "bindings": [
-    {
-      "selector": ".button",
-      "variable": "Theme/color/primary/default"
-    },
-    {
-      "selector": ".button-label",
-      "variable": "Typography/Label/MD/font-size"
-    }
+    { "selector": "root.fill", "variable": "color/primary/default" },
+    { "selector": "text/label.text-style", "variable": "Label/MD" }
   ],
   "layout": {
     "direction": "horizontal",
-    "gap": "Layout/spacing/2",
-    "padding": "Layout/spacing/3",
+    "gap": "space/md",
+    "padding": "space/md",
     "sizing": {
       "horizontal": "hug",
       "vertical": "hug"
     }
-  },
-  "surface": {
-    "fill": "Theme/color/primary/default",
-    "radius": "Layout/radius/md"
-  },
-  "control": {
-    "shape": "checkbox"
   },
   "confidence": {
     "layout": "high",

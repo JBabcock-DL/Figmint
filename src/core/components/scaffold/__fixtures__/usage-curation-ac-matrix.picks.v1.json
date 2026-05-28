@@ -1,0 +1,32 @@
+[
+  {
+    "disabled": false,
+    "size": "sm",
+    "variant": "a"
+  },
+  {
+    "disabled": true,
+    "size": "md",
+    "variant": "b"
+  },
+  {
+    "disabled": false,
+    "size": "sm",
+    "variant": "c"
+  },
+  {
+    "disabled": false,
+    "size": "sm",
+    "variant": "b"
+  },
+  {
+    "disabled": false,
+    "size": "md",
+    "variant": "a"
+  },
+  {
+    "disabled": false,
+    "size": "md",
+    "variant": "b"
+  }
+]

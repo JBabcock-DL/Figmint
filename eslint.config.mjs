@@ -75,6 +75,7 @@ export default defineConfig([
       'src/core/audit/**/*.ts',
       'src/core/canvas/**/*.ts',
       'src/core/bootstrap/**/*.ts',
+      'src/core/components/scaffold/**/*.ts',
       'src/io/messages/bootstrap.ts',
     ],
     rules: {
@@ -99,6 +100,23 @@ export default defineConfig([
       '@typescript-eslint/prefer-optional-chain': 'off',
       '@typescript-eslint/unbound-method': 'off',
       '@typescript-eslint/no-deprecated': 'off',
+    },
+  },
+
+  {
+    files: ['tests/unit/core/components/scaffold/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/prefer-optional-chain': 'off',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/prefer-for-of': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-unnecessary-type-parameters': 'off',
     },
   },
 

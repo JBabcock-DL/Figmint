@@ -2,6 +2,8 @@
 type: work-order
 github_issue: 25
 project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JKg
+blocked_by: WO-057
+note: In-Figma /vqa Ship is gated on WO-057 doc-pipeline parity (2026-05-28 architectural lock).
 ---
 
 ## Goal
@@ -96,9 +98,25 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 ---
 
+## Open bugs — integrated VQA _(2026-05-28; BUG-S5-002 resolved in code WO-057)_
+
+**Register:** [designops-canvas-parity-bug-register.md](../research/designops-canvas-parity-bug-register.md)
+
+| Bug ID | Summary |
+| ------ | ------- |
+| **BUG-S5-002** | **Resolved in code (WO-057)** — `assertNoCollapsedAxis` + `comp/doc-section-width` |
+| **BUG-S5-007** | ComponentSet `finalizeComponentSet` default width 320 vs DesignOps 1640 WRAP grid |
+| **BUG-S5-008** | Hidden staging `holder.resize(1,1)` — verify no leak |
+
+Subsystem Figma VQA remains N/A, but **integrated forward-scaffold VQA fails** until geometry + audit fixes land (WO-025 / WO-027).
+
+**Research spike:** **SPK-S5-AUD-1** — extend `comp/scaffold-one-px-master` to width axis + doc section probes.
+
+---
+
 ## Figma VQA Checklist
 
-N/A — no Figma artifact (subsystem ticket)
+N/A — no Figma artifact (subsystem ticket). **Integrated VQA:** see WO-027 + register BUG-S5-001..003.
 
 ---
 

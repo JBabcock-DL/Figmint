@@ -3,6 +3,12 @@
   "kind": "registry",
   "fileKey": "FigmintDemo",
   "components": {
-    "Button": { "nodeId": "1:10", "name": "Button" }
+    "Button": {
+      "nodeId": "1:10",
+      "key": "k_button",
+      "pageName": "↳ Buttons",
+      "publishedAt": "2026-05-28T00:00:00.000Z",
+      "version": 1
+    }
   }
 }

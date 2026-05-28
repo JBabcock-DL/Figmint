@@ -1,0 +1,5 @@
+{
+  "variant": ["a", "b", "c"],
+  "size": ["sm", "md"],
+  "disabled": [false, true]
+}

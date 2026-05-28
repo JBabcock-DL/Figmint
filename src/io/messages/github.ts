@@ -30,6 +30,18 @@ export interface GitHubTokenProbeMessage {
   repoUrl: string;
 }
 
+export interface GitHubSessionLoadMessage {
+  type: 'github/session/load';
+}
+
+export interface GitHubSessionLoadedMessage {
+  type: 'github/session/loaded';
+  repoUrl?: string;
+  tokensPath?: string;
+  registryPath?: string;
+  connected?: boolean;
+}
+
 export interface GitHubContentsFetchMessage {
   type: 'github/contents/fetch';
   requestId: string;
@@ -85,12 +97,14 @@ export type GitHubMainMessage =
   | GitHubTokenSaveMessage
   | GitHubTokenClearMessage
   | GitHubTokenProbeMessage
+  | GitHubSessionLoadMessage
   | GitHubContentsFetchMessage;
 
 export type GitHubUiMessage =
   | GitHubOAuthDeviceCodeMessage
   | GitHubOAuthPollResultMessage
   | GitHubTokenStatusMessage
+  | GitHubSessionLoadedMessage
   | GitHubContentsResultMessage
   | GitHubContentsErrorMessage
   | GitHubErrorMessage;
@@ -145,6 +159,22 @@ export function isGitHubTokenProbeMessage(message: unknown): message is GitHubTo
     return false;
   }
   return message.type === 'github/token/probe' && typeof message.repoUrl === 'string';
+}
+
+export function isGitHubSessionLoadMessage(message: unknown): message is GitHubSessionLoadMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return message.type === 'github/session/load';
+}
+
+export function isGitHubSessionLoadedMessage(
+  message: unknown,
+): message is GitHubSessionLoadedMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return message.type === 'github/session/loaded';
 }
 
 export function isGitHubContentsFetchMessage(

@@ -1,17 +1,32 @@
 import { useEffect, useState } from 'react';
 
 import { registerSinkMessageListener } from '@/io/sinks';
-import { ExportSheet } from '@/ui/components/ExportSheet';
+import { TabPanel } from '@/ui/components/TabPanel';
 import { registerExportMessageListener } from '@/ui/export/exportMessageListener';
-import { sampleDriftReportDocument } from '@/ui/export/sampleDriftReport';
+import { useGitHubConnect } from '@/ui/github/useGitHubConnect';
+import { useGitHubSession } from '@/ui/github/useGitHubSession';
 import { Bootstrap } from '@/ui/tabs/Bootstrap';
+import { Components } from '@/ui/tabs/Components';
+import { ExportSandbox, type ExportDemo } from '@/ui/tabs/ExportSandbox';
 import { Settings } from '@/ui/tabs/Settings';
 
-type AppTab = 'bootstrap' | 'settings' | 'export';
+type AppTab = 'bootstrap' | 'components' | 'export' | 'settings';
+
+const TAB_PANEL_IDS: Record<AppTab, string> = {
+  bootstrap: 'figmint-tabpanel-bootstrap',
+  components: 'figmint-tabpanel-components',
+  export: 'figmint-tabpanel-export',
+  settings: 'figmint-tabpanel-settings',
+};
 
 export function App() {
   const [activeTab, setActiveTab] = useState<AppTab>('bootstrap');
-  const [showExportSheet, setShowExportSheet] = useState(false);
+  const [exportDemo, setExportDemo] = useState<ExportDemo>(null);
+  const githubSession = useGitHubSession();
+  const github = useGitHubConnect({
+    repoUrl: githubSession.repoUrl,
+    tokensPath: githubSession.tokensPath,
+  });
 
   useEffect(function () {
     registerSinkMessageListener();
@@ -40,10 +55,15 @@ export function App() {
 
       <nav
         aria-label="Figmint tabs"
+        role="tablist"
         style={{ borderBottom: '1px solid #ddd', paddingBottom: '6px' }}
       >
         <button
           type="button"
+          role="tab"
+          id="figmint-tab-bootstrap"
+          aria-controls={TAB_PANEL_IDS.bootstrap}
+          aria-selected={activeTab === 'bootstrap'}
           aria-current={activeTab === 'bootstrap' ? 'page' : undefined}
           onClick={function () {
             setActiveTab('bootstrap');
@@ -61,12 +81,16 @@ export function App() {
         </button>
         <button
           type="button"
-          aria-current={activeTab === 'settings' ? 'page' : undefined}
+          role="tab"
+          id="figmint-tab-components"
+          aria-controls={TAB_PANEL_IDS.components}
+          aria-selected={activeTab === 'components'}
+          aria-current={activeTab === 'components' ? 'page' : undefined}
           onClick={function () {
-            setActiveTab('settings');
+            setActiveTab('components');
           }}
           style={{
-            background: activeTab === 'settings' ? '#f0f0f0' : 'transparent',
+            background: activeTab === 'components' ? '#f0f0f0' : 'transparent',
             border: '1px solid #ccc',
             borderRadius: '4px',
             fontSize: '11px',
@@ -75,10 +99,14 @@ export function App() {
             padding: '4px 10px',
           }}
         >
-          Settings
+          Components
         </button>
         <button
           type="button"
+          role="tab"
+          id="figmint-tab-export"
+          aria-controls={TAB_PANEL_IDS.export}
+          aria-selected={activeTab === 'export'}
           aria-current={activeTab === 'export' ? 'page' : undefined}
           onClick={function () {
             setActiveTab('export');
@@ -95,45 +123,61 @@ export function App() {
         >
           Export
         </button>
+        <button
+          type="button"
+          role="tab"
+          id="figmint-tab-settings"
+          aria-controls={TAB_PANEL_IDS.settings}
+          aria-selected={activeTab === 'settings'}
+          aria-current={activeTab === 'settings' ? 'page' : undefined}
+          onClick={function () {
+            setActiveTab('settings');
+          }}
+          style={{
+            background: activeTab === 'settings' ? '#f0f0f0' : 'transparent',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            fontSize: '11px',
+            fontWeight: 600,
+            marginLeft: '6px',
+            padding: '4px 10px',
+          }}
+        >
+          Settings
+        </button>
       </nav>
 
-      {activeTab === 'export' ? (
-        <section aria-label="Export sandbox" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <p style={{ color: '#666', fontSize: 11, margin: 0 }}>
-            Try the unified export sheet with a sample drift report fixture.
-          </p>
-          {!showExportSheet ? (
-            <button
-              type="button"
-              onClick={function () {
-                setShowExportSheet(true);
-              }}
-              style={{
-                alignSelf: 'flex-start',
-                border: '1px solid #ccc',
-                borderRadius: 4,
-                fontSize: 11,
-                fontWeight: 600,
-                padding: '6px 12px',
-              }}
-            >
-              Export sample drift report
-            </button>
-          ) : (
-            <ExportSheet
-              document={sampleDriftReportDocument}
-              defaultSinks={['download']}
-              onCancel={function () {
-                setShowExportSheet(false);
-              }}
-            />
-          )}
-        </section>
-      ) : activeTab === 'settings' ? (
-        <Settings />
-      ) : (
+      {/* All panels stay mounted — switching tabs only toggles visibility. */}
+      <TabPanel id={TAB_PANEL_IDS.bootstrap} active={activeTab === 'bootstrap'}>
         <Bootstrap />
-      )}
+      </TabPanel>
+
+      <TabPanel id={TAB_PANEL_IDS.components} active={activeTab === 'components'}>
+        <Components
+          repoUrl={githubSession.repoUrl}
+          registryPath={githubSession.registryPath}
+          github={github}
+          onOpenSettings={function () {
+            setActiveTab('settings');
+          }}
+        />
+      </TabPanel>
+
+      <TabPanel id={TAB_PANEL_IDS.export} active={activeTab === 'export'}>
+        <ExportSandbox exportDemo={exportDemo} onExportDemoChange={setExportDemo} />
+      </TabPanel>
+
+      <TabPanel id={TAB_PANEL_IDS.settings} active={activeTab === 'settings'}>
+        <Settings
+          repoUrl={githubSession.repoUrl}
+          tokensPath={githubSession.tokensPath}
+          registryPath={githubSession.registryPath}
+          onRepoUrlChange={githubSession.setRepoUrl}
+          onTokensPathChange={githubSession.setTokensPath}
+          onRegistryPathChange={githubSession.setRegistryPath}
+          github={github}
+        />
+      </TabPanel>
     </main>
   );
 }

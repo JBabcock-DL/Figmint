@@ -2,6 +2,8 @@
 type: work-order
 github_issue: 28
 project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JNQ
+blocked_by: WO-057
+note: Instance-gallery emitter is replaced by WO-057 Step 19 (Do/Don't usage section per §6). FR-SCAF-5 intent is preserved but delivered via WO-057's `buildUsageNotes`, not this ticket's instance gallery. /vqa Ship gated on WO-057.
 ---
 
 ## Goal
@@ -94,13 +96,31 @@ After forward scaffold (WO-022..024), designers need a compact, labeled preview 
 
 ---
 
+## Open bugs — VQA follow-up _(2026-05-28; BUG-S5-001/003/004 resolved in code WO-057)_
+
+**Register:** [designops-canvas-parity-bug-register.md](../research/designops-canvas-parity-bug-register.md)
+
+| Bug ID | Owner | Summary |
+| ------ | ----- | ------- |
+| **BUG-S5-001** | **Resolved in code (WO-057)** — doc section STRETCH geometry + 5-section pipeline |
+| **BUG-S5-003** | **Resolved in code (WO-057)** — `buildUsageNotes` Do/Don't; gallery deleted |
+| **BUG-S5-004** | **Resolved in code (WO-057)** — full doc pipeline in `src/core/canvas/doc/*` |
+
+**Evidence:** User file `Dw8NkEiG91NhjYqRPNTOOu` node `5:193` — usage cells `1×98`, instances at negative x inside cells.
+
+**Research spike:** **SPK-S5-USG-1** — diff `usageFrame.ts` vs `DesignOps-plugin/.../usage.mcp.js` + `04-doc-pipeline-contract.md` §6.
+
+**Note:** Full Do/Don't usage + 5-section doc pipeline shipped in **WO-057**. In-Figma `/vqa` sign-off still required before Closed.
+
+---
+
 ## Figma VQA Checklist
 
 | Field | Value |
 | ----- | ----- |
-| file_key | `cVdPraIafWFBRZnzMPhtrW` (Plugin Sandbox) |
-| node_id | _TBD after scaffold — ComponentSet + usage-examples wrapper_ |
-| Notes | Run after WO-022+024; verify 6 labeled instances beside ComponentSet |
+| file_key | `Dw8NkEiG91NhjYqRPNTOOu` (user repro) · `cVdPraIafWFBRZnzMPhtrW` (Plugin Sandbox) |
+| node_id | `5:193` (`_PageContent` / `doc/component/button`) |
+| Notes | Section frames must be **width ≥ 400** (target 1640), not 1px; 6 usage instances visible without horizontal clip |
 
 ---
 

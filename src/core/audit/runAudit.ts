@@ -1,10 +1,14 @@
+/// <reference types="@figma/plugin-typings" />
+
 import type { AuditReportV1, AuditScope } from '@detroitlabs/figmint-contracts';
 
 import { mergeProbeWithStats, probeCanvasPage } from './probeCanvasPage';
+import { runComponentBindingRules } from './rules/componentBindings';
+import { runComponentRules } from './rules/componentRules';
 import { runCanvasRules } from './rules/canvasRules';
-import { runVariableRules } from './rules';
+import { runDocPipelinePreflightRules, runVariableRules } from './rules';
 import { buildAuditSummary } from './summary';
-import type { CanvasAuditInput, VariablesAuditInput } from './types';
+import type { CanvasAuditInput, ComponentAuditInput, VariablesAuditInput } from './types';
 
 function computePassed(results: AuditReportV1['results']): boolean {
   for (const result of results) {
@@ -61,9 +65,10 @@ function buildCanvasSummary(results: AuditReportV1['results']): AuditReportV1['s
 
 export function runAudit(scope: 'variables', input: VariablesAuditInput): Promise<AuditReportV1>;
 export function runAudit(scope: 'canvas', input: CanvasAuditInput): Promise<AuditReportV1>;
+export function runAudit(scope: 'component', input: ComponentAuditInput): Promise<AuditReportV1>;
 export function runAudit(
   scope: AuditScope,
-  input: VariablesAuditInput | CanvasAuditInput,
+  input: VariablesAuditInput | CanvasAuditInput | ComponentAuditInput,
 ): Promise<AuditReportV1> {
   if (scope === 'variables') {
     const variableInput = input as VariablesAuditInput;
@@ -127,7 +132,137 @@ export function runAudit(
     });
   }
 
-  return Promise.reject(new Error('unsupported audit scope: ' + scope));
+  if (scope === 'component') {
+    const componentInput = input as ComponentAuditInput;
+    const results: AuditReportV1['results'] = [];
+
+    if (componentInput.bindingsResult !== undefined) {
+      const bindingResults = runComponentBindingRules({
+        spec: componentInput.spec,
+        componentSet: componentInput.componentSet,
+        bindingsResult: componentInput.bindingsResult,
+      });
+      for (let i = 0; i < bindingResults.length; i++) {
+        results.push(bindingResults[i]);
+      }
+    }
+
+    if (componentInput.applyPropertiesResult !== undefined) {
+      const propResults = runComponentRules({
+        spec: componentInput.spec,
+        componentSet: componentInput.componentSet,
+        applyPropertiesResult: componentInput.applyPropertiesResult,
+      });
+      for (let i = 0; i < propResults.length; i++) {
+        results.push(propResults[i]);
+      }
+    }
+
+    if (results.length === 0) {
+      return Promise.reject(
+        new Error('component audit requires bindingsResult and/or applyPropertiesResult'),
+      );
+    }
+
+    const passed = computePassed(results);
+    const fileKey = readFigmaFileKey();
+    const operation = 'apply-bindings' as const;
+    const metaBase = {
+      generatedAt: new Date().toISOString(),
+      scope: 'component' as const,
+      operation: operation,
+    };
+    const reportMeta: AuditReportV1['meta'] = fileKey
+      ? Object.assign({}, metaBase, { figmaFileKey: fileKey })
+      : metaBase;
+
+    return Promise.resolve({
+      v: 1,
+      kind: 'audit-report',
+      meta: reportMeta,
+      passed: passed,
+      summary: buildCanvasSummary(results),
+      results: results,
+    });
+  }
+
+  return Promise.reject(new Error('unsupported audit scope: ' + String(scope)));
+}
+
+function buildPreflightSummary(results: AuditReportV1['results']): AuditReportV1['summary'] {
+  return buildCanvasSummary(results);
+}
+
+async function getLocalVariableCollections(): Promise<VariableCollection[]> {
+  const variablesApi = figma.variables;
+  if (typeof variablesApi.getLocalVariableCollectionsAsync === 'function') {
+    return variablesApi.getLocalVariableCollectionsAsync();
+  }
+  if (typeof variablesApi.getLocalVariableCollections === 'function') {
+    return variablesApi.getLocalVariableCollections();
+  }
+  return [];
+}
+
+async function getLocalVariables(): Promise<Variable[]> {
+  const variablesApi = figma.variables;
+  if (typeof variablesApi.getLocalVariablesAsync === 'function') {
+    return variablesApi.getLocalVariablesAsync();
+  }
+  if (typeof variablesApi.getLocalVariables === 'function') {
+    return variablesApi.getLocalVariables();
+  }
+  return [];
+}
+
+async function getLocalTextStyles(): Promise<TextStyle[]> {
+  if (typeof figma.getLocalTextStylesAsync === 'function') {
+    return figma.getLocalTextStylesAsync();
+  }
+  if (typeof figma.getLocalTextStyles === 'function') {
+    return figma.getLocalTextStyles();
+  }
+  return [];
+}
+
+export async function runDocPipelinePreflightAudit(): Promise<AuditReportV1> {
+  const collections = await getLocalVariableCollections();
+  const themeCollection = collections.find((collection) => collection.name === 'Theme');
+  const typoCollection = collections.find((collection) => collection.name === 'Typography');
+
+  const allVariables = await getLocalVariables();
+  const themeVariables = themeCollection
+    ? allVariables.filter((variable) => variable.variableCollectionId === themeCollection.id)
+    : [];
+  const typographyVariables = typoCollection
+    ? allVariables.filter((variable) => variable.variableCollectionId === typoCollection.id)
+    : [];
+
+  const textStyles = await getLocalTextStyles();
+  const results = runDocPipelinePreflightRules({
+    themeVariables,
+    typographyVariables,
+    textStyles,
+  });
+  const passed = computePassed(results);
+  const fileKey = readFigmaFileKey();
+  const metaBase = {
+    generatedAt: new Date().toISOString(),
+    scope: 'component' as const,
+    operation: 'scaffold-component' as const,
+  };
+  const reportMeta: AuditReportV1['meta'] = fileKey
+    ? Object.assign({}, metaBase, { figmaFileKey: fileKey })
+    : metaBase;
+
+  return {
+    v: 1,
+    kind: 'audit-report',
+    meta: reportMeta,
+    passed,
+    summary: buildPreflightSummary(results),
+    results,
+  };
 }
 
 export type { VariablesAuditInput };

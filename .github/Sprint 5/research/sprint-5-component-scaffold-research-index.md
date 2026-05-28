@@ -1,6 +1,6 @@
 # Sprint 5 — Component scaffold (forward path) research index
 
-> **Status:** All six tickets **In Research** (2026-05-28). Research complete — ready for `/plan` in dependency order.
+> **Status:** WO-022..027 **In Build** (2026-05-28). Forward scaffold runs but **DesignOps canvas parity fails** — see **[designops-canvas-parity-bug-register.md](./designops-canvas-parity-bug-register.md)** before `/vqa` or Completed.
 > **Quality bar:** [`.github/templates/research-quality-bar.md`](../../templates/research-quality-bar.md)
 
 ---
@@ -21,8 +21,9 @@ Ship the **forward scaffold path** (ComponentSpec → Figma ComponentSet + bindi
 | WO-025 | #28 | [usage-frame-generator.md](../WO-025-usage-frame-generator/research/usage-frame-generator.md) | 326 | SPK-025-1 instance gallery on sandbox |
 | WO-026 | #29 | [registry-update-emission.md](../WO-026-registry-update-emission/research/registry-update-emission.md) | 328 | SPK-026-1 merge + ExportSheet staging |
 | WO-027 | #30 | [components-tab-forward-flow.md](../WO-027-components-tab-ui-forward-flow/research/components-tab-forward-flow.md) | 497 | SPK-027-1 end-to-end Button <5s |
+| WO-057 | #60 | [doc-pipeline-lift-map.md](../WO-057-designops-doc-pipeline-parity/research/doc-pipeline-lift-map.md) + [section-contract-trace.md](../WO-057-designops-doc-pipeline-parity/research/section-contract-trace.md) + [audit-gate-spec.md](../WO-057-designops-doc-pipeline-parity/research/audit-gate-spec.md) + [bootstrap-text-styles-spec.md](../WO-057-designops-doc-pipeline-parity/research/bootstrap-text-styles-spec.md) | 287+489+354+205 = 1335 | SPK-S5-DOC-1.A..F (preflight gate, 5-section emit, 96-instance matrix, opacity overlay) |
 
-**Total research:** ~2,242 lines across 6 artifacts.
+**Total research:** ~3,577 lines across 10 artifacts (Sprint 5 with WO-057).
 
 ---
 
@@ -51,6 +52,18 @@ flowchart LR
 1. **WO-022** — core scaffold + variant matrix (blocks all others)
 2. **WO-023, WO-024, WO-025, WO-026** — parallel after WO-022 plan/build Phase 1 lands (or parallel `/plan` now)
 3. **WO-027** — UI orchestration last (consumes all pipeline stages + ExportSheet)
+
+---
+
+## Open bugs (P0 — blocks VQA)
+
+| Register | Figma repro | DesignOps target |
+| -------- | ----------- | ---------------- |
+| [designops-canvas-parity-bug-register.md](./designops-canvas-parity-bug-register.md) | [Untitled `5:193`](https://www.figma.com/design/Dw8NkEiG91NhjYqRPNTOOu/Untitled?node-id=5-193) — **1px-wide** doc sections | [v60 Button `433:335`](https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/v60-updates-%E2%80%94-Foundations?node-id=433-335) |
+
+**Headline:** `resize(1,1)` + incomplete `reassertHug` leaves `component-set-group`, `usage`, and usage cells at **width=1**; plugin audit does not fail. Not following `04-doc-pipeline-contract.md` five-section doc layout.
+
+**Next agent spikes:** SPK-S5-GEO-1 (Hug fix) → SPK-S5-AUD-1 (width collapse audit) → SPK-S5-USG-1 (usage vs DesignOps) → SPK-S5-DOC-1 (full doc pipeline scope).
 
 ---
 

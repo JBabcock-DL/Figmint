@@ -4,6 +4,7 @@ import {
   isGitHubErrorMessage,
   isGitHubOAuthDeviceCodeMessage,
   isGitHubOAuthPollResultMessage,
+  isGitHubSessionLoadedMessage,
   isGitHubTokenStatusMessage,
 } from '@/io/messages/github';
 import type { DeviceCodeResponse, DeviceTokenPollResult } from '@/io/github/deviceFlow';
@@ -170,6 +171,49 @@ export function postTokenProbe(repoUrl: string): void {
     },
     '*',
   );
+}
+
+export interface GitHubSessionSnapshot {
+  repoUrl?: string;
+  tokensPath?: string;
+  registryPath?: string;
+  connected?: boolean;
+}
+
+export function loadGitHubSession(timeoutMs?: number): Promise<GitHubSessionSnapshot> {
+  registerGitHubMessageListener();
+  const waitMs = timeoutMs !== undefined ? timeoutMs : 5000;
+
+  return new Promise(function (resolve, reject) {
+    function onMessage(event: MessageEvent<unknown>) {
+      const message = extractPluginMessage(event);
+      if (message === undefined) {
+        return;
+      }
+      if (isGitHubSessionLoadedMessage(message)) {
+        window.removeEventListener('message', onMessage);
+        resolve({
+          repoUrl: message.repoUrl,
+          tokensPath: message.tokensPath,
+          registryPath: message.registryPath,
+          connected: message.connected,
+        });
+        return;
+      }
+      if (isGitHubErrorMessage(message)) {
+        window.removeEventListener('message', onMessage);
+        reject(new Error(message.message));
+      }
+    }
+
+    window.addEventListener('message', onMessage);
+    parent.postMessage({ pluginMessage: { type: 'github/session/load' } }, '*');
+
+    setTimeout(function () {
+      window.removeEventListener('message', onMessage);
+      reject(new Error('Timed out waiting for GitHub session.'));
+    }, waitMs);
+  });
 }
 
 export function waitForTokenStatus(

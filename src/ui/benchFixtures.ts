@@ -2,9 +2,14 @@ import type { LoadedDocument } from '@/io/sources/types';
 
 import bootstrapComplete from '@/core/variables/__fixtures__/bootstrap-complete.v1.json';
 import foundationsMinimal from '@/core/variables/__fixtures__/foundations-minimal.v1.json';
+import componentSpecButtonCanonical from '../../tests/fixtures/component-spec-button-canonical.json';
 import spike400 from '../../.github/Sprint 1/WO-005-phase-0-spike-variable-push-evc-validation-latency-benchmark/scripts/fixtures/spike-400.json';
 
-export type BenchFixtureId = 'bootstrap-complete' | 'foundations-minimal' | 'spike-400';
+export type BenchFixtureId =
+  | 'bootstrap-complete'
+  | 'foundations-minimal'
+  | 'spike-400'
+  | 'component-spec-button-canonical';
 
 const BENCH_FIXTURES: Record<BenchFixtureId, { label: string; payload: unknown }> = {
   'bootstrap-complete': {
@@ -19,6 +24,10 @@ const BENCH_FIXTURES: Record<BenchFixtureId, { label: string; payload: unknown }
     label: 'WO-005 spike-400 (400 colors only — push latency bench)',
     payload: spike400,
   },
+  'component-spec-button-canonical': {
+    label: 'WO-027 Button canonical (12 variants — Components VQA)',
+    payload: componentSpecButtonCanonical,
+  },
 };
 
 export const BENCH_FIXTURE_OPTIONS = Object.entries(BENCH_FIXTURES).map(([id, meta]) => ({
@@ -29,8 +38,10 @@ export const BENCH_FIXTURE_OPTIONS = Object.entries(BENCH_FIXTURES).map(([id, me
 export function loadBenchFixture(id: BenchFixtureId): LoadedDocument {
   const entry = BENCH_FIXTURES[id];
   const receivedAt = new Date().toISOString();
+  const kind =
+    id === 'component-spec-button-canonical' ? ('component-spec' as const) : ('tokens-dtcg' as const);
   return {
-    kind: 'tokens-dtcg',
+    kind: kind,
     payload: entry.payload,
     sourceMeta: {
       port: 'paste',

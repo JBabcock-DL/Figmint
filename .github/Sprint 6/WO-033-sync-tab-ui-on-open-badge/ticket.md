@@ -2,6 +2,10 @@
 type: work-order
 github_issue: 36
 project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JVA
+absorbed_by: WO-058
+closed_at: 2026-05-28
+closed_reason: not_planned
+note: Sync tab UI collapses into WO-058's Settings GitHub-Desktop-style repo card (Fetch / Pull / Push / last-synced). On-open badge becomes a small follow-up on that card. 2026-05-28 architectural lock.
 ---
 
 ## Goal

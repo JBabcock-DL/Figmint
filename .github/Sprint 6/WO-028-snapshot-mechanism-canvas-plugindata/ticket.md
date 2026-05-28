@@ -2,6 +2,10 @@
 type: work-order
 github_issue: 31
 project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JQM
+absorbed_by: WO-058
+closed_at: 2026-05-28
+closed_reason: not_planned
+note: Snapshot mechanism becomes Phase 1 of WO-058 (GitHub-Desktop-style sync). Scope and acceptance criteria absorbed verbatim. 2026-05-28 architectural lock.
 ---
 
 ## Goal

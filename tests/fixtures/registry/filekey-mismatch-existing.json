@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "kind": "registry",
+  "fileKey": "other-file-key",
+  "components": {
+    "Input": {
+      "nodeId": "2:20",
+      "key": "input-key",
+      "pageName": "↳ Buttons",
+      "publishedAt": "2026-05-28T00:00:00.000Z",
+      "version": 1
+    }
+  }
+}

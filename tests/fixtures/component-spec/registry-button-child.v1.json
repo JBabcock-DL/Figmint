@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "kind": "registry",
+  "fileKey": "mock-file-key",
+  "components": {
+    "button": {
+      "nodeId": "component-999",
+      "key": "button-primary",
+      "pageName": "↳ Buttons",
+      "publishedAt": "2026-05-28T00:00:00.000Z",
+      "version": 1
+    }
+  }
+}

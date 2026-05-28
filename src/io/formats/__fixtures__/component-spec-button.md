@@ -1,36 +1,39 @@
 # component-spec v1
 
-**Name:** Button · **Framework:** react · **Category:** Form & Input · **Archetype:** control
+**Name:** Button · **Framework:** react · **Category:** Form & Input · **Archetype:** chip
 
 ## Variant matrix
 
 | Variant | Values |
 | --- | --- |
-| size | sm, md, lg |
-| variant | primary, secondary, ghost |
+| size | sm, default, lg, icon |
+| variant | default, destructive, outline, secondary, ghost, link |
 
 ## Props
 
 | name | type | default | enum |
 | --- | --- | --- | --- |
+| asChild | boolean | false | — |
+| className | string |  | — |
 | disabled | boolean | false | — |
-| size | enum | md | sm, md, lg |
-| variant | enum | primary | primary, secondary, ghost |
+| size | enum | default | sm, default, lg, icon |
+| type | enum | button | button, submit, reset |
+| variant | enum | default | default, destructive, outline, secondary, ghost, link |
 
 ## Bindings
 
 | selector | variable |
 | --- | --- |
-| .button | Theme/color/primary/default |
-| .button-label | Typography/Label/MD/font-size |
+| root.fill | color/primary/default |
+| text/label.text-style | Label/MD |
 
 ## Layout
 
 | Property | Value |
 | --- | --- |
 | direction | horizontal |
-| gap | Layout/spacing/2 |
-| padding | Layout/spacing/3 |
+| gap | space/md |
+| padding | space/md |
 | horizontal sizing | hug |
 | vertical sizing | hug |
 

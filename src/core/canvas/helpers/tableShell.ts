@@ -13,6 +13,7 @@ export function createTableGroup(slug: string): FrameNode {
   group.counterAxisSizingMode = 'FIXED';
   group.clipsContent = false;
   group.itemSpacing = 12;
+  group.fills = [];
   return group;
 }
 
@@ -46,6 +47,7 @@ export function createHeaderRow(
   header.primaryAxisSizingMode = 'FIXED';
   header.counterAxisSizingMode = 'FIXED';
   header.resize(TABLE_WIDTH, TABLE_HEADER_HEIGHT);
+  header.fills = [];
   for (const col of columns) {
     const cell = createHeaderCell(col.width, col.id, col.id, mutedTextVar, codeStyleId);
     header.appendChild(cell);

@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Accordion",
+  "framework": "react",
+  "archetype": "container",
+  "variantMatrix": {
+    "variant": ["default"]
+  },
+  "props": [],
+  "bindings": [],
+  "layout": {
+    "direction": "vertical",
+    "gap": "8",
+    "padding": "16",
+    "sizing": {
+      "horizontal": "fill",
+      "vertical": "hug"
+    }
+  },
+  "container": {
+    "kind": "accordion"
+  }
+}

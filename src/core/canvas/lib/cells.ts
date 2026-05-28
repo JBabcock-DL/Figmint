@@ -8,6 +8,7 @@ import {
 import { configureTableText } from '@/core/canvas/helpers/textCell';
 import { bindPaintToVar } from '@/core/canvas/helpers/bindings';
 import { hexToRgb } from '@/core/canvas/lib/colorFormats';
+import { loadFontsForCanvas } from '@/core/canvas/lib/fonts';
 import { reassertHug } from '@/core/canvas/helpers/autoLayout';
 
 export interface DocStyleIds {
@@ -70,9 +71,10 @@ export async function makeTableText(
   styleId: string | null,
   fillVariable?: Variable | null,
 ): Promise<TextNode> {
+  await loadFontsForCanvas();
+
   const text = figma.createText();
   text.characters = String(characters);
-  configureTableText(text, colWidth);
   if (styleId !== null && styleId !== '') {
     try {
       text.textStyleId = styleId;
@@ -80,6 +82,7 @@ export async function makeTableText(
       /* style may be missing on scratch files */
     }
   }
+  configureTableText(text, colWidth);
   if (fillVariable !== null && fillVariable !== undefined) {
     bindPaintToVar(text, fillVariable);
   }

@@ -1,0 +1,10 @@
+{
+  "color/primary/default": { "name": "color/primary/default", "resolvedType": "COLOR" },
+  "color/on-primary/default": { "name": "color/on-primary/default", "resolvedType": "COLOR" },
+  "color/state-layer/hover": { "name": "color/state-layer/hover", "resolvedType": "COLOR" },
+  "color/outline/default": { "name": "color/outline/default", "resolvedType": "COLOR" },
+  "space/md": { "name": "space/md", "resolvedType": "FLOAT" },
+  "space/sm": { "name": "space/sm", "resolvedType": "FLOAT" },
+  "radius/md": { "name": "radius/md", "resolvedType": "FLOAT" },
+  "radius/sm": { "name": "radius/sm", "resolvedType": "FLOAT" }
+}

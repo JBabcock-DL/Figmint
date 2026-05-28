@@ -3,7 +3,8 @@ import { useCallback, useState } from 'react';
 import { buildDefaultHeadBranch } from '@/io/github/branchName';
 import { buildPrBody } from '@/io/github/prBody';
 import { loadFromGitHub } from '@/io/sources/github';
-import { useGitHubConnect } from '@/ui/github/useGitHubConnect';
+import { DEFAULT_REGISTRY_PATH } from '@/ui/components/scaffold/constants';
+import type { UseGitHubConnectResult } from '@/ui/github/useGitHubConnect';
 
 const DEFAULT_TOKENS_PATH = 'design/tokens.json';
 
@@ -21,16 +22,27 @@ const inputStyle = {
   width: '100%',
 };
 
-export function Settings() {
-  const [repoUrl, setRepoUrl] = useState('');
-  const [tokensPath, setTokensPath] = useState(DEFAULT_TOKENS_PATH);
+export interface SettingsProps {
+  repoUrl: string;
+  tokensPath: string;
+  registryPath: string;
+  onRepoUrlChange: (value: string) => void;
+  onTokensPathChange: (value: string) => void;
+  onRegistryPathChange: (value: string) => void;
+  github: UseGitHubConnectResult;
+}
+
+export function Settings({
+  repoUrl,
+  tokensPath,
+  registryPath,
+  onRepoUrlChange,
+  onTokensPathChange,
+  onRegistryPathChange,
+  github,
+}: SettingsProps) {
   const [readResult, setReadResult] = useState('');
   const [prResult, setPrResult] = useState('');
-
-  const github = useGitHubConnect({
-    repoUrl: repoUrl,
-    tokensPath: tokensPath,
-  });
 
   const handleTestRead = useCallback(async function () {
     setReadResult('Reading…');
@@ -133,7 +145,7 @@ export function Settings() {
             type="url"
             value={repoUrl}
             onChange={function (event) {
-              setRepoUrl(event.target.value);
+              onRepoUrlChange(event.target.value);
             }}
             placeholder="https://github.com/owner/repo"
             style={inputStyle}
@@ -145,11 +157,28 @@ export function Settings() {
             type="text"
             value={tokensPath}
             onChange={function (event) {
-              setTokensPath(event.target.value);
+              onTokensPathChange(event.target.value);
             }}
+            placeholder={DEFAULT_TOKENS_PATH}
             style={inputStyle}
           />
         </label>
+        <label style={{ color: '#666', display: 'block', fontSize: '11px', marginTop: '8px' }}>
+          Figma sync file path
+          <input
+            type="text"
+            value={registryPath}
+            onChange={function (event) {
+              onRegistryPathChange(event.target.value);
+            }}
+            placeholder={DEFAULT_REGISTRY_PATH}
+            style={inputStyle}
+          />
+        </label>
+        <p style={{ color: '#666', fontSize: '10px', lineHeight: 1.45, margin: '6px 0 0' }}>
+          Tracks components already scaffolded in Figma (<code>{DEFAULT_REGISTRY_PATH}</code>). Not
+          a catalog of every component in your repo — browse + batch scaffold ships in WO-056.
+        </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
           <button
             type="button"

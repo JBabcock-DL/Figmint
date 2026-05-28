@@ -64,13 +64,19 @@ describe('runAudit variables scope', () => {
     expect(audit.passed).toBe(true);
   });
 
-  it('throws for unsupported component scope', async () => {
-    await expect(
-      runAudit('component' as 'variables', {
-        canonical,
-        pushResult: { created: 0, updated: 0, skipped: 0, errors: [] },
-        figmaCollections: [],
-      }),
-    ).rejects.toThrow('unsupported audit scope: component');
+  it('runs component scope audit report', async () => {
+    const { componentSet } = await import('../../helpers/scaffold/mockVariantTree').then((mod) =>
+      mod.buildMockVariantTree(1),
+    );
+    const chipSpec = await import('../../fixtures/components/button-chip-bindings.v1.json');
+
+    const audit = await runAudit('component', {
+      spec: chipSpec.default as import('@detroitlabs/figmint-contracts').ComponentSpecV1,
+      componentSet: componentSet as unknown as ComponentSetNode,
+      bindingsResult: { applied: 11, failed: [], passed: true },
+    });
+
+    expect(audit.meta.scope).toBe('component');
+    expect(audit.passed).toBeDefined();
   });
 });

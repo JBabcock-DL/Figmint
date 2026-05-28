@@ -55,3 +55,10 @@ export interface CanvasAuditInput {
   /** Vitest-only probe override when page walk is unavailable */
   probeOverride?: import('./probeCanvasPage').CanvasPageProbe;
 }
+
+export interface ComponentAuditInput {
+  spec: import('@detroitlabs/figmint-contracts').ComponentSpecV1;
+  componentSet: ComponentSetNode;
+  bindingsResult?: import('@/core/components/scaffold/types').ApplyBindingsResult;
+  applyPropertiesResult?: import('@/core/components/scaffold/types').ApplyPropertiesResult;
+}

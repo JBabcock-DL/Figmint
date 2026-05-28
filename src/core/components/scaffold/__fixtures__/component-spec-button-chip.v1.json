@@ -1,0 +1,43 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Button",
+  "framework": "react",
+  "archetype": "chip",
+  "variantMatrix": {
+    "variant": ["default", "destructive", "outline", "secondary", "ghost", "link"],
+    "size": ["sm", "default", "lg", "icon"]
+  },
+  "props": [
+    {
+      "name": "variant",
+      "type": "enum",
+      "default": "default",
+      "enum": ["default", "destructive", "outline", "secondary", "ghost", "link"]
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "default": "default",
+      "enum": ["sm", "default", "lg", "icon"]
+    },
+    { "name": "disabled", "type": "boolean", "default": false },
+    { "name": "asChild", "type": "boolean", "default": false },
+    {
+      "name": "type",
+      "type": "enum",
+      "default": "button",
+      "enum": ["button", "submit", "reset"]
+    },
+    { "name": "className", "type": "string", "default": "" },
+    { "name": "loading", "type": "boolean", "default": false }
+  ],
+  "componentProps": { "label": true, "leadingIcon": true, "trailingIcon": true },
+  "iconSlots": { "leading": true, "trailing": true, "size": 24 },
+  "bindings": [],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "space/md",
+    "sizing": { "horizontal": "hug", "vertical": "hug" }
+  }
+}

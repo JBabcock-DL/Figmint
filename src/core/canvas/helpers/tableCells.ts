@@ -9,7 +9,7 @@ import {
 import type { BodyCellLayoutMode } from '../types';
 import { createHugFrame, reassertHug } from './autoLayout';
 import { bindPaintToVar, bindStrokeToVar } from './bindings';
-import { configureTableText } from './textCell';
+import { configureTableText, applyTableTextLayout } from './textCell';
 
 /**
  * §0.5 — HORIZONTAL + FIXED/FIXED + resize before text append.
@@ -38,7 +38,6 @@ export function createHeaderCell(
 
   const text = figma.createText();
   text.characters = labelText;
-  configureTableText(text, colWidth);
   if (codeStyleId !== null && codeStyleId !== undefined && codeStyleId !== '') {
     try {
       text.textStyleId = codeStyleId;
@@ -46,10 +45,12 @@ export function createHeaderCell(
       /* style may be missing on scratch files */
     }
   }
+  configureTableText(text, colWidth);
   if (mutedTextVar !== null && mutedTextVar !== undefined) {
     bindPaintToVar(text, mutedTextVar);
   }
   cell.appendChild(text);
+  applyTableTextLayout(text);
   return cell;
 }
 
@@ -110,6 +111,12 @@ export function createBodyRow(tokenPath: string, borderVariable?: Variable | nul
 /** Re-assert Hug on a body cell after appendChild. */
 export function reassertBodyCell(cell: FrameNode): void {
   reassertHug(cell);
+  for (let i = 0; i < cell.children.length; i++) {
+    const child = cell.children[i];
+    if (child.type === 'TEXT') {
+      applyTableTextLayout(child as TextNode);
+    }
+  }
 }
 
 /** Re-assert Hug on a body row after appendChild. */

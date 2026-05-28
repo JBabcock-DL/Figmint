@@ -2,6 +2,8 @@
 type: work-order
 github_issue: 26
 project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JLk
+blocked_by: WO-057
+note: In-Figma /vqa Ship is gated on WO-057 doc-pipeline parity (2026-05-28 architectural lock).
 ---
 
 ## Goal
@@ -85,6 +87,12 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 ### Telemetry / observability
 
 - `pluginLog()` per major event (main thread — not `console.debug`); production telemetry deferred.
+
+---
+
+## Open bugs — related _(2026-05-28)_
+
+**Register:** [designops-canvas-parity-bug-register.md](../research/designops-canvas-parity-bug-register.md) — **BUG-S5-005**: `chip.ts` `state-layer/hover` and `focus-ring` stubs use `resize(1,1)` without Hug/content. Reconcile with `component-chip.mcp.js` after SPK-S5-GEO-1.
 
 ---
 

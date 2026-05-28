@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Checkbox",
+  "framework": "react",
+  "archetype": "control",
+  "variantMatrix": {
+    "checked": [false, true]
+  },
+  "props": [],
+  "bindings": [],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "8",
+    "padding": "4",
+    "sizing": {
+      "horizontal": "hug",
+      "vertical": "hug"
+    }
+  },
+  "control": {
+    "shape": "checkbox"
+  }
+}

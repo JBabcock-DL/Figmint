@@ -106,10 +106,13 @@ export function AuditPanel({ audits, onDismiss }: AuditPanelProps) {
         warned
       </div>
 
-      <p style={{ color: '#444', margin: 0 }}>
-        Push stats: created {String(report.summary.variablesCreated)}, updated{' '}
-        {String(report.summary.variablesUpdated)}, skipped {String(report.summary.variablesSkipped)}
-      </p>
+      {report.meta.operation === 'push-variables' ? (
+        <p style={{ color: '#444', margin: 0 }}>
+          Push stats: created {String(report.summary.variablesCreated)}, updated{' '}
+          {String(report.summary.variablesUpdated)}, skipped{' '}
+          {String(report.summary.variablesSkipped)}
+        </p>
+      ) : null}
 
       <ul
         style={{

@@ -1,0 +1,26 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Button",
+  "framework": "react",
+  "archetype": "chip",
+  "variantMatrix": {
+    "variant": ["a", "b", "c"],
+    "size": ["sm", "md"],
+    "disabled": [false, true]
+  },
+  "props": [],
+  "bindings": [],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "8",
+    "padding": "16",
+    "sizing": {
+      "horizontal": "hug",
+      "vertical": "hug"
+    }
+  },
+  "iconSlots": {
+    "leading": true
+  }
+}

@@ -23,8 +23,10 @@ export function configureTableText(
 }
 
 /**
- * Hook for WO-012 doc style assignment — no-op until typography builders wire styles.
+ * §0 — table cell text hugs line height; fills horizontal inset only.
+ * Call after `appendChild` into a header/body cell (not before).
  */
-export function applyDocStyle(_text: TextNode, _styleName: string): void {
-  return;
+export function applyTableTextLayout(text: TextNode): void {
+  text.layoutSizingHorizontal = 'FILL';
+  text.layoutSizingVertical = 'HUG';
 }

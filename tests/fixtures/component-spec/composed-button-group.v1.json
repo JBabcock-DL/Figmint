@@ -1,0 +1,28 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "ButtonGroup",
+  "framework": "react",
+  "variantMatrix": {
+    "variant": ["default"]
+  },
+  "props": [],
+  "bindings": [],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "8",
+    "padding": "8",
+    "sizing": {
+      "horizontal": "hug",
+      "vertical": "hug"
+    }
+  },
+  "composes": [
+    {
+      "component": "button",
+      "slot": "actions",
+      "cardinality": "many",
+      "count": 2
+    }
+  ]
+}

@@ -4,6 +4,7 @@
 // `dist/ui.html` produced by the UI build pass — see vite.config.ts.
 
 import { runBootstrap } from '@/core/bootstrap/runBootstrap';
+import { runScaffoldComponent } from '@/core/components/scaffold/runScaffold';
 import { pushTokens } from '@/core/variables';
 import { runCanvasBench } from '@/core/canvas/bench';
 import { buildPrimitivesPage } from '@/core/canvas/colorTables';
@@ -22,6 +23,7 @@ import {
   type CanvasBuildResultMessage,
 } from '@/io/messages/canvas';
 import { isBootstrapRunMessage } from '@/io/messages/bootstrap';
+import { isScaffoldRunMessage } from '@/io/messages/scaffold';
 import {
   isPushVariablesMessage,
   type PushErrorMessage,
@@ -34,11 +36,13 @@ import {
   isGitHubTokenClearMessage,
   isGitHubTokenProbeMessage,
   isGitHubTokenSaveMessage,
+  isGitHubSessionLoadMessage,
   type GitHubContentsErrorMessage,
   type GitHubContentsResultMessage,
   type GitHubErrorMessage,
   type GitHubOAuthDeviceCodeMessage,
   type GitHubOAuthPollResultMessage,
+  type GitHubSessionLoadedMessage,
   type GitHubTokenStatusMessage,
 } from '@/io/messages/github';
 import { fetchRepoFileContents, GitHubAuthError, GitHubNotFoundError } from '@/io/github/contents';
@@ -47,10 +51,13 @@ import { pollDeviceFlow, startDeviceFlow } from '@/io/github/oauth';
 import { normalizeRepoUrl, parseOwnerRepo } from '@/io/github/repoUrl';
 import {
   clearConfig,
+  clearLastRepoUrl,
   clearToken,
   getConfig,
+  getLastRepoUrl,
   getToken,
   setConfig,
+  setLastRepoUrl,
   setToken,
 } from '@/io/github/storage';
 import {
@@ -170,7 +177,9 @@ async function handleGitHubTokenSave(
     tokensPath: pathValue,
     defaultBranch: existingConfig !== null ? existingConfig.defaultBranch : undefined,
     exportBasePath: existingConfig !== null ? existingConfig.exportBasePath : undefined,
+    registryPath: existingConfig !== null ? existingConfig.registryPath : undefined,
   });
+  await setLastRepoUrl(normalized);
   await sendGitHubTokenStatus(normalized);
   pluginLog('[main] github/token/save ok', scope);
 }
@@ -179,8 +188,35 @@ async function handleGitHubTokenClear(repoUrl: string): Promise<void> {
   const normalized = normalizeRepoUrl(repoUrl);
   await clearToken(normalized);
   await clearConfig(normalized);
+  const lastRepo = await getLastRepoUrl();
+  if (lastRepo === normalized) {
+    await clearLastRepoUrl();
+  }
   await sendGitHubTokenStatus(normalized);
   pluginLog('[main] github/token/clear ok');
+}
+
+async function handleGitHubSessionLoad(): Promise<void> {
+  const lastRepo = await getLastRepoUrl();
+  const response: GitHubSessionLoadedMessage = {
+    type: 'github/session/loaded',
+  };
+
+  if (lastRepo !== null) {
+    const token = await getToken(lastRepo);
+    const config = await getConfig(lastRepo);
+    response.repoUrl = lastRepo;
+    response.tokensPath =
+      config !== null && config.tokensPath.length > 0 ? config.tokensPath : 'design/tokens.json';
+    response.registryPath =
+      config !== null && config.registryPath !== undefined && config.registryPath.length > 0
+        ? config.registryPath
+        : '.figmint-registry.json';
+    response.connected = token !== null;
+    await sendGitHubTokenStatus(lastRepo);
+  }
+
+  figma.ui.postMessage(response);
 }
 
 async function handleGitHubOAuthStart(requestId: string, scope: string): Promise<void> {
@@ -735,6 +771,17 @@ figma.ui.onmessage = (message: unknown) => {
     return;
   }
 
+  if (isGitHubSessionLoadMessage(message)) {
+    handleGitHubSessionLoad().catch(function (error: unknown) {
+      const errResponse: GitHubErrorMessage = {
+        type: 'github/error',
+        message: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
   if (isGitHubContentsFetchMessage(message)) {
     handleGitHubContentsFetch(
       message.requestId,
@@ -771,6 +818,17 @@ figma.ui.onmessage = (message: unknown) => {
         message: extractErrorMessage(error),
       });
       pluginLog('[main] bootstrap/run unhandled', extractErrorMessage(error));
+    });
+    return;
+  }
+
+  if (isScaffoldRunMessage(message)) {
+    runScaffoldComponent(message.spec, message.options).catch(function (error: unknown) {
+      figma.ui.postMessage({
+        type: 'scaffold/error',
+        message: extractErrorMessage(error),
+      });
+      pluginLog('[main] scaffold/run unhandled', extractErrorMessage(error));
     });
     return;
   }

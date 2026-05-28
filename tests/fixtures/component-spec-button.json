@@ -1,0 +1,62 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Button",
+  "framework": "react",
+  "category": "Form & Input",
+  "archetype": "control",
+  "variantMatrix": {
+    "size": ["sm", "md", "lg"],
+    "variant": ["primary", "secondary", "ghost"]
+  },
+  "props": [
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "default": "md",
+      "enum": ["sm", "md", "lg"]
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "default": "primary",
+      "enum": ["primary", "secondary", "ghost"]
+    }
+  ],
+  "bindings": [
+    {
+      "selector": ".button",
+      "variable": "Theme/color/primary/default"
+    },
+    {
+      "selector": ".button-label",
+      "variable": "Typography/Label/MD/font-size"
+    }
+  ],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "Layout/spacing/2",
+    "padding": "Layout/spacing/3",
+    "sizing": {
+      "horizontal": "hug",
+      "vertical": "hug"
+    }
+  },
+  "surface": {
+    "fill": "Theme/color/primary/default",
+    "radius": "Layout/radius/md"
+  },
+  "control": {
+    "shape": "checkbox"
+  },
+  "confidence": {
+    "layout": "high",
+    "bindings": "medium",
+    "unresolved": ["trailing icon slot"]
+  }
+}

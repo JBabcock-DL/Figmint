@@ -24,7 +24,7 @@ export interface AuditReportMeta {
   generatedAt: string;
   scope: AuditScope;
   figmaFileKey?: string;
-  operation: 'push-variables';
+  operation: 'push-variables' | 'apply-bindings' | 'scaffold-component';
 }
 
 /**

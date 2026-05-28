@@ -1,0 +1,26 @@
+[
+  {
+    "size": "sm",
+    "variant": "primary"
+  },
+  {
+    "size": "md",
+    "variant": "secondary"
+  },
+  {
+    "size": "lg",
+    "variant": "ghost"
+  },
+  {
+    "size": "sm",
+    "variant": "secondary"
+  },
+  {
+    "size": "sm",
+    "variant": "ghost"
+  },
+  {
+    "size": "md",
+    "variant": "primary"
+  }
+]

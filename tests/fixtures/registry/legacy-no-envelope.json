@@ -1,0 +1,12 @@
+{
+  "fileKey": "legacy-file-key",
+  "components": {
+    "button": {
+      "nodeId": "1:10",
+      "key": "legacy-key",
+      "pageName": "↳ Buttons",
+      "publishedAt": "2026-05-01T00:00:00.000Z",
+      "version": 1
+    }
+  }
+}

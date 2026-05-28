@@ -73,7 +73,7 @@ function rowTokenPath(rowData: unknown): string {
   return 'unknown';
 }
 
-function resolveTableChrome(variables: Record<string, Variable | null>): BuildTableChrome {
+export function resolveTableChrome(variables: Record<string, Variable | null>): BuildTableChrome {
   return {
     borderVar:
       variables['doc/table/border'] !== undefined ? variables['doc/table/border'] : null,

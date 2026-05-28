@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Input",
+  "framework": "react",
+  "archetype": "field",
+  "variantMatrix": {
+    "state": ["default"]
+  },
+  "props": [],
+  "bindings": [],
+  "layout": {
+    "direction": "vertical",
+    "gap": "4",
+    "padding": "12",
+    "sizing": {
+      "horizontal": "fill",
+      "vertical": "hug"
+    }
+  },
+  "field": {
+    "label": "Label"
+  }
+}

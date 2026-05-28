@@ -1,0 +1,38 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Button",
+  "framework": "react",
+  "archetype": "chip",
+  "variantMatrix": {
+    "variant": ["primary", "secondary"],
+    "size": ["default", "sm"]
+  },
+  "props": [],
+  "bindings": [
+    { "selector": "root.fill", "variable": "color/primary/default" },
+    { "selector": "root.radius", "variable": "radius/md" },
+    { "selector": "root.padding", "variable": "space/md" },
+    { "selector": "root.gap", "variable": "space/sm" },
+    { "selector": "text/label.text-style", "variable": "Label/MD" },
+    { "selector": "text/label.fill", "variable": "color/on-primary/default" },
+    { "selector": "icon-slot/leading.fill", "variable": "color/on-primary/default" },
+    { "selector": "icon-slot/trailing.fill", "variable": "color/on-primary/default" },
+    { "selector": "state-layer/hover.fill", "variable": "color/state-layer/hover" },
+    { "selector": "focus-ring.stroke", "variable": "color/outline/default" },
+    { "selector": "root.stroke", "variable": "color/outline/default" }
+  ],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "8",
+    "padding": "16",
+    "sizing": {
+      "horizontal": "hug",
+      "vertical": "hug"
+    }
+  },
+  "iconSlots": {
+    "leading": true,
+    "trailing": true
+  }
+}

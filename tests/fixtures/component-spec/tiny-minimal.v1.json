@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Separator",
+  "framework": "react",
+  "archetype": "tiny",
+  "variantMatrix": {
+    "variant": ["default"]
+  },
+  "props": [],
+  "bindings": [],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "0",
+    "padding": "0",
+    "sizing": {
+      "horizontal": "fill",
+      "vertical": "hug"
+    }
+  },
+  "tiny": {
+    "shape": "separator"
+  }
+}

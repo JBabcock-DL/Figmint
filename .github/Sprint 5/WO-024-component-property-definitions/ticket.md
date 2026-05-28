@@ -2,6 +2,8 @@
 type: work-order
 github_issue: 27
 project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JMY
+blocked_by: WO-057
+note: In-Figma /vqa Ship is gated on WO-057 doc-pipeline parity (2026-05-28 architectural lock).
 ---
 
 ## Goal

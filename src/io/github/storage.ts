@@ -1,4 +1,6 @@
-import { configStorageKey, tokenStorageKey } from '@/io/github/repoUrl';
+import { configStorageKey, normalizeRepoUrl, tokenStorageKey } from '@/io/github/repoUrl';
+
+const LAST_REPO_STORAGE_KEY = 'figmint:github:lastRepoUrl';
 
 export interface StoredGitHubToken {
   accessToken: string;
@@ -9,6 +11,8 @@ export interface StoredGitHubToken {
 
 export interface StoredGitHubConfig {
   tokensPath: string;
+  /** Registry document path; Components tab defaults to `.figmint-registry.json` when unset. */
+  registryPath?: string;
   defaultBranch?: string;
   exportBasePath?: string;
 }
@@ -59,4 +63,24 @@ export async function setConfig(repoUrl: string, config: StoredGitHubConfig): Pr
 
 export async function clearConfig(repoUrl: string): Promise<void> {
   await figma.clientStorage.deleteAsync(configStorageKey(repoUrl));
+}
+
+export async function getLastRepoUrl(): Promise<string | null> {
+  const raw = await figma.clientStorage.getAsync(LAST_REPO_STORAGE_KEY);
+  if (typeof raw !== 'string' || raw.length === 0) {
+    return null;
+  }
+  try {
+    return normalizeRepoUrl(raw);
+  } catch {
+    return null;
+  }
+}
+
+export async function setLastRepoUrl(repoUrl: string): Promise<void> {
+  await figma.clientStorage.setAsync(LAST_REPO_STORAGE_KEY, normalizeRepoUrl(repoUrl));
+}
+
+export async function clearLastRepoUrl(): Promise<void> {
+  await figma.clientStorage.deleteAsync(LAST_REPO_STORAGE_KEY);
 }

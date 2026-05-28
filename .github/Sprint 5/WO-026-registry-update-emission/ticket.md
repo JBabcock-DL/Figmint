@@ -2,6 +2,8 @@
 type: work-order
 github_issue: 29
 project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JOI
+superseded_by: WO-058
+note: `.figmint-registry.json` envelope is deleted in WO-058 — canvas pluginData snapshots become single source of truth (PRD §6.4 FR-DRIFT-1). DO NOT move this ticket to Completed; close as Won't Do when WO-058 enters /research. 2026-05-28 architectural lock.
 ---
 
 ## Goal
@@ -71,6 +73,15 @@ When a designer scaffolds a component (e.g. Button), Figma gains a ComponentSet 
 - Code Connect mapping URL in registry (deferred — Sprint 8; `key` + `nodeId` suffice).
 - Configurable registry path UI (FR-CONF-5) — default path only; param on API.
 - Auto-commit without ExportSheet confirmation.
+- **Repo component catalog / discovery** — registry is a **sync ledger**, not a list of all scaffoldable components in the codebase (see WO-027 [registry-ux-intent](../WO-027-components-tab-ui-forward-flow/research/registry-ux-intent.md)).
+
+---
+
+## Product semantics _(for UI copy — 2026-05-28)_
+
+**`.figmint-registry.json` is not "all components in my repo."** It records components **already scaffolded in Figma** (nodeId, key, page, version) so re-scaffold, composed children, and drift can resolve Figma nodes. Spec content stays in `component-spec.v1.json` files. First-time users often have **no registry file** until after first scaffold + export — empty load is expected, not an error.
+
+**Settings vs Components:** Registry **path** configuration is a connection/setup concern; prefer **Settings** tab for path + helper text; Components tab should only **load** the sync file and show linked component names (WO-027 UX follow-on).
 
 ---
 

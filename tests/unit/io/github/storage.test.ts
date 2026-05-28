@@ -2,10 +2,13 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
   clearConfig,
+  clearLastRepoUrl,
   clearToken,
   getConfig,
+  getLastRepoUrl,
   getToken,
   setConfig,
+  setLastRepoUrl,
   setToken,
 } from '@/io/github/storage';
 
@@ -52,6 +55,13 @@ describe('storage', () => {
     expect(token!.scope).toBe('repo');
     expect(config).not.toBeNull();
     expect(config!.tokensPath).toBe('design/tokens.json');
+  });
+
+  it('persists and clears last repo URL', async function () {
+    await setLastRepoUrl(REPO_URL);
+    expect(await getLastRepoUrl()).toBe(REPO_URL);
+    await clearLastRepoUrl();
+    expect(await getLastRepoUrl()).toBeNull();
   });
 
   it('clears token and config keys', async function () {
