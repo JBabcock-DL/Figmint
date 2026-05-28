@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { buildMatrix } from '@/core/canvas/doc/matrix';

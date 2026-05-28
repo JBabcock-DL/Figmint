@@ -6,7 +6,7 @@ import {
   isCanvasBuildErrorMessage,
   isCanvasBuildResultMessage,
 } from '@/io/messages/canvas';
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 describe('canvas messages', () => {
   it('isCanvasBuildPageMessage accepts valid primitives build', () => {

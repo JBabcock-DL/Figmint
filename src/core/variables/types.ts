@@ -4,7 +4,7 @@ import type {
   Token,
   TokenAliasRef,
   TokensV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 export type { CodeSyntaxPlatform, CollectionId, TokenAliasRef, Token as TokenV1, TokensV1 };
 

@@ -73,6 +73,6 @@ All N/A.
 
 ## Backend action
 
-- **Backend:** GitHub — issue [#27](https://github.com/JBabcock-DL/Figmint/issues/27)
+- **Backend:** GitHub — issue [#27](https://github.com/JBabcock-DL/FigHub/issues/27)
 - **Project item:** `PVTI_lAHOD9B30s4BY4aYzgt5JMY`
 - **Status:** **In Review** (`594e69fa`) — subsystem Ship; Completed blocked on WO-027 integrated sandbox

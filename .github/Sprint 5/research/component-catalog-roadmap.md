@@ -11,7 +11,7 @@ Designers expect **Browse repo → multiselect → batch scaffold**. Phase 2 shi
 
 | UI label | File / concept | Purpose |
 | -------- | -------------- | ------- |
-| **Figma sync file** | `.figmint-registry.json` | Already scaffolded in Figma (nodeId, version) |
+| **Figma sync file** | `.fighub-registry.json` | Already scaffolded in Figma (nodeId, version) |
 | **Browse repo components** | WO-056 catalog | All discoverable specs in GitHub repo |
 | **Import from repo** | WO-044 | Parse React/source → new spec |
 

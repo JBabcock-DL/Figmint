@@ -2,7 +2,7 @@
 
 ## Approach
 
-Ship a **variables-scope** post-push audit engine: a versioned `AuditReportV1` contract in `@detroitlabs/figmint-contracts`, sixteen pure rule modules under `src/core/audit/rules/`, a snapshot reader (`readFigmaVariableState`) and orchestrator (`runAudit`) in `src/core/audit/`, and Vitest coverage with JSON fixtures (no live Figma in CI). Audit answers “did this push succeed correctly?” against canonical `TokensV1` + normalized Figma snapshots — distinct from `DriftReportV1` (3-way repo sync). WO-008 owns the push hook and returns `PushResult & { audit: AuditReportV1 }`; WO-010 owns the audit implementation and the contract. Sprint 2 output is **JSON only** (`AuditReportV1` serialization); GFM markdown is WO-019. Build in three sequential phases: contract + test harness → rules → orchestrator + integration tests.
+Ship a **variables-scope** post-push audit engine: a versioned `AuditReportV1` contract in `@detroitlabs/fighub-contracts`, sixteen pure rule modules under `src/core/audit/rules/`, a snapshot reader (`readFigmaVariableState`) and orchestrator (`runAudit`) in `src/core/audit/`, and Vitest coverage with JSON fixtures (no live Figma in CI). Audit answers “did this push succeed correctly?” against canonical `TokensV1` + normalized Figma snapshots — distinct from `DriftReportV1` (3-way repo sync). WO-008 owns the push hook and returns `PushResult & { audit: AuditReportV1 }`; WO-010 owns the audit implementation and the contract. Sprint 2 output is **JSON only** (`AuditReportV1` serialization); GFM markdown is WO-019. Build in three sequential phases: contract + test harness → rules → orchestrator + integration tests.
 
 ## Steps
 
@@ -10,14 +10,14 @@ Ship a **variables-scope** post-push audit engine: a versioned `AuditReportV1` c
 
 - [x] Step 1 — Author `packages/contracts/src/auditReport.v1.ts` per research locked shape: `AuditScope`, `AuditSeverity`, `AuditRuleResult`, `AuditReportSummary` (with `variablesCreated/Updated/Skipped`, `rulesPassed/Failed/Warned`, `modeCoverage`, `codeSyntaxCoverage`), `AuditReportMeta` (`generatedAt`, `scope`, `figmaFileKey?`, `operation: 'push-variables'`), `AuditReportV1` (`v: 1`, `kind: 'audit-report'`, `meta`, `passed`, `summary`, `results[]`). Document `passed` semantics: `true` iff every result with `severity !== 'warn'` (default `error`) has `pass: true`.
 - [x] Step 2 — Re-export all audit types from `packages/contracts/src/index.ts` (mirror `driftReport.v1.ts` export style).
-- [x] Step 3 — Add `{ file: 'src/auditReport.v1.ts', type: 'AuditReportV1', out: 'audit-report.v1.schema.json' }` to `packages/contracts/scripts/build-schemas.mjs` `CONTRACTS` array (after `driftReport.v1.ts` entry). Run `npm run build -w @detroitlabs/figmint-contracts` and confirm `dist/audit-report.v1.schema.json` emits with `$id: https://figmint.detroitlabs.com/schemas/audit-report.v1.schema.json`.
+- [x] Step 3 — Add `{ file: 'src/auditReport.v1.ts', type: 'AuditReportV1', out: 'audit-report.v1.schema.json' }` to `packages/contracts/scripts/build-schemas.mjs` `CONTRACTS` array (after `driftReport.v1.ts` entry). Run `npm run build -w @detroitlabs/fighub-contracts` and confirm `dist/audit-report.v1.schema.json` emits with `$id: https://fighub.detroitlabs.com/schemas/audit-report.v1.schema.json`.
 - [x] Step 4 — Add Vitest to repo root: `vitest@~3.2` (and `@vitest/coverage-v8` optional — skip unless needed) as root `devDependencies`; add scripts `"test": "vitest run"`, `"test:watch": "vitest"`.
 - [x] Step 5 — Add `vitest.config.ts` at repo root: `test.include: ['tests/unit/**/*.test.ts']`, `resolve.alias` matching `tsconfig.json` paths (`@/*` → `./src/*`), `environment: 'node'`, enable `resolveJsonModule` for fixture imports. Extend root `tsconfig.json` `include` with `tests/**/*` if needed for `tsc --noEmit`.
 - [x] Step 6 — Scaffold `tests/fixtures/audit/` and `tests/unit/audit/` directories with `.gitkeep` or placeholder README (one line: fixture purpose).
 
 ### Plugin audit types & shared helpers (Phase 1)
 
-- [x] Step 7 — Create `src/core/audit/types.ts`: re-export `AuditReportV1`, `AuditRuleResult`, `AuditReportSummary`, `AuditScope` from `@detroitlabs/figmint-contracts`; define plugin-only `FigmaVariableSnapshot`, `FigmaCollectionSnapshot` (per research §4 — mode names as keys in `valuesByMode`, `codeSyntax` partial triple); define `PushResult` interface `{ created, updated, skipped, errors: string[] }` (matches WO-008; stays plugin-local until ops-program needs it); export `PushResultWithAudit = PushResult & { audit: AuditReportV1 }` for WO-008 integration contract.
+- [x] Step 7 — Create `src/core/audit/types.ts`: re-export `AuditReportV1`, `AuditRuleResult`, `AuditReportSummary`, `AuditScope` from `@detroitlabs/fighub-contracts`; define plugin-only `FigmaVariableSnapshot`, `FigmaCollectionSnapshot` (per research §4 — mode names as keys in `valuesByMode`, `codeSyntax` partial triple); define `PushResult` interface `{ created, updated, skipped, errors: string[] }` (matches WO-008; stays plugin-local until ops-program needs it); export `PushResultWithAudit = PushResult & { audit: AuditReportV1 }` for WO-008 integration contract.
 - [x] Step 8 — Create `src/core/audit/constants.ts`: `COLLECTION_DISPLAY_NAMES` map (`primitives`→`Primitives`, `theme`→`Theme`, `typography`→`Typography`, `layout`→`Layout`, `effects`→`Effects`); `ALL_COLLECTION_IDS` ordered array; `CODE_SYNTAX_PLATFORMS: readonly ['WEB','ANDROID','iOS']`; `COLOR_EPSILON = 1/255` for RGBA compare in value-equality rule.
 
 ### Rule modules (Phase 2)
@@ -55,7 +55,7 @@ Implement each rule as a **pure function** `(input: RuleInput) => AuditRuleResul
 - [x] Step 34 — `tests/unit/audit/rules/codesyntax-coverage.test.ts` — assert `buildAuditSummary` / rule output populates `codeSyntaxCoverage` counts for WEB/ANDROID/iOS.
 - [x] Step 35 — `tests/unit/audit/runAudit.test.ts` — end-to-end `runAudit('variables', { canonical, pushResult: { created:1, updated:0, skipped:0, errors:[] }, figmaCollections })` for pass-all (expect `passed: true`, summary counts) and missing-dark (expect `passed: false`, failed rule present). Mock no Figma globals — pass snapshots directly.
 - [x] Step 36 — Document WO-008 integration in `src/core/audit/README.md` (short): after push commit, `const figmaCollections = await readFigmaVariableState(); const audit = await runAudit('variables', { canonical, pushResult, figmaCollections }); return { ...pushResult, audit };` — caller checks `audit.passed`, does **not** merge audit diagnostics into `pushResult.errors[]`.
-- [x] Step 37 — Run quality gates: `npm run typecheck`, `npm run lint`, `npm run format:check` (or `prettier . --write` then check), `npm test`, `npm run build -w @detroitlabs/figmint-contracts`. Fix any issues. **Do not commit** (per user instruction).
+- [x] Step 37 — Run quality gates: `npm run typecheck`, `npm run lint`, `npm run format:check` (or `prettier . --write` then check), `npm test`, `npm run build -w @detroitlabs/fighub-contracts`. Fix any issues. **Do not commit** (per user instruction).
 
 ## Build Agents
 
@@ -89,7 +89,7 @@ Implement each rule as a **pure function** `(input: RuleInput) => AuditRuleResul
 
 **MCP / external:** None for build. Manual sandbox verification optional post-build: [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox) (`file_key=cVdPraIafWFBRZnzMPhtrW`).
 
-**Imports:** `@detroitlabs/figmint-contracts` for output types; `@figma/plugin-typings` for `VariableResolvedDataType` / `VariableValue` in snapshot types only.
+**Imports:** `@detroitlabs/fighub-contracts` for output types; `@figma/plugin-typings` for `VariableResolvedDataType` / `VariableValue` in snapshot types only.
 
 ## Open Questions
 

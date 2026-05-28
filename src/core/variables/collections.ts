@@ -1,4 +1,4 @@
-import type { CollectionId } from '@detroitlabs/figmint-contracts';
+import type { CollectionId } from '@detroitlabs/fighub-contracts';
 
 import type { LocalVariableSnapshot } from './types';
 

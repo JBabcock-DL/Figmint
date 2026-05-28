@@ -40,7 +40,7 @@ export interface CanvasPageTarget {
 }
 
 export interface CanvasBuildContext {
-  tokens: import('@detroitlabs/figmint-contracts').TokensV1;
+  tokens: import('@detroitlabs/fighub-contracts').TokensV1;
   pushResult?: import('@/core/audit/types').PushResult;
   pageId?: string;
 }
@@ -54,7 +54,7 @@ export interface CanvasBuildResult {
   tableCount: number;
   swatchCount: number;
   warnings: string[];
-  audit?: import('@detroitlabs/figmint-contracts').AuditReportV1;
+  audit?: import('@detroitlabs/fighub-contracts').AuditReportV1;
   stats?: Record<string, number>;
 }
 

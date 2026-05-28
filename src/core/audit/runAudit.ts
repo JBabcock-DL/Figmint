@@ -1,6 +1,6 @@
 /// <reference types="@figma/plugin-typings" />
 
-import type { AuditReportV1, AuditScope } from '@detroitlabs/figmint-contracts';
+import type { AuditReportV1, AuditScope } from '@detroitlabs/fighub-contracts';
 
 import { mergeProbeWithStats, probeCanvasPage } from './probeCanvasPage';
 import { runComponentBindingRules } from './rules/componentBindings';

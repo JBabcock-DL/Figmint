@@ -16,7 +16,7 @@ import type { ContractDocument, ExportSheetProps } from '@/ui/export/types';
 const SINK_LABELS: Record<SinkId, string> = {
   download: 'Download file(s)',
   clipboard: 'Copy markdown to clipboard',
-  'output-page': 'Write to Figmint Output page',
+  'output-page': 'Write to FigHub Output page',
   'plugin-data': 'Write to frame pluginData',
   'github-pr': 'Open GitHub PR',
 };

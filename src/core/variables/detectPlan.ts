@@ -1,4 +1,4 @@
-const PROBE_COLLECTION_NAME = '__figmint_evc_probe__';
+const PROBE_COLLECTION_NAME = '__fighub_evc_probe__';
 const PROBE_EXTENSION_NAME = '__probe__';
 
 function extractErrorMessage(error: unknown): string {

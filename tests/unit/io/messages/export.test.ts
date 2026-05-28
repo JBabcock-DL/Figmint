@@ -13,7 +13,7 @@ describe('export message guards', () => {
   const formatOptions = { format: 'json' as const };
   const files = [
     {
-      path: 'docs/figmint/drift-2026-05-27.v1.json',
+      path: 'docs/fighub/drift-2026-05-27.v1.json',
       content: '{"kind":"drift-report"}',
       format: 'json' as const,
     },
@@ -48,7 +48,7 @@ describe('export message guards', () => {
               baseBranch: 'main',
               commitMessage: 'chore: export drift report',
             },
-            files: [{ path: 'docs/figmint/drift.v1.json', content: '{}' }],
+            files: [{ path: 'docs/fighub/drift.v1.json', content: '{}' }],
           },
         }),
       ).toBe(true);
@@ -58,8 +58,8 @@ describe('export message guards', () => {
           requestId: 'export-3',
           sinks: ['output-page'],
           doc: { kind: 'registry', payload: { v: 1, kind: 'registry' } },
-          formatOptions: { format: 'json', baseName: 'docs/figmint/registry-export', label: 'figmint/registry' },
-          files: [{ path: 'docs/figmint/registry-export.json', content: '{}', format: 'json' }],
+          formatOptions: { format: 'json', baseName: 'docs/fighub/registry-export', label: 'fighub/registry' },
+          files: [{ path: 'docs/fighub/registry-export.json', content: '{}', format: 'json' }],
         }),
       ).toBe(true);
     });

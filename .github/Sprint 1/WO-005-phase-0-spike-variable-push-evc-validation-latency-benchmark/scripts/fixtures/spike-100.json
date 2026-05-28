@@ -7,7 +7,7 @@
         "$type": "color",
         "$value": "#988583",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-50)",
               "ANDROID": "color-primary-50",
@@ -20,7 +20,7 @@
         "$type": "color",
         "$value": "#b4e135",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-100)",
               "ANDROID": "color-primary-100",
@@ -33,7 +33,7 @@
         "$type": "color",
         "$value": "#b1def4",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-200)",
               "ANDROID": "color-primary-200",
@@ -46,7 +46,7 @@
         "$type": "color",
         "$value": "#86473f",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-300)",
               "ANDROID": "color-primary-300",
@@ -59,7 +59,7 @@
         "$type": "color",
         "$value": "#d22d5e",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-400)",
               "ANDROID": "color-primary-400",
@@ -72,7 +72,7 @@
         "$type": "color",
         "$value": "#1a78c9",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-500)",
               "ANDROID": "color-primary-500",
@@ -85,7 +85,7 @@
         "$type": "color",
         "$value": "#665ee8",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-600)",
               "ANDROID": "color-primary-600",
@@ -98,7 +98,7 @@
         "$type": "color",
         "$value": "#fd92b3",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-700)",
               "ANDROID": "color-primary-700",
@@ -111,7 +111,7 @@
         "$type": "color",
         "$value": "#36fb72",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-800)",
               "ANDROID": "color-primary-800",
@@ -124,7 +124,7 @@
         "$type": "color",
         "$value": "#ce619d",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-primary-900)",
               "ANDROID": "color-primary-900",
@@ -139,7 +139,7 @@
         "$type": "color",
         "$value": "#c47cdb",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-50)",
               "ANDROID": "color-secondary-50",
@@ -152,7 +152,7 @@
         "$type": "color",
         "$value": "#9c25fd",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-100)",
               "ANDROID": "color-secondary-100",
@@ -165,7 +165,7 @@
         "$type": "color",
         "$value": "#e7d9bc",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-200)",
               "ANDROID": "color-secondary-200",
@@ -178,7 +178,7 @@
         "$type": "color",
         "$value": "#bc7467",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-300)",
               "ANDROID": "color-secondary-300",
@@ -191,7 +191,7 @@
         "$type": "color",
         "$value": "#b93fc6",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-400)",
               "ANDROID": "color-secondary-400",
@@ -204,7 +204,7 @@
         "$type": "color",
         "$value": "#50a5f1",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-500)",
               "ANDROID": "color-secondary-500",
@@ -217,7 +217,7 @@
         "$type": "color",
         "$value": "#4d7150",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-600)",
               "ANDROID": "color-secondary-600",
@@ -230,7 +230,7 @@
         "$type": "color",
         "$value": "#220bfb",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-700)",
               "ANDROID": "color-secondary-700",
@@ -243,7 +243,7 @@
         "$type": "color",
         "$value": "#eaa84a",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-800)",
               "ANDROID": "color-secondary-800",
@@ -256,7 +256,7 @@
         "$type": "color",
         "$value": "#bfda15",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-secondary-900)",
               "ANDROID": "color-secondary-900",
@@ -271,7 +271,7 @@
         "$type": "color",
         "$value": "#dec39c",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-50)",
               "ANDROID": "color-neutral-50",
@@ -284,7 +284,7 @@
         "$type": "color",
         "$value": "#255338",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-100)",
               "ANDROID": "color-neutral-100",
@@ -297,7 +297,7 @@
         "$type": "color",
         "$value": "#d96d19",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-200)",
               "ANDROID": "color-neutral-200",
@@ -310,7 +310,7 @@
         "$type": "color",
         "$value": "#9121ae",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-300)",
               "ANDROID": "color-neutral-300",
@@ -323,7 +323,7 @@
         "$type": "color",
         "$value": "#453b8f",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-400)",
               "ANDROID": "color-neutral-400",
@@ -336,7 +336,7 @@
         "$type": "color",
         "$value": "#ae07c4",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-500)",
               "ANDROID": "color-neutral-500",
@@ -349,7 +349,7 @@
         "$type": "color",
         "$value": "#73d585",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-600)",
               "ANDROID": "color-neutral-600",
@@ -362,7 +362,7 @@
         "$type": "color",
         "$value": "#dca1ba",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-700)",
               "ANDROID": "color-neutral-700",
@@ -375,7 +375,7 @@
         "$type": "color",
         "$value": "#d6076b",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-800)",
               "ANDROID": "color-neutral-800",
@@ -388,7 +388,7 @@
         "$type": "color",
         "$value": "#3ea140",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-neutral-900)",
               "ANDROID": "color-neutral-900",
@@ -403,7 +403,7 @@
         "$type": "color",
         "$value": "#264ba3",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-50)",
               "ANDROID": "color-accent-50",
@@ -416,7 +416,7 @@
         "$type": "color",
         "$value": "#e42a55",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-100)",
               "ANDROID": "color-accent-100",
@@ -429,7 +429,7 @@
         "$type": "color",
         "$value": "#e05e94",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-200)",
               "ANDROID": "color-accent-200",
@@ -442,7 +442,7 @@
         "$type": "color",
         "$value": "#77925f",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-300)",
               "ANDROID": "color-accent-300",
@@ -455,7 +455,7 @@
         "$type": "color",
         "$value": "#c3787e",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-400)",
               "ANDROID": "color-accent-400",
@@ -468,7 +468,7 @@
         "$type": "color",
         "$value": "#48f869",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-500)",
               "ANDROID": "color-accent-500",
@@ -481,7 +481,7 @@
         "$type": "color",
         "$value": "#94de88",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-600)",
               "ANDROID": "color-accent-600",
@@ -494,7 +494,7 @@
         "$type": "color",
         "$value": "#2c1253",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-700)",
               "ANDROID": "color-accent-700",
@@ -507,7 +507,7 @@
         "$type": "color",
         "$value": "#291012",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-800)",
               "ANDROID": "color-accent-800",
@@ -520,7 +520,7 @@
         "$type": "color",
         "$value": "#c0763d",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-accent-900)",
               "ANDROID": "color-accent-900",
@@ -535,7 +535,7 @@
         "$type": "color",
         "$value": "#a12dd4",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-50)",
               "ANDROID": "color-success-50",
@@ -548,7 +548,7 @@
         "$type": "color",
         "$value": "#200c00",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-100)",
               "ANDROID": "color-success-100",
@@ -561,7 +561,7 @@
         "$type": "color",
         "$value": "#240a21",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-200)",
               "ANDROID": "color-success-200",
@@ -574,7 +574,7 @@
         "$type": "color",
         "$value": "#8ca3f6",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-300)",
               "ANDROID": "color-success-300",
@@ -587,7 +587,7 @@
         "$type": "color",
         "$value": "#52a417",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-400)",
               "ANDROID": "color-success-400",
@@ -600,7 +600,7 @@
         "$type": "color",
         "$value": "#bb3dec",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-500)",
               "ANDROID": "color-success-500",
@@ -613,7 +613,7 @@
         "$type": "color",
         "$value": "#6f8a2d",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-600)",
               "ANDROID": "color-success-600",
@@ -626,7 +626,7 @@
         "$type": "color",
         "$value": "#d82402",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-700)",
               "ANDROID": "color-success-700",
@@ -639,7 +639,7 @@
         "$type": "color",
         "$value": "#db2643",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-800)",
               "ANDROID": "color-success-800",
@@ -652,7 +652,7 @@
         "$type": "color",
         "$value": "#06bdf8",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-success-900)",
               "ANDROID": "color-success-900",
@@ -667,7 +667,7 @@
         "$type": "color",
         "$value": "#ac160d",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-50)",
               "ANDROID": "color-warning-50",
@@ -680,7 +680,7 @@
         "$type": "color",
         "$value": "#4bd01b",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-100)",
               "ANDROID": "color-warning-100",
@@ -693,7 +693,7 @@
         "$type": "color",
         "$value": "#e303e6",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-200)",
               "ANDROID": "color-warning-200",
@@ -706,7 +706,7 @@
         "$type": "color",
         "$value": "#b79e91",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-300)",
               "ANDROID": "color-warning-300",
@@ -719,7 +719,7 @@
         "$type": "color",
         "$value": "#4f9bdc",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-400)",
               "ANDROID": "color-warning-400",
@@ -732,7 +732,7 @@
         "$type": "color",
         "$value": "#e70207",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-500)",
               "ANDROID": "color-warning-500",
@@ -745,7 +745,7 @@
         "$type": "color",
         "$value": "#6bb872",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-600)",
               "ANDROID": "color-warning-600",
@@ -758,7 +758,7 @@
         "$type": "color",
         "$value": "#031e9d",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-700)",
               "ANDROID": "color-warning-700",
@@ -771,7 +771,7 @@
         "$type": "color",
         "$value": "#9b1be8",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-800)",
               "ANDROID": "color-warning-800",
@@ -784,7 +784,7 @@
         "$type": "color",
         "$value": "#324fb3",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-warning-900)",
               "ANDROID": "color-warning-900",
@@ -799,7 +799,7 @@
         "$type": "color",
         "$value": "#f93713",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-50)",
               "ANDROID": "color-error-50",
@@ -812,7 +812,7 @@
         "$type": "color",
         "$value": "#ec3485",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-100)",
               "ANDROID": "color-error-100",
@@ -825,7 +825,7 @@
         "$type": "color",
         "$value": "#2666c4",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-200)",
               "ANDROID": "color-error-200",
@@ -838,7 +838,7 @@
         "$type": "color",
         "$value": "#bd9a8f",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-300)",
               "ANDROID": "color-error-300",
@@ -851,7 +851,7 @@
         "$type": "color",
         "$value": "#0980ae",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-400)",
               "ANDROID": "color-error-400",
@@ -864,7 +864,7 @@
         "$type": "color",
         "$value": "#51cc19",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-500)",
               "ANDROID": "color-error-500",
@@ -877,7 +877,7 @@
         "$type": "color",
         "$value": "#9db238",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-600)",
               "ANDROID": "color-error-600",
@@ -890,7 +890,7 @@
         "$type": "color",
         "$value": "#721a83",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-700)",
               "ANDROID": "color-error-700",
@@ -903,7 +903,7 @@
         "$type": "color",
         "$value": "#6f1842",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-800)",
               "ANDROID": "color-error-800",
@@ -916,7 +916,7 @@
         "$type": "color",
         "$value": "#067e6d",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-error-900)",
               "ANDROID": "color-error-900",
@@ -931,7 +931,7 @@
         "$type": "color",
         "$value": "#a87d41",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-50)",
               "ANDROID": "color-info-50",
@@ -944,7 +944,7 @@
         "$type": "color",
         "$value": "#88f8ef",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-100)",
               "ANDROID": "color-info-100",
@@ -957,7 +957,7 @@
         "$type": "color",
         "$value": "#5d939a",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-200)",
               "ANDROID": "color-info-200",
@@ -970,7 +970,7 @@
         "$type": "color",
         "$value": "#f4c765",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-300)",
               "ANDROID": "color-info-300",
@@ -983,7 +983,7 @@
         "$type": "color",
         "$value": "#a57b98",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-400)",
               "ANDROID": "color-info-400",
@@ -996,7 +996,7 @@
         "$type": "color",
         "$value": "#3d78e3",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-500)",
               "ANDROID": "color-info-500",
@@ -1009,7 +1009,7 @@
         "$type": "color",
         "$value": "#d4df0e",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-600)",
               "ANDROID": "color-info-600",
@@ -1022,7 +1022,7 @@
         "$type": "color",
         "$value": "#599579",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-700)",
               "ANDROID": "color-info-700",
@@ -1035,7 +1035,7 @@
         "$type": "color",
         "$value": "#59fb8c",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-800)",
               "ANDROID": "color-info-800",
@@ -1048,7 +1048,7 @@
         "$type": "color",
         "$value": "#f161b7",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-info-900)",
               "ANDROID": "color-info-900",
@@ -1063,7 +1063,7 @@
         "$type": "color",
         "$value": "#1fd0e8",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-50)",
               "ANDROID": "color-surface-50",
@@ -1076,7 +1076,7 @@
         "$type": "color",
         "$value": "#614414",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-100)",
               "ANDROID": "color-surface-100",
@@ -1089,7 +1089,7 @@
         "$type": "color",
         "$value": "#650fd5",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-200)",
               "ANDROID": "color-surface-200",
@@ -1102,7 +1102,7 @@
         "$type": "color",
         "$value": "#8fde0a",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-300)",
               "ANDROID": "color-surface-300",
@@ -1115,7 +1115,7 @@
         "$type": "color",
         "$value": "#acf7d3",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-400)",
               "ANDROID": "color-surface-400",
@@ -1128,7 +1128,7 @@
         "$type": "color",
         "$value": "#15c408",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-500)",
               "ANDROID": "color-surface-500",
@@ -1141,7 +1141,7 @@
         "$type": "color",
         "$value": "#c9dde9",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-600)",
               "ANDROID": "color-surface-600",
@@ -1154,7 +1154,7 @@
         "$type": "color",
         "$value": "#445dfe",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-700)",
               "ANDROID": "color-surface-700",
@@ -1167,7 +1167,7 @@
         "$type": "color",
         "$value": "#61aa27",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-800)",
               "ANDROID": "color-surface-800",
@@ -1180,7 +1180,7 @@
         "$type": "color",
         "$value": "#8d0f7c",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-surface-900)",
               "ANDROID": "color-surface-900",
@@ -1195,7 +1195,7 @@
         "$type": "color",
         "$value": "#9db8d6",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-50)",
               "ANDROID": "color-brand-50",
@@ -1208,7 +1208,7 @@
         "$type": "color",
         "$value": "#fe9206",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-100)",
               "ANDROID": "color-brand-100",
@@ -1221,7 +1221,7 @@
         "$type": "color",
         "$value": "#675e3b",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-200)",
               "ANDROID": "color-brand-200",
@@ -1234,7 +1234,7 @@
         "$type": "color",
         "$value": "#92c390",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-300)",
               "ANDROID": "color-brand-300",
@@ -1247,7 +1247,7 @@
         "$type": "color",
         "$value": "#e1783d",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-400)",
               "ANDROID": "color-brand-400",
@@ -1260,7 +1260,7 @@
         "$type": "color",
         "$value": "#4a1212",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-500)",
               "ANDROID": "color-brand-500",
@@ -1273,7 +1273,7 @@
         "$type": "color",
         "$value": "#01c6a7",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-600)",
               "ANDROID": "color-brand-600",
@@ -1286,7 +1286,7 @@
         "$type": "color",
         "$value": "#2d2bfc",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-700)",
               "ANDROID": "color-brand-700",
@@ -1299,7 +1299,7 @@
         "$type": "color",
         "$value": "#69fa69",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-800)",
               "ANDROID": "color-brand-800",
@@ -1312,7 +1312,7 @@
         "$type": "color",
         "$value": "#e47a7e",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--color-brand-900)",
               "ANDROID": "color-brand-900",

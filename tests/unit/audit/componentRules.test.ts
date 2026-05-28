@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import chipFixture from '@/core/components/scaffold/__fixtures__/component-spec-button-chip.v1.json';
 import { runAudit } from '@/core/audit/runAudit';

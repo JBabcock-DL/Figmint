@@ -159,7 +159,7 @@ export async function createPullRequestFromSinkContext(
   const prTitle =
     input.prTitle ??
     ctx.options.prTitle ??
-    'figmint: ' + ctx.contractKind + ' export (' + formatDateUtc(dateUtc) + ')';
+    'fighub: ' + ctx.contractKind + ' export (' + formatDateUtc(dateUtc) + ')';
 
   return createPullRequestFlow({
     token: token,

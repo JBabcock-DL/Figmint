@@ -2,18 +2,18 @@
 
 ## Approach
 
-Implement a deterministic, Plugin-API-only push engine under `src/core/variables/` that consumes canonical `TokensV1` (from `@detroitlabs/figmint-contracts` once WO-055 lands) and writes the five Foundations collections in strict dependency order. The engine snapshots local Figma state once at push start, reconciles collections and modes idempotently, then runs five sequential variable passes (Primitives → Theme → Typography → Layout → Effects) with runtime `varMap` alias resolution. Value and `codeSyntax` equality gates skip redundant writes on re-run. WO-009 and WO-010 integrate via compile-time stubs (`deriveCodeSyntax`, `runAudit`) replaced in place when those tickets merge. Main-thread code stays ES2017-safe (`esbuild` target `es2017`; no `?.` / `??` / `replaceAll`; `Date.now()` for timing). On per-variable or per-pass failures, **continue** the push and accumulate `errors[]` (do not abort remaining collections).
+Implement a deterministic, Plugin-API-only push engine under `src/core/variables/` that consumes canonical `TokensV1` (from `@detroitlabs/fighub-contracts` once WO-055 lands) and writes the five Foundations collections in strict dependency order. The engine snapshots local Figma state once at push start, reconciles collections and modes idempotently, then runs five sequential variable passes (Primitives → Theme → Typography → Layout → Effects) with runtime `varMap` alias resolution. Value and `codeSyntax` equality gates skip redundant writes on re-run. WO-009 and WO-010 integrate via compile-time stubs (`deriveCodeSyntax`, `runAudit`) replaced in place when those tickets merge. Main-thread code stays ES2017-safe (`esbuild` target `es2017`; no `?.` / `??` / `replaceAll`; `Date.now()` for timing). On per-variable or per-pass failures, **continue** the push and accumulate `errors[]` (do not abort remaining collections).
 
 ## Steps
 
 ### Foundation — types, constants, stubs
 
 - [x] **Step 1** — Create `src/core/variables/` package layout: `types.ts`, `collections.ts`, `modes.ts`, `compare.ts`, `detectPlan.ts`, `resolveTokens.ts`, `push.ts`, and `index.ts` exporting `pushTokens`, `PushResult`, and shared types. Add `src/core/audit/runAudit.ts` stub (WO-010). **Skipped** `codeSyntax.ts` stub — WO-009 real `mapCodeSyntax` / `applyCodeSyntax` already landed.
-- [x] **Step 2** — Implement `types.ts`: `PushError`, `CollectionPassResult`, `PushResult`, `PushOptions` (`evcEnabled?: boolean`, `continueOnAuditFail?: boolean` default `false`), `VarMaps`, `LocalVariableSnapshot` (`collectionByName`, `variableByKey`, raw arrays). Re-export `CollectionId`, `TokensV1`, `TokenV1`, `TokenAliasRef`, `CodeSyntaxPlatform` from `@detroitlabs/figmint-contracts` (WO-055 landed — no mirror).
+- [x] **Step 2** — Implement `types.ts`: `PushError`, `CollectionPassResult`, `PushResult`, `PushOptions` (`evcEnabled?: boolean`, `continueOnAuditFail?: boolean` default `false`), `VarMaps`, `LocalVariableSnapshot` (`collectionByName`, `variableByKey`, raw arrays). Re-export `CollectionId`, `TokensV1`, `TokenV1`, `TokenAliasRef`, `CodeSyntaxPlatform` from `@detroitlabs/fighub-contracts` (WO-055 landed — no mirror).
 - [x] **Step 3** — Add `collections.ts` constants: `COLLECTION_ORDER: CollectionId[]` = `['primitives','theme','typography','layout','effects']` and `DISPLAY_NAME: Record<CollectionId, string>` mapping to `Primitives`, `Theme`, `Typography`, `Layout`, `Effects` (Title Case, case-sensitive per research §3).
 - [x] **Step 4** — ~~Stub `codeSyntax.ts`~~ **N/A (WO-009 pre-landed)** — `push.ts` imports `applyCodeSyntax` from real `codeSyntax.ts`; no stub written.
 - [x] **Step 5** — Stub `src/core/audit/runAudit.ts` (WO-010): export `runAudit(scope: 'variables', ctx: { tokens: TokensV1; pushResult: PushResult })` returning a minimal pass-shaped object `{ passed: true, failures: [] }` typed loosely until `AuditReportV1` lands in contracts. No Figma reads in stub.
-- [x] **Step 6** — Implement `detectPlan.ts`: `isEnterprise(): Promise<boolean>` using ephemeral `createVariableCollection('__figmint_evc_probe__')` + `extend('__probe__')` try/catch; treat message containing `enterprise plan` as non-Enterprise; always remove probe collection in `finally`. ES2017-safe error string extraction.
+- [x] **Step 6** — Implement `detectPlan.ts`: `isEnterprise(): Promise<boolean>` using ephemeral `createVariableCollection('__fighub_evc_probe__')` + `extend('__probe__')` try/catch; treat message containing `enterprise plan` as non-Enterprise; always remove probe collection in `finally`. ES2017-safe error string extraction.
 
 ### Phase 1 modules — collections + modes (no variable writes)
 
@@ -80,7 +80,7 @@ Implement a deterministic, Plugin-API-only push engine under `src/core/variables
 | Dependency           | Role                                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------------------- |
 | **WO-002**           | Plugin scaffold, `esbuild` `es2017` main target, `src/core/` layout                                           |
-| **WO-003**           | `@detroitlabs/figmint-contracts` import path; `TokensV1` stub until WO-055 fills body                         |
+| **WO-003**           | `@detroitlabs/fighub-contracts` import path; `TokensV1` stub until WO-055 fills body                         |
 | **WO-055**           | Canonical `TokensV1` / `TokenV1` types in `packages/contracts/src/tokens.v1.ts` — WO-008 mirrors until merged |
 | **WO-007**           | Production-scale `TokensV1` fixtures for integration/bench (minimal fixture in Step 25 unblocks earlier)      |
 | **WO-009**           | Replaces `deriveCodeSyntax` stub in `codeSyntax.ts`; push call sites unchanged                                |

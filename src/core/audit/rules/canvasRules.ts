@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import type { CanvasPageProbe } from '../probeCanvasPage';
 import { PAGE_CONTENT_WIDTH, TABLE_WIDTH } from '../probeCanvasPage';

@@ -55,7 +55,7 @@ function snapshotVariable(
       codeSyntax: readCodeSyntax(variable),
     };
   } catch (error) {
-    pluginLog('[figmint] skip variable snapshot', variable.name, extractErrorMessage(error));
+    pluginLog('[fighub] skip variable snapshot', variable.name, extractErrorMessage(error));
     return null;
   }
 }

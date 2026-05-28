@@ -14,7 +14,7 @@ WO-020 ships **`src/ui/components/ExportSheet.tsx`** — a reusable modal/sheet 
 
 Seven decisions unblock `/plan`:
 
-1. **Props:** `{ document: ContractDocument, defaultSinks?: SinkId[], title?: string, onComplete?: (results: ExportResults) => void }`. `ContractDocument` mirrors `LoadedDocument<T>` but carries **canonical typed payloads** from `@detroitlabs/figmint-contracts` (post-adapt for tokens), not raw wire JSON.
+1. **Props:** `{ document: ContractDocument, defaultSinks?: SinkId[], title?: string, onComplete?: (results: ExportResults) => void }`. `ContractDocument` mirrors `LoadedDocument<T>` but carries **canonical typed payloads** from `@detroitlabs/fighub-contracts` (post-adapt for tokens), not raw wire JSON.
 2. **Format UX:** two independent checkboxes (JSON, Markdown); at least one required. Default both checked (FR-IO-3). WO-019 `format(doc, 'json' | 'md')` produces bytes; ExportSheet never authors markdown directly.
 3. **Sink UX:** five checkboxes; **`flags.githubOAuth`** hides GitHub PR in Community builds (WO-021). `defaultSinks` pre-checks sinks per flow (e.g. handoff → clipboard, drift Org → GitHub PR + download).
 4. **Path input:** shown when GitHub PR and/or download is selected. Base path defaults from **`ContractKind`** table (§4); `{date}` = `YYYY-MM-DD` local; `{slug}` = kebab-case from document name/title when available.
@@ -54,7 +54,7 @@ import type {
   OpsProgramV1,
   RegistryV1,
   TokensV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 import type { ContractKind } from '@/io/sources/types';
 
 /** Canonical document ready for serialization — output path, not wire ingest. */
@@ -142,7 +142,7 @@ PRD §10.4 shows both format toggles active. Implementation:
 | ---- | -------------- | --------- | ----------------- |
 | `download` | Download file(s) | `ui` | ✅ |
 | `clipboard` | Copy markdown to clipboard | `ui` | ✅ |
-| `output-page` | Write to Figmint Output page | `main` | ✅ |
+| `output-page` | Write to FigHub Output page | `main` | ✅ |
 | `plugin-data` | Write to frame pluginData | `main` | ✅ |
 | `github-pr` | Open GitHub PR | `main` | **Hidden** when `!flags.githubOAuth` |
 
@@ -164,16 +164,16 @@ const ALL_SINKS: SinkId[] = [
 
 ### 5. Default paths per `ContractKind`
 
-PRD §10.4 example: `docs/figmint/drift-{date}.md`. Extend consistently:
+PRD §10.4 example: `docs/fighub/drift-{date}.md`. Extend consistently:
 
 | `ContractDocument['kind']` | Default basename (no extension) | Notes |
 | -------------------------- | --------------------------------- | ----- |
-| `drift-report` | `docs/figmint/drift-{date}` | PRD literal |
-| `handoff-context` | `docs/figmint/handoff-{date}` | FR-HAND-5 default sink is clipboard, not path |
-| `ops-program` | `docs/figmint/ops-{date}` | Machine-first; default both formats |
-| `component-spec` | `docs/figmint/components/{slug}` | `{slug}` = kebab(`payload.name`) |
-| `registry` | `.figmint-registry` | Single JSON file; MD checkbox disabled/hidden (registry has no MD renderer in WO-019 scope) |
-| `tokens` | `docs/figmint/tokens-{date}` | Canonical export after adapt |
+| `drift-report` | `docs/fighub/drift-{date}` | PRD literal |
+| `handoff-context` | `docs/fighub/handoff-{date}` | FR-HAND-5 default sink is clipboard, not path |
+| `ops-program` | `docs/fighub/ops-{date}` | Machine-first; default both formats |
+| `component-spec` | `docs/fighub/components/{slug}` | `{slug}` = kebab(`payload.name`) |
+| `registry` | `.fighub-registry` | Single JSON file; MD checkbox disabled/hidden (registry has no MD renderer in WO-019 scope) |
+| `tokens` | `docs/fighub/tokens-{date}` | Canonical export after adapt |
 
 Implementation: `src/ui/export/defaultPaths.ts` pure helper:
 

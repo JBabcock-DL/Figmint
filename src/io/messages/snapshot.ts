@@ -1,4 +1,4 @@
-import type { RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 export interface SnapshotReadMessage {
   type: 'snapshot/read';

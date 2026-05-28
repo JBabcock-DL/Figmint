@@ -1,6 +1,6 @@
 {
-  "name": "Figmint",
-  "id": "figmint-dev-placeholder",
+  "name": "FigHub",
+  "id": "fighub-dev-placeholder",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
@@ -8,6 +8,6 @@
   "networkAccess": {
     "allowedDomains": ["none"],
     "devAllowedDomains": ["http://localhost:8787"],
-    "reasoning": "GitHub OAuth + API via Figmint relay (CORS-safe). Direct github.com blocked in plugin sandbox."
+    "reasoning": "GitHub OAuth + API via FigHub relay (CORS-safe). Direct github.com blocked in plugin sandbox."
   }
 }

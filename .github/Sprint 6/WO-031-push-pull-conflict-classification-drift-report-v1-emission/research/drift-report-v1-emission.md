@@ -82,7 +82,7 @@ Extend `src/io/github/prBody.ts` or add `driftReportPrTitle(summary, sprintLabel
 
 - Title: `DesignOps drift: 4 push, 2 pull, 1 conflicts`
 - Body: full markdown from `renderDriftReportMarkdown`
-- File path default: `docs/figmint/drift-{ISO-date}.md` + `.json` (PRD §653)
+- File path default: `docs/fighub/drift-{ISO-date}.md` + `.json` (PRD §653)
 
 Reuse `executeGithubPRSink` from `src/io/sinks/githubPR.ts`.
 

@@ -22,7 +22,7 @@ _Derived from Goal — see ticket-level scope._
 
 ## Design reference _(when UI work applies)_
 
-Export sheet design lives in the Figmint design file (file_key TBD).
+Export sheet design lives in the FigHub design file (file_key TBD).
 
 ---
 
@@ -30,10 +30,10 @@ Export sheet design lives in the Figmint design file (file_key TBD).
 
 ### Functional
 
-1. `src/ui/components/ExportSheet.tsx` — props: `{ document: ContractDocument, defaultSinks?: SinkId[], title?: string, onComplete?, onCancel? }`. `ContractDocument` is a discriminated union over canonical `@detroitlabs/figmint-contracts` payloads (ops-program, component-spec, drift-report, handoff-context, registry, tokens).
+1. `src/ui/components/ExportSheet.tsx` — props: `{ document: ContractDocument, defaultSinks?: SinkId[], title?: string, onComplete?, onCancel? }`. `ContractDocument` is a discriminated union over canonical `@detroitlabs/fighub-contracts` payloads (ops-program, component-spec, drift-report, handoff-context, registry, tokens).
 2. Format checkboxes: independent JSON / Markdown toggles; at least one required; default both checked. WO-019 `format()` produces bytes — ExportSheet never authors markdown directly. Registry kind disables Markdown (no WO-019 renderer).
 3. Sink checkboxes: download / clipboard / Output page / pluginData / GitHub PR. **`flags.githubOAuth`** hides GitHub PR in Community builds. `defaultSinks` pre-checks per flow; intersected with available sinks on mount.
-4. Path input shown when download and/or GitHub PR selected. Default basename from `ContractKind` via `src/ui/export/defaultPaths.ts` (e.g. `docs/figmint/drift-{date}` per PRD §10.4).
+4. Path input shown when download and/or GitHub PR selected. Default basename from `ContractKind` via `src/ui/export/defaultPaths.ts` (e.g. `docs/fighub/drift-{date}` per PRD §10.4).
 5. Submit serializes selected formats, then invokes sinks **in parallel** (`Promise.allSettled` for UI sinks; `export/run` postMessage for main-thread sinks). Per-sink success/failure rendered in a status list (Bootstrap step-list visual language).
 6. `src/io/messages/export.ts` — typed `export/run`, `export/sink-result`, `export/complete` union; `main.ts` handler for output-page, plugin-data, github-pr sinks.
 7. Extract `exportSheetReducer.ts` for form + async status state (match Bootstrap tab pattern).

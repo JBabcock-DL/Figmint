@@ -12,14 +12,14 @@ const pkg = JSON.parse(readFileSync(resolve(rootDir, 'package.json'), 'utf8')) a
 };
 
 /** Loaded from `.env.local` / `.env` — see `.env.example`. */
-function loadFigmintEnv(key: string): string {
+function loadFigHubEnv(key: string): string {
   const mode = process.env.NODE_ENV === 'development' ? 'development' : 'production';
   const env = loadEnv(mode, rootDir, '');
   return env[key] ?? '';
 }
 
-const githubOAuthClientId = loadFigmintEnv('GITHUB_OAUTH_CLIENT_ID');
-const figmintOAuthRelayUrl = loadFigmintEnv('FIGMINT_OAUTH_RELAY_URL');
+const githubOAuthClientId = loadFigHubEnv('GITHUB_OAUTH_CLIENT_ID');
+const fighubOAuthRelayUrl = loadFigHubEnv('FIGHUB_OAUTH_RELAY_URL');
 
 const sharedResolve = {
   alias: [
@@ -31,7 +31,7 @@ const sharedResolve = {
 const sharedDefine = {
   'import.meta.env.PACKAGE_VERSION': JSON.stringify(pkg.version),
   'import.meta.env.GITHUB_OAUTH_CLIENT_ID': JSON.stringify(githubOAuthClientId),
-  'import.meta.env.FIGMINT_OAUTH_RELAY_URL': JSON.stringify(figmintOAuthRelayUrl),
+  'import.meta.env.FIGHUB_OAUTH_RELAY_URL': JSON.stringify(fighubOAuthRelayUrl),
 };
 
 /**
@@ -62,7 +62,7 @@ export default defineConfig(() => {
         lib: {
           entry: resolve(rootDir, 'src/main.ts'),
           formats: ['iife'],
-          name: 'FigmintPlugin',
+          name: 'FigHubPlugin',
           fileName: () => 'code.js',
         },
         rollupOptions: {

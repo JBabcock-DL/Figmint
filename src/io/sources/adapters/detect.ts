@@ -52,7 +52,7 @@ function hasDtcgLeaf(obj: Record<string, unknown>, depth: number): boolean {
       '$value' in node &&
       '$type' in node &&
       typeof node.$type === 'string' &&
-      DTCG_TYPES.has(node.$type as import('@detroitlabs/figmint-contracts').DtcgTokenType)
+      DTCG_TYPES.has(node.$type as import('@detroitlabs/fighub-contracts').DtcgTokenType)
     ) {
       return true;
     }

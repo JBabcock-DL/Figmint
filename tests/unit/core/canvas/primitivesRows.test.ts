@@ -7,7 +7,7 @@ import {
   projectPrimitiveFloatRows,
   projectPrimitiveStringRows,
 } from '@/core/canvas/projectRows/primitivesRows';
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 describe('primitivesRows', () => {
   it('projects typeface string rows from foundations-minimal', () => {

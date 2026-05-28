@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-import type { ComponentSpecV1, RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1, RegistryV1 } from '@detroitlabs/fighub-contracts';
 import Ajv from 'ajv';
 import { describe, expect, it } from 'vitest';
 
@@ -43,7 +43,7 @@ function buildScaffoldResult(componentSet: ReturnType<typeof createMockComponent
     variantCount: 1,
     variantByKey: {},
     replacedExisting: false,
-    scaffoldId: 'figmint:scaffold:v1:Button:test',
+    scaffoldId: 'fighub:scaffold:v1:Button:test',
     auditRows: [],
     unresolvedTokens: [],
   };

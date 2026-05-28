@@ -1,4 +1,4 @@
-import type { OpsProgramOp, OpsProgramV1 } from '@detroitlabs/figmint-contracts';
+import type { OpsProgramOp, OpsProgramV1 } from '@detroitlabs/fighub-contracts';
 
 import { renderGfmTable, renderMetaBullets } from './shared';
 

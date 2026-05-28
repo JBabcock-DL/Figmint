@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
 
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { adapt } from '@/io/sources/adapters';
 import type { FormatError } from '@/io/sources/adapters';
@@ -43,7 +43,7 @@ function formatAdaptError(error: FormatError): string {
     message = `${message} (${error.path})`;
   }
   if (message.includes('Unknown top-level DTCG group')) {
-    message = `${message} — Figmint expects either five collection roots (primitives, theme, …) or a generic palette where groups like color live at the top level (wrapped into primitives automatically). Try **Load sample** for a known-good token file.`;
+    message = `${message} — FigHub expects either five collection roots (primitives, theme, …) or a generic palette where groups like color live at the top level (wrapped into primitives automatically). Try **Load sample** for a known-good token file.`;
   }
   return message;
 }

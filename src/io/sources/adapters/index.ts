@@ -1,4 +1,4 @@
-import type { TokensV1, TokensV1Legacy, TokensV1WC3DTCG } from '@detroitlabs/figmint-contracts';
+import type { TokensV1, TokensV1Legacy, TokensV1WC3DTCG } from '@detroitlabs/fighub-contracts';
 
 import { adaptDTCG } from './dtcg';
 import { detectFormat, type TokenWireFormat } from './detect';

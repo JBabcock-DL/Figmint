@@ -1,4 +1,4 @@
-import type { CollectionId, DtcgTokenType } from '@detroitlabs/figmint-contracts';
+import type { CollectionId, DtcgTokenType } from '@detroitlabs/fighub-contracts';
 
 export const COLLECTION_IDS: readonly CollectionId[] = [
   'primitives',

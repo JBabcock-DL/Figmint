@@ -1,6 +1,6 @@
 /// <reference types="@figma/plugin-typings" />
 
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 export const REQUIRED_COLOR_TOKENS = [
   'color/border/subtle',

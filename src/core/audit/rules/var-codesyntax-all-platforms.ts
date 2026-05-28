@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { CODE_SYNTAX_PLATFORMS } from '../constants';
 import { findFigmaVariable } from './_helpers';

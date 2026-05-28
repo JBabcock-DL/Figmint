@@ -30,7 +30,7 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. **`packages/contracts/src/auditReport.v1.ts`** — versioned output contract (`v: 1`, `kind: 'audit-report'`) with `AuditRuleResult`, `AuditReportSummary`, and `AuditReportV1`. Export from `@detroitlabs/figmint-contracts`; regenerate JSON Schema via WO-003 wiring.
+1. **`packages/contracts/src/auditReport.v1.ts`** — versioned output contract (`v: 1`, `kind: 'audit-report'`) with `AuditRuleResult`, `AuditReportSummary`, and `AuditReportV1`. Export from `@detroitlabs/fighub-contracts`; regenerate JSON Schema via WO-003 wiring.
 2. **`src/core/audit/runAudit.ts`** — `runAudit('variables', { canonical, pushResult, figmaCollections })` returns `AuditReportV1`. Sprint 2 implements `variables` scope only; `canvas` / `component` throw until later sprints.
 3. **`src/core/audit/readFigmaVariableState.ts`** — main-thread Plugin API read → normalized `FigmaCollectionSnapshot[]` (mode IDs mapped to mode names). Rules consume snapshots, not live Figma handles.
 4. **Rule engine** — one module per rule under `src/core/audit/rules/` (pure functions). Port Sprint 2 rules from `14-audit.md` Variables & codeSyntax section + WO-055 canonical integrity checks (see research rule catalog — 16 rules).

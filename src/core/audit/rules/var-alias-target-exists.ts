@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { isTokenAliasRef } from '../../variables/types';
 import { indexCanonicalTokens } from './_helpers';

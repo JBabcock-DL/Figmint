@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import type { AuditReportV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditReportV1 } from '@detroitlabs/fighub-contracts';
 
 import {
   classifyAuditRule,

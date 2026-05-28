@@ -1,4 +1,4 @@
-import type { CollectionId } from '@detroitlabs/figmint-contracts';
+import type { CollectionId } from '@detroitlabs/fighub-contracts';
 
 import { COLLECTION_ID_SET } from './constants';
 
@@ -118,7 +118,7 @@ export function resolveLegacyAlias(
   return { collection: 'primitives', name: aliasPath };
 }
 
-export function isTokensV1(raw: unknown): raw is import('@detroitlabs/figmint-contracts').TokensV1 {
+export function isTokensV1(raw: unknown): raw is import('@detroitlabs/fighub-contracts').TokensV1 {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
     return false;
   }

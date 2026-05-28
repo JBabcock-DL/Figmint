@@ -4,13 +4,13 @@
 > **Date:** 2026-05-27
 > **Ticket:** WO-019 (GitHub #22)
 > **PRD anchors:** §6.8 FR-IO-3, §8.4 (drift headings), §10.3 (single source → two sinks)
-> **Contracts:** `@detroitlabs/figmint-contracts` — `opsProgram`, `tokens`, `componentSpec`, `driftReport`, `handoffContext` (not `registry`, not `auditReport` in this ticket’s five renderers)
+> **Contracts:** `@detroitlabs/fighub-contracts` — `opsProgram`, `tokens`, `componentSpec`, `driftReport`, `handoffContext` (not `registry`, not `auditReport` in this ticket’s five renderers)
 
 ---
 
 ## Summary
 
-WO-019 adds a **write-only** formatting layer under `src/io/formats/`: canonical in-memory objects (already typed from `@detroitlabs/figmint-contracts`) serialize to **deterministic JSON** or **human/agent-readable GFM markdown**. Markdown is never parsed back to JSON — that invariant is product-level (PRD §10.3) and must stay true in `loadFromFile` (today’s `.md` rejection is correct; only the user-facing hint text is misleading).
+WO-019 adds a **write-only** formatting layer under `src/io/formats/`: canonical in-memory objects (already typed from `@detroitlabs/fighub-contracts`) serialize to **deterministic JSON** or **human/agent-readable GFM markdown**. Markdown is never parsed back to JSON — that invariant is product-level (PRD §10.3) and must stay true in `loadFromFile` (today’s `.md` rejection is correct; only the user-facing hint text is misleading).
 
 The public entry point is `format(doc, 'json' | 'md')`, dispatching on `doc.kind` to one of **five** markdown renderers. JSON uses a small `stableStringify` helper (sorted object keys, recursive) so byte-identical output is stable across runs — supporting FR-IO-3 / §11.2 determinism. Vitest covers each kind with committed fixtures under `src/io/formats/__fixtures__/` plus golden `.md` snapshots for regression.
 
@@ -42,7 +42,7 @@ import type {
   HandoffContextV1,
   OpsProgramV1,
   TokensV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 export type FormattableDocument =
   | OpsProgramV1
@@ -60,7 +60,7 @@ export function format(doc: FormattableDocument, fmt: OutputFormat): string {
 
 **Out of union (by design for WO-019):**
 
-- `RegistryV1` — PRD §8.6 is machine-oriented registry file (`.figmint-registry.json`); not in FR-IO-3 “five document types” table in §8 intro; no ticket AC.
+- `RegistryV1` — PRD §8.6 is machine-oriented registry file (`.fighub-registry.json`); not in FR-IO-3 “five document types” table in §8 intro; no ticket AC.
 - `AuditReportV1` — exists in contracts (WO-010); markdown deferred per cross-ticket note — not in ticket’s five renderers.
 - `TokensV1WC3DTCG` / `TokensV1Legacy` — **input wire shapes**; markdown “tokens preview” targets normalized **`TokensV1`** only.
 
@@ -272,7 +272,7 @@ Extend `vitest.config.ts` `include` if colocating tests under `src/io/formats/*.
 
 | Dependency | Status | Notes |
 |------------|--------|-------|
-| WO-003 `@detroitlabs/figmint-contracts` | Done | All five types exported from `packages/contracts/src/index.ts` |
+| WO-003 `@detroitlabs/fighub-contracts` | Done | All five types exported from `packages/contracts/src/index.ts` |
 | WO-006 I/O sources | Done | Ingest JSON only; hint update optional in WO-019 |
 | WO-020 Export sheet | Downstream | Will call `format()` for download/clipboard |
 
@@ -337,7 +337,7 @@ No new npm packages required for stable JSON.
 | `ops-program` | `'ops-program'` | `meta.generatedAt`, `ops[]` |
 | `tokens` (TokensV1) | wire via normalized model | `collections[]`, `tokens[]`, optional `themes[]` |
 
-Types imported from `@detroitlabs/figmint-contracts` — **no duplicate TS interfaces** in formats layer.
+Types imported from `@detroitlabs/fighub-contracts` — **no duplicate TS interfaces** in formats layer.
 
 ### Determinism validation approach
 

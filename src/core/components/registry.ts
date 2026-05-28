@@ -1,4 +1,4 @@
-import type { RegistryComponentEntry, RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { RegistryComponentEntry, RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 import { hashVariantMatrix } from './scaffold/variantMatrix';
 import {

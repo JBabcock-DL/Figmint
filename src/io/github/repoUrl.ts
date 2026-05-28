@@ -62,11 +62,11 @@ export function parseOwnerRepo(normalizedUrl: string): { owner: string; repo: st
 }
 
 export function tokenStorageKey(repoUrl: string): string {
-  return 'figmint:github:token:' + normalizeRepoUrl(repoUrl);
+  return 'fighub:github:token:' + normalizeRepoUrl(repoUrl);
 }
 
 export function configStorageKey(repoUrl: string): string {
-  return 'figmint:github:config:' + normalizeRepoUrl(repoUrl);
+  return 'fighub:github:config:' + normalizeRepoUrl(repoUrl);
 }
 
 export function isValidRepoUrl(input: string): boolean {

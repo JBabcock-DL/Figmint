@@ -9,13 +9,13 @@ blocks: WO-027
 
 ## Goal
 
-Port the full **5-section DesignOps doc-pipeline contract** into Figmint's forward component scaffold so that every scaffolded component page renders the same authoritative doc layout as the legacy DesignOps-plugin canvas: (1) **section header**, (2) **properties table**, (3) **component-set group** (already partially shipped), (4) **matrix specimen**, (5) **Do / Don't usage**. Replaces the current instance-gallery stub under `doc/component/*` with a canvas that matches `uCpQaRsW4oiXW3DsC6cLZm` node `433:335` and unblocks WO-027 VQA Ship.
+Port the full **5-section DesignOps doc-pipeline contract** into FigHub's forward component scaffold so that every scaffolded component page renders the same authoritative doc layout as the legacy DesignOps-plugin canvas: (1) **section header**, (2) **properties table**, (3) **component-set group** (already partially shipped), (4) **matrix specimen**, (5) **Do / Don't usage**. Replaces the current instance-gallery stub under `doc/component/*` with a canvas that matches `uCpQaRsW4oiXW3DsC6cLZm` node `433:335` and unblocks WO-027 VQA Ship.
 
 ---
 
 ## Problem story
 
-As a **designer reviewing a Figmint-scaffolded component page**, I want the same five-section doc layout the legacy DesignOps-plugin produced (header → properties table → set group → matrix specimen → Do/Don't), so that I can sign off on forward scaffolds without manually rebuilding the doc canvas to match Foundations.
+As a **designer reviewing a FigHub-scaffolded component page**, I want the same five-section doc layout the legacy DesignOps-plugin produced (header → properties table → set group → matrix specimen → Do/Don't), so that I can sign off on forward scaffolds without manually rebuilding the doc canvas to match Foundations.
 
 **Problem (2026-05-28):** WO-022..027 forward scaffold ships only **Section 3** (component-set-group, partial — no title, caption, dashed outline, or wrap-grid) and **Section 5** (usage section is an instance gallery, **not** Do/Don't). Sections **1 (header)**, **2 (properties table)**, and **4 (matrix specimen)** are entirely missing. Designer rejection logged on `Dw8NkEiG91NhjYqRPNTOOu` node `5:321` vs Foundations target `uCpQaRsW4oiXW3DsC6cLZm` node `433:335`.
 
@@ -23,7 +23,7 @@ As a **designer reviewing a Figmint-scaffolded component page**, I want the same
 
 ## Hypothesis
 
-We believe **porting the full §1/§3.2/§4/§5/§6/§13 doc-pipeline contract from `DesignOps-plugin/skills/create-component/conventions/04-doc-pipeline-contract.md` into the Figmint forward scaffold** for **designers running `/build` on a component scaffold WO** will **produce a canvas that matches `uCpQaRsW4oiXW3DsC6cLZm` 433:335 on first pass**.
+We believe **porting the full §1/§3.2/§4/§5/§6/§13 doc-pipeline contract from `DesignOps-plugin/skills/create-component/conventions/04-doc-pipeline-contract.md` into the FigHub forward scaffold** for **designers running `/build` on a component scaffold WO** will **produce a canvas that matches `uCpQaRsW4oiXW3DsC6cLZm` 433:335 on first pass**.
 
 We'll know we're right when **a designer compares the scaffolded `doc/component/button` frame side-by-side with Foundations and signs off without redraw requests** (zero FAIL rows on the §4 Figma VQA Checklist).
 

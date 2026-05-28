@@ -1,0 +1,31 @@
+{
+  "v": 1,
+  "kind": "component-drift-ac",
+  "specName": "Button",
+  "input": {
+    "repoSpecs": {
+      "Button": {
+        "variantMatrix": { "variant": ["default", "primary"] },
+        "props": [{ "name": "disabled", "type": "boolean", "default": true }],
+        "bindings": []
+      }
+    },
+    "figmaComponents": {
+      "Button": {
+        "variantMatrix": { "variant": ["default", "secondary"] },
+        "props": [{ "name": "disabled", "type": "boolean", "default": false }],
+        "bindings": []
+      }
+    },
+    "snapshotComponents": {
+      "Button": {
+        "variantMatrix": { "variant": ["default"] },
+        "props": [{ "name": "disabled", "type": "boolean", "default": false }],
+        "bindings": []
+      }
+    }
+  },
+  "expected": {
+    "direction": "conflict"
+  }
+}

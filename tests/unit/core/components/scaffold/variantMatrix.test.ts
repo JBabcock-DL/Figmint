@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import {
   buildScaffoldId,
@@ -60,7 +60,7 @@ describe('variantMatrix', () => {
   it('builds stable scaffold ids', () => {
     const specName = 'Button';
     const id = buildScaffoldId(specName, matrix3x2x2);
-    expect(id.indexOf('figmint:scaffold:v1:Button:')).toBe(0);
+    expect(id.indexOf('fighub:scaffold:v1:Button:')).toBe(0);
     expect(buildScaffoldId(specName, matrix3x2x2)).toBe(id);
   });
 

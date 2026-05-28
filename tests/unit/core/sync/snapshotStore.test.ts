@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import {
   clearSnapshot,
@@ -32,7 +32,7 @@ function buildScaffoldResult(componentSet: ReturnType<typeof createMockComponent
     variantCount: 1,
     variantByKey: {},
     replacedExisting: false,
-    scaffoldId: 'figmint:scaffold:v1:Button:test',
+    scaffoldId: 'fighub:scaffold:v1:Button:test',
     auditRows: [],
     unresolvedTokens: [],
   };

@@ -176,7 +176,7 @@ Fixture: extend `drift-report-ac.json` to 10 entries for AC scenario.
 
 1. Add `src/ui/drift/resolutionReducer.ts` — pure state machine for resolutions.
 2. Add `src/io/messages/drift.ts` — typed UI↔main messages.
-3. Implement DriftList + ConflictResolver with existing Figmint token styles (inline styles like App.tsx).
+3. Implement DriftList + ConflictResolver with existing FigHub token styles (inline styles like App.tsx).
 4. Wire Settings repo card to show drift counts from cached report.
 5. Figma VQA: capture plugin iframe screenshots for filter chips + conflict columns (fill ticket checklist during `/vqa`).
 

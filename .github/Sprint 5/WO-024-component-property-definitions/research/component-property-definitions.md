@@ -40,7 +40,7 @@ export interface ComponentSpecProp {
 
 **Legacy lift:** `shadcn-props.schema.json` `$defs/componentEntry.properties` is an **untyped array** (doc-table rows). Per-component JSON (e.g. `shadcn-props/button.json`) stores **5-tuples** `[name, type, default, required, description]` for the Properties + Types doc table — not Figma API calls directly.
 
-| Legacy tuple column | Figmint contract field | Notes |
+| Legacy tuple column | FigHub contract field | Notes |
 | ------------------- | ---------------------- | ----- |
 | `[0]` name | `name` | kebab-case or camelCase preserved |
 | `[1]` type | `type` | legacy allows `"enum"`, `"boolean"`, `"string"`, union strings like `"button" \| "submit"` |
@@ -193,7 +193,7 @@ function validateVariantProperties(
 **Lift:** `01-config-schema.md` §3.3.3 + `06-audit-checklist.md` S9.9:
 
 - `addComponentProperty` throw → log via `pluginLog`, collect `{ variant, message }`, continue draw (legacy soft-fail).
-- Figmint **default:** same soft-fail for individual variant, but **aggregate audit FAIL** if any variant failed and zero variants succeeded for that property name.
+- FigHub **default:** same soft-fail for individual variant, but **aggregate audit FAIL** if any variant failed and zero variants succeeded for that property name.
 - Read-only file / library component → throw before apply; surface as op error to designer.
 
 ### 8. Testing strategy
@@ -336,7 +336,7 @@ Path: `src/core/components/scaffold/__fixtures__/component-spec-button-chip.v1.j
 ### Locked API — `applyProperties.ts`
 
 ```ts
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 export interface ApplyPropertiesResult {
   ok: boolean;

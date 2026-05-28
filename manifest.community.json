@@ -1,6 +1,6 @@
 {
-  "name": "Figmint",
-  "id": "figmint-community-dev-placeholder",
+  "name": "FigHub",
+  "id": "fighub-community-dev-placeholder",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",

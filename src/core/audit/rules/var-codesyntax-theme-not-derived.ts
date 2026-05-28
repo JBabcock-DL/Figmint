@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { CODE_SYNTAX_PLATFORMS } from '../constants';
 import { findFigmaVariable } from './_helpers';
@@ -6,7 +6,7 @@ import type { RuleInput } from '../types';
 
 const RULE_ID = 'var/codesyntax-theme-not-derived';
 
-function hasExplicitCodeSyntax(token: import('@detroitlabs/figmint-contracts').Token): boolean {
+function hasExplicitCodeSyntax(token: import('@detroitlabs/fighub-contracts').Token): boolean {
   if (!token.codeSyntax) {
     return false;
   }

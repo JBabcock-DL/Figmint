@@ -1,4 +1,4 @@
-import type { ComponentSpecProp } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecProp } from '@detroitlabs/fighub-contracts';
 
 export type FigmaPropType = 'BOOLEAN' | 'TEXT' | 'INSTANCE_SWAP';
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { adaptLegacy } from '@/io/sources/adapters/legacy';
-import type { TokensV1Legacy } from '@detroitlabs/figmint-contracts';
+import type { TokensV1Legacy } from '@detroitlabs/fighub-contracts';
 
 import { loadAdapterFixture } from './helpers';
 

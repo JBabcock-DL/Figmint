@@ -1,7 +1,7 @@
 # Bootstrap bench result (WO-015 / G1)
 
 **Date:** 2026-05-27 (VQA refresh)  
-**Environment:** Figmint community build, Figma desktop, [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox) (`file_key=cVdPraIafWFBRZnzMPhtrW`)  
+**Environment:** FigHub community build, Figma desktop, [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox) (`file_key=cVdPraIafWFBRZnzMPhtrW`)  
 **Target:** G1 full bootstrap **< 30 000 ms**
 
 ## Run 1 — Full bootstrap (primary VQA evidence)

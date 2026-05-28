@@ -8,7 +8,7 @@ promoted_at: 2026-05-27
 
 ## Goal
 
-Lock the **canonical internal token model** — the TypeScript shape that Figmint's token-input adapters normalize both W3C DTCG and legacy `DesignOps-plugin` formats _into_ — before Sprint 2 begins writing those adapters (WO-007).
+Lock the **canonical internal token model** — the TypeScript shape that FigHub's token-input adapters normalize both W3C DTCG and legacy `DesignOps-plugin` formats _into_ — before Sprint 2 begins writing those adapters (WO-007).
 
 The decision is **architecturally upstream of WO-007** (token input adapters), WO-008 (variable collection push engine), and WO-009 (codeSyntax mapping). The canonical shape lands as the concrete `TokensV1` interface inside `packages/contracts/src/tokens.v1.ts` (which WO-003 left as a `TODO` placeholder for this exact purpose).
 
@@ -33,7 +33,7 @@ We'll know we're right when WO-007's W3C DTCG and legacy adapters both consume `
 ## User stories
 
 - [ ] As a Sprint 2 lead, I can read the locked `decisions/canonical-token-model.md` (or this ticket body) and know exactly which TypeScript shape WO-007's adapters target — no follow-up clarifying questions.
-- [ ] As a Sprint 2 WO-007 author, I can import `TokensV1` from `@detroitlabs/figmint-contracts` and write the W3C DTCG → `TokensV1` adapter without re-deriving the canonical shape.
+- [ ] As a Sprint 2 WO-007 author, I can import `TokensV1` from `@detroitlabs/fighub-contracts` and write the W3C DTCG → `TokensV1` adapter without re-deriving the canonical shape.
 - [ ] As a Sprint 2 WO-008 author, I can read a `TokensV1` document and emit the exact Plugin API call sequence (`createVariableCollection` × N → `createVariable` × M → `setValueForMode` × P → `setVariableCodeSyntax` × Q → `commitUndo`) without intermediate shape translation.
 - [ ] As an agent porting from `DesignOps-plugin`, I can map the legacy `theme-aliases.json` + per-collection variable lists directly to `TokensV1` with a deterministic adapter (no lossy guessing).
 
@@ -48,7 +48,7 @@ We'll know we're right when WO-007's W3C DTCG and legacy adapters both consume `
 ### Functional
 
 1. Produce a written decision document at `research/canonical-token-model.md` that captures the canonical TS shape. ✅ Done — see `research/canonical-token-model.md`. The locked shape supports:
-   - W3C DTCG round-trip (lossless from input → canonical → output) — `aliasOf` structured ref ↔ DTCG `{group.token}` curly-brace string round-trip is defined; `$extensions.figmint.modes` + `$extensions.figmint.codeSyntax` carry mode + platform data on DTCG export. See research §"Side-by-side worked example".
+   - W3C DTCG round-trip (lossless from input → canonical → output) — `aliasOf` structured ref ↔ DTCG `{group.token}` curly-brace string round-trip is defined; `$extensions.fighub.modes` + `$extensions.fighub.codeSyntax` carry mode + platform data on DTCG export. See research §"Side-by-side worked example".
    - Legacy `DesignOps-plugin` format round-trip (lossless — `theme-aliases.json`, per-collection variable lists, codeSyntax-per-platform). 1:1 field mapping with no transformation beyond the alias-string → structured-ref pass.
    - All 5 collections from PRD §6.1 (Primitives, Theme, Typography, Layout, Effects).
    - Per-collection modes (1 mode on Primitives/Layout; 2 modes Light/Dark on Theme + Effects; 8 Android-curve modes on Typography). Mode storage: `Record<ModeName, Value>` keyed by stable name, not runtime ID.
@@ -128,7 +128,7 @@ All six dimensions are **locked** below. Rationale + side-by-side legacy / DTCG 
 WO-005 spike findings already deliver the EVC-side input this decision needs (`research/extended-collections.md` §2.4 / §5). The remaining research before `/plan` is:
 
 - Map every field in legacy `theme-aliases.json` (Detroit Labs Foundations example) into the canonical shape — no field can drop without explicit "intentional loss" rationale.
-- Map a representative W3C DTCG token tree (with `$value`, `$type`, `$description`, `$extensions.figmint.modes`, `$extensions.figmint.codeSyntax`) into the canonical shape — same no-loss rule.
+- Map a representative W3C DTCG token tree (with `$value`, `$type`, `$description`, `$extensions.fighub.modes`, `$extensions.fighub.codeSyntax`) into the canonical shape — same no-loss rule.
 - Confirm `ts-json-schema-generator` emits a usable JSON Schema for the chosen interface without manual edits.
 
 Open questions:
@@ -194,7 +194,7 @@ This ticket is a **design-handoff scaffold** for an architectural decision that 
 
 ## Goal
 
-Lock the **canonical internal token model** — the TypeScript shape that Figmint's token-input adapters normalize both W3C DTCG and legacy `DesignOps-plugin` formats _into_ — before Sprint 2 begins writing those adapters.
+Lock the **canonical internal token model** — the TypeScript shape that FigHub's token-input adapters normalize both W3C DTCG and legacy `DesignOps-plugin` formats _into_ — before Sprint 2 begins writing those adapters.
 
 PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-2 (normalize to canonical internal model), §8.2 (`tokens` hybrid contract).
 

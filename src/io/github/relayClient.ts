@@ -1,6 +1,6 @@
 /**
  * WO-016 — fetch GitHub OAuth/API via HTTPS relay (CORS-safe from Figma sandbox).
- * Production uses FIGMINT_OAUTH_RELAY_URL; dev defaults to localhost:8787.
+ * Production uses FIGHUB_OAUTH_RELAY_URL; dev defaults to localhost:8787.
  */
 
 import type { DeviceCodeResponse, DeviceTokenPollResult } from '@/io/github/deviceFlow';
@@ -8,7 +8,7 @@ import type { DeviceCodeResponse, DeviceTokenPollResult } from '@/io/github/devi
 const DEFAULT_RELAY = 'http://localhost:8787';
 
 function relayBase(): string {
-  const fromEnv = import.meta.env.FIGMINT_OAUTH_RELAY_URL;
+  const fromEnv = import.meta.env.FIGHUB_OAUTH_RELAY_URL;
   if (typeof fromEnv === 'string' && fromEnv.length > 0) {
     return fromEnv.replace(/\/$/, '');
   }

@@ -82,7 +82,7 @@
           "$type": "color",
           "$value": "#6366f1",
           "$extensions": {
-            "figmint": {
+            "fighub": {
               "modes": {
                 "Light": "#6366f1",
                 "Dark": "#818cf8"
@@ -100,7 +100,7 @@
             "$type": "color",
             "$value": "#ffffff",
             "$extensions": {
-              "figmint": {
+              "fighub": {
                 "modes": {
                   "Light": "#ffffff",
                   "Dark": "#0f172a"
@@ -115,7 +115,7 @@
           "$type": "color",
           "$value": "{primitives.color.neutral.100}",
           "$extensions": {
-            "figmint": {
+            "fighub": {
               "modes": {
                 "Light": "{primitives.color.neutral.100}",
                 "Dark": "{primitives.color.neutral.900}"
@@ -131,7 +131,7 @@
           "$deprecated": true,
           "$description": "Deprecated disabled surface",
           "$extensions": {
-            "figmint": {
+            "fighub": {
               "modes": {
                 "Light": "{color.neutral.100}",
                 "Dark": "{color.neutral.900}"
@@ -156,7 +156,7 @@
           "lineHeight": "64px"
         },
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "codeSyntax": {
               "WEB": "var(--typography-display-lg)",
               "ANDROID": "text-display-lg",
@@ -203,7 +203,7 @@
         "$type": "color",
         "$value": "rgba(0, 0, 0, 0.12)",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "Light": "rgba(0, 0, 0, 0.12)",
               "Dark": "rgba(0, 0, 0, 0.45)"
@@ -216,7 +216,7 @@
           "$value": "{primitives.elevation.100}",
           "$type": "dimension",
           "$extensions": {
-            "figmint": {
+            "fighub": {
               "modes": {
                 "Light": "{primitives.elevation.100}",
                 "Dark": "{primitives.elevation.100}"

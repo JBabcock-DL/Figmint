@@ -94,15 +94,15 @@ src/core/variables/__fixtures__/bootstrap-complete.v1.json:
 
 > Design-system bootstrap **continues to publish** `_Doc/Section`, `_Doc/TokenName`, `_Doc/Code`, `_Doc/Caption` text styles plus `Label/SM`, `Label/MD`, `Label/LG` (verified by audit gate — no new bootstrap work).
 
-### F6 — Naming-prefix delta (legacy "Doc/X" vs Figmint "_Doc/X")
+### F6 — Naming-prefix delta (legacy "Doc/X" vs FigHub "_Doc/X")
 
-Per [`doc-pipeline-lift-map.md`](./doc-pipeline-lift-map.md) F6 + D2: legacy contract names them `Doc/X` (no underscore). Figmint names them `_Doc/X` (underscore prefix to keep them from cluttering the published-style picker for non-doc users).
+Per [`doc-pipeline-lift-map.md`](./doc-pipeline-lift-map.md) F6 + D2: legacy contract names them `Doc/X` (no underscore). FigHub names them `_Doc/X` (underscore prefix to keep them from cluttering the published-style picker for non-doc users).
 
-**Decision (locked, D2 in lift-map):** keep Figmint's `_Doc/*` prefix. Section emitters must resolve via `findTextStyleByName(existing, '_Doc/Section')` (NOT `'Doc/Section'`). The ticket text and `04-doc-pipeline-contract.md` use the unprefixed form for human readability; the code uses the prefixed form to match Figmint's already-published styles.
+**Decision (locked, D2 in lift-map):** keep FigHub's `_Doc/*` prefix. Section emitters must resolve via `findTextStyleByName(existing, '_Doc/Section')` (NOT `'Doc/Section'`). The ticket text and `04-doc-pipeline-contract.md` use the unprefixed form for human readability; the code uses the prefixed form to match FigHub's already-published styles.
 
 ### F7 — Why the original ticket Requirement 7 over-scoped
 
-The ticket was drafted from the `04-doc-pipeline-contract.md` §11 "every text node assigns `textStyleId` to one of `Doc/Section`, `Doc/TokenName`, `Doc/Code`, `Doc/Caption`" and §13 reference. The drafter assumed Figmint's bootstrap did not yet publish those styles. In fact:
+The ticket was drafted from the `04-doc-pipeline-contract.md` §11 "every text node assigns `textStyleId` to one of `Doc/Section`, `Doc/TokenName`, `Doc/Code`, `Doc/Caption`" and §13 reference. The drafter assumed FigHub's bootstrap did not yet publish those styles. In fact:
 
 - `publishTypographyStyles.ts` lines 19, 74 were shipped by WO-011 (Sprint 3 primitives + WO-012 typography).
 - `bootstrap-complete.v1.json` was regenerated in Sprint 2 to include all slot variables.
@@ -156,7 +156,7 @@ No bootstrap code changes.
 | D1 | No new DTCG text-style definitions in WO-057 scope | All 4 Doc styles + 7 Label styles already published by `publishTypographyStyles.ts` |
 | D2 | No new fixture entries in `bootstrap-complete.v1.json` | All required color tokens + font-family variables already present |
 | D3 | Ticket Requirement 7 is amended (not scope-added) — see F5 | Original wording over-scopes; actual requirement is verification, not publication |
-| D4 | Section emitters resolve text styles via `findTextStyleByName(_, '_Doc/Section')` with underscore prefix | Figmint convention (D2 in lift-map) |
+| D4 | Section emitters resolve text styles via `findTextStyleByName(_, '_Doc/Section')` with underscore prefix | FigHub convention (D2 in lift-map) |
 | D5 | If a user somehow has `_Doc/Section` but not `_Doc/Caption`, the audit gate flags ALL missing styles in one row | One actionable error per scaffold run |
 | D6 | The `verifySlotTextStyles` helper in bootstrap is the model for the new audit gate's presence check | Mirror the pattern for consistency |
 
@@ -194,12 +194,12 @@ No bootstrap code changes.
 
 ## References
 
-- `Figmint/src/core/canvas/publishTypographyStyles.ts` (130 lines) — proves Doc + Label slot styles published.
-- `Figmint/src/core/canvas/typographyStyleBinding.ts:10-13` — `DOC_STYLE_TOKEN_PREFIX` mapping.
-- `Figmint/src/core/canvas/data/typography-slots.json` — slot definitions.
-- `Figmint/src/core/variables/__fixtures__/bootstrap-complete.v1.json:2845+` — Label/MD/* variables.
-- `Figmint/src/core/bootstrap/runBootstrap.ts` — bootstrap orchestrator.
+- `FigHub/src/core/canvas/publishTypographyStyles.ts` (130 lines) — proves Doc + Label slot styles published.
+- `FigHub/src/core/canvas/typographyStyleBinding.ts:10-13` — `DOC_STYLE_TOKEN_PREFIX` mapping.
+- `FigHub/src/core/canvas/data/typography-slots.json` — slot definitions.
+- `FigHub/src/core/variables/__fixtures__/bootstrap-complete.v1.json:2845+` — Label/MD/* variables.
+- `FigHub/src/core/bootstrap/runBootstrap.ts` — bootstrap orchestrator.
 - `DesignOps-plugin/skills/create-component/conventions/04-doc-pipeline-contract.md` §11 — text-style assignment rule.
 - [`audit-gate-spec.md`](./audit-gate-spec.md) — preflight gate consumes the publish set.
 - [`doc-pipeline-lift-map.md`](./doc-pipeline-lift-map.md) F3, F5, F6 — confirms no bootstrap work needed.
-- `Figmint/memory.md` 2026-05-28 — Sprint 5 entry on DesignOps parity.
+- `FigHub/memory.md` 2026-05-28 — Sprint 5 entry on DesignOps parity.

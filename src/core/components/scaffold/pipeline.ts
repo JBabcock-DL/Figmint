@@ -1,4 +1,4 @@
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { applyProperties } from './applyProperties';
 import type { ApplyBindingsRunner, ApplyPropertiesResult } from './types';

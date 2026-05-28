@@ -1,4 +1,4 @@
-import type { CollectionId } from '@detroitlabs/figmint-contracts';
+import type { CollectionId } from '@detroitlabs/fighub-contracts';
 
 export const COLLECTION_DISPLAY_NAMES: Record<CollectionId, string> = {
   primitives: 'Primitives',

@@ -1,4 +1,4 @@
-import type { ComponentSpecLayoutArchetype, ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecLayoutArchetype, ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { fnv1a32Hex } from './variantMatrix';
 import type { ScaffoldBuildContext, ScaffoldOptions, VariantCombo } from './types';

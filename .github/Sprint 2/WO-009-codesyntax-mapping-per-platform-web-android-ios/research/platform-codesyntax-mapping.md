@@ -10,7 +10,7 @@
 
 ## Summary
 
-Figmint attaches per-platform `codeSyntax` to every pushed variable via `figma.variables.setVariableCodeSyntax` (Plugin API only — no REST hop). The canonical `TokensV1` token carries an optional `codeSyntax?: Partial<Record<'WEB' | 'ANDROID' | 'iOS', string>>` field (WO-055 §4). **Source-of-truth is hybrid:** use stored values when present; derive from collection-specific rules when absent. Theme semantic tokens **must never** be path-derived — they come from explicit row data (legacy `theme-aliases.json`) or a role table. Primitives, Typography, Layout, and Effects use deterministic derivation algorithms documented below.
+FigHub attaches per-platform `codeSyntax` to every pushed variable via `figma.variables.setVariableCodeSyntax` (Plugin API only — no REST hop). The canonical `TokensV1` token carries an optional `codeSyntax?: Partial<Record<'WEB' | 'ANDROID' | 'iOS', string>>` field (WO-055 §4). **Source-of-truth is hybrid:** use stored values when present; derive from collection-specific rules when absent. Theme semantic tokens **must never** be path-derived — they come from explicit row data (legacy `theme-aliases.json`) or a role table. Primitives, Typography, Layout, and Effects use deterministic derivation algorithms documented below.
 
 The ticket spot-check (`Theme/Primary` → `--theme-primary` / `R.color.theme_primary` / `Color.themePrimary`) **does not match legacy Detroit Labs Foundations.** Correct legacy values for `color/primary/default` are `var(--color-primary)` / `primary` / `.Primary.default`. Acceptance criteria updated accordingly.
 
@@ -135,7 +135,7 @@ Use **`color/primary/default`** as the canonical spot-check token (not abstract 
 Both functions in `src/core/variables/codeSyntax.ts`:
 
 ```ts
-import type { CanonicalToken, CodeSyntaxPlatform } from '@detroitlabs/figmint-contracts';
+import type { CanonicalToken, CodeSyntaxPlatform } from '@detroitlabs/fighub-contracts';
 
 /** Pure mapper — all Vitest coverage targets this. */
 export function mapCodeSyntax(token: CanonicalToken): Partial<Record<CodeSyntaxPlatform, string>>;
@@ -181,7 +181,7 @@ figma.commitUndo()  // once per push batch, not per variable
 
 **Collection pass order (unchanged from WO-008):** Primitives → Theme → Typography → Layout → Effects.
 
-**Figmint vs legacy transport:** Legacy Step 11 split Plugin API (structure) + REST PUT (codeSyntax) due to MCP 50 kB cap. Figmint uses Plugin API for both — `setVariableCodeSyntax` immediately after values per variable (WO-005 spike validated).
+**FigHub vs legacy transport:** Legacy Step 11 split Plugin API (structure) + REST PUT (codeSyntax) due to MCP 50 kB cap. FigHub uses Plugin API for both — `setVariableCodeSyntax` immediately after values per variable (WO-005 spike validated).
 
 **Performance note:** `setVariableCodeSyntax` is ~47% of push time at n=400 but only ~281 ms absolute. Keep as contiguous per-variable loop; do not interleave with `setValueForMode` across variables.
 
@@ -262,7 +262,7 @@ Mock `Variable.setVariableCodeSyntax`; assert called 3× with exact platform lit
 | --- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
 | 1   | Should WO-009 ship derivation for Theme when stored missing (dev/test tokens)? | **No** — skip + audit warning. Keeps production parity with legacy.       |
 | 2   | Typography domain: always `.Typography.*` even when path uses `Display/LG`?    | **Yes** — per `typography-slots.json` codeSyntaxRules.                    |
-| 3   | Partial codeSyntax on Primitives from DTCG `$extensions.figmint.codeSyntax`?   | Hybrid: stored platforms win; derive rest. Matches spike fixture pattern. |
+| 3   | Partial codeSyntax on Primitives from DTCG `$extensions.fighub.codeSyntax`?   | Hybrid: stored platforms win; derive rest. Matches spike fixture pattern. |
 
 ---
 
@@ -273,7 +273,7 @@ Mock `Variable.setVariableCodeSyntax`; assert called 3× with exact platform lit
 - `DesignOps-plugin/skills/create-design-system/data/primitives-baseline.json` — `codeSyntaxRules`
 - `DesignOps-plugin/skills/create-design-system/data/layout-effects.json` — Layout + Effects triples
 - `DesignOps-plugin/skills/create-design-system/data/typography-slots.json` — Typography rules
-- `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` — push sequence (REST→Plugin API in Figmint)
+- `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` — push sequence (REST→Plugin API in FigHub)
 - `.github/Sprint 1/WO-055-…/research/canonical-token-model.md` §4
 - `.github/Sprint 1/WO-005-…/research/latency-benchmark.md` §3–§6
 - Figma Plugin API — [`CodeSyntaxPlatform`](https://developers.figma.com/docs/plugins/api/CodeSyntaxPlatform/), [`Variable.setVariableCodeSyntax`](https://developers.figma.com/docs/plugins/api/properties/Variable-setvariablecodesyntax/)

@@ -3,7 +3,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { COLLECTION_MODES, ensureModes } from '@/core/variables/modes';
 import { ensureCollections } from '@/core/variables/collections';
 import { loadLocalVariableSnapshot } from '@/core/variables/push';
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import foundationsMinimal from '@/core/variables/__fixtures__/foundations-minimal.v1.json';
 import { installMockFigmaVariables } from './__mocks__/figmaVariables';

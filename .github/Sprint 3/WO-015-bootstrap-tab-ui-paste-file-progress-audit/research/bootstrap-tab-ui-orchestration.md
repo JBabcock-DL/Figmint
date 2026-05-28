@@ -181,7 +181,7 @@ export interface BootstrapResultMessage {
 
 ### 5. Audit inline display — `AuditReportV1` contract
 
-Contract shape (`@detroitlabs/figmint-contracts`):
+Contract shape (`@detroitlabs/fighub-contracts`):
 
 | Field                                      | UI use                                                              |
 | ------------------------------------------ | ------------------------------------------------------------------- |
@@ -300,5 +300,5 @@ Risk: canvas builder ports are the unknown — WO-005 left ~29 s headroom intent
 1. **Canvas builder API shape** — single `buildStyleGuide({ pages })` vs per-module functions? Resolve during WO-011 `/plan` (WO-015 orchestrator should import whichever WO-011 locks).
 2. **Failed canvas step behavior** — abort remaining pages vs continue with partial style guide? PRD §11.4 suggests show failures inline; recommend **continue + aggregate errors** unless push-variables failed (hard abort).
 3. **Undo grouping** — should entire bootstrap be one undo group? WO-008 uses `figma.commitUndo()` per push; canvas builders may need a shared undo boundary — confirm with WO-011 implementer.
-4. **Figma design file** — Bootstrap tab mock not yet assigned (`file_key` TBD in ticket). `/plan` should either link the Figmint design file or explicitly defer VQA to post-design.
+4. **Figma design file** — Bootstrap tab mock not yet assigned (`file_key` TBD in ticket). `/plan` should either link the FigHub design file or explicitly defer VQA to post-design.
 5. **Canvas audit timing** — run once after all pages vs per-page audit? WO-010 research deferred canvas rules to Sprint 3; WO-015 should match whatever WO-011/010 plan locks.

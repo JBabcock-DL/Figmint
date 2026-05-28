@@ -8,9 +8,9 @@
 
 ## Summary
 
-Figmint must authenticate designers to a connected GitHub repo, persist a revocable OAuth token in `figma.clientStorage` (keyed by repo URL), read token files via `src/io/sources/github.ts`, and write PRs via `src/io/sinks/githubPR.ts` — gated by `flags.githubOAuth` and `manifest.json` network access.
+FigHub must authenticate designers to a connected GitHub repo, persist a revocable OAuth token in `figma.clientStorage` (keyed by repo URL), read token files via `src/io/sources/github.ts`, and write PRs via `src/io/sinks/githubPR.ts` — gated by `flags.githubOAuth` and `manifest.json` network access.
 
-**Revised MVP OAuth architecture (post-spike):** GitHub **Device Authorization Grant** remains the preferred UX (8-char code, no redirect `window.opener` issues), but **all GitHub HTTP** (device code, token poll, and REST API) must go through a **Detroit Labs–hosted HTTPS relay** per [Figma OAuth with Plugins](https://developers.figma.com/docs/plugins/oauth-with-plugins/). Local dev uses `npm run spike:oauth-relay` (`http://localhost:8787`, `devAllowedDomains`). Production relay URL via `FIGMINT_OAUTH_RELAY_URL` at build time. **Auth Code + PKCE** remains an alternative with the same relay requirement.
+**Revised MVP OAuth architecture (post-spike):** GitHub **Device Authorization Grant** remains the preferred UX (8-char code, no redirect `window.opener` issues), but **all GitHub HTTP** (device code, token poll, and REST API) must go through a **Detroit Labs–hosted HTTPS relay** per [Figma OAuth with Plugins](https://developers.figma.com/docs/plugins/oauth-with-plugins/). Local dev uses `npm run spike:oauth-relay` (`http://localhost:8787`, `devAllowedDomains`). Production relay URL via `FIGHUB_OAUTH_RELAY_URL` at build time. **Auth Code + PKCE** remains an alternative with the same relay requirement.
 
 Token lifecycle stays on the **main thread** (`figma.clientStorage`); OAuth orchestration uses UI → main `postMessage`, main → relay `fetch`.
 
@@ -64,8 +64,8 @@ Per PRD §11.3, §13.1 FR-CONF-4, and ticket scope:
 
 - **API surface:** `figma.clientStorage.getAsync` / `setAsync` / `deleteAsync` — **main thread only** ([Figma docs](https://developers.figma.com/docs/plugins/oauth-with-plugins/#saving-the-access-token-locally)).
 - **Key scheme (locked for `/plan`):**
-  - `figmint:github:token:<normalizedRepoUrl>` → `{ accessToken: string; scope: string; createdAt: string; tokenType?: string }`
-  - `figmint:github:config:<normalizedRepoUrl>` → `{ tokensPath: string; defaultBranch?: string }` (paths per FR-CONF-5; expand in later tickets)
+  - `fighub:github:token:<normalizedRepoUrl>` → `{ accessToken: string; scope: string; createdAt: string; tokenType?: string }`
+  - `fighub:github:config:<normalizedRepoUrl>` → `{ tokensPath: string; defaultBranch?: string }` (paths per FR-CONF-5; expand in later tickets)
 - **Normalization:** lowercase host, strip trailing slash, canonical form `https://github.com/{owner}/{repo}` (reject non-GitHub hosts).
 - **Security posture:** clientStorage is inspectable in DevTools — acceptable per PRD §11.3; tokens are revocable, scoped, and Org-only. Never store `client_secret`. Never log token values (use `pluginLog` with redaction).
 - **Revocation / disconnect:** `deleteAsync` on token + config keys; optional `DELETE` to GitHub revoking grant is best-effort (not required for MVP AC).
@@ -130,7 +130,7 @@ Default acceptance path: `design/tokens.json` on connected test repo.
 Ticket includes a minimal PR sink in WO-016; WO-018 expands it (Sink interface, dual json+md, export sheet). MVP responsibilities:
 
 - Input: `{ repoUrl, baseBranch, files: Array<{ path, content }>, title, body }`.
-- Steps: get default branch SHA → create ref `figmint/{kind}-{date}` → create blobs → create tree → create commit → `POST /repos/{owner}/{repo}/pulls`.
+- Steps: get default branch SHA → create ref `fighub/{kind}-{date}` → create blobs → create tree → create commit → `POST /repos/{owner}/{repo}/pulls`.
 - Auth: read token from clientStorage on main thread (same key as source).
 - Errors: map 401 → “Reconnect GitHub”, 422 branch exists → user-facing message.
 
@@ -174,7 +174,7 @@ PRD §6.9 FR-CONF-1 / `src/ui/tabs/Settings.tsx` (stub in PRD §7.3, not yet in 
 
 | # | Question | Owner / resolution |
 |---|----------|-------------------|
-| OQ-16-1 | Has Detroit Labs registered the Figmint OAuth App (client_id + Device Flow enabled)? | Eng lead before `/build` |
+| OQ-16-1 | Has Detroit Labs registered the FigHub OAuth App (client_id + Device Flow enabled)? | Eng lead before `/build` |
 | OQ-16-2 | Device Flow UX acceptable for designers vs browser-tab Auth Code flow? | Design / client feedback during VQA |
 | OQ-16-3 | Should token refresh / expiry handling be implemented for GitHub Apps with expiring user tokens, or is classic OAuth App non-expiring token sufficient for MVP? | Default: OAuth App non-expiring; revisit if app type changes |
 | OQ-16-4 | Exact repo URL normalization for monorepos / GitHub Enterprise (`github.company.com`) — MVP is github.com cloud only? | Confirm Org clients; GHE would need manifest domain additions |
@@ -211,7 +211,7 @@ PRD §6.9 FR-CONF-1 / `src/ui/tabs/Settings.tsx` (stub in PRD §7.3, not yet in 
 | [GitHub Device Flow](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow) | Browser POST to GitHub OAuth endpoints | **Not callable from Figma sandbox** — CORS blocks null origin (SPK-016-1) |
 | Figma token storage doc | Access token via **`figma.clientStorage` on main thread** | Main owns secrets; relay returns token to plugin |
 
-**Locked interpretation (revised 2026-05-27):** Device Flow is still the preferred **UX** (out-of-band code entry), but HTTP must go through a **Figmint relay** — same infrastructure class as Figma’s Auth Code + PKCE relay pattern.
+**Locked interpretation (revised 2026-05-27):** Device Flow is still the preferred **UX** (out-of-band code entry), but HTTP must go through a **FigHub relay** — same infrastructure class as Figma’s Auth Code + PKCE relay pattern.
 
 ### GitHub Device Flow API contract (MVP sequence)
 
@@ -249,7 +249,7 @@ Content-Type: application/json
 
 Pending: `200` + `{"error":"authorization_pending"}` · Slow: `{"error":"slow_down"}` · Success: `{"access_token":"…","token_type":"bearer","scope":"repo"}`
 
-**Step C — Persist** UI → main `github/token/save` → `figma.clientStorage.setAsync('figmint:github:token:' + normalizedRepoUrl, JSON.stringify({ accessToken, scope, createdAt }))`
+**Step C — Persist** UI → main `github/token/save` → `figma.clientStorage.setAsync('fighub:github:token:' + normalizedRepoUrl, JSON.stringify({ accessToken, scope, createdAt }))`
 
 ### GitHub read (Contents API) — WO-016 AC path
 
@@ -270,7 +270,7 @@ Response: `content` base64, `encoding: "base64"`, `sha` — decode → `parseTex
 | -- | -------- | --------- | --------------------- |
 | D-016-1 | GitHub **Device Flow via HTTPS relay** for MVP | SPK-016-1: direct plugin fetch to GitHub OAuth blocked by CORS | In-plugin Device Flow (pre-spike assumption) |
 | D-016-2 | Token on main; **all GitHub HTTP via relay** | CORS + clientStorage main-only | Direct main/UI fetch to github.com |
-| D-016-3 | Storage key `figmint:github:token:<normalizedRepoUrl>` | FR-CONF-4 single connected repo | Global single key (blocks repo switch) |
+| D-016-3 | Storage key `fighub:github:token:<normalizedRepoUrl>` | FR-CONF-4 single connected repo | Global single key (blocks repo switch) |
 | D-016-4 | Scope **`repo`** at connect | Private repo read + PR write in one grant | Split read/write scopes (deferred) |
 | D-016-6 | **Relay mandatory** for OAuth + API | UI and main direct fetch both fail CORS | UI-only or main-only GitHub fetch |
 

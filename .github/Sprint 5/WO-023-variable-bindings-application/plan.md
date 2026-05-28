@@ -30,9 +30,9 @@ Implement a **post-scaffold binding pass** that reads `ComponentSpecV1.bindings[
 - Do **not** use CSS-like selectors (`.button`) or collection-prefixed paths as authoritative keys — `src/io/formats/__fixtures__/component-spec-button.json` is export-sample only.
 - Do **not** add `kind` or `property` fields to `ComponentSpecBinding` — selector string encodes both (contract v1 locked).
 
-**Lift map (legacy → Figmint):**
+**Lift map (legacy → FigHub):**
 
-| DesignOps source | Figmint module | Notes |
+| DesignOps source | FigHub module | Notes |
 | ---------------- | -------------- | ----- |
 | `conventions/07-token-paths.md` §7.1 | `normalizeVariablePath()` + `resolvePath()` | Slash paths; optional `{Collection}/` strip |
 | `component-chip.mcp.js` §5 `bindColor` | `bindPaintToVar` / `bindStrokeToVar` | Paint bind, not `setBoundVariable` on fill |
@@ -78,7 +78,7 @@ Implement a **post-scaffold binding pass** that reads `ComponentSpecV1.bindings[
 Copy-paste contract for build agents — **do not rename exports or change signatures without contract bump:**
 
 ```ts
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 import type { VariablePathMap } from '@/core/canvas/lib/variables';
 
 /** Parsed binding kind — suffix of selector after final '.' */
@@ -178,7 +178,7 @@ return result;
   - Add `ComponentAuditInput` for audit wiring:
 
 ```ts
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 import type { ApplyBindingsResult } from './types';
 
 export interface ComponentAuditInput {
@@ -192,7 +192,7 @@ export interface ComponentAuditInput {
 
 - [x] **Step 2** — Patch `packages/contracts/src/auditReport.v1.ts`:
   - Extend `AuditReportMeta.operation` union: `'push-variables' | 'apply-bindings'`.
-  - Re-export unchanged; run `npm run build -w @detroitlabs/figmint-contracts`.
+  - Re-export unchanged; run `npm run build -w @detroitlabs/fighub-contracts`.
   - **Done when:** `dist/audit-report.v1.schema.json` includes `"apply-bindings"` in `operation` enum; `tsc --noEmit` clean.
 
 - [x] **Step 3** — Extend `src/core/audit/types.ts`:
@@ -390,7 +390,7 @@ export interface ComponentAuditInput {
   - `npm run lint`
   - `npm run format:check` (or write + recheck)
   - `npm test`
-  - `npm run build -w @detroitlabs/figmint-contracts`
+  - `npm run build -w @detroitlabs/fighub-contracts`
   - `npm run build` (dual manifest)
   - **Done when:** all green; **do not commit** (repo default git strategy).
 
@@ -437,7 +437,7 @@ export interface ComponentAuditInput {
 | **WO-014** | `bindPaintToVar`, `bindStrokeToVar` in `src/core/canvas/helpers/bindings.ts` |
 | **WO-010** | `runAudit` orchestrator + `AuditReportV1` contract |
 | **WO-024** | Downstream — runs **after** this ticket's `applyBindings()` |
-| **WO-003** | `@detroitlabs/figmint-contracts` — `ComponentSpecV1`, audit types |
+| **WO-003** | `@detroitlabs/fighub-contracts` — `ComponentSpecV1`, audit types |
 
 **Lift references (read-only during build):**
 

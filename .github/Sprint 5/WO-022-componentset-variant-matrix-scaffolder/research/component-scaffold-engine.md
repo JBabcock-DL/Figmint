@@ -21,11 +21,11 @@ WO-022 implements the **forward-path scaffold core**: given a validated `Compone
 
 ## Key Findings
 
-### 1. Legacy pipeline is an MCP budget artifact — Figmint collapses to one call
+### 1. Legacy pipeline is an MCP budget artifact — FigHub collapses to one call
 
-**Evidence:** `DesignOps-plugin/skills/create-component/EXECUTOR.md` §0 — fixed order `cc-scaffold` → `cc-properties` → `cc-component-*` → `cc-matrix` → `cc-usage`; `Docs/lift-sources.md` §Component archetype bundles — "The 5-call sequence is an MCP-payload-budget artifact — Figmint executes the full pipeline in one Plugin API call."
+**Evidence:** `DesignOps-plugin/skills/create-component/EXECUTOR.md` §0 — fixed order `cc-scaffold` → `cc-properties` → `cc-component-*` → `cc-matrix` → `cc-usage`; `Docs/lift-sources.md` §Component archetype bundles — "The 5-call sequence is an MCP-payload-budget artifact — FigHub executes the full pipeline in one Plugin API call."
 
-Each legacy bundle repeats ~300 lines of preamble (page nav, variable lookup, `bindColor`/`bindNum`, font load). Figmint factors shared preamble into `src/core/components/scaffold/context.ts` (new) reusing `ensureLocalVariableMap()` from `src/core/canvas/lib/variables.ts` where needed, but **WO-022 geometry uses hex fallbacks** until WO-023 binds.
+Each legacy bundle repeats ~300 lines of preamble (page nav, variable lookup, `bindColor`/`bindNum`, font load). FigHub factors shared preamble into `src/core/components/scaffold/context.ts` (new) reusing `ensureLocalVariableMap()` from `src/core/canvas/lib/variables.ts` where needed, but **WO-022 geometry uses hex fallbacks** until WO-023 binds.
 
 **WO-022 in-scope slice:** archetype variant builders + `combineAsVariants` + ComponentSet grid styling (from `buildComponentSetSection` in bundles, lines ~902–971 in `component-chip.mcp.js`). **Out of scope:** `buildPropertiesTable`, `buildMatrix`, `buildUsageNotes` (doc pipeline §§6.6–6.8).
 
@@ -57,7 +57,7 @@ else switch (spec.archetype ?? inferArchetype(spec)) → archetypes/{name}.ts
 else → archetypes/chip.ts + pluginLog warn (legacy fallback)
 ```
 
-| Archetype | Legacy builder | Modular lift source | Figmint file |
+| Archetype | Legacy builder | Modular lift source | FigHub file |
 | --------- | -------------- | ------------------- | ------------ |
 | `chip` | `buildVariant` | `component-chip.mcp.js` L281–536 (inline; no `cc-arch-chip.js`) | `archetypes/chip.ts` |
 | `surface-stack` | `buildSurfaceStackVariant` | `cc-arch-surface-stack.js` | `archetypes/surfaceStack.ts` |
@@ -105,7 +105,7 @@ Shared dashed-slot / sample-text helpers → `archetypes/shared.ts` porting `cc-
 
 | Layer | Node type | Notes |
 | ----- | --------- | ----- |
-| `text/label` | TEXT | Required when label present; legacy chip left unnamed — **Figmint fixes** |
+| `text/label` | TEXT | Required when label present; legacy chip left unnamed — **FigHub fixes** |
 | `icon-slot/leading` / `trailing` / `center` | FRAME or INSTANCE | When `iconSlots` config present |
 | `state-layer/hover` / `pressed` / `focus` | FRAME | When M3 stateRole configured |
 | `focus-ring` | FRAME | When focus ring configured |
@@ -119,10 +119,10 @@ Port comments from `cc-arch-*` verbatim where they document M3/state-layer behav
 
 **Locked strategy:**
 
-1. Compute stable id: `figmint:scaffold:v1:${spec.name}:${hashVariantMatrix(spec.variantMatrix)}` (FNV-1a or SHA-256 truncated — match fixture generator pattern from WO-005).
-2. On target page, `findOne` ComponentSet where `getPluginData('figmint.scaffoldId') === id` OR name matches `{spec.name} — ComponentSet`.
+1. Compute stable id: `fighub:scaffold:v1:${spec.name}:${hashVariantMatrix(spec.variantMatrix)}` (FNV-1a or SHA-256 truncated — match fixture generator pattern from WO-005).
+2. On target page, `findOne` ComponentSet where `getPluginData('fighub.scaffoldId') === id` OR name matches `{spec.name} — ComponentSet`.
 3. If found: **`remove()`** existing ComponentSet (and orphan staging frames matching `_ccVariantBuild/${name}`), then rebuild — **replace semantics**, not in-place patch (simpler; matches registry update story in WO-026).
-4. After create: `componentSet.setPluginData('figmint.scaffoldId', id)` and `setPluginData('figmint.specVersion', '1')`.
+4. After create: `componentSet.setPluginData('fighub.scaffoldId', id)` and `setPluginData('fighub.specVersion', '1')`.
 
 **Plugin data limit:** 100 kB per key per node ([Plugin API — shared pluginData](https://developers.figma.com/docs/plugins/api/node-properties/#setplugindata)) — id string is well under cap.
 
@@ -151,7 +151,7 @@ WO-022 builders should **structure** nodes so WO-024 can attach property referen
 
 **Evidence:** `02-archetype-routing.md` §3.05 — composed cells need `InstanceNode`s of published child ComponentSets via `.designops-registry.json`. `component-composed.mcp.js` throws if child missing in registry.
 
-**Impact:** `archetypes/composed.ts` requires **read** access to Figmint registry (`.figmint-registry.json` shape in `packages/contracts/src/registry.v1.ts`) — **not** registry write (WO-026). Accept `RegistryV1` as optional parameter to `scaffold()`: `scaffold(spec, target, options?: { registry?: RegistryV1 })`.
+**Impact:** `archetypes/composed.ts` requires **read** access to FigHub registry (`.fighub-registry.json` shape in `packages/contracts/src/registry.v1.ts`) — **not** registry write (WO-026). Accept `RegistryV1` as optional parameter to `scaffold()`: `scaffold(spec, target, options?: { registry?: RegistryV1 })`.
 
 **Pre-plan spike SPK-022-3** validates composed Button Group path — defer composed integration tests until child Button exists in sandbox (bootstrap or pre-scaffold).
 
@@ -176,7 +176,7 @@ WO-022 builders should **structure** nodes so WO-024 can attach property referen
 
 ### Patterns to mirror
 
-| Pattern | Source | Figmint target |
+| Pattern | Source | FigHub target |
 | ------- | ------ | -------------- |
 | Hidden variant staging frame | `component-chip.mcp.js` L594–604 | `stageVariants()` in `index.ts` |
 | `combineAsVariants` + grid layout | `component-chip.mcp.js` L902–969 | `finalizeComponentSet()` |

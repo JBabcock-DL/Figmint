@@ -10,7 +10,7 @@
 
 | Label | File | `file_key` | `node_id` | What it shows |
 | ----- | ---- | ----------- | --------- | ------------- |
-| **Broken output (Figmint)** | [Untitled — user sandbox](https://www.figma.com/design/Dw8NkEiG91NhjYqRPNTOOu/Untitled?node-id=5-193) | `Dw8NkEiG91NhjYqRPNTOOu` | `5:193` | `_PageContent` → `doc/component/button` with **1px-wide** `component-set-group`, **1px-wide** `usage`, **1px-wide** usage cells; instances offset negatively inside cells |
+| **Broken output (FigHub)** | [Untitled — user sandbox](https://www.figma.com/design/Dw8NkEiG91NhjYqRPNTOOu/Untitled?node-id=5-193) | `Dw8NkEiG91NhjYqRPNTOOu` | `5:193` | `_PageContent` → `doc/component/button` with **1px-wide** `component-set-group`, **1px-wide** `usage`, **1px-wide** usage cells; instances offset negatively inside cells |
 | **Target (DesignOps)** | [v60 Foundations — Button doc](https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/v60-updates-%E2%80%94-Foundations?node-id=433-335) | `uCpQaRsW4oiXW3DsC6cLZm` | `433:335` | Full doc frame: header, properties table, component-set-group (1640), variant×state matrix, Do/Don't usage |
 | **Plugin sandbox** | [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox) | `cVdPraIafWFBRZnzMPhtrW` | — | WO-027 VQA target; bootstrap-complete variables |
 
@@ -136,7 +136,7 @@ _PageContent                           1800 × 902
 **Research tasks:**
 
 1. Read legacy `usage.mcp.js` + `04-doc-pipeline-contract.md` §6.
-2. Document delta table: Figmint frame names vs DesignOps layer names.
+2. Document delta table: FigHub frame names vs DesignOps layer names.
 3. Propose either (A) minimal Hug fix on current gallery, or (B) port Do/Don't layout from CONFIG `usageDo` / `usageDont`.
 
 ---
@@ -154,7 +154,7 @@ _PageContent                           1800 × 902
 
 **Research spike SPK-S5-DOC-1:**
 
-- Diff v60 node `433:335` vs Figmint `5:193` section-by-section.
+- Diff v60 node `433:335` vs FigHub `5:193` section-by-section.
 - Estimate port slices: `scaffold` → `properties` → `component-chip` → `matrix` → `usage` (five-call order per EXECUTOR.md).
 - Decision: Phase 2.1 single-call doc shell vs full five-call port.
 

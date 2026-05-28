@@ -13,7 +13,7 @@ mkdirSync(distDir, { recursive: true });
 
 function patchDistManifest() {
   const env = loadEnv('production', rootDir, '');
-  const relayUrl = (env.FIGMINT_OAUTH_RELAY_URL ?? '').trim().replace(/\/$/, '');
+  const relayUrl = (env.FIGHUB_OAUTH_RELAY_URL ?? '').trim().replace(/\/$/, '');
   const manifestPath = resolve(distDir, 'manifest.json');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
   manifest.networkAccess = manifest.networkAccess ?? {};

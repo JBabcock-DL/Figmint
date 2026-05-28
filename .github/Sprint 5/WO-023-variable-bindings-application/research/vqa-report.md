@@ -67,6 +67,6 @@ All N/A (no Figma surface).
 
 ## Backend action
 
-- **Backend:** GitHub — issue [#26](https://github.com/JBabcock-DL/Figmint/issues/26)
+- **Backend:** GitHub — issue [#26](https://github.com/JBabcock-DL/FigHub/issues/26)
 - **Project item:** `PVTI_lAHOD9B30s4BY4aYzgt5JLk`
 - **Status:** **In Review** (`594e69fa`) — subsystem Ship; Completed blocked on WO-027 integrated sandbox

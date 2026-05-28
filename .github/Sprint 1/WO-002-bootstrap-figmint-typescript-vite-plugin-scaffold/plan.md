@@ -1,10 +1,10 @@
-# Plan — WO-002: Bootstrap Figmint TypeScript + Vite plugin scaffold
+# Plan — WO-002: Bootstrap FigHub TypeScript + Vite plugin scaffold
 
 > Authoritative plan. Toolchain locked by [`research/scaffold-choice.md`](research/scaffold-choice.md); cross-ticket reconciliation decisions in `memory.md` (2026-05-27). Build agents work on `main` and leave changes uncommitted for the user to review.
 
 ## Approach
 
-Stand up the Figmint plugin source tree on **raw Vite 8** (NOT `create-figma-plugin`), using `@figma/plugin-typings`, `vite-plugin-singlefile`, React 19, TypeScript 6, and Node ≥22 LTS. A single `vite.config.ts` reads `process.env.BUILD_TARGET` (`community` | `org`) and runs a two-thread build: `src/main.ts` → `dist/code.js` via Vite **library mode** (Plugin API sandbox thread, no DOM lib), and `src/ui/index.tsx` → `dist/ui.html` via `@vitejs/plugin-react` + `vite-plugin-singlefile` (UI iframe thread, JS+CSS inlined per Figma's single-file rule). Two `scripts/build-{community,org}.mjs` Node scripts set the env, invoke the Vite builds, and copy the matching `manifest.{community,org}.json` into `dist/manifest.json`. The `src/` tree matches PRD §7.3 exactly; the real contracts package lives separately at `packages/contracts/` per WO-003 — `src/contracts/` is left as an empty placeholder. Root `package.json` declares an npm workspace (`"workspaces": ["packages/*"]`) so WO-003 can drop its package in without further wiring. Scaffold delivers a 320×240 "Figmint" placeholder UI only — no variable push, canvas, or component logic.
+Stand up the FigHub plugin source tree on **raw Vite 8** (NOT `create-figma-plugin`), using `@figma/plugin-typings`, `vite-plugin-singlefile`, React 19, TypeScript 6, and Node ≥22 LTS. A single `vite.config.ts` reads `process.env.BUILD_TARGET` (`community` | `org`) and runs a two-thread build: `src/main.ts` → `dist/code.js` via Vite **library mode** (Plugin API sandbox thread, no DOM lib), and `src/ui/index.tsx` → `dist/ui.html` via `@vitejs/plugin-react` + `vite-plugin-singlefile` (UI iframe thread, JS+CSS inlined per Figma's single-file rule). Two `scripts/build-{community,org}.mjs` Node scripts set the env, invoke the Vite builds, and copy the matching `manifest.{community,org}.json` into `dist/manifest.json`. The `src/` tree matches PRD §7.3 exactly; the real contracts package lives separately at `packages/contracts/` per WO-003 — `src/contracts/` is left as an empty placeholder. Root `package.json` declares an npm workspace (`"workspaces": ["packages/*"]`) so WO-003 can drop its package in without further wiring. Scaffold delivers a 320×240 "FigHub" placeholder UI only — no variable push, canvas, or component logic.
 
 ## Steps
 
@@ -25,7 +25,7 @@ Stand up the Figmint plugin source tree on **raw Vite 8** (NOT `create-figma-plu
   figma.showUI(__html__, { width: 320, height: 240 });
   ```
   Wrap in a minimal `figma.on("run", ...)` if needed; no message handlers, no closeUI logic — placeholder only.
-- [ ] **Step 7** — Create `src/ui/index.html` (Vite entry HTML referencing `index.tsx`), `src/ui/index.tsx` (React 19 root mount via `createRoot`), and `src/ui/App.tsx` (functional component rendering centered "Figmint" + version from `import.meta.env.PACKAGE_VERSION` — exposed via `vite.config.ts`'s `define`). Inline minimal CSS (no separate file needed for placeholder; Tailwind / design system arrives in later sprints).
+- [ ] **Step 7** — Create `src/ui/index.html` (Vite entry HTML referencing `index.tsx`), `src/ui/index.tsx` (React 19 root mount via `createRoot`), and `src/ui/App.tsx` (functional component rendering centered "FigHub" + version from `import.meta.env.PACKAGE_VERSION` — exposed via `vite.config.ts`'s `define`). Inline minimal CSS (no separate file needed for placeholder; Tailwind / design system arrives in later sprints).
 - [ ] **Step 8** — Create `src/config/flags.community.ts` and `src/config/flags.org.ts`. Both export `const flags = { ... } as const` with the **same shape** but different values. Initial shape (minimal — expanded by Sprint 2+ tickets):
   ```ts
   export const flags = {
@@ -37,7 +37,7 @@ Stand up the Figmint plugin source tree on **raw Vite 8** (NOT `create-figma-plu
   } as const;
   ```
   Vite alias from Step 4 picks the right file at build time; consumers do `import { flags } from "@/config/flags"` without knowing which is loaded.
-- [ ] **Step 9** — Create `manifest.community.json` and `manifest.org.json` at repo root. Required fields per Figma manifest spec: `name` ("Figmint" community, "Figmint (Org)" org), `id` (use temporary placeholder IDs — Figma assigns real ones at publish time; both manifests share schema but differ on `name` and on `networkAccess.allowedDomains`), `api: "1.0.0"`, `main: "code.js"`, `ui: "ui.html"`, `editorType: ["figma"]`, `networkAccess: { allowedDomains: ["none"] }` for community / `{ allowedDomains: ["https://api.github.com", "https://github.com"] }` for org (GitHub-only per PRD §11.3 and `memory.md` Conventions).
+- [ ] **Step 9** — Create `manifest.community.json` and `manifest.org.json` at repo root. Required fields per Figma manifest spec: `name` ("FigHub" community, "FigHub (Org)" org), `id` (use temporary placeholder IDs — Figma assigns real ones at publish time; both manifests share schema but differ on `name` and on `networkAccess.allowedDomains`), `api: "1.0.0"`, `main: "code.js"`, `ui: "ui.html"`, `editorType: ["figma"]`, `networkAccess: { allowedDomains: ["none"] }` for community / `{ allowedDomains: ["https://api.github.com", "https://github.com"] }` for org (GitHub-only per PRD §11.3 and `memory.md` Conventions).
 - [ ] **Step 10** — Create `scripts/build-community.mjs` and `scripts/build-org.mjs`. Each script: (a) sets `process.env.BUILD_TARGET = "community"|"org"`, (b) shells out to Vite twice — once with `VITE_BUILD_THREAD=main` and once with `VITE_BUILD_THREAD=ui` — (c) copies the matching `manifest.{community,org}.json` to `dist/manifest.json` via `fs.copyFileSync`, (d) prints a one-line success summary. Use `node:child_process.spawnSync("npx", ["vite", "build"], { stdio: "inherit", env: { ...process.env, BUILD_TARGET, VITE_BUILD_THREAD } })` for portability.
 - [ ] **Step 11** — Create `scripts/dev.mjs` using `concurrently` (default per OQ-F) to run both build threads in parallel watch mode. Invocation pattern:
   ```js
@@ -58,7 +58,7 @@ Stand up the Figmint plugin source tree on **raw Vite 8** (NOT `create-figma-plu
   );
   ```
   Also handle manifest copy on first run. Figma desktop's built-in plugin hot-reload picks up `dist/` changes.
-- [ ] **Step 12** — **Smoke test (manual — flagged for the user since build agents don't drive Figma desktop):** `npm install` → `npm run build:community` → load `dist/` in Figma desktop dev mode (Plugins → Development → Import plugin from manifest → pick `dist/manifest.json`) → verify the 320×240 placeholder UI appears with "Figmint" text + version. Build agent documents the steps and exit conditions in this step's checklist comment; user runs the manual load.
+- [ ] **Step 12** — **Smoke test (manual — flagged for the user since build agents don't drive Figma desktop):** `npm install` → `npm run build:community` → load `dist/` in Figma desktop dev mode (Plugins → Development → Import plugin from manifest → pick `dist/manifest.json`) → verify the 320×240 placeholder UI appears with "FigHub" text + version. Build agent documents the steps and exit conditions in this step's checklist comment; user runs the manual load.
 - [ ] **Step 13** — Verify `npx tsc --noEmit` passes with zero errors under strict mode (Acceptance Criterion). Verify `npm run build:org` produces a distinct `dist/manifest.json` (differs from community on `name` + `networkAccess.allowedDomains`) and that the bundle compiles cleanly. Confirm no file references `DesignOps-plugin` paths in production code (documentation references only — Acceptance Criterion).
 
 ## Build Agents
@@ -77,7 +77,7 @@ Stand up the Figmint plugin source tree on **raw Vite 8** (NOT `create-figma-plu
 ## Dependencies & Tools
 
 - **Node 22 LTS** — locally installed; verify with `node --version` before `npm install` (PRD §11.5 bumped from Node 20 during Sprint 1 reconciliation; Node 20 EOL'd 2026-04-30; locked in `memory.md`).
-- **npm** — Figmint locks `main` git strategy; no Yarn / no pnpm. Root `package.json` declares the workspace.
+- **npm** — FigHub locks `main` git strategy; no Yarn / no pnpm. Root `package.json` declares the workspace.
 - **Figma desktop app** — required for Step 12's manual smoke test (load `dist/manifest.json` via Plugins → Development → Import plugin from manifest).
 - **MCP servers** — none required for this ticket. Figma MCP is plugin-level config (Sprint 2+ for canvas work); GitHub backend is already configured per `workflow.md`.
 - **External APIs** — none consumed by this ticket. (Org manifest declares `networkAccess.allowedDomains` for GitHub but no code calls it yet — that wires up in Sprint 2+.)
@@ -95,7 +95,7 @@ Stand up the Figmint plugin source tree on **raw Vite 8** (NOT `create-figma-plu
 - **Git strategy: `main`** (locked in `memory.md` 2026-05-27 — uncommitted changes, user reviews + commits manually). Build agents must NOT run `git commit`, `git push`, or `gh pr create`. Leave all changes uncommitted. No per-agent branches, no worktrees.
 - **PRD §11.5 Node 22 LTS** — bumped from Node 20 during Sprint 1 cross-ticket research reconciliation (Node 20 EOL'd 2026-04-30; WO-003's `ts-json-schema-generator@2.x` + WO-004's ESLint 10 / typescript-eslint v8 both require Node ≥22). This is the new floor; `engines.node` must be `">=22.0.0"`.
 - **Scaffold delivers a placeholder UI only.** No actual variable push, canvas building, or component logic — those land in Sprint 2+ per the breakdown plan. `src/{core,ops,io,contracts}` stay empty (with `.gitkeep`) until their owning tickets land.
-- **`src/contracts/` is a placeholder.** The real published package is `@detroitlabs/figmint-contracts` at `packages/contracts/` per WO-003. The root `package.json` `"workspaces": ["packages/*"]` declaration is the wiring; WO-003 drops the package in without needing to touch WO-002 deliverables.
+- **`src/contracts/` is a placeholder.** The real published package is `@detroitlabs/fighub-contracts` at `packages/contracts/` per WO-003. The root `package.json` `"workspaces": ["packages/*"]` declaration is the wiring; WO-003 drops the package in without needing to touch WO-002 deliverables.
 - **`src/config/flags` selection** happens at Vite build time via `resolve.alias`. Same import path (`@/config/flags`) resolves to a different file per `BUILD_TARGET`. Consumers stay tree-shakeable and never branch at runtime.
 - **No third-party network calls beyond GitHub API + Figma Plugin API** (PRD §11.3 + `memory.md` Conventions). The community `manifest.networkAccess.allowedDomains` is `["none"]`; the org variant whitelists GitHub only.
 - **Downstream unblocks:** After this plan is approved and BUILD runs, **WO-003** (contracts package — depends on workspace root + tsconfig) and **WO-005** (Phase 0 spike — depends on the scaffold) can BUILD in parallel. **WO-004** (CI) depends on both WO-002 and WO-003 being merged.

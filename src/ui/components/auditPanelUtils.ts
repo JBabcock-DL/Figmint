@@ -1,4 +1,4 @@
-import type { AuditReportV1, AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditReportV1, AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 export type AuditRuleSortBucket = 'failed' | 'warn' | 'passed';
 

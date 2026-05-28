@@ -14,12 +14,12 @@ PRD anchors: `Docs/PRD.md` §10 (Sources/Sinks), §13.1 (feature gating), §11.3
 
 ## Problem story
 
-Org-tier Figmint engagements assume a connected consumer repo (`tokens.json`, drift reports, Code Connect stubs). Today the plugin only accepts paste / file / clipboard input (WO-006) — designers must manually copy repo files into the plugin, and nothing writes back to GitHub. Without OAuth, the Sync tab, component import, and PR sinks in PRD §10 cannot ship. This ticket adds the authentication + storage foundation so a designer connects one repo once, pulls token files deterministically, and opens an engineer-reviewable PR — Community build users never see GitHub affordances.
+Org-tier FigHub engagements assume a connected consumer repo (`tokens.json`, drift reports, Code Connect stubs). Today the plugin only accepts paste / file / clipboard input (WO-006) — designers must manually copy repo files into the plugin, and nothing writes back to GitHub. Without OAuth, the Sync tab, component import, and PR sinks in PRD §10 cannot ship. This ticket adds the authentication + storage foundation so a designer connects one repo once, pulls token files deterministically, and opens an engineer-reviewable PR — Community build users never see GitHub affordances.
 
 ## User stories
 
 - As an Org build designer, I connect my team's GitHub repo once in Settings so I don't re-paste `tokens.json` every session.
-- As an Org build designer, I pull `design/tokens.json` from the connected repo into Bootstrap without leaving Figmint.
+- As an Org build designer, I pull `design/tokens.json` from the connected repo into Bootstrap without leaving FigHub.
 - As an Org build designer, I open a PR with a single file change so engineering can review and merge token updates.
 - As a Community build designer, I never see GitHub connect UI or network calls to GitHub.
 
@@ -37,7 +37,7 @@ Org-tier Figmint engagements assume a connected consumer repo (`tokens.json`, dr
 
 1. **OAuth (Org, UI iframe):** GitHub **Device Authorization Grant** for MVP — `client_id` only (no `client_secret`, no relay server). User opens `github.com/login/device`, enters the user code; UI polls `github.com/login/oauth/access_token` until authorized or timeout. Auth Code + PKCE deferred to v1.x (requires public HTTPS relay per Figma OAuth docs).
 2. **Scopes:** Request `repo` at connect time (read private files + create branches/commits/PRs). Enforce configured paths in app logic — OAuth cannot scope to subdirectories.
-3. **Token storage (main thread):** After OAuth, UI sends token to main via typed `postMessage`; main persists in `figma.clientStorage` at `figmint:github:token:<normalizedRepoUrl>`. Config (paths) at `figmint:github:config:<normalizedRepoUrl>`. Disconnect deletes both keys.
+3. **Token storage (main thread):** After OAuth, UI sends token to main via typed `postMessage`; main persists in `figma.clientStorage` at `fighub:github:token:<normalizedRepoUrl>`. Config (paths) at `fighub:github:config:<normalizedRepoUrl>`. Disconnect deletes both keys.
 4. **`src/io/messages/github.ts`:** Typed UI ↔ main messages (`github/token/save`, `github/token/clear`, `github/token/status`, `github/contents/fetch`, result/error). ES2017-safe guards for `main.ts`.
 5. **`src/io/sources/github.ts`:** `loadFromGitHub(repoUrl, path, ref?)` → `LoadedDocument | ValidationError`; fetches via main-thread GitHub Contents API, decodes base64, runs existing `parseTextToDocument` / `detectContract` pipeline. Add `GitHubSourceMeta` to `src/io/sources/types.ts` and re-export from `index.ts`.
 6. **`src/io/sinks/githubPR.ts` (MVP):** Given token + `{ repoUrl, baseBranch, files[], title, body }`, create branch, commit one or more files, open PR via GitHub REST API. WO-018 extends with Sink interface + dual json/md.

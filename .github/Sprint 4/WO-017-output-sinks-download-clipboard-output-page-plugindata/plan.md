@@ -18,7 +18,7 @@ All sinks call **`prepareSinkContent()`** once per export. **Phase A (parallel b
 | Download `.v1.json` / `.v1.md` MIME | Step 4 |
 | Clipboard + execCommand fallback | Step 5 |
 | Output page auto-create + update-by-label | Step 6 |
-| pluginData single selection + `figmint:<kind>` | Step 7 |
+| pluginData single selection + `fighub:<kind>` | Step 7 |
 | Unit tests + message guards | Steps 8–10, 13 |
 
 ---
@@ -92,7 +92,7 @@ function defaultBaseName(doc: LoadedDocument): string;
 // `${doc.kind}-${isoDateFromPayloadOrNow}` — read meta.generatedAt if present
 
 function defaultLabel(doc: LoadedDocument): string;
-// `figmint/${doc.kind}/${generatedAt}`
+// `fighub/${doc.kind}/${generatedAt}`
 
 export function prepareSinkContent(
   doc: LoadedDocument,
@@ -150,21 +150,21 @@ export const clipboardSink: Sink = { id: 'clipboard', async write(...) };
 Constants (export for tests):
 
 ```ts
-export const FIGMINT_OUTPUT_PAGE_NAME = 'Figmint Output';
+export const FIGHUB_OUTPUT_PAGE_NAME = 'FigHub Output';
 export const LEGACY_OUTPUT_PAGE_NAMES = ['DesignOps Output'];
-export const FIGMINT_OUTPUT_CONTENT_FRAME = '_FigmintOutputContent';
-export const FIGMINT_SHARED_NS = 'figmint';
-export const FIGMINT_PAGE_ROLE_KEY = 'pageRole';
-export const FIGMINT_PAGE_ROLE_OUTPUT = 'output';
+export const FIGHUB_OUTPUT_CONTENT_FRAME = '_FigHubOutputContent';
+export const FIGHUB_SHARED_NS = 'fighub';
+export const FIGHUB_PAGE_ROLE_KEY = 'pageRole';
+export const FIGHUB_PAGE_ROLE_OUTPUT = 'output';
 ```
 
 **`findOrCreateOutputPage(): Page`** — resolution order:
-1. All pages: shared pluginData `figmint`/`pageRole` === `output`
-2. Name === `Figmint Output`
+1. All pages: shared pluginData `fighub`/`pageRole` === `output`
+2. Name === `FigHub Output`
 3. Name === `DesignOps Output` (exactly one)
 4. Create page, set name + shared pluginData, append to root; set `figma.currentPage = page` on first create only
 
-**`findOrCreateContentFrame(page): Frame`** — child frame `_FigmintOutputContent`, VERTICAL auto-layout, width ~960.
+**`findOrCreateContentFrame(page): Frame`** — child frame `_FigHubOutputContent`, VERTICAL auto-layout, width ~960.
 
 **`writeToOutputPage(prepared, options): Promise<SinkResult>`**:
 - Content string: `options.format === 'json' ? prepared.json : prepared.markdown`; when `both` → **markdown** on canvas.
@@ -176,11 +176,11 @@ export const FIGMINT_PAGE_ROLE_OUTPUT = 'output';
 - [x] **Step 7** — Implement `src/io/sinks/pluginData.ts` (main thread):
 
 ```ts
-export const FIGMINT_PLUGIN_DATA_PREFIX = 'figmint:';
+export const FIGHUB_PLUGIN_DATA_PREFIX = 'fighub:';
 export const PLUGIN_DATA_MAX_BYTES = 100_000;
 
 export function pluginDataKey(kind: ContractKind): string;
-// return FIGMINT_PLUGIN_DATA_PREFIX + kind
+// return FIGHUB_PLUGIN_DATA_PREFIX + kind
 
 export async function writeToPluginData(
   doc: LoadedDocument,
@@ -312,7 +312,7 @@ const markdown = format(payload, 'md');
   1. Load drift sample via temporary dev button or WO-020 preview
   2. Download JSON+MD
   3. Copy markdown
-  4. Output page creates `Figmint Output`
+  4. Output page creates `FigHub Output`
   5. Select one frame → pluginData write
   - **Done when:** checklist recorded in build notes.
 

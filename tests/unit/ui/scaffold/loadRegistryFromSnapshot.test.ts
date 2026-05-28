@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 import { loadRegistryForComponentsTab } from '@/ui/components/scaffold/loadRegistryFromSnapshot';
 

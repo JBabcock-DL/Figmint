@@ -1,4 +1,4 @@
-import type { RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 import registryPayload from '../../../tests/fixtures/ui/export/registry.json';
 

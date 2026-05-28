@@ -14,7 +14,7 @@ PRD anchors: `Docs/PRD.md` §5.4 UC-4 (import), §6.3 FR-IMP-*; extends Phase 4a
 
 ## Problem story
 
-Phase 2 **UC-2** loads `.figmint-registry.json` — a **Figma sync ledger** of components already on canvas. Designers reasonably expect **Load** to show **all components available in the codebase** and let them scaffold many at once. That gap blocks self-serve onboarding until every spec is pasted manually.
+Phase 2 **UC-2** loads `.fighub-registry.json` — a **Figma sync ledger** of components already on canvas. Designers reasonably expect **Load** to show **all components available in the codebase** and let them scaffold many at once. That gap blocks self-serve onboarding until every spec is pasted manually.
 
 WO-056 closes the product loop: **repo discovery → multiselect → queued scaffold → merged registry export**.
 
@@ -24,7 +24,7 @@ WO-056 closes the product loop: **repo discovery → multiselect → queued scaf
 
 - As a designer, after connecting GitHub in Settings, I open **Browse repo components** and see every discoverable `component-spec.v1.json` (and/or importable React entry) in my repo.
 - As a designer, I **multiselect** Button, Input, Card (etc.) and run **Scaffold selected** — the plugin queues scaffolds with progress per component.
-- As a designer, I export **one** updated `.figmint-registry.json` after the batch completes (ExportSheet confirm — no silent PR).
+- As a designer, I export **one** updated `.fighub-registry.json` after the batch completes (ExportSheet confirm — no silent PR).
 
 ---
 

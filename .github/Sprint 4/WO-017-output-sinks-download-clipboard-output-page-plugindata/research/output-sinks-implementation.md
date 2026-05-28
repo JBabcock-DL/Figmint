@@ -21,7 +21,7 @@ Four findings unblock WO-017 build:
 
 3. **Clipboard write is the inverse of clipboard read** — `navigator.clipboard.readText()` is blocked on plugin open (WO-006 locked). **`writeText()` on an explicit user gesture** (Export button click from WO-020) is the primary copy path; ship **`execCommand('copy')` via a transient off-screen `<textarea>`** as fallback when `writeText` throws `NotAllowedError`. Do not attempt clipboard write outside a click handler.
 
-4. **Output page + pluginData conventions** — Page name **`Figmint Output`** (legacy alias **`DesignOps Output`**). Labeled text nodes use name prefix `figmint/<kind>/…`; **update-by-label** when a node with the same name exists, else append. pluginData keys use namespace prefix **`figmint:`** on the selected node; value is always **JSON** (machine-readable handoff). Snapshot hidden node (`_FigmintSnapshot`) is **WO-028** — reserve the page layout pattern but do not implement snapshot writes here.
+4. **Output page + pluginData conventions** — Page name **`FigHub Output`** (legacy alias **`DesignOps Output`**). Labeled text nodes use name prefix `fighub/<kind>/…`; **update-by-label** when a node with the same name exists, else append. pluginData keys use namespace prefix **`fighub:`** on the selected node; value is always **JSON** (machine-readable handoff). Snapshot hidden node (`_FigHubSnapshot`) is **WO-028** — reserve the page layout pattern but do not implement snapshot writes here.
 
 ---
 
@@ -44,7 +44,7 @@ export interface FormatOptions {
   primaryFormat?: OutputFormat;
   /** Base filename without extension, e.g. `drift-report-2026-05-27`. Default derived from `doc.kind` + ISO date. */
   baseName?: string;
-  /** Output-page / pluginData label slug; default `figmint/<kind>/<generatedAt from payload or now>`. */
+  /** Output-page / pluginData label slug; default `fighub/<kind>/<generatedAt from payload or now>`. */
   label?: string;
 }
 
@@ -106,7 +106,7 @@ For sample `DriftReportV1` (`packages/contracts/src/driftReport.v1.ts`):
 | Field | Source |
 | ----- | ------ |
 | `baseName` default | `` `${doc.kind}-${meta.generatedAt.slice(0, 10)}` `` → `drift-report-2026-01-01` |
-| `label` default | `` `figmint/${doc.kind}/${meta.generatedAt}` `` → `figmint/drift-report/2026-01-01T00:00:00.000Z` |
+| `label` default | `` `fighub/${doc.kind}/${meta.generatedAt}` `` → `fighub/drift-report/2026-01-01T00:00:00.000Z` |
 | Extension | `.v1.json` / `.v1.md` per PRD §10.3 |
 
 Use `doc.kind` from `LoadedDocument`, not re-parse payload. `rawSnippet` is **not** written to sinks — always canonical serialized output from `payload`.
@@ -217,7 +217,7 @@ Do not merge — opposite directions, opposite fallback strategies.
 
 ---
 
-## 4. `outputPage.ts` — Figmint Output page text nodes (main thread)
+## 4. `outputPage.ts` — FigHub Output page text nodes (main thread)
 
 **File:** `src/io/sinks/outputPage.ts`  
 **Thread:** Main (`code.js`) — Figma Plugin API.
@@ -227,17 +227,17 @@ Do not merge — opposite directions, opposite fallback strategies.
 Constants:
 
 ```ts
-export const FIGMINT_OUTPUT_PAGE_NAME = 'Figmint Output';
+export const FIGHUB_OUTPUT_PAGE_NAME = 'FigHub Output';
 export const LEGACY_OUTPUT_PAGE_NAMES = ['DesignOps Output'];
-export const FIGMINT_SHARED_NS = 'figmint';
-export const FIGMINT_PAGE_ROLE_KEY = 'pageRole';
-export const FIGMINT_PAGE_ROLE_OUTPUT = 'output';
+export const FIGHUB_SHARED_NS = 'fighub';
+export const FIGHUB_PAGE_ROLE_KEY = 'pageRole';
+export const FIGHUB_PAGE_ROLE_OUTPUT = 'output';
 ```
 
 Resolution order (same pattern as `findStyleGuidePage` in `src/core/canvas/lib/pages.ts`):
 
-1. Page with `getSharedPluginData('figmint', 'pageRole') === 'output'`
-2. Exact name `Figmint Output`
+1. Page with `getSharedPluginData('fighub', 'pageRole') === 'output'`
+2. Exact name `FigHub Output`
 3. Exact legacy name `DesignOps Output` (single match only)
 4. **Create:** `figma.createPage()`, set name + shared pluginData, append to root
 
@@ -246,14 +246,14 @@ After create, optionally `figma.currentPage = page` so designer sees the write (
 ### Content layout
 
 ```
-Figmint Output (Page)
-└── _FigmintOutputContent (Frame, VERTICAL auto-layout, full width ~960)
-    ├── figmint/drift-report/2026-01-01T… (TEXT — label heading, Inter Bold 14)
+FigHub Output (Page)
+└── _FigHubOutputContent (Frame, VERTICAL auto-layout, full width ~960)
+    ├── fighub/drift-report/2026-01-01T… (TEXT — label heading, Inter Bold 14)
     ├── [body TEXT — serialized content, Inter Regular 11, monospace preferred via Inter]
     └── … (more label groups appended)
 ```
 
-**Update-by-label (locked):** Before append, scan `_FigmintOutputContent` children for a TEXT node whose `name === label`. If found, update `characters` on the **body** sibling (pair pattern: label frame row containing label + body, OR single text node with name = label and characters = content — **recommend single TEXT node** named `label`, characters = full serialized content for MCP readability).
+**Update-by-label (locked):** Before append, scan `_FigHubOutputContent` children for a TEXT node whose `name === label`. If found, update `characters` on the **body** sibling (pair pattern: label frame row containing label + body, OR single text node with name = label and characters = content — **recommend single TEXT node** named `label`, characters = full serialized content for MCP readability).
 
 Simpler locked pattern (build agent):
 
@@ -278,7 +278,7 @@ Call `figma.loadFontAsync({ family: 'Inter', style: 'Regular' })` before setting
 
 ---
 
-## 5. `pluginData.ts` — `figmint:` namespace on selected node (main thread)
+## 5. `pluginData.ts` — `fighub:` namespace on selected node (main thread)
 
 **File:** `src/io/sinks/pluginData.ts`  
 **Thread:** Main.
@@ -301,10 +301,10 @@ WO-020 should show helper copy: "Select a frame before exporting to pluginData."
 ### Key convention (locked)
 
 ```ts
-export const FIGMINT_PLUGIN_DATA_PREFIX = 'figmint:';
+export const FIGHUB_PLUGIN_DATA_PREFIX = 'fighub:';
 
 function pluginDataKey(doc: LoadedDocument): string {
-  return FIGMINT_PLUGIN_DATA_PREFIX + doc.kind; // e.g. figmint:drift-report
+  return FIGHUB_PLUGIN_DATA_PREFIX + doc.kind; // e.g. fighub:drift-report
 }
 ```
 
@@ -443,7 +443,7 @@ tests/
 
 ### 7.2 Sample document
 
-Use `DriftReportV1` from `@detroitlabs/figmint-contracts` in tests:
+Use `DriftReportV1` from `@detroitlabs/fighub-contracts` in tests:
 
 ```ts
 const doc: LoadedDocument<DriftReportV1> = {
@@ -463,7 +463,7 @@ Commit **`tests/fixtures/io/sinks/drift-report-sample.v1.json`** with ≥1 push 
 | **download** | Spy `URL.createObjectURL`, `URL.revokeObjectURL`, `HTMLAnchorElement.prototype.click`, `document.createElement`. Assert filename, mime, blob size. No real file IO. |
 | **clipboard** | `vi.spyOn(navigator.clipboard, 'writeText')` — resolve/reject. Separate test forces `writeText` reject → assert `execCommand` path (mock `document.execCommand` return `true`). |
 | **outputPage** | Extend `installMockFigmaCanvas()` pattern: add `figma.createPage`, `figma.root.children`, `getSharedPluginData` / `setSharedPluginData` on mock pages, `MockTextNode.characters` mutation. Test find/create, update-by-label, legacy page name. |
-| **pluginData** | Mock node `{ setPluginData: vi.fn(), getPluginData: vi.fn() }`; mock `figma.currentPage.selection`. Assert key `figmint:drift-report`, value equals JSON string. Test 0 / 2 selection errors. |
+| **pluginData** | Mock node `{ setPluginData: vi.fn(), getPluginData: vi.fn() }`; mock `figma.currentPage.selection`. Assert key `fighub:drift-report`, value equals JSON string. Test 0 / 2 selection errors. |
 
 ### 7.4 postMessage / client sinks
 

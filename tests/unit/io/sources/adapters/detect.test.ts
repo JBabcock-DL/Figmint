@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { detectFormat } from '@/io/sources/adapters/detect';
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { loadAdapterFixture } from './helpers';
 

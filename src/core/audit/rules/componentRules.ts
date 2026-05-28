@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { buildImplicitPropPlan, filterPropsForApply } from '@/core/components/scaffold/propFilter';
 import type { ComponentAuditInput } from '@/core/components/scaffold/types';

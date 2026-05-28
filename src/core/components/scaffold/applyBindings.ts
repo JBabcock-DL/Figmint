@@ -1,4 +1,4 @@
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { bindPaintToVar, bindStrokeToVar } from '@/core/canvas/helpers/bindings';
 import { ensureLocalVariableMap, resolvePath } from '@/core/canvas/lib/variables';

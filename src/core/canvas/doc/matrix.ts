@@ -1,4 +1,4 @@
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { resizeThenApplySizing } from '@/core/canvas/helpers/autoLayout';
 import { resolveDocStyles } from '@/core/canvas/lib/cells';

@@ -1,4 +1,4 @@
-import type { ColorValue } from '@detroitlabs/figmint-contracts';
+import type { ColorValue } from '@detroitlabs/fighub-contracts';
 
 const HEX_COLOR = /^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
 const RGB_COLOR =

@@ -11,7 +11,7 @@
 
 ## Summary
 
-WO-026 implements **registry upsert + staged export** after a successful forward-path scaffold (WO-022). When `scaffold()` returns a `ComponentSetNode`, the plugin must produce an updated **`RegistryV1`** document that records the ComponentSet's **`nodeId`**, Figma **`key`**, hosting **`pageName`**, monotonic **`version`**, and optional composite metadata — then surface it through the **WO-020 ExportSheet** so the designer emits `.figmint-registry.json` via download (Community) or GitHub PR (Org).
+WO-026 implements **registry upsert + staged export** after a successful forward-path scaffold (WO-022). When `scaffold()` returns a `ComponentSetNode`, the plugin must produce an updated **`RegistryV1`** document that records the ComponentSet's **`nodeId`**, Figma **`key`**, hosting **`pageName`**, monotonic **`version`**, and optional composite metadata — then surface it through the **WO-020 ExportSheet** so the designer emits `.fighub-registry.json` via download (Community) or GitHub PR (Org).
 
 **Locked recommendation:** add **`src/core/components/registry.ts`** as a pure, testable module with four public functions — `normalizeRegistryInput`, `loadRegistryFromGitHub`, `buildRegistryEntry`, `mergeRegistryEntry`, `createRegistryDocument` — porting upsert semantics from legacy **`merge-registry.mjs`** and wrapping results in the **`RegistryV1`** envelope (`v: 1`, `kind: 'registry'`). **Do not** auto-commit to GitHub silently; always stage the merged document and open ExportSheet (FR-SCAF-6 + PRD §11.4 preview-first). **Default sinks:** Org build → `defaultSinks: ['github-pr']`; Community → `defaultSinks: ['download']` (intersected with `availableSinks()` per WO-020). Registry map keys use **`spec.name`** (e.g. `"Button"`) to match ticket acceptance criteria; legacy kebab keys (e.g. `"button"`) are normalized on read only when unambiguous.
 
@@ -46,7 +46,7 @@ export interface RegistryV1 {
 }
 ```
 
-JSON Schema at `packages/contracts/dist/registry.v1.schema.json` (retrieved 2026-05-28) requires envelope fields `v`, `kind`, `fileKey`, `components` and forbids extra top-level or entry-level properties. Legacy `.designops-registry.json` lacked `v`/`kind` — Figmint adds the envelope on **write** and accepts legacy bodies on **read** via normalization (see §3).
+JSON Schema at `packages/contracts/dist/registry.v1.schema.json` (retrieved 2026-05-28) requires envelope fields `v`, `kind`, `fileKey`, `components` and forbids extra top-level or entry-level properties. Legacy `.designops-registry.json` lacked `v`/`kind` — FigHub adds the envelope on **write** and accepts legacy bodies on **read** via normalization (see §3).
 
 **Requirement trace:** AC "Registry document validates against `RegistryV1` schema (WO-003)" — satisfied by emitting contract-typed objects; validate in unit tests with AJV against `dist/registry.v1.schema.json`.
 
@@ -63,9 +63,9 @@ JSON Schema at `packages/contracts/dist/registry.v1.schema.json` (retrieved 2026
 | Optional fields | `cvaHash` (default `null`), `composedChildVersions` (object, composites only) |
 | Serialization | `JSON.stringify(registry, null, 2)` + trailing newline |
 
-Legacy CLI entry shape wraps component name outside the record: `{ fileKey, component, nodeId, key, … }`. Figmint **`buildRegistryEntry`** accepts scaffold output + spec and returns `{ componentKey, entry }` for **`mergeRegistryEntry`**.
+Legacy CLI entry shape wraps component name outside the record: `{ fileKey, component, nodeId, key, … }`. FigHub **`buildRegistryEntry`** accepts scaffold output + spec and returns `{ componentKey, entry }` for **`mergeRegistryEntry`**.
 
-**Version increment (locked):** legacy script does **not** auto-increment — the caller supplies `version`. Figmint locks: on upsert, `version = (existing?.version ?? 0) + 1`; on first insert, `version = 1`. Always set `publishedAt = new Date().toISOString()` on every successful scaffold merge (fresh publish timestamp).
+**Version increment (locked):** legacy script does **not** auto-increment — the caller supplies `version`. FigHub locks: on upsert, `version = (existing?.version ?? 0) + 1`; on first insert, `version = 1`. Always set `publishedAt = new Date().toISOString()` on every successful scaffold merge (fresh publish timestamp).
 
 **Requirement trace:** AC "Re-scaffolding the same Button updates (not duplicates) the entry" — upsert by stable component map key + version bump proves replace semantics.
 
@@ -75,8 +75,8 @@ Legacy CLI entry shape wraps component name outside the record: `{ fileKey, comp
 
 | Concern | Locked behavior |
 | ------- | ---------------- |
-| Default path | `.figmint-registry.json` (basename `.figmint-registry` from WO-020 + `.json` extension) |
-| Configurable path | Defer full FR-CONF-5 settings UI; accept `registryPath` parameter defaulting to `.figmint-registry.json` |
+| Default path | `.fighub-registry.json` (basename `.fighub-registry` from WO-020 + `.json` extension) |
+| Configurable path | Defer full FR-CONF-5 settings UI; accept `registryPath` parameter defaulting to `.fighub-registry.json` |
 | Missing file (404) | Treat as **greenfield** — return `null` / empty components, do not fail scaffold |
 | Invalid JSON | Surface `ValidationError` to UI; scaffold may still complete with in-memory-only registry |
 | Legacy filename | Accept read of `.designops-registry.json` when designer's repo still uses legacy name (normalization only) |
@@ -112,7 +112,7 @@ Legacy CLI entry shape wraps component name outside the record: `{ fileKey, comp
 | ------ | ---- |
 | `src/ui/components/ExportSheet.tsx` | Format/sink UI; registry hides MD checkbox |
 | `src/ui/export/exportSheetReducer.ts` | Registry → `{ json: true, md: false }` initial formats |
-| `src/ui/export/defaultPaths.ts` | Registry basename → `.figmint-registry` |
+| `src/ui/export/defaultPaths.ts` | Registry basename → `.fighub-registry` |
 | `src/ui/export/serializeForExport.ts` | Registry → single `{basename}.json` via `stableStringify` |
 | `src/ui/export/runExport.ts` | Parallel sinks; GitHub PR payload builder |
 | `src/ui/export/availableSinks.ts` | `github-pr` when `flags.githubOAuth && flags.githubPRSink` |
@@ -127,7 +127,7 @@ scaffold(spec, page) → ScaffoldResult
   → <ExportSheet document={...} defaultSinks={org ? ['github-pr'] : ['download']} title="Update registry" />
 ```
 
-**GitHub PR branch:** `buildDefaultHeadBranch('registry', date)` → `figmint/registry-YYYY-MM-DD` (`src/io/github/branchName.ts`). Commit message: `figmint: update registry — {spec.name}`.
+**GitHub PR branch:** `buildDefaultHeadBranch('registry', date)` → `fighub/registry-YYYY-MM-DD` (`src/io/github/branchName.ts`). Commit message: `fighub: update registry — {spec.name}`.
 
 **Flags:** root `src/config/flags.ts` currently has all features `true` (single build). Community vs Org default sink selection uses `flags.githubOAuth && flags.githubPRSink` — when false, fall back to `download` only.
 
@@ -144,7 +144,7 @@ scaffold(spec, page) → ScaffoldResult
 | Ticket | Needs from WO-026 |
 | ------ | ----------------- |
 | WO-022 composed archetype | **Read** registry (optional param) — child `nodeId` before composite draw |
-| WO-030 / WO-031 (Sprint 6) | Repo `.figmint-registry.json` as drift baseline |
+| WO-030 / WO-031 (Sprint 6) | Repo `.fighub-registry.json` as drift baseline |
 | WO-043 dependency scanner | Registry lookup for sub-component refs |
 | WO-037 handoff emission | May bundle registry snapshot in handoff context (separate ticket) |
 
@@ -190,7 +190,7 @@ WO-026 **write** path unblocks designer-driven repo sync; WO-022 **read** path c
 
 ### Patterns to mirror
 
-| Pattern | Source | Figmint target |
+| Pattern | Source | FigHub target |
 | ------- | ------ | -------------- |
 | Upsert by component key | `merge-registry.mjs` L67–87 | `mergeRegistryEntry()` |
 | fileKey guard | `merge-registry.mjs` L74–78 | throw typed error |
@@ -249,8 +249,8 @@ WO-026 **write** path unblocks designer-driven repo sync; WO-022 **read** path c
 | SPK-026-1 | Unit: merge into empty registry, then upsert same key | Second merge replaces entry; `version` 1→2; other keys untouched | ☐ pending — `/build` Phase 1 |
 | SPK-026-2 | Unit: `fileKey` mismatch throws | Error code `REGISTRY_FILE_KEY_MISMATCH`; no mutation | ☐ pending |
 | SPK-026-3 | Unit: normalize legacy body `{ fileKey, components }` without `v`/`kind` | Output validates against AJV schema | ☐ pending |
-| SPK-026-4 | Integration: scaffold Button in sandbox → ExportSheet → download `.figmint-registry.json` | File contains `Button` entry with ComponentSet `nodeId` | ☐ pending — VQA / WO-027 |
-| SPK-026-5 | Org build: ExportSheet with `github-pr` selected → PR contains registry JSON | PR file path `.figmint-registry.json`; valid JSON | ☐ deferred — requires OAuth + connected repo (WO-016 PASS) |
+| SPK-026-4 | Integration: scaffold Button in sandbox → ExportSheet → download `.fighub-registry.json` | File contains `Button` entry with ComponentSet `nodeId` | ☐ pending — VQA / WO-027 |
+| SPK-026-5 | Org build: ExportSheet with `github-pr` selected → PR contains registry JSON | PR file path `.fighub-registry.json`; valid JSON | ☐ deferred — requires OAuth + connected repo (WO-016 PASS) |
 
 **Research-complete gate:** SPK-026-1..3 are unit-test gates before `/build`; SPK-026-4..5 run at VQA with WO-027.
 
@@ -309,7 +309,7 @@ export async function loadRegistryFromGitHub(
 
 | # | Question | Owner | Status |
 | - | -------- | ----- | ------ |
-| OQ-1 | Configurable registry path (FR-CONF-5) in Settings? | WO-027 / Settings ticket | **OPEN** — default `.figmint-registry.json` for WO-026; path param on API |
+| OQ-1 | Configurable registry path (FR-CONF-5) in Settings? | WO-027 / Settings ticket | **OPEN** — default `.fighub-registry.json` for WO-026; path param on API |
 | OQ-2 | Store Code Connect URL in registry? | Sprint 8 | **RESOLVED — no**; use Figma `key` |
 | OQ-3 | Registry map key casing for legacy repos? | `/plan` | **RESOLVED** — write PascalCase (`spec.name`); read alias kebab when safe |
 | OQ-4 | Auto-open ExportSheet vs banner? | WO-027 UX | **OPEN** — lean auto-open modal after scaffold success |

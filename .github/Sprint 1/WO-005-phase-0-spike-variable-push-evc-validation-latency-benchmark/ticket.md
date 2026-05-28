@@ -26,7 +26,7 @@ As Sprint 2 leads, we need three platform facts confirmed before we commit Sprin
 
 ## Hypothesis (optional)
 
-The variable-push sequence is already specified in `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` (Plugin API mode setup + `setValueForMode` + `setVariableCodeSyntax`). Translating that prose into TypeScript and running it directly in the plugin sandbox will (a) succeed without redesign and (b) finish in <2s for the small input sizes we test. The legacy two-layer split (Plugin API for structure + REST PUT for `codeSyntax`) is an MCP payload-budget artifact — Figmint can use Plugin API end-to-end.
+The variable-push sequence is already specified in `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` (Plugin API mode setup + `setValueForMode` + `setVariableCodeSyntax`). Translating that prose into TypeScript and running it directly in the plugin sandbox will (a) succeed without redesign and (b) finish in <2s for the small input sizes we test. The legacy two-layer split (Plugin API for structure + REST PUT for `codeSyntax`) is an MCP payload-budget artifact — FigHub can use Plugin API end-to-end.
 
 > **Lift-source correction (see `Docs/lift-sources.md` §0):** Earlier ticket drafts cited `canvas-templates/bundles/step-15a-primitives.mcp.js` as the source for the push sequence. That file is actually a **canvas-table builder** that reads variables back to draw the Primitives style-guide page — it does NOT create variables. The real Plugin API push sequence lives in `phases/04-step11-push.md`.
 
@@ -82,7 +82,7 @@ A spike-grade UI exists (paste textarea + "Push" button). Real `file_key` / `nod
 ### Technical / architectural
 
 - **Lift reference — primary (the variable-push sequence specified for the legacy MCP path):**
-  - `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` — **read it first**. Contains the exact mode-setup table per collection, the `setValueForMode` rules (COLOR / FLOAT / STRING / BOOLEAN / VARIABLE_ALIAS), the codeSyntax payload shape, and the dependency order. **The legacy two-layer split (Plugin API + REST PUT) is an MCP payload artifact — Figmint should use Plugin API for both, including `figma.variables.setVariableCodeSyntax`.**
+  - `DesignOps-plugin/skills/create-design-system/phases/04-step11-push.md` — **read it first**. Contains the exact mode-setup table per collection, the `setValueForMode` rules (COLOR / FLOAT / STRING / BOOLEAN / VARIABLE_ALIAS), the codeSyntax payload shape, and the dependency order. **The legacy two-layer split (Plugin API + REST PUT) is an MCP payload artifact — FigHub should use Plugin API for both, including `figma.variables.setVariableCodeSyntax`.**
   - `DesignOps-plugin/skills/create-design-system/phases/02-steps5-9.md` — per-collection variable lists (what to create).
   - `DesignOps-plugin/skills/create-design-system/conventions/01-collections.md` — 5-collection structure.
   - `DesignOps-plugin/skills/create-design-system/conventions/02-codesyntax.md` — per-platform codeSyntax mapping.

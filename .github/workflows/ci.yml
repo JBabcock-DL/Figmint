@@ -44,7 +44,7 @@ jobs:
         run: npm test
 
       - name: Build contracts
-        run: npm run build --workspace=@detroitlabs/figmint-contracts
+        run: npm run build --workspace=@detroitlabs/fighub-contracts
 
       - name: Build
         run: npm run build

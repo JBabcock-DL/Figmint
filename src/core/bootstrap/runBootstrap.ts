@@ -1,6 +1,6 @@
 /// <reference types="@figma/plugin-typings" />
 
-import type { AuditReportV1, TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditReportV1, TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { ensureStyleGuideScaffold } from '@/core/bootstrap/ensureStyleGuideScaffold';
 import { runAudit } from '@/core/audit/runAudit';

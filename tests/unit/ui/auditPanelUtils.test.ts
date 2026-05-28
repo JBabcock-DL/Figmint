@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { classifyAuditRule, sortAuditRules } from '@/ui/components/auditPanelUtils';
 

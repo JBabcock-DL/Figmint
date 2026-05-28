@@ -1,4 +1,4 @@
-# Research quality bar — Figmint (mandatory for `/research`)
+# Research quality bar — FigHub (mandatory for `/research`)
 
 > **Who must read this:** any agent running `/research`, `/plan`, or reviewing whether a ticket is ready to move from **In Research** → **In Planning**.
 

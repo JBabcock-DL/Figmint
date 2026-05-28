@@ -6,7 +6,7 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JEE
 
 ## Goal
 
-Implement the four non-GitHub output sinks: download as file, copy to clipboard, write to a labeled text node on the Figmint Output page, and write to a selected frame's pluginData. All sinks share the same `LoadedDocument` input shape and a common `Sink` interface for the unified export sheet (WO-020).
+Implement the four non-GitHub output sinks: download as file, copy to clipboard, write to a labeled text node on the FigHub Output page, and write to a selected frame's pluginData. All sinks share the same `LoadedDocument` input shape and a common `Sink` interface for the unified export sheet (WO-020).
 
 PRD anchors: `Docs/PRD.md` §6.8 FR-IO-2, §10.2.
 
@@ -20,7 +20,7 @@ As a designer exporting a contract document (e.g. drift-report), I want to send 
 
 - [ ] As a designer, I can download a contract as `.v1.json` and/or `.v1.md` files.
 - [ ] As a designer, I can copy the serialized document to my clipboard from an Export action (user gesture).
-- [ ] As a designer, I can write the document to a labeled text node on the **Figmint Output** page (auto-created on first use).
+- [ ] As a designer, I can write the document to a labeled text node on the **FigHub Output** page (auto-created on first use).
 - [ ] As a designer, I can write JSON to pluginData on a **single selected** frame/node for machine-readable round-trips.
 
 ## Design reference _(when UI work applies)_
@@ -37,8 +37,8 @@ As a designer exporting a contract document (e.g. drift-report), I want to send 
 2. `src/io/sinks/prepareContent.ts` — `prepareSinkContent(doc, options)` calls WO-019 `format()` when available; **stub** (`JSON.stringify` + placeholder markdown) until WO-019 merges.
 3. `src/io/sinks/download.ts` — UI-thread sink: `Blob` + temporary `<a download>` click; supports `json`, `md`, or `both` (two files).
 4. `src/io/sinks/clipboard.ts` — UI-thread sink: `navigator.clipboard.writeText()` on user gesture; **`document.execCommand('copy')` fallback** via off-screen textarea when `writeText` throws.
-5. `src/io/sinks/outputPage.ts` — **main-thread** find-or-create **Figmint Output** page (legacy alias **DesignOps Output**); write/update labeled TEXT node by `label` (default `figmint/<kind>/<generatedAt>`); content frame `_FigmintOutputContent`.
-6. `src/io/sinks/pluginData.ts` — **main-thread** `setPluginData(key, value)` on exactly one selected node; keys **`figmint:<kind>`** (e.g. `figmint:drift-report`); value always JSON string; reject >100 kB.
+5. `src/io/sinks/outputPage.ts` — **main-thread** find-or-create **FigHub Output** page (legacy alias **DesignOps Output**); write/update labeled TEXT node by `label` (default `fighub/<kind>/<generatedAt>`); content frame `_FigHubOutputContent`.
+6. `src/io/sinks/pluginData.ts` — **main-thread** `setPluginData(key, value)` on exactly one selected node; keys **`fighub:<kind>`** (e.g. `fighub:drift-report`); value always JSON string; reject >100 kB.
 7. `src/io/sinks/outputPageClient.ts` + `pluginDataClient.ts` — UI-thread `Sink` wrappers that dispatch via `parent.postMessage` (do not import main-thread Figma modules in UI bundle).
 8. `src/io/messages/sinks.ts` — typed `sink/output-page`, `sink/plugin-data`, `sink/result`, `sink/error` messages + ES2017-safe guards; wire handlers in `src/main.ts`.
 9. `src/io/sinks/index.ts` — barrel + `runSink(id, doc, options)` orchestrator for WO-020.
@@ -61,8 +61,8 @@ _See ticket-level scope. Export sheet (WO-020) owns destination checkboxes; this
 - [ ] All four sinks implement `Sink.write()` and succeed against a sample `DriftReportV1` `LoadedDocument` built from `tests/fixtures/io/sinks/drift-report-sample.v1.json`.
 - [ ] Download sink writes `{baseName}.v1.json` and/or `{baseName}.v1.md` with correct MIME types.
 - [ ] Clipboard sink copies JSON or markdown per `FormatOptions`; fallback path covered in unit test when `writeText` rejects.
-- [ ] Output page auto-created on first use (`Figmint Output` + `figmint` shared pluginData `pageRole=output`); subsequent export with same `label` updates existing text node characters.
-- [ ] pluginData sink writes `figmint:drift-report` (or matching kind) on a single selected node; errors on 0 or 2+ selections.
+- [ ] Output page auto-created on first use (`FigHub Output` + `fighub` shared pluginData `pageRole=output`); subsequent export with same `label` updates existing text node characters.
+- [ ] pluginData sink writes `fighub:drift-report` (or matching kind) on a single selected node; errors on 0 or 2+ selections.
 - [ ] Unit tests per sink + `messages/sinks` type guards; Vitest mocks per `research/output-sinks-implementation.md` §7.
 
 ## Out of scope

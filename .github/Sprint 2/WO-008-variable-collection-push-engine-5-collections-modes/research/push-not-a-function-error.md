@@ -19,7 +19,7 @@ Fixes **#3, #4, #5** (in-memory audit snapshot, `createVariableAlias`, safer ski
 
 ## Key findings
 
-### 1. Error path in Figmint
+### 1. Error path in FigHub
 
 | Symptom                                   | Meaning                                                                                        |
 | ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -83,11 +83,11 @@ These do **not** change WO-008 mode reconciliation (#1 rejected) or empty-collec
 
 ### Immediate diagnostics (no behavior change)
 
-1. Rebuild (`npm run build:community`), **close** Figmint plugin, reopen from `dist/manifest.json`.
+1. Rebuild (`npm run build:community`), **close** FigHub plugin, reopen from `dist/manifest.json`.
 2. Note exact red text: **`[phase] …` or bare?**
 3. Fresh Figma file → spike-400 → **first push only**. Do 400 variables appear in Primitives before the error?
 4. Repeat with **foundations-minimal** bench fixture (multi-collection, ~few tokens).
-5. Figma console: filter `[push] phase failed`, `[figmint] skip variable snapshot`, `[push] applyScopes failed`.
+5. Figma console: filter `[push] phase failed`, `[fighub] skip variable snapshot`, `[push] applyScopes failed`.
 
 ### Fix options (only after phase confirmed — **ask user before implementing**)
 

@@ -13,7 +13,7 @@
 
 Seven decisions unblock WO-010 `/plan`:
 
-1. **Ship `auditReport.v1.ts` in `@detroitlabs/figmint-contracts`** — not an internal-only type. Post-push audit is an **output document** (like `drift-report.v1` / `handoff-context.v1`), consumed by WO-015 UI, ops audit log entries, agents (PRD G6), and WO-019 markdown rendering in Sprint 4. Implementation lives in `src/core/audit/`; the contract is the wire shape.
+1. **Ship `auditReport.v1.ts` in `@detroitlabs/fighub-contracts`** — not an internal-only type. Post-push audit is an **output document** (like `drift-report.v1` / `handoff-context.v1`), consumed by WO-015 UI, ops audit log entries, agents (PRD G6), and WO-019 markdown rendering in Sprint 4. Implementation lives in `src/core/audit/`; the contract is the wire shape.
 
 2. **`AuditReportV1` ≠ `DriftReportV1`.** Drift is a **3-way Figma ↔ repo diff** with snapshot baseline (Phase 3). Audit is **post-operation validation** that the just-written Figma state matches canonical input + deterministic rules. They may reference the same token IDs but serve different lifecycles; do not merge types.
 

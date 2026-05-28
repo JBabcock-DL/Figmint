@@ -8,9 +8,9 @@
 
 ## Approach
 
-Replace the designer-hostile three-path Settings model (repo URL + tokens path + `.figmint-registry.json` path) with a **GitHub Desktop–style repo card**: Connect once, then **Fetch latest / Pull design system / Push updates**. Repo-side paths come **only** from optional root `figmint.json` (defaults when absent). Registry state moves from repo JSON to **canvas `SnapshotV1` pluginData** on hidden frame `_FigmintSnapshotStore` in the Figmint Output page — unblocks Sprint 6 drift detectors (WO-029–032).
+Replace the designer-hostile three-path Settings model (repo URL + tokens path + `.fighub-registry.json` path) with a **GitHub Desktop–style repo card**: Connect once, then **Fetch latest / Pull design system / Push updates**. Repo-side paths come **only** from optional root `fighub.json` (defaults when absent). Registry state moves from repo JSON to **canvas `SnapshotV1` pluginData** on hidden frame `_FigHubSnapshotStore` in the FigHub Output page — unblocks Sprint 6 drift detectors (WO-029–032).
 
-**In scope:** snapshot contract + store, delete `.figmint-registry.json` production paths, trim registry audit rules, `figmint.json` parser, Fetch/Pull/Push main handlers, Settings + Components UI collapse, shallow Push PR, drift badge stub, WO-026 close.
+**In scope:** snapshot contract + store, delete `.fighub-registry.json` production paths, trim registry audit rules, `fighub.json` parser, Fetch/Pull/Push main handlers, Settings + Components UI collapse, shallow Push PR, drift badge stub, WO-026 close.
 
 **Out of scope (do not implement):** multi-repo UX, branch-aware sync, CLI, deep Code Connect push (WO-040..046), full drift resolution (WO-032), bulk spec catalog pull (WO-056).
 
@@ -18,9 +18,9 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 
 | Wrong | Correct |
 | ----- | ------- |
-| Keep `.figmint-registry.json` as optional fallback | Delete all read/write/reference in `src/` + contracts |
+| Keep `.fighub-registry.json` as optional fallback | Delete all read/write/reference in `src/` + contracts |
 | Repurpose `comp/registry-envelope` against pluginData | **Delete** envelope + filekey rules outright |
-| User-editable tokensPath in Settings | Paths from `figmint.json` resolved defaults only |
+| User-editable tokensPath in Settings | Paths from `fighub.json` resolved defaults only |
 | `console.debug` in main thread after scaffold | `pluginLog()` only |
 | Direct `fetch('api.github.com')` from UI | OAuth relay via existing `relayClient.ts` |
 | `String.replace(bundle, …)` for PR bodies | `slice`/concat or callback |
@@ -36,12 +36,12 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 | Req 4 delete envelope/filekey audits | Step 6 |
 | Req 5 revert WO-026 production path | Steps 10–11 |
 | Req 6 scaffold + Components snapshot | Steps 12–14 |
-| Req 7–8 figmint.json contract + parser | Steps 15–16 |
+| Req 7–8 fighub.json contract + parser | Steps 15–16 |
 | Req 9 Fetch on connect | Steps 17–19 |
 | Req 10–11 Settings collapse + remove path fields | Steps 20–24 |
 | Req 12 Pull tokens | Steps 25–26 |
 | Req 13 Push PR | Steps 27–29 |
-| Req 14 malformed figmint.json preflight | Step 30 |
+| Req 14 malformed fighub.json preflight | Step 30 |
 | Req 15 drift badge stub | Step 31 |
 | Req 16 close WO-026 | Step 32 |
 | Req 17–18 no registry file references | Steps 9, 18, 22 |
@@ -85,8 +85,8 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   **Done when:** `npm run typecheck` passes; contract re-export visible.
 
 - [x] **Step 2** — Add constants in `src/core/sync/snapshotConstants.ts`:
-  - `SNAPSHOT_PLUGIN_DATA_KEY = 'figmint:snapshot:v1'`
-  - `SNAPSHOT_FRAME_NAME = '_FigmintSnapshotStore'`
+  - `SNAPSHOT_PLUGIN_DATA_KEY = 'fighub:snapshot:v1'`
+  - `SNAPSHOT_FRAME_NAME = '_FigHubSnapshotStore'`
   - `SNAPSHOT_MAX_BYTES = 90_000` (guard below Figma 100KB limit)
   **Done when:** file exists; imported by store module.
 
@@ -141,11 +141,11 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   - Remove dependency on `options.registry` from GitHub load (keep param for tests with explicit inject)
   **Done when:** scaffold integration test passes with mock snapshot frame.
 
-- [x] **Step 9** — Remove `.figmint-registry.json` constants from production paths:
+- [x] **Step 9** — Remove `.fighub-registry.json` constants from production paths:
   - Delete `DEFAULT_REGISTRY_PATH` from `src/ui/components/scaffold/constants.ts`
   - Remove `DEFAULT_REGISTRY_PATH` usage from `registry.types.ts` — delete `resolveRegistryReadPath` or make throw "deprecated"
   - Remove `registry` case from `src/ui/export/defaultPaths.ts` OR restrict to Export sandbox-only with comment
-  **Done when:** `rg '\.figmint-registry' src/ packages/contracts/src/ --glob '!**/sample*'` returns zero matches.
+  **Done when:** `rg '\.fighub-registry' src/ packages/contracts/src/ --glob '!**/sample*'` returns zero matches.
 
 - [x] **Step 10** — Update `src/ui/tabs/Components.tsx`:
   - Remove "Load sync registry" button (~line 365)
@@ -171,19 +171,19 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   - `tests/unit/io/messages/export.test.ts` — remove registry export path assertions from production flows
   **Done when:** `npm test` passes Phase 1 subset.
 
-### Phase 2 — figmint.json + Settings collapse
+### Phase 2 — fighub.json + Settings collapse
 
-- [ ] **Step 14** — Add `packages/contracts/src/figmintJson.v1.ts`:
+- [ ] **Step 14** — Add `packages/contracts/src/fighubJson.v1.ts`:
   ```typescript
-  export interface FigmintJsonV1 {
+  export interface FigHubJsonV1 {
     v: 1;
-    kind: 'figmint-config';
+    kind: 'fighub-config';
     tokensPath?: string;
     specsPath?: string;
     designSystemBranch?: string;
     exportBasePath?: string;
   }
-  export interface ResolvedFigmintConfig {
+  export interface ResolvedFigHubConfig {
     tokensPath: string;
     specsPath: string;
     exportBasePath: string;
@@ -193,19 +193,19 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   Export from `packages/contracts/src/index.ts`.
   **Done when:** typecheck passes.
 
-- [ ] **Step 15** — Implement `src/io/formats/figmintJson.ts`:
-  - `FIGMINT_JSON_FILENAME = 'figmint.json'`
-  - `FIGMINT_JSON_DEFAULTS` per research (tokens `design/tokens.json`, specs `components/`, export `docs/figmint/`, branch null)
-  - `parseFigmintJson(text: string): { ok: true; value: FigmintJsonV1 } | { ok: false; error: string }`
-  - `resolveFigmintConfig(parsed: FigmintJsonV1 | null): ResolvedFigmintConfig`
-  - Validate: `v === 1`; if `kind` present must be `'figmint-config'`
-  **Done when:** `tests/unit/io/formats/figmintJson.test.ts` — valid parse, absent→defaults, malformed v2 fails, extra keys OK.
+- [ ] **Step 15** — Implement `src/io/formats/fighubJson.ts`:
+  - `FIGHUB_JSON_FILENAME = 'fighub.json'`
+  - `FIGHUB_JSON_DEFAULTS` per research (tokens `design/tokens.json`, specs `components/`, export `docs/fighub/`, branch null)
+  - `parseFigHubJson(text: string): { ok: true; value: FigHubJsonV1 } | { ok: false; error: string }`
+  - `resolveFigHubConfig(parsed: FigHubJsonV1 | null): ResolvedFigHubConfig`
+  - Validate: `v === 1`; if `kind` present must be `'fighub-config'`
+  **Done when:** `tests/unit/io/formats/fighubJson.test.ts` — valid parse, absent→defaults, malformed v2 fails, extra keys OK.
 
 - [ ] **Step 16** — Refactor `src/io/github/storage.ts`:
   - Replace `StoredGitHubConfig` fields `tokensPath`/`registryPath` with:
     ```typescript
     export interface StoredRepoSyncState {
-      resolvedConfig: ResolvedFigmintConfig | null;
+      resolvedConfig: ResolvedFigHubConfig | null;
       lastFetchedAt: string | null;
       lastPulledAt: string | null;
       lastPushedAt: string | null;
@@ -224,7 +224,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 
 - [ ] **Step 18** — Implement `handleGitHubRepoFetch` in `src/main.ts`:
   1. Resolve default branch via relay `GET /repos/{owner}/{repo}` → `default_branch`
-  2. Fetch `figmint.json` at repo root; 404 → `resolveFigmintConfig(null)`
+  2. Fetch `fighub.json` at repo root; 404 → `resolveFigHubConfig(null)`
   3. Parse; malformed → `warning` string + defaults
   4. `setSyncState({ resolvedConfig, lastFetchedAt: ISO, defaultBranch })`
   5. Post `github/repo/fetch-result`
@@ -238,7 +238,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 - [ ] **Step 20** — Implement `handleGitHubRepoPull` in `src/main.ts`:
   1. Require connected token + cached `resolvedConfig` (else error "Fetch first")
   2. `loadFromGitHub` equivalent for `resolvedConfig.tokensPath`
-  3. Cache tokens JSON text in `clientStorage` key `figmint:repo:{hash}:tokens`
+  3. Cache tokens JSON text in `clientStorage` key `fighub:repo:{hash}:tokens`
   4. Update `lastPulledAt`
   5. Post result with `{ ok, kind, cachedAt }`
   **Done when:** unit test caches tokens on pull.
@@ -252,7 +252,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 - [ ] **Step 22** — Add `src/ui/components/RepoSyncCard.tsx`:
   - Props: `repoUrl`, `connected`, `displayName` (from `formatRepoDisplay`), sync hook state, OAuth connect/disconnect callbacks
   - Layout: repo name top-left; "Last synced: {relative time from lastFetchedAt}"; buttons **Fetch latest**, **Pull design system**, **Push updates** right-aligned
-  - Warning banner when `configWarning` set (malformed figmint.json)
+  - Warning banner when `configWarning` set (malformed fighub.json)
   - Button styles: `minHeight: 44, minWidth: 44`, `:focus-visible` outline `2px solid #0055FF`
   - Drift stub section (Step 31): collapsible placeholder
   **Done when:** `tests/unit/ui/components/RepoSyncCard.test.tsx` renders buttons; no path inputs.
@@ -270,7 +270,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   **Done when:** App.tsx updated; typecheck passes.
 
 - [ ] **Step 25** — Update `src/ui/components/scaffold/resolveComponentSpec.ts`:
-  - Accept `specsPath` from `ResolvedFigmintConfig` (passed from Components via session) instead of hardcoded paths
+  - Accept `specsPath` from `ResolvedFigHubConfig` (passed from Components via session) instead of hardcoded paths
   - Build path: `{specsPath}{specName}.json` with trailing slash normalization
   **Done when:** unit test resolves `components/Button.json`.
 
@@ -284,7 +284,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   1. Require token + `resolvedConfig`
   2. Build staged file: `{ path: exportBasePath + 'sync-stub.v1.json', content: minimal ops-program stub }`
   3. Call `createPullRequestFromContext` / existing PR flow with:
-     - `prTitle: 'figmint: push updates from Figma'`
+     - `prTitle: 'fighub: push updates from Figma'`
      - `prBody: buildPrBody({...})`
      - `headBranch: buildDefaultHeadBranch('push', new Date())`
   4. `pluginLog('push/started')` → on success `pluginLog('push/pr-opened', url)` → on fail `pluginLog('push/error', msg)`
@@ -297,9 +297,9 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 - [ ] **Step 29** — Remove Settings dev PR smoke test section (lines 235–252 old Settings) — replaced by Push button.
   **Done when:** no `github/pr/test-open` from Settings except if guarded by `import.meta.env.DEV` flag (optional keep).
 
-- [ ] **Step 30** — Extend doc preflight for malformed figmint.json:
-  - Add optional input to `DocPipelinePreflightRulesInput`: `figmintConfigParseError?: string`
-  - New rule `doc-pipeline/figmint-config` — pass when no error; fail when malformed (absent OK)
+- [ ] **Step 30** — Extend doc preflight for malformed fighub.json:
+  - Add optional input to `DocPipelinePreflightRulesInput`: `fighubConfigParseError?: string`
+  - New rule `doc-pipeline/fighub-config` — pass when no error; fail when malformed (absent OK)
   - Wire from scaffold preflight when sync state has warning
   **Done when:** `tests/unit/audit/doc-required-tokens.test.ts` or new file covers malformed vs absent.
 
@@ -309,7 +309,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   **Done when:** component renders stub; WO-029 can replace without Settings restructure.
 
 - [ ] **Step 32** — Close WO-026 on GitHub:
-  - `gh issue close 29 --repo JBabcock-DL/Figmint --reason "not planned"` with comment "Superseded by WO-058"
+  - `gh issue close 29 --repo JBabcock-DL/FigHub --reason "not planned"` with comment "Superseded by WO-058"
   - Update local WO-026 ticket note if present
   **Done when:** issue #29 closed.
 
@@ -333,17 +333,17 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 
 ### Phase 1 (sequential — single code-build agent)
 
-- **`code-build`** — Steps 1–13: Snapshot contract + store + message guards; registry audit trim; snapshotRegistry rewrite; runScaffold + Components migration; main snapshot handlers; test batch. **Gate:** Phase 2 must not start until `rg '\.figmint-registry' src/` is clean and scaffold tests pass.
+- **`code-build`** — Steps 1–13: Snapshot contract + store + message guards; registry audit trim; snapshotRegistry rewrite; runScaffold + Components migration; main snapshot handlers; test batch. **Gate:** Phase 2 must not start until `rg '\.fighub-registry' src/` is clean and scaffold tests pass.
 
 ### Phase 2 (parallel after Phase 1)
 
-- **`code-build`** — Steps 14–20, 25–26: figmintJson contract + parser; storage refactor; github messages + fetch/pull main handlers; resolveComponentSpec path from config.
+- **`code-build`** — Steps 14–20, 25–26: fighubJson contract + parser; storage refactor; github messages + fetch/pull main handlers; resolveComponentSpec path from config.
 - **`code-build`** — Steps 21–24: `useRepoSync` hook, `RepoSyncCard`, Settings rewrite, session simplification.
 
 ### Phase 3 (parallel after Phase 2)
 
 - **`code-build`** — Steps 27–29, 31: Push handler + UI wire; remove dev smoke test.
-- **`code-build`** — Steps 30, 33–34: figmint.json preflight audit rule; CI + manual VQA checklist.
+- **`code-build`** — Steps 30, 33–34: fighub.json preflight audit rule; CI + manual VQA checklist.
 - **`code-build`** — Step 32: Close WO-026 GitHub issue (may run anytime after Step 7).
 
 ---
@@ -388,7 +388,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 
 ## Notes
 
-- **2026-05-28 Phase 1 build complete.** Snapshot SSOT on `_FigmintSnapshotStore` frame (`figmint:snapshot:v1` pluginData). Deleted `registryExport.ts`, `loadRegistryFromRepo.ts`, `constants.ts`. Export sandbox helpers moved to `src/ui/export/registryExportSandbox.ts`. `comp/registry-envelope` + `comp/registry-filekey` audit rows removed. Components tab auto-loads canvas snapshot on mount; post-scaffold registry PR export removed. Settings registry path field removed (Phase 2 adds RepoSyncCard). Tests: 581 passed | 1 skipped. Gate: zero `.figmint-registry` refs in `src/`.
+- **2026-05-28 Phase 1 build complete.** Snapshot SSOT on `_FigHubSnapshotStore` frame (`fighub:snapshot:v1` pluginData). Deleted `registryExport.ts`, `loadRegistryFromRepo.ts`, `constants.ts`. Export sandbox helpers moved to `src/ui/export/registryExportSandbox.ts`. `comp/registry-envelope` + `comp/registry-filekey` audit rows removed. Components tab auto-loads canvas snapshot on mount; post-scaffold registry PR export removed. Settings registry path field removed (Phase 2 adds RepoSyncCard). Tests: 581 passed | 1 skipped. Gate: zero `.fighub-registry` refs in `src/`.
 
 - **ES2017:** no `?.`, `??`, `replaceAll` in `src/main.ts` / `src/core/sync/**`
 - **Logging:** `pluginLog()` only on main thread
@@ -404,12 +404,12 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 ```
 packages/contracts/src/
   snapshot.v1.ts
-  figmintJson.v1.ts
+  fighubJson.v1.ts
 src/core/sync/
   snapshotConstants.ts
   snapshotStore.ts
 src/io/formats/
-  figmintJson.ts
+  fighubJson.ts
 src/io/messages/
   snapshot.ts
 src/ui/sync/
@@ -421,7 +421,7 @@ src/ui/components/
 tests/unit/core/sync/
   snapshotStore.test.ts
 tests/unit/io/formats/
-  figmintJson.test.ts
+  fighubJson.test.ts
 tests/unit/ui/components/
   RepoSyncCard.test.tsx
 ```

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Bootstrap Figmint sprints 2-11 tickets.
+Bootstrap FigHub sprints 2-11 tickets.
 
 One-off batch creator: writes ticket.md + plan.md per ticket, creates GitHub
 issues, adds them to Project #9, and sets Status = Context Backlog.
 
-Run from figmint repo root: `python scripts/bootstrap-sprints-2-11.py`
+Run from fighub repo root: `python scripts/bootstrap-sprints-2-11.py`
 Idempotency: this script is NOT idempotent. It creates new GitHub issues on
 every run. Designed for one-time execution after Sprint 1 land.
 """
@@ -19,12 +19,12 @@ from pathlib import Path
 
 # --- config (from .github/templates/workflow.md) -----------------------------
 
-REPO = "JBabcock-DL/Figmint"
+REPO = "JBabcock-DL/FigHub"
 PROJECT_NUM = 9
 PROJECT_ID = "PVT_kwHOD9B30s4BY4aY"
 STATUS_FIELD_ID = "PVTSSF_lAHOD9B30s4BY4aYzhT7CAM"
 STATUS_BACKLOG = "38fea6b7"
-REPO_ROOT = Path("c:/Users/jbabc/Documents/GitHub/figmint")
+REPO_ROOT = Path("c:/Users/jbabc/Documents/GitHub/fighub")
 PLAN_PATH = r"C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md"
 DESIGNOPS = "c:/Users/jbabc/Documents/GitHub/DesignOps-plugin"
 
@@ -170,7 +170,7 @@ def vqa_table_stub():
 | `file_key` | `<!-- filled during /plan or /vqa -->` |
 | `node_id` | `<!-- filled during /plan or /vqa -->` |
 | Figma deep link | `<!-- filled -->` |
-| Frame / scope | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
+| Frame / scope | `<!-- e.g. FigHub plugin window — Bootstrap tab -->` |
 | Captured at | `<!-- ISO date -->` |
 
 **Assertions** *(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):*
@@ -298,7 +298,7 @@ TICKETS = [
         "slug": "color-and-theme-canvas-builders",
         "title": "WO-011: Color & Theme canvas builders (port 15a + 15b from DesignOps-plugin)",
         "body": body(
-            goal="Port the step-15a (Primitives color tables) and step-15b (Theme tables) canvas builders from DesignOps-plugin into figmint as deterministic TypeScript modules. Together these build the foundational color portion of the style-guide canvas.",
+            goal="Port the step-15a (Primitives color tables) and step-15b (Theme tables) canvas builders from DesignOps-plugin into fighub as deterministic TypeScript modules. Together these build the foundational color portion of the style-guide canvas.",
             requirements=[
                 "`src/core/canvas/colorTables.ts` — port of `step-15a-primitives.mcp.js` (~1314 lines source).",
                 "`src/core/canvas/themeTables.ts` — port of `step-15b-theme.mcp.js`.",
@@ -443,7 +443,7 @@ TICKETS = [
             deps=["WO-006", "WO-007", "WO-008", "WO-010", "WO-011", "WO-012", "WO-013"],
             prd_refs=["`Docs/PRD.md` §6.1 FR-BOOT-*, §6.8 FR-IO-*"],
             vqa=vqa_table_stub(),
-            design_ref="Bootstrap tab UI mock — first end-user-visible Figmint surface. Design lives in the Figmint design file (file_key to be assigned during /plan).",
+            design_ref="Bootstrap tab UI mock — first end-user-visible FigHub surface. Design lives in the FigHub design file (file_key to be assigned during /plan).",
         ),
     },
 
@@ -485,18 +485,18 @@ TICKETS = [
         "slug": "output-sinks-download-clipboard-output-page-plugindata",
         "title": "WO-017: Output sinks — download + clipboard + Output page + frame pluginData",
         "body": body(
-            goal="Implement the four non-GitHub output sinks: download as file, copy to clipboard, write to a labeled text node on the DesignOps Output page (renamed: Figmint Output page), and write to a selected frame's pluginData. All sinks share the same `LoadedDocument` input shape.",
+            goal="Implement the four non-GitHub output sinks: download as file, copy to clipboard, write to a labeled text node on the DesignOps Output page (renamed: FigHub Output page), and write to a selected frame's pluginData. All sinks share the same `LoadedDocument` input shape.",
             requirements=[
                 "`src/io/sinks/download.ts` — browser-native file download (.json or .md).",
                 "`src/io/sinks/clipboard.ts` — write to OS clipboard via `navigator.clipboard.writeText()`.",
-                "`src/io/sinks/outputPage.ts` — find-or-create a `Figmint Output` page, write a labeled text node with the document content.",
+                "`src/io/sinks/outputPage.ts` — find-or-create a `FigHub Output` page, write a labeled text node with the document content.",
                 "`src/io/sinks/pluginData.ts` — `setPluginData(key, value)` on a target node.",
                 "All four implement the same `Sink` interface for use by the unified export sheet (WO-020).",
             ],
             acceptance=[
                 "Each sink works against a sample drift-report.v1 document.",
                 "Output page auto-created on first use; subsequent writes append text nodes (or update by label).",
-                "pluginData sink uses a stable namespace prefix (`figmint:` for collision avoidance).",
+                "pluginData sink uses a stable namespace prefix (`fighub:` for collision avoidance).",
                 "Unit tests for each sink (mock Figma + clipboard APIs where needed).",
             ],
             out_of_scope=[
@@ -517,8 +517,8 @@ TICKETS = [
             goal="GitHub PR as a configured output sink. Designer picks a target repo + branch + commit message; plugin commits the contract document(s) and opens a PR. Gated to Org build (depends on WO-016 OAuth).",
             requirements=[
                 "`src/io/sinks/githubPR.ts` — accepts list of `{ path, content }` + commit message + base branch; creates new branch, commits files, opens PR.",
-                "Default branch naming pattern: `figmint/{contractKind}-{date}` (configurable).",
-                "PR body includes a `Generated by Figmint` footer with plugin version.",
+                "Default branch naming pattern: `fighub/{contractKind}-{date}` (configurable).",
+                "PR body includes a `Generated by FigHub` footer with plugin version.",
                 "Implements the standard `Sink` interface (WO-017).",
                 "Org build only.",
             ],
@@ -589,7 +589,7 @@ TICKETS = [
             deps=["WO-017", "WO-018", "WO-019"],
             prd_refs=["`Docs/PRD.md` §6.8 FR-IO-4, §10.4"],
             vqa=vqa_table_stub(),
-            design_ref="Export sheet design lives in the Figmint design file (file_key TBD).",
+            design_ref="Export sheet design lives in the FigHub design file (file_key TBD).",
         ),
     },
     {
@@ -747,9 +747,9 @@ TICKETS = [
     {
         "id": "WO-026", "sprint": 5,
         "slug": "registry-update-emission",
-        "title": "WO-026: Registry update emission (.figmint-registry.json)",
+        "title": "WO-026: Registry update emission (.fighub-registry.json)",
         "body": body(
-            goal="After each successful scaffold, emit an updated `.figmint-registry.json` (or stage one for emission via export sheet) so the consumer repo stays in sync with what exists in Figma. Implements FR-SCAF-6.",
+            goal="After each successful scaffold, emit an updated `.fighub-registry.json` (or stage one for emission via export sheet) so the consumer repo stays in sync with what exists in Figma. Implements FR-SCAF-6.",
             requirements=[
                 "`src/core/components/registry.ts` — read existing registry (if any from connected repo), merge in new component metadata, return the updated registry document.",
                 "New entry includes: name, archetype, variant matrix, props, Figma node id, optional Code Connect mapping URL.",
@@ -779,7 +779,7 @@ TICKETS = [
             goal="Build the Components tab UI for the forward-scaffold flow. Designer picks from the registry OR pastes a `ComponentSpecV1`; plugin scaffolds + binds + adds props + builds usage frame; registry export sheet appears. Phase 2 GA cut.",
             requirements=[
                 "`src/ui/tabs/Components.tsx` — full tab UI.",
-                "Two entry paths: 'Add from registry' (browses connected repo's `.figmint-registry.json`) and 'Paste/load spec' (uses WO-006 sources).",
+                "Two entry paths: 'Add from registry' (browses connected repo's `.fighub-registry.json`) and 'Paste/load spec' (uses WO-006 sources).",
                 "Spec preview + edit (variant matrix, prop list, binding overrides) before scaffold.",
                 "'Scaffold' button orchestrates WO-022 → WO-023 → WO-024 → WO-025 → WO-026 → export sheet.",
                 "Progress + audit display.",
@@ -798,7 +798,7 @@ TICKETS = [
             deps=["WO-006", "WO-022", "WO-023", "WO-024", "WO-025", "WO-026"],
             prd_refs=["`Docs/PRD.md` §6.2, §12 Phase 2 exit"],
             vqa=vqa_table_stub(),
-            design_ref="Components tab UI mock lives in the Figmint design file.",
+            design_ref="Components tab UI mock lives in the FigHub design file.",
         ),
     },
 
@@ -808,13 +808,13 @@ TICKETS = [
         "slug": "snapshot-mechanism-canvas-plugindata",
         "title": "WO-028: Snapshot mechanism (canvas pluginData — the 3-way common ancestor)",
         "body": body(
-            goal="Implement the per-key snapshot that serves as the 'common ancestor' for 3-way drift detection (push/pull/conflict). Stored in pluginData on a hidden node in the Figmint Output page; updated per-key after every successful push or pull.",
+            goal="Implement the per-key snapshot that serves as the 'common ancestor' for 3-way drift detection (push/pull/conflict). Stored in pluginData on a hidden node in the FigHub Output page; updated per-key after every successful push or pull.",
             requirements=[
                 "`src/core/drift/snapshot.ts` — read/write snapshot from pluginData.",
                 "Per-key entries: `{ key: string, value: unknown, source: 'push' | 'pull', timestamp: ISO }`.",
                 "API: `getSnapshot()`, `updateSnapshotKey(key, value, source)`, `clearSnapshot()`.",
                 "Snapshot survives across plugin re-opens and Figma file forks.",
-                "Stable namespace prefix (`figmint:snapshot:`).",
+                "Stable namespace prefix (`fighub:snapshot:`).",
             ],
             acceptance=[
                 "After a variable push, the snapshot reflects the pushed values per key.",
@@ -866,7 +866,7 @@ TICKETS = [
         "slug": "component-drift-detector-3-way",
         "title": "WO-030: Component drift detector (Figma ↔ component-spec/registry 3-way)",
         "body": body(
-            goal="Same 3-way classification as WO-029, but for components. Compares current Figma ComponentSets against repo `.figmint-registry.json` and per-component specs in the connected repo, using the snapshot as common ancestor.",
+            goal="Same 3-way classification as WO-029, but for components. Compares current Figma ComponentSets against repo `.fighub-registry.json` and per-component specs in the connected repo, using the snapshot as common ancestor.",
             requirements=[
                 "`src/core/drift/components.ts` — `detectComponentDrift(repoSpecs, figmaComponents, snapshot): ComponentDrift[]`.",
                 "Detects: new variants in Figma, removed variants, changed bindings, prop additions, prop removals.",
@@ -941,7 +941,7 @@ TICKETS = [
             deps=["WO-031", "WO-008", "WO-018", "WO-028"],
             prd_refs=["`Docs/PRD.md` §6.5"],
             vqa=vqa_table_stub(),
-            design_ref="Sync tab resolution UI mock lives in the Figmint design file.",
+            design_ref="Sync tab resolution UI mock lives in the FigHub design file.",
         ),
     },
     {
@@ -968,7 +968,7 @@ TICKETS = [
             deps=["WO-029", "WO-030", "WO-032"],
             prd_refs=["`Docs/PRD.md` §6.4 FR-DRIFT-5"],
             vqa=vqa_table_stub(),
-            design_ref="Sync tab + badge design lives in the Figmint design file.",
+            design_ref="Sync tab + badge design lives in the FigHub design file.",
         ),
     },
 
@@ -1095,7 +1095,7 @@ TICKETS = [
             deps=["WO-037"],
             prd_refs=["`Docs/PRD.md` §6.6, §12 Phase 3 exit"],
             vqa=vqa_table_stub(),
-            design_ref="Handoff tab UI mock lives in the Figmint design file.",
+            design_ref="Handoff tab UI mock lives in the FigHub design file.",
         ),
     },
 
@@ -1216,7 +1216,7 @@ TICKETS = [
             requirements=[
                 "`src/core/import/shared/dependencyScanner.ts` — `scanDependencies(file: string): DependencyTree`.",
                 "Pre-scan via regex / lightweight AST (don't full-parse if not needed).",
-                "Check `.figmint-registry.json` from connected repo for each ref.",
+                "Check `.fighub-registry.json` from connected repo for each ref.",
                 "Returns a tree: each node = { name, status: 'registered' | 'unknown' | 'circular' }.",
                 "UI integration: dependency tree preview before import (WO-044).",
             ],
@@ -1259,7 +1259,7 @@ TICKETS = [
             deps=["WO-040", "WO-041", "WO-042", "WO-043"],
             prd_refs=["`Docs/PRD.md` §6.3, §6.7, §12 Phase 4a"],
             vqa=vqa_table_stub(),
-            design_ref="Components tab Import + CC PR UI mock lives in the Figmint design file.",
+            design_ref="Components tab Import + CC PR UI mock lives in the FigHub design file.",
         ),
     },
 
@@ -1439,7 +1439,7 @@ TICKETS = [
             acceptance=[
                 "PR opened in DesignOps-plugin repo with all hard-sunset deletions.",
                 "Repo still builds / verify scripts pass after deletions.",
-                "PR description links to Figmint PRD §17 and this ticket.",
+                "PR description links to FigHub PRD §17 and this ticket.",
             ],
             out_of_scope=[
                 "Skill rewrites (WO-052).",
@@ -1452,18 +1452,18 @@ TICKETS = [
     },
     {
         "id": "WO-052", "sprint": 11,
-        "slug": "rewrite-surviving-skills-as-figmint-output-consumers",
-        "title": "WO-052: Rewrite surviving DesignOps-plugin skills as Figmint-output consumers",
+        "slug": "rewrite-surviving-skills-as-fighub-output-consumers",
+        "title": "WO-052: Rewrite surviving DesignOps-plugin skills as FigHub-output consumers",
         "body": body(
-            goal="Rewrite the DesignOps-plugin skills that survive sunset (`sync-design-system`, `dev-handoff`) as thin Claude-side companions that consume Figmint's output JSON/markdown documents — no more Figma MCP calls in those flows.",
+            goal="Rewrite the DesignOps-plugin skills that survive sunset (`sync-design-system`, `dev-handoff`) as thin Claude-side companions that consume FigHub's output JSON/markdown documents — no more Figma MCP calls in those flows.",
             requirements=[
-                "Rewrite `skills/sync-design-system/SKILL.md` to: consume `drift-report.v1.md` from the plugin → run `AskUserQuestion` for conflicts → guide the user to apply via Figmint plugin.",
+                "Rewrite `skills/sync-design-system/SKILL.md` to: consume `drift-report.v1.md` from the plugin → run `AskUserQuestion` for conflicts → guide the user to apply via FigHub plugin.",
                 "Rewrite `skills/dev-handoff/SKILL.md` to: consume `handoff-context.v1.md` from the plugin → create the ticket via `gh` or Atlassian MCP.",
                 "Mark other agent-side skills with deprecation pointers as needed.",
-                "Add a redirect note in `skills/new-project/`, `skills/create-design-system/`, `skills/create-component/`, `skills/code-connect/` pointing to Figmint.",
+                "Add a redirect note in `skills/new-project/`, `skills/create-design-system/`, `skills/create-component/`, `skills/code-connect/` pointing to FigHub.",
             ],
             acceptance=[
-                "Both rewritten skills work end-to-end against a Figmint-generated document.",
+                "Both rewritten skills work end-to-end against a FigHub-generated document.",
                 "Old MCP-heavy paths removed from those skills.",
                 "Redirect pointers in the obsoleted skills.",
             ],
@@ -1478,19 +1478,19 @@ TICKETS = [
     {
         "id": "WO-053", "sprint": 11,
         "slug": "update-designops-plugin-meta-docs-agent-side-companion",
-        "title": "WO-053: Update DesignOps-plugin meta docs as agent-side companion to Figmint",
+        "title": "WO-053: Update DesignOps-plugin meta docs as agent-side companion to FigHub",
         "body": body(
-            goal="Update `CLAUDE.md`, `memory.md`, and `AGENTS.md` in DesignOps-plugin to reflect its new role as the **agent-side companion** to Figmint — orchestration + ticket workflows + Claude-side decisioning, no more Figma MCP / canvas-build code paths.",
+            goal="Update `CLAUDE.md`, `memory.md`, and `AGENTS.md` in DesignOps-plugin to reflect its new role as the **agent-side companion** to FigHub — orchestration + ticket workflows + Claude-side decisioning, no more Figma MCP / canvas-build code paths.",
             requirements=[
-                "Rewrite `CLAUDE.md` to point at Figmint as the canvas authority.",
+                "Rewrite `CLAUDE.md` to point at FigHub as the canvas authority.",
                 "Trim `memory.md` of MCP / payload / canvas-bundle entries.",
                 "Trim `AGENTS.md` to keep only host-specific notes + ticket-workflow conventions.",
-                "Add a top-of-repo banner: 'This repo is the agent-side companion to Figmint. Canvas work lives in Figmint.'",
+                "Add a top-of-repo banner: 'This repo is the agent-side companion to FigHub. Canvas work lives in FigHub.'",
             ],
             acceptance=[
                 "Meta docs read coherently as agent-side companion role.",
                 "No remaining references to canvas-bundle-runner or MCP payload budgets.",
-                "Figmint repo + PRD linked prominently.",
+                "FigHub repo + PRD linked prominently.",
             ],
             out_of_scope=[
                 "Skill rewrites (WO-052 owns).",
@@ -1611,7 +1611,7 @@ def create_one(t: dict, repo_root: Path) -> tuple[bool, str]:
 def main():
     repo_root = REPO_ROOT
     if not repo_root.is_dir():
-        print(f"ERROR: figmint repo not found at {repo_root}")
+        print(f"ERROR: fighub repo not found at {repo_root}")
         sys.exit(1)
 
     print(f"Creating {len(TICKETS)} tickets across sprints "

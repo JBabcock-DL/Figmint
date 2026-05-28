@@ -1,4 +1,4 @@
-import type { CollectionId, TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { CollectionId, TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { COLLECTION_ORDER } from './collections';
 

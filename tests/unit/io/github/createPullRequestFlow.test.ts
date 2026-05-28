@@ -8,10 +8,10 @@ import { GitHubFlowError } from '@/io/github/githubErrors';
 import * as relayClient from '@/io/github/relayClient';
 import type { GithubPRSinkContext } from '@/io/sinks/types';
 
-const BASE_HEAD = 'figmint/drift-report-2026-05-27';
-const BASE_HEAD_ENCODED = 'figmint%2Fdrift-report-2026-05-27';
-const SUFFIX_HEAD = 'figmint/drift-report-2026-05-27-2';
-const SUFFIX_HEAD_ENCODED = 'figmint%2Fdrift-report-2026-05-27-2';
+const BASE_HEAD = 'fighub/drift-report-2026-05-27';
+const BASE_HEAD_ENCODED = 'fighub%2Fdrift-report-2026-05-27';
+const SUFFIX_HEAD = 'fighub/drift-report-2026-05-27-2';
+const SUFFIX_HEAD_ENCODED = 'fighub%2Fdrift-report-2026-05-27-2';
 
 function buildHappyPathHandler(calls: string[], headBranch: string, headBranchEncoded: string) {
   return async function (method: 'GET' | 'POST' | 'PATCH', path: string) {
@@ -70,16 +70,16 @@ describe('createPullRequestFlow', () => {
       repo: 'widgets',
       baseBranch: 'main',
       headBranch: BASE_HEAD,
-      commitMessage: 'figmint: drift report export',
-      prTitle: 'figmint: drift report export',
+      commitMessage: 'fighub: drift report export',
+      prTitle: 'fighub: drift report export',
       prBody: 'test body',
       files: [
         {
-          path: 'docs/figmint/drift-report-2026-05-27.v1.json',
+          path: 'docs/fighub/drift-report-2026-05-27.v1.json',
           content: '{"v":1}',
         },
         {
-          path: 'docs/figmint/drift-report-2026-05-27.v1.md',
+          path: 'docs/fighub/drift-report-2026-05-27.v1.md',
           content: '# Drift report',
         },
       ],
@@ -143,10 +143,10 @@ describe('createPullRequestFlow', () => {
       repo: 'widgets',
       baseBranch: 'main',
       headBranch: BASE_HEAD,
-      commitMessage: 'figmint: drift report export',
-      prTitle: 'figmint: drift report export',
+      commitMessage: 'fighub: drift report export',
+      prTitle: 'fighub: drift report export',
       prBody: 'test body',
-      files: [{ path: 'docs/figmint/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
+      files: [{ path: 'docs/fighub/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
     });
 
     expect(result.headBranch).toBe(BASE_HEAD);
@@ -195,10 +195,10 @@ describe('createPullRequestFlow', () => {
       repo: 'widgets',
       baseBranch: 'main',
       headBranch: BASE_HEAD,
-      commitMessage: 'figmint: drift report export',
-      prTitle: 'figmint: drift report export',
+      commitMessage: 'fighub: drift report export',
+      prTitle: 'fighub: drift report export',
       prBody: 'test body',
-      files: [{ path: 'docs/figmint/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
+      files: [{ path: 'docs/fighub/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
     });
 
     expect(result.headBranch).toBe(SUFFIX_HEAD);
@@ -244,10 +244,10 @@ describe('createPullRequestFlow', () => {
         repo: 'widgets',
         baseBranch: 'main',
         headBranch: BASE_HEAD,
-        commitMessage: 'figmint: drift report export',
-        prTitle: 'figmint: drift report export',
+        commitMessage: 'fighub: drift report export',
+        prTitle: 'fighub: drift report export',
         prBody: 'test body',
-        files: [{ path: 'docs/figmint/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
+        files: [{ path: 'docs/fighub/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
       }),
     ).rejects.toMatchObject({
       mapped: {
@@ -263,14 +263,14 @@ describe('createPullRequestFlow', () => {
     );
 
     const ctx: GithubPRSinkContext = {
-      files: [{ path: 'docs/figmint/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
+      files: [{ path: 'docs/fighub/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
       contractKind: 'drift-report',
       repoUrl: 'https://github.com/acme/widgets',
       options: {
         owner: 'acme',
         repo: 'widgets',
         baseBranch: 'main',
-        commitMessage: 'figmint: drift report export',
+        commitMessage: 'fighub: drift report export',
       },
       figmaFileKey: 'abc123',
       figmaFileName: 'Design System',
@@ -299,10 +299,10 @@ describe('createPullRequestFlow', () => {
         repo: 'widgets',
         baseBranch: 'main',
         headBranch: BASE_HEAD,
-        commitMessage: 'figmint: drift report export',
-        prTitle: 'figmint: drift report export',
+        commitMessage: 'fighub: drift report export',
+        prTitle: 'fighub: drift report export',
         prBody: 'test body',
-        files: [{ path: 'docs/figmint/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
+        files: [{ path: 'docs/fighub/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
       }),
     ).rejects.toBeInstanceOf(GitHubFlowError);
   });

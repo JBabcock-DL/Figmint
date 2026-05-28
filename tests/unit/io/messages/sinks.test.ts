@@ -110,7 +110,7 @@ describe('sink message guards', () => {
           type: 'sink/plugin-data',
           requestId: 'req-4',
           doc: serializable,
-          options: { format: 'md', label: 'figmint/x/y' },
+          options: { format: 'md', label: 'fighub/x/y' },
         }),
       ).toBe(true);
     });

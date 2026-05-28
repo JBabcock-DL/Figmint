@@ -99,7 +99,7 @@ function singleModeLeaf(family, shade) {
     $type: 'color',
     $value: hashHex(tokenPath),
     $extensions: {
-      figmint: {
+      fighub: {
         codeSyntax: codeSyntaxFor(family, shade),
       },
     },
@@ -115,7 +115,7 @@ function twoModeLeaf(family, shade) {
     // $value mirrors the first mode (Light) so single-mode consumers still see a sane value.
     $value: lightHex,
     $extensions: {
-      figmint: {
+      fighub: {
         modes: { light: lightHex, dark: darkHex },
         codeSyntax: codeSyntaxFor(family, shade),
       },

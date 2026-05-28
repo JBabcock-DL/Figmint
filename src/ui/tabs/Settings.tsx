@@ -1,8 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { buildDefaultHeadBranch } from '@/io/github/branchName';
 import { buildPrBody } from '@/io/github/prBody';
 import { loadFromGitHub } from '@/io/sources/github';
+import { RepoSyncCard } from '@/ui/components/RepoSyncCard';
 import type { UseGitHubConnectResult } from '@/ui/github/useGitHubConnect';
 
 const DEFAULT_TOKENS_PATH = 'design/tokens.json';
@@ -38,6 +41,22 @@ export function Settings({
 }: SettingsProps) {
   const [readResult, setReadResult] = useState('');
   const [prResult, setPrResult] = useState('');
+  const [repoTokens, setRepoTokens] = useState<TokensV1 | null>(null);
+
+  useEffect(
+    function () {
+      if (!github.connected) {
+        setRepoTokens(null);
+        return;
+      }
+      void loadFromGitHub(repoUrl, tokensPath).then(function (result) {
+        if ('payload' in result && result.kind === 'tokens') {
+          setRepoTokens(result.payload);
+        }
+      });
+    },
+    [github.connected, repoUrl, tokensPath],
+  );
 
   const handleTestRead = useCallback(async function () {
     setReadResult('Reading…');
@@ -57,14 +76,14 @@ export function Settings({
       {
         v: 1,
         kind: 'ops-program',
-        meta: { generatedAt: new Date().toISOString(), source: 'figmint-settings-test' },
+        meta: { generatedAt: new Date().toISOString(), source: 'fighub-settings-test' },
         steps: [],
       },
       null,
       2,
     );
-    const filePath = 'docs/figmint/test-export.v1.json';
-    const commitMessage = 'figmint: test export (WO-016)';
+    const filePath = 'docs/fighub/test-export.v1.json';
+    const commitMessage = 'fighub: test export (WO-016)';
     const prBody = buildPrBody({
       commitMessage: commitMessage,
       files: [{ path: filePath, format: 'json' }],
@@ -160,7 +179,7 @@ export function Settings({
         </label>
         <p style={{ color: '#666', fontSize: '10px', lineHeight: 1.45, margin: '6px 0 0' }}>
           Component registry is stored in the Figma file (canvas snapshot). Repo sync paths ship in
-          WO-058 Phase 2 via <code>figmint.json</code>.
+          WO-058 Phase 2 via <code>fighub.json</code>.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
           <button
@@ -195,6 +214,15 @@ export function Settings({
           {github.tokenPreview ? ' · token ' + github.tokenPreview : ''}
         </p>
       </div>
+
+      {github.connected ? (
+        <RepoSyncCard
+          repoUrl={repoUrl}
+          tokensPath={tokensPath}
+          connected={github.connected}
+          repoTokens={repoTokens !== null ? repoTokens : undefined}
+        />
+      ) : null}
 
       <div style={sectionStyle}>
         <h2 style={{ fontSize: '13px', margin: '0 0 8px' }}>Read smoke test</h2>

@@ -108,7 +108,7 @@ Per locked decision 2026-05-27, Tests 2–4 (mode inheritance, override applicat
 **Procedure (per `research/latency-benchmark.md` §5.4 run hygiene):**
 
 1. Open a fresh empty Figma file (cmd/ctrl+N).
-2. Re-launch the Figmint plugin.
+2. Re-launch the FigHub plugin.
 3. Load fixture via the dropdown.
 4. Click **Push**. Record the `BenchRecord` from the `<pre>` block.
 5. Close-without-save.

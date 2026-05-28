@@ -48,7 +48,7 @@ bindColor(summary, 'color/background/content-muted', '#6b7280', 'fills');
 header.appendChild(summary);
 ```
 
-**Figmint emit (`src/core/canvas/doc/header.ts`):**
+**FigHub emit (`src/core/canvas/doc/header.ts`):**
 
 | Property | Value | Source |
 | -------- | ----- | ------ |
@@ -122,7 +122,7 @@ for (const w of COLS) {
 }
 ```
 
-**Figmint emit (`src/core/canvas/doc/propertiesTable.ts`):** wrap table in `doc/table-group/${docKey}/properties` (per §4 last paragraph). Inner table = `doc/table/${docKey}/properties`. Header row + N body rows. Apply text-style id post-creation: `cell.children[0].textStyleId = resolveDocStyles().tokenName.id` (or code/caption per column).
+**FigHub emit (`src/core/canvas/doc/propertiesTable.ts`):** wrap table in `doc/table-group/${docKey}/properties` (per §4 last paragraph). Inner table = `doc/table/${docKey}/properties`. Header row + N body rows. Apply text-style id post-creation: `cell.children[0].textStyleId = resolveDocStyles().tokenName.id` (or code/caption per column).
 
 **Row ordering (per §4 "Property row ordering"):**
 
@@ -174,7 +174,7 @@ doc/component/{name}/component-set-group       VERTICAL auto-layout, width 1640
 
 **Caption:** "Live ComponentSet — edit here, matrix updates." (verbatim from §3.2). `_Doc/Caption` at 13px.
 
-**Figmint extension (`src/core/canvas/doc/setGroup.ts`):** Wrap existing `ensureComponentSetGroup` to add:
+**FigHub extension (`src/core/canvas/doc/setGroup.ts`):** Wrap existing `ensureComponentSetGroup` to add:
 
 1. After group creation, append title + caption + the reparented ComponentSet (in that order).
 2. After ComponentSet is reparented (the existing `group.insertChild(0, componentSet)` becomes `group.appendChild(componentSet)` since title + caption come first).
@@ -241,7 +241,7 @@ if (componentNode) {
 }
 ```
 
-**Figmint variant key format:** WO-022's `formatVariantName(combo)` produces sorted `key=value` joined by `, ` (e.g. `"size=sm, variant=default"`). The matrix emitter must use the same key shape for `variantByKey` lookup — already returned by `scaffold()`.
+**FigHub variant key format:** WO-022's `formatVariantName(combo)` produces sorted `key=value` joined by `, ` (e.g. `"size=sm, variant=default"`). The matrix emitter must use the same key shape for `variantByKey` lookup — already returned by `scaffold()`.
 
 **Critical (§5.4):** Instance is **not resized** (it hugs its own auto-layout). Cell counterAxis is AUTO (Hug height), primaryAxis is FIXED at column width.
 

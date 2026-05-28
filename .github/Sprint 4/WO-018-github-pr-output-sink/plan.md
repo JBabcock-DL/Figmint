@@ -49,7 +49,7 @@ export interface GithubPRSinkOptions {
   repo: string;
   baseBranch: string;
   commitMessage: string;
-  branchPattern?: string; // default figmint/{contractKind}-{date}
+  branchPattern?: string; // default fighub/{contractKind}-{date}
   headBranch?: string; // explicit override
   prTitle?: string;
 }
@@ -70,7 +70,7 @@ export interface GithubPRSinkContext {
 - [x] **Step 2** — Implement `src/io/github/branchName.ts`:
 
 ```ts
-export const DEFAULT_BRANCH_PATTERN = 'figmint/{contractKind}-{date}';
+export const DEFAULT_BRANCH_PATTERN = 'fighub/{contractKind}-{date}';
 
 export function formatBranchPattern(
   pattern: string,
@@ -180,7 +180,7 @@ export { executeGithubPRSink, isGithubPREnabled } from './githubPR';
 ```
 
 - [x] **Step 10** — Integration test `tests/unit/io/sinks/githubPR.test.ts`:
-  - Input: drift-report serialized json+md paths under `docs/figmint/drift-2026-05-27.v1.{json,md}`
+  - Input: drift-report serialized json+md paths under `docs/fighub/drift-2026-05-27.v1.{json,md}`
   - Assert: one tree POST with 2 blob entries; one pulls POST.
   - **Done when:** ticket AC "one commit" verified in mock assertions.
 

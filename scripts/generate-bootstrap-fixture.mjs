@@ -248,7 +248,7 @@ for (const t of tokens) {
 
 const fixture = {
   $comment:
-    'Figmint bootstrap-complete sample — all 5 collections populated for Bootstrap tab VQA. Regenerate: node scripts/generate-bootstrap-fixture.mjs',
+    'FigHub bootstrap-complete sample — all 5 collections populated for Bootstrap tab VQA. Regenerate: node scripts/generate-bootstrap-fixture.mjs',
   v: 1,
   kind: 'tokens',
   collections,

@@ -2,7 +2,7 @@
 
 ## Approach
 
-Deliver the **first end-user-visible Figmint surface**: extract the working prototype from `src/ui/App.tsx` into **`src/ui/tabs/Bootstrap.tsx`**, add tab shell, token preview gate, and one-button **`bootstrap/run`** orchestration on the main thread with **`bootstrap/progress`** streaming. Reuse WO-006/007/008/010 verbatim. Canvas steps call WO-011/012/013 exports once merged. **Phase 1** (this ticket's first merge) may ship with canvas steps **`skipped`** + clear UX; **Phase 2** enables full AC when canvas builders land. Main thread uses `pluginLog()`; UI iframe may use `console.debug`.
+Deliver the **first end-user-visible FigHub surface**: extract the working prototype from `src/ui/App.tsx` into **`src/ui/tabs/Bootstrap.tsx`**, add tab shell, token preview gate, and one-button **`bootstrap/run`** orchestration on the main thread with **`bootstrap/progress`** streaming. Reuse WO-006/007/008/010 verbatim. Canvas steps call WO-011/012/013 exports once merged. **Phase 1** (this ticket's first merge) may ship with canvas steps **`skipped`** + clear UX; **Phase 2** enables full AC when canvas builders land. Main thread uses `pluginLog()`; UI iframe may use `console.debug`.
 
 **Drift guard:** Do **not** build formal `src/ops/` dispatcher (Sprint 4). Do **not** duplicate adapt/push logic — extract/move from `App.tsx`.
 
@@ -186,7 +186,7 @@ Deliver the **first end-user-visible Figmint surface**: extract the working prot
   2. All steps `done` or `error` with detail
   3. Record `totalDurationMs` → `research/bootstrap-bench-result.md` — target **< 30000 ms** (G1)
 
-- [x] **Step 12** — Figma VQA prep: assign design file `file_key` in ticket checklist OR document "Plugin Sandbox placeholder until Figmint UI file exists". Fill VQA table during `/vqa`.
+- [x] **Step 12** — Figma VQA prep: assign design file `file_key` in ticket checklist OR document "Plugin Sandbox placeholder until FigHub UI file exists". Fill VQA table during `/vqa`.
 
 - [x] **Step 13** — CI: typecheck, lint, test, build:community green; check off ticket AC (Phase 2 items marked when canvas lands).
 
@@ -257,7 +257,7 @@ Deliver the **first end-user-visible Figmint surface**: extract the working prot
 - **Full bootstrap default:** `bootstrap/run` omits `skipCanvas` — canvas builders from WO-011/012/013 run sequentially.
 - **Files added:** `src/io/messages/bootstrap.ts`, `src/core/bootstrap/runBootstrap.ts`, `src/ui/tabs/Bootstrap.tsx`, `src/ui/bootstrap/bootstrapProgressReducer.ts`, `src/ui/components/{ProgressBar,BootstrapStepList,AuditPanel,auditPanelUtils}.ts`, tests under `tests/unit/io/messages/bootstrap.test.ts` and `tests/unit/ui/*`.
 - **App.tsx:** 57 lines (body < 80); bench fixtures gated behind `import.meta.env.DEV`.
-- **VQA (Step 12):** Use **Plugin Sandbox** placeholder until dedicated Figmint UI Figma file exists — assign `file_key` during `/vqa`.
+- **VQA (Step 12):** Use **Plugin Sandbox** placeholder until dedicated FigHub UI Figma file exists — assign `file_key` during `/vqa`.
 - **Manual smoke stubs:** `research/bootstrap-phase1-smoke.md`, `research/bootstrap-bench-result.md` (Vitest covers contract; live Figma bench pending).
 - **CI:** typecheck, lint, format:check, test (216), build:community — all green.
 

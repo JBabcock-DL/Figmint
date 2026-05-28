@@ -1,4 +1,4 @@
-import type { ColorValue, Token, TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { ColorValue, Token, TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { resolveTokens } from '@/core/variables/resolveTokens';
 import { isTokenAliasRef } from '@/core/variables/types';

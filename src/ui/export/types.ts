@@ -5,7 +5,7 @@ import type {
   OpsProgramV1,
   RegistryV1,
   TokensV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import type { SinkId } from '@/io/sinks/types';
 

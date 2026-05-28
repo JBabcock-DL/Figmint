@@ -1,4 +1,4 @@
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { isTokensV1 } from '@/io/sources/adapters/internal';
 

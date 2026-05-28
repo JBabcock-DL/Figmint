@@ -1,6 +1,6 @@
-# Research — JSON Schema generator for `@detroitlabs/figmint-contracts`
+# Research — JSON Schema generator for `@detroitlabs/fighub-contracts`
 
-**Ticket:** WO-003 — Set up `@detroitlabs/figmint-contracts` workspace package
+**Ticket:** WO-003 — Set up `@detroitlabs/fighub-contracts` workspace package
 **Date:** 2026-05-27
 **Author:** Research Agent
 **Status:** Decision ready for `/plan`
@@ -11,9 +11,9 @@
 
 **Recommendation: `ts-json-schema-generator` v2.9.0 (pinned `~2.9.0`), invoked from a Node script at `packages/contracts/scripts/build-schemas.mjs`.**
 
-Figmint's six contracts (`ops-program.v1`, `tokens.v1`, `component-spec.v1`, `drift-report.v1`, `handoff-context.v1`, `registry.v1`) are pure-interface, version-discriminated TS shapes that get authored once (PRD §7.4) and emitted once per build into `packages/contracts/dist/*.schema.json`. The plugin itself does **not** validate at runtime (PRD §10.3 — JSON Schema exists for _external_ consumers: CI, agents, the sunsetting DesignOps-plugin skills). Given that constraint, a build-time TS-interface → JSON Schema generator beats every runtime-schema-first alternative (Zod, Valibot, TypeBox, typia) because nothing else needs to ship in the plugin bundle, and the authoring model in `src/*.v1.ts` stays "TS interface, no DSL." `ts-json-schema-generator` is the most actively maintained tool in that category (v2.9.0 published April 2026, TS 6 support, 141 releases), it natively targets JSON Schema Draft 7 with full Draft 2020-12 idioms available, and it serializes Figmint's `v: 1` + `kind: "..."` discriminator pattern as `anyOf` branches with `const` literals on the discriminator fields — which is exactly what AJV-strict and OpenAPI-aware consumers expect.
+FigHub's six contracts (`ops-program.v1`, `tokens.v1`, `component-spec.v1`, `drift-report.v1`, `handoff-context.v1`, `registry.v1`) are pure-interface, version-discriminated TS shapes that get authored once (PRD §7.4) and emitted once per build into `packages/contracts/dist/*.schema.json`. The plugin itself does **not** validate at runtime (PRD §10.3 — JSON Schema exists for _external_ consumers: CI, agents, the sunsetting DesignOps-plugin skills). Given that constraint, a build-time TS-interface → JSON Schema generator beats every runtime-schema-first alternative (Zod, Valibot, TypeBox, typia) because nothing else needs to ship in the plugin bundle, and the authoring model in `src/*.v1.ts` stays "TS interface, no DSL." `ts-json-schema-generator` is the most actively maintained tool in that category (v2.9.0 published April 2026, TS 6 support, 141 releases), it natively targets JSON Schema Draft 7 with full Draft 2020-12 idioms available, and it serializes FigHub's `v: 1` + `kind: "..."` discriminator pattern as `anyOf` branches with `const` literals on the discriminator fields — which is exactly what AJV-strict and OpenAPI-aware consumers expect.
 
-`@sinclair/typebox` 1.x and Zod 4 `z.toJSONSchema` are both attractive runtime-validator stacks with first-class Draft 2020-12 emission, but adopting either inverts WO-003's authoring model (schema-first, types-derived) and either (a) bloats the plugin if the validator is also used at runtime, or (b) adds a parallel DSL that the team has to keep in sync with hand-written TS interfaces, which is the exact drift WO-003 exists to prevent. `typia` is fastest in raw runtime numbers but requires a `ts-patch` compiler plugin that fights the Vite/TS pipeline already locked by WO-002, and Figmint has zero runtime-validation need that would justify that cost. `typescript-json-schema` is explicitly in maintenance mode and its README points at `ts-json-schema-generator` as the recommended successor. The full comparison and build-script outline are below.
+`@sinclair/typebox` 1.x and Zod 4 `z.toJSONSchema` are both attractive runtime-validator stacks with first-class Draft 2020-12 emission, but adopting either inverts WO-003's authoring model (schema-first, types-derived) and either (a) bloats the plugin if the validator is also used at runtime, or (b) adds a parallel DSL that the team has to keep in sync with hand-written TS interfaces, which is the exact drift WO-003 exists to prevent. `typia` is fastest in raw runtime numbers but requires a `ts-patch` compiler plugin that fights the Vite/TS pipeline already locked by WO-002, and FigHub has zero runtime-validation need that would justify that cost. `typescript-json-schema` is explicitly in maintenance mode and its README points at `ts-json-schema-generator` as the recommended successor. The full comparison and build-script outline are below.
 
 ---
 
@@ -23,10 +23,10 @@ Figmint's six contracts (`ops-program.v1`, `tokens.v1`, `component-spec.v1`, `dr
 
 - **Latest version (npm):** `2.9.0` — published ~2 months ago (Apr 2026). Source: <https://www.npmjs.com/package/ts-json-schema-generator>.
 - **Latest GitHub release tag:** `v2.5.0` (2026-02-04); newer minors (2.6–2.9) are published via the `next`-branch auto-deploy process; both auto-published canaries and stable releases are tracked on npm. Last repo push: 2026-04-02. Source: <https://github.com/vega/ts-json-schema-generator>.
-- **Maintenance:** Active. 110 contributors. 141 releases. 1.7k+ stars. TypeScript 6 support landed in PR #2509 (Mar 30 2026) while keeping TS 5 compatibility — important because the rest of Figmint stays on stable TS through Sprint 1/2 and may upgrade later.
-- **Node engine:** `>=22.0.0` (per latest `package.json`). Aligns with Figmint memory.md "Stack / runtimes: Node 20+" — **we'd need to bump the CI matrix to Node 22 for this package's build script**, but the plugin runtime itself is sandboxed inside Figma and untouched.
+- **Maintenance:** Active. 110 contributors. 141 releases. 1.7k+ stars. TypeScript 6 support landed in PR #2509 (Mar 30 2026) while keeping TS 5 compatibility — important because the rest of FigHub stays on stable TS through Sprint 1/2 and may upgrade later.
+- **Node engine:** `>=22.0.0` (per latest `package.json`). Aligns with FigHub memory.md "Stack / runtimes: Node 20+" — **we'd need to bump the CI matrix to Node 22 for this package's build script**, but the plugin runtime itself is sandboxed inside Figma and untouched.
 - **Output JSON Schema version:** Draft 7 by default; emits Draft 7 keywords that are forward-compatible with Draft 2020-12 (no `additionalItems`-only features used). Setting `$schema` to 2020-12 in post-processing is trivial.
-- **Discriminated-union output (Figmint's `v: 1` pattern):** Default behavior on a `type X = A | B | C` where every branch has `v: 1` and `kind: "ops-program" | "tokens" | …` is `anyOf` with each branch carrying `properties.v.const = 1` and `properties.kind.const = "<literal>"` plus a tight `required: ["v", "kind", ...]`. That's the standard JSON Schema 2020-12 "discriminator via `const`" pattern (Jsonic.io reference: <https://jsonic.io/guides/json-schema-discriminator>) and AJV-strict validates it correctly.
+- **Discriminated-union output (FigHub's `v: 1` pattern):** Default behavior on a `type X = A | B | C` where every branch has `v: 1` and `kind: "ops-program" | "tokens" | …` is `anyOf` with each branch carrying `properties.v.const = 1` and `properties.kind.const = "<literal>"` plus a tight `required: ["v", "kind", ...]`. That's the standard JSON Schema 2020-12 "discriminator via `const`" pattern (Jsonic.io reference: <https://jsonic.io/guides/json-schema-discriminator>) and AJV-strict validates it correctly.
 - **Explicit discriminator support:** `@discriminator <prop>` JSDoc tag generates an `if/then/else` schema; `discriminatorType: "open-api"` config switch emits the non-standard OpenAPI `discriminator` object for consumers that want it (PR #1572, merged 2023). We do **not** need this for AJV — `anyOf` + `const` is sufficient and standards-compliant.
 - **`$ref` for shared types:** Yes — referenced types are emitted under `definitions` (Draft 7) or `$defs` (2020-12 idiom) and consumed via `$ref`. Renaming to `$defs` is a one-line post-processing step if we want strict 2020-12 output.
 - **Complex unions / mapped types / generics / conditionals:** Supported per project README (`interface`, `enum`, `union`, `tuple`, generics, `typeof`, `keyof`, conditional types, type aliases).
@@ -41,7 +41,7 @@ Figmint's six contracts (`ops-program.v1`, `tokens.v1`, `component-spec.v1`, `dr
 - **Maintenance:** **Maintenance mode.** README explicitly says "more or less in maintenance mode" and recommends `ts-json-schema-generator` for new projects: <https://github.com/YousefED/typescript-json-schema/blob/master/README.md>. Still gets quarterly patch releases (3 releases between Nov 2025 and May 2026), so it's not dead — but it's not where new features land.
 - **Output:** Draft 7 by default; uses the older "type hierarchy" approach rather than the AST. The README's own warning is that it has "better support for type aliases" only on `ts-json-schema-generator` because of this.
 - **Discriminator support:** Same `anyOf` + `const` default as `ts-json-schema-generator`, but with several known quirks around literal unions and inheritance that have stale unfixed issues.
-- **Why not pick it:** Authoritative recommendation from its own maintainers points at `ts-json-schema-generator`. No upside for Figmint.
+- **Why not pick it:** Authoritative recommendation from its own maintainers points at `ts-json-schema-generator`. No upside for FigHub.
 
 ### 3. `typia` — samchon/typia
 
@@ -51,7 +51,7 @@ Figmint's six contracts (`ops-program.v1`, `tokens.v1`, `component-spec.v1`, `dr
 - **Discriminator handling:** Excellent — typia preserves TS narrowing semantics 1:1, so discriminated unions on literal keys work out of the box.
 - **Why not pick it:**
   1. **Compiler-plugin friction with WO-002.** WO-002 just locked in Vite + plain `tsc` strict mode. Adding `ts-patch` to that pipeline introduces a non-standard postinstall step, complicates `npm ci` in CI, and creates an upgrade cliff every TS major.
-  2. **The plugin never validates at runtime.** PRD §10.3 says JSON Schema is for external consumers; the plugin's deterministic core trusts that ops programs were validated upstream. Typia's primary value (runtime validation) is exactly the value Figmint doesn't need.
+  2. **The plugin never validates at runtime.** PRD §10.3 says JSON Schema is for external consumers; the plugin's deterministic core trusts that ops programs were validated upstream. Typia's primary value (runtime validation) is exactly the value FigHub doesn't need.
   3. **Cost-benefit asymmetry.** Typia generates _both_ schemas and runtime validators, but if we only use the schema-emission half (`typia.json.schemas`), we get all of typia's compile-time overhead with none of its runtime payoff, and a far simpler tool (`ts-json-schema-generator`) does the same job without the compiler plugin.
 
 ### 4. `@sinclair/typebox` 0.x / `typebox` 1.x
@@ -72,7 +72,7 @@ Figmint's six contracts (`ops-program.v1`, `tokens.v1`, `component-spec.v1`, `dr
 
 - **Status of standalone package:** **No longer actively maintained as of November 2025.** Latest: `zod-to-json-schema@3.25.2` (Mar 27 2026). The README directs users to Zod v4's built-in `z.toJSONSchema()`. Source: <https://github.com/StefanTerdell/zod-to-json-schema/>.
 - **Zod 4 native:** `z.toJSONSchema(schema, { target: 'draft-2020-12' })` is now the recommended path. Targets Draft 2020-12 by default, with `draft-07`, `draft-04`, and `openapi-3.0` fallbacks. Source: <https://zod.dev/json-schema>.
-- **Discriminated unions:** `z.discriminatedUnion()` maps to `oneOf` (correct for Figmint's mutually-exclusive `kind` discriminator); `z.union()` maps to `anyOf`. Fixed in Zod 4.1.13 (Nov 2025). Source: <https://github.com/colinhacks/zod/issues/4089>.
+- **Discriminated unions:** `z.discriminatedUnion()` maps to `oneOf` (correct for FigHub's mutually-exclusive `kind` discriminator); `z.union()` maps to `anyOf`. Fixed in Zod 4.1.13 (Nov 2025). Source: <https://github.com/colinhacks/zod/issues/4089>.
 - **Why not pick it (same trade-offs as TypeBox, with one extra):**
   1. **Same model inversion** as TypeBox — schema-first, types-derived. Same rewrite cost for `tokens.v1.ts`'s three-shape adapter union.
   2. **Plugin bundle cost.** Zod's runtime is ~12 KB minified+gzipped (smaller than TypeBox but not free). The plugin would either need to import Zod for parsing/validation (against PRD §10.3) or import it only at build time (in which case `ts-json-schema-generator` does the same job for $0 plugin bytes).
@@ -83,7 +83,7 @@ Figmint's six contracts (`ops-program.v1`, `tokens.v1`, `component-spec.v1`, `dr
 - **Latest version:** `1.7.0` (May 5 2026). Targets draft-07, draft-2020-12, OpenAPI 3.0. Source: <https://registry.npmjs.org/@valibot/to-json-schema>.
 - **Model:** Same as Zod (schema-first, type-derived) but with Valibot's pipe-based API and smaller bundle (~5 KB).
 - **Maturity:** Now at v1 (Mar 2025) with steady minor releases; reaching ~200k monthly downloads on the JSON-schema package per the Valibot team's own blog post.
-- **Why not pick it:** Same model-inversion argument as Zod/TypeBox, with the additional caveat that Valibot's discriminator support is via `v.variant(key, [...])` which is less mature in the JSON Schema converter than Zod 4's. No upside specific to Figmint.
+- **Why not pick it:** Same model-inversion argument as Zod/TypeBox, with the additional caveat that Valibot's discriminator support is via `v.variant(key, [...])` which is less mature in the JSON Schema converter than Zod 4's. No upside specific to FigHub.
 
 ---
 
@@ -112,7 +112,7 @@ Figmint's six contracts (`ops-program.v1`, `tokens.v1`, `component-spec.v1`, `dr
 
 ### Rationale (two paragraphs)
 
-Figmint's contract package has two non-negotiable shape constraints that drive the decision: (1) every contract is a pure-data TS interface authored by hand (PRD §7.4, ticket §Functional #2) — there's no scenario where we want to learn or import a DSL — and (2) the plugin runtime ships **zero** validation code (PRD §10.3, ticket §Out of scope). Both constraints point away from runtime-validator stacks (TypeBox, Zod, Valibot, typia) and toward a build-time TS-AST → JSON Schema generator. Between the two real candidates in that category, `ts-json-schema-generator` decisively wins: it's actively developed (last release ~2 months ago, TS 6 support landed Mar 30 2026), it has explicit successor status over `typescript-json-schema` per the latter's own README, it handles every type construct Figmint's contracts use (interfaces, generics, conditional types, `keyof`, literal unions), and its default output for our `v: 1 + kind: "<literal>"` discriminator is exactly the AJV-strict-compatible `anyOf` + `const` pattern that JSON Schema 2020-12 specifies. The build script is a ~50-line Node program; the output is six (well, seven counting the `TokensInput` union) `*.schema.json` files committed under `packages/contracts/dist/`. The only operational cost is bumping the contracts package's CI matrix to Node 22 (the v2.x line requires it), which aligns with the broader Node 20+ baseline already in memory.md and is a sensible 2026 default.
+FigHub's contract package has two non-negotiable shape constraints that drive the decision: (1) every contract is a pure-data TS interface authored by hand (PRD §7.4, ticket §Functional #2) — there's no scenario where we want to learn or import a DSL — and (2) the plugin runtime ships **zero** validation code (PRD §10.3, ticket §Out of scope). Both constraints point away from runtime-validator stacks (TypeBox, Zod, Valibot, typia) and toward a build-time TS-AST → JSON Schema generator. Between the two real candidates in that category, `ts-json-schema-generator` decisively wins: it's actively developed (last release ~2 months ago, TS 6 support landed Mar 30 2026), it has explicit successor status over `typescript-json-schema` per the latter's own README, it handles every type construct FigHub's contracts use (interfaces, generics, conditional types, `keyof`, literal unions), and its default output for our `v: 1 + kind: "<literal>"` discriminator is exactly the AJV-strict-compatible `anyOf` + `const` pattern that JSON Schema 2020-12 specifies. The build script is a ~50-line Node program; the output is six (well, seven counting the `TokensInput` union) `*.schema.json` files committed under `packages/contracts/dist/`. The only operational cost is bumping the contracts package's CI matrix to Node 22 (the v2.x line requires it), which aligns with the broader Node 20+ baseline already in memory.md and is a sensible 2026 default.
 
 The trade-off worth naming: by picking a pure-generator path we are _not_ setting up a runtime validation harness for the plugin. If a future sprint discovers the plugin should validate ops programs at runtime (e.g. when the agent → canvas pluginData path opens in Phase 3 per PRD §10.1), the migration target is `@sinclair/typebox` 1.x — same authoring repo, same package, but `Type.Object` replaces the TS interface and `TypeCompiler.Compile` adds a 50 KB-ish validator into the plugin bundle. That is a future decision, not a Sprint 1 one, and crucially it does **not** invalidate any schema files we generate now: TypeBox's output is the same Draft 2020-12 shape. Postponing it is safe.
 
@@ -169,7 +169,7 @@ for (const { file, type, out } of CONTRACTS) {
   });
   const schema = generator.createSchema(type);
   schema.$schema = 'https://json-schema.org/draft/2020-12/schema';
-  schema.$id = `https://figmint.detroitlabs.com/schemas/${out}`;
+  schema.$id = `https://fighub.detroitlabs.com/schemas/${out}`;
   await writeFile(join(distDir, out), JSON.stringify(schema, null, 2) + '\n', 'utf8');
   console.log(`✓ ${out}`);
 }
@@ -298,7 +298,7 @@ ts-json-schema-generator@~2.9.0
 
 `~2.9.x` pins to the current minor (`2.9.x` patch updates only) — appropriate while we settle on the build-script shape. Once `/build` lands and CI is green, we can move to `^2.x.x` for minor updates.
 
-Cross-package: also pin `rimraf@^6.0.1` (already a Figmint dev-dep candidate via WO-002) and reuse Figmint's root `typescript@^5.x` for the `tsc --emitDeclarationOnly` step.
+Cross-package: also pin `rimraf@^6.0.1` (already a FigHub dev-dep candidate via WO-002) and reuse FigHub's root `typescript@^5.x` for the `tsc --emitDeclarationOnly` step.
 
 ---
 
@@ -345,7 +345,7 @@ Cross-package: also pin `rimraf@^6.0.1` (already a Figmint dev-dep candidate via
 - OpenAPI `discriminator` keyword in ts-json-schema-generator (PR #1572): <https://github.com/vega/ts-json-schema-generator/pull/1572>
 - ts-json-schema-generator programmatic API: <https://www.npmjs.com/package/ts-json-schema-generator#programmatic-usage>
 
-### Figmint internal references (read in scope of this research)
+### FigHub internal references (read in scope of this research)
 
 - `Docs/PRD.md` §7.3 (repo layout), §7.4 (cross-repo contract package), §8 (5 data contracts), §10.3 (dual-format serialization)
 - `Docs/lift-sources.md` §5 (schemas to lift)

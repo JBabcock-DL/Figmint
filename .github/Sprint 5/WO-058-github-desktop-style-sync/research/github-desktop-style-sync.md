@@ -8,9 +8,9 @@
 
 ## Summary
 
-WO-058 collapses Figmint's GitHub I/O into a **GitHub Desktop–style** designer workflow: connect once, then **Fetch / Pull / Push** from a single repo card — no tokens-path, registry-path, or "Load sync registry" affordances. Repo-side config moves to optional root **`figmint.json`**. Canvas **`SnapshotV1`** pluginData on a hidden Output-page frame becomes the **single source of truth** for registry + drift baseline; **`.figmint-registry.json` is deleted** from read/write/audit paths.
+WO-058 collapses FigHub's GitHub I/O into a **GitHub Desktop–style** designer workflow: connect once, then **Fetch / Pull / Push** from a single repo card — no tokens-path, registry-path, or "Load sync registry" affordances. Repo-side config moves to optional root **`fighub.json`**. Canvas **`SnapshotV1`** pluginData on a hidden Output-page frame becomes the **single source of truth** for registry + drift baseline; **`.fighub-registry.json` is deleted** from read/write/audit paths.
 
-**Locked recommendation:** Implement in **three build phases** — (1) snapshot store + registry migration + delete repo registry emission, (2) `figmint.json` + Fetch/Pull/Push orchestration + Settings UI collapse, (3) shallow Push PR wiring + drift badge hook (WO-033 tail). Delete `comp/registry-envelope` and `comp/registry-filekey` audit rules outright; retain entry-level rows against snapshot registry. Push commits as **the authenticated user** via OAuth token; PR title/body branded with Figmint metadata block.
+**Locked recommendation:** Implement in **three build phases** — (1) snapshot store + registry migration + delete repo registry emission, (2) `fighub.json` + Fetch/Pull/Push orchestration + Settings UI collapse, (3) shallow Push PR wiring + drift badge hook (WO-033 tail). Delete `comp/registry-envelope` and `comp/registry-filekey` audit rules outright; retain entry-level rows against snapshot registry. Push commits as **the authenticated user** via OAuth token; PR title/body branded with FigHub metadata block.
 
 ---
 
@@ -37,7 +37,7 @@ Source: `src/core/components/registryAuditRows.ts` lines 13–21, 54–59 — ga
 | ----- | --------- | ------- | ----- |
 | Repo URL | `repoUrl` | — | 142–152 |
 | Tokens path | `tokensPath` | `design/tokens.json` | 154–164 |
-| Figma sync file path | `registryPath` | `.figmint-registry.json` | 166–176 |
+| Figma sync file path | `registryPath` | `.fighub-registry.json` | 166–176 |
 
 Plus dev-only "Test read tokens path" and "Open test PR" sections (lines 216–252) — **move PR smoke test behind dev flag or delete** in favor of real Push button.
 
@@ -49,13 +49,13 @@ Main-thread config: `src/io/github/storage.ts` `StoredGitHubConfig` holds `token
 
 `src/ui/tabs/Components.tsx`:
 
-- Line 365: **"Load sync registry"** button — manual GitHub fetch of `.figmint-registry.json`
+- Line 365: **"Load sync registry"** button — manual GitHub fetch of `.fighub-registry.json`
 - Lines 503+: post-scaffold **ExportSheet** for registry PR emission (WO-026 path)
 - Uses `loadRegistryForComponentsTab` → `registryExport.loadRegistryFromGitHub`
 
 After WO-058: registry loads **automatically from canvas snapshot** on tab mount; scaffold upserts snapshot in-memory + persists to pluginData; **no ExportSheet for registry** to repo.
 
-### 4. Files referencing `.figmint-registry.json` (deletion inventory)
+### 4. Files referencing `.fighub-registry.json` (deletion inventory)
 
 | Path | Action |
 | ---- | ------ |
@@ -83,8 +83,8 @@ Canonical spec: [WO-028 snapshot research](../../Sprint%206/WO-028-snapshot-mech
 | -------- | ---- |
 | Contract | `packages/contracts/src/snapshot.v1.ts` |
 | Store | `src/core/sync/snapshotStore.ts` (or `src/core/drift/snapshot.ts`) |
-| Hidden frame | `_FigmintSnapshotStore` on Figmint Output page |
-| pluginData key | `figmint:snapshot:v1` |
+| Hidden frame | `_FigHubSnapshotStore` on FigHub Output page |
+| pluginData key | `fighub:snapshot:v1` |
 | Registry SSOT | `snapshot.registry.components` mirrors `RegistryV1.components` |
 
 **New helpers:**
@@ -111,48 +111,48 @@ Scaffold pipeline (`runScaffold.ts:305`) calls `buildRegistryAuditRows` — swit
 
 Optional future: `sync/snapshot-present` info row if snapshot node missing (warn, not error).
 
-WO-057 gate extension: add `figmint.json` malformed check to preflight — **not** absent file (defaults OK).
+WO-057 gate extension: add `fighub.json` malformed check to preflight — **not** absent file (defaults OK).
 
-### 7. `figmint.json` schema (finalized)
+### 7. `fighub.json` schema (finalized)
 
-**Contract:** `packages/contracts/src/figmintJson.v1.ts`
+**Contract:** `packages/contracts/src/fighubJson.v1.ts`
 
 ```typescript
-export interface FigmintJsonV1 {
+export interface FigHubJsonV1 {
   v: 1;
-  kind: 'figmint-config';
+  kind: 'fighub-config';
   /** Directory or file path to tokens relative to repo root. Default: `design/tokens.json` */
   tokensPath?: string;
   /** Directory containing component-spec JSON files. Default: `components/` */
   specsPath?: string;
   /** Git branch for Fetch/Pull/Push. Default: repository default branch */
   designSystemBranch?: string;
-  /** Base path for Figmint contract exports in PRs. Default: `docs/figmint/` */
+  /** Base path for FigHub contract exports in PRs. Default: `docs/fighub/` */
   exportBasePath?: string;
 }
 ```
 
-**Parser:** `src/io/formats/figmintJson.ts`
+**Parser:** `src/io/formats/fighubJson.ts`
 
 ```typescript
-export const FIGMINT_JSON_DEFAULTS: Required<Pick<FigmintJsonV1, 'tokensPath' | 'specsPath' | 'exportBasePath'>> & { designSystemBranch: string | null } = {
+export const FIGHUB_JSON_DEFAULTS: Required<Pick<FigHubJsonV1, 'tokensPath' | 'specsPath' | 'exportBasePath'>> & { designSystemBranch: string | null } = {
   tokensPath: 'design/tokens.json',
   specsPath: 'components/',
-  exportBasePath: 'docs/figmint/',
+  exportBasePath: 'docs/fighub/',
   designSystemBranch: null, // null → resolve via GitHub API default branch
 };
 
-export type ParseFigmintJsonResult =
-  | { ok: true; value: FigmintJsonV1; resolved: typeof FIGMINT_JSON_DEFAULTS }
+export type ParseFigHubJsonResult =
+  | { ok: true; value: FigHubJsonV1; resolved: typeof FIGHUB_JSON_DEFAULTS }
   | { ok: false; error: string };
 
-export function parseFigmintJson(text: string): ParseFigmintJsonResult;
-export function resolveFigmintConfig(parsed: FigmintJsonV1 | null): ResolvedFigmintConfig;
+export function parseFigHubJson(text: string): ParseFigHubJsonResult;
+export function resolveFigHubConfig(parsed: FigHubJsonV1 | null): ResolvedFigHubConfig;
 ```
 
 **Validation rules:**
 
-- `v` must be `1`; `kind` must be `'figmint-config'` if present
+- `v` must be `1`; `kind` must be `'fighub-config'` if present
 - Extra keys → **warn** (forward compatible), not fail
 - Malformed JSON / wrong `v` → `{ ok: false }` + non-blocking Settings warning banner
 - File 404 on Fetch → use defaults silently
@@ -162,7 +162,7 @@ export function resolveFigmintConfig(parsed: FigmintJsonV1 | null): ResolvedFigm
 ```json
 {
   "v": 1,
-  "kind": "figmint-config",
+  "kind": "fighub-config",
   "tokensPath": "design/tokens.json",
   "specsPath": "components/",
   "designSystemBranch": "main"
@@ -173,7 +173,7 @@ export function resolveFigmintConfig(parsed: FigmintJsonV1 | null): ResolvedFigm
 
 | Action | Designer copy | Behavior |
 | ------ | ------------- | -------- |
-| **Fetch** | "Fetch latest" | GitHub: GET default-branch HEAD SHA for `figmint.json` + `tokensPath` + list `specsPath` dir (shallow metadata only). Updates **last-fetched** timestamp. Does **not** mutate Figma canvas. |
+| **Fetch** | "Fetch latest" | GitHub: GET default-branch HEAD SHA for `fighub.json` + `tokensPath` + list `specsPath` dir (shallow metadata only). Updates **last-fetched** timestamp. Does **not** mutate Figma canvas. |
 | **Pull** | "Pull design system" | Fetch + download tokens JSON + cache in `clientStorage` per repo + optional variable push preview. Updates snapshot **pull** keys for tokens applied. Registry: read specs index from repo file listing (future WO-056 catalog) — Phase 1: no bulk spec download. |
 | **Push** | "Push updates" | Opens PR via relay with staged changes (shallow: single test/doc file or pending export queue). Full drift-resolution push deferred to WO-032. |
 
@@ -181,7 +181,7 @@ export function resolveFigmintConfig(parsed: FigmintJsonV1 | null): ResolvedFigm
 
 ```typescript
 interface StoredRepoSyncState {
-  figmintConfig: ResolvedFigmintConfig | null; // cached from last Fetch
+  fighubConfig: ResolvedFigHubConfig | null; // cached from last Fetch
   lastFetchedAt: string | null;
   lastPulledAt: string | null;
   lastPushedAt: string | null;
@@ -189,7 +189,7 @@ interface StoredRepoSyncState {
 }
 ```
 
-Remove `tokensPath` / `registryPath` from user-editable config — paths come **only** from `figmint.json` resolved defaults.
+Remove `tokensPath` / `registryPath` from user-editable config — paths come **only** from `fighub.json` resolved defaults.
 
 ### 9. Settings UI wireframe (ASCII)
 
@@ -200,7 +200,7 @@ Remove `tokensPath` / `registryPath` from user-editable config — paths come **
 │                                                           │
 │              [ Fetch latest ] [ Pull ] [ Push updates ]     │
 │                                                           │
-│  ⚠ figmint.json could not be parsed — using defaults.     │  ← non-blocking
+│  ⚠ fighub.json could not be parsed — using defaults.     │  ← non-blocking
 └───────────────────────────────────────────────────────────┘
 
 ┌─ Drift (expandable — WO-033 tail / WO-032) ───────────────┐
@@ -220,20 +220,20 @@ Remove `tokensPath` / `registryPath` from user-editable config — paths come **
 
 | Field | Value |
 | ----- | ----- |
-| **Committer** | Authenticated user (OAuth token) — Figmint does not have a bot identity |
-| **PR title** | `figmint: push updates from Figma` (generic Phase 1); drift-specific titles from WO-031 pattern later |
+| **Committer** | Authenticated user (OAuth token) — FigHub does not have a bot identity |
+| **PR title** | `fighub: push updates from Figma` (generic Phase 1); drift-specific titles from WO-031 pattern later |
 | **PR body** | Existing `buildPrBody()` from `src/io/github/prBody.ts` — includes plugin version, Figma file URL, contract kind |
-| **Branch** | `figmint/push-{YYYYMMDD}-{hhmm}` via `buildDefaultHeadBranch` |
+| **Branch** | `fighub/push-{YYYYMMDD}-{hhmm}` via `buildDefaultHeadBranch` |
 | **Files** | Under `exportBasePath` from resolved config |
 
-Sign-off: Figmint is **author in prose**, user is **GitHub commit author**.
+Sign-off: FigHub is **author in prose**, user is **GitHub commit author**.
 
 ### 11. Message contract additions
 
 Extend `src/io/messages/github.ts`:
 
 ```typescript
-// Fetch figmint.json + resolve default branch
+// Fetch fighub.json + resolve default branch
 type GitHubRepoFetchMessage = {
   type: 'github/repo/fetch';
   requestId: string;
@@ -244,9 +244,9 @@ type GitHubRepoFetchResultMessage = {
   type: 'github/repo/fetch-result';
   requestId: string;
   ok: boolean;
-  config?: ResolvedFigmintConfig;
+  config?: ResolvedFigHubConfig;
   lastFetchedAt?: string;
-  warning?: string; // malformed figmint.json
+  warning?: string; // malformed fighub.json
   error?: string;
 };
 
@@ -305,7 +305,7 @@ Remove:
 | `src/io/github/githubUiBridge.ts` | OAuth + contents fetch relay |
 | `src/io/github/createPullRequestFlow.ts` | PR creation via relay |
 | `src/io/sources/github.ts` | `loadFromGitHub(repo, path)` |
-| `src/io/sinks/outputPage.ts` | Figmint Output page |
+| `src/io/sinks/outputPage.ts` | FigHub Output page |
 | `src/core/components/registry.ts` | Upsert/merge logic — **keep**, change persistence target |
 | `src/core/components/registryAuditRows.ts` | Audit rows — **trim** |
 | `src/ui/tabs/Settings.tsx` | 3-field UI — **replace** |
@@ -316,9 +316,9 @@ Remove:
 | Path | Phase |
 | ---- | ----- |
 | `packages/contracts/src/snapshot.v1.ts` | 1 |
-| `packages/contracts/src/figmintJson.v1.ts` | 2 |
+| `packages/contracts/src/fighubJson.v1.ts` | 2 |
 | `src/core/sync/snapshotStore.ts` | 1 |
-| `src/io/formats/figmintJson.ts` | 2 |
+| `src/io/formats/fighubJson.ts` | 2 |
 | `src/io/messages/snapshot.ts` | 1 |
 | `src/ui/components/RepoSyncCard.tsx` | 2 |
 | `src/ui/sync/useRepoSync.ts` | 2 |
@@ -340,7 +340,7 @@ Remove:
 | WO-033 | Badge + on-open detect on repo card |
 | WO-026 | Superseded — delete emission |
 | WO-029–032 | Blocked until WO-058 Phase 1 snapshot API |
-| WO-057 | Preflight gate — extend for malformed figmint.json |
+| WO-057 | Preflight gate — extend for malformed fighub.json |
 | WO-056 | Future catalog may use Fetch metadata |
 
 ---
@@ -351,9 +351,9 @@ Remove:
 | -- | -------- | --------- | -------- |
 | D-058-1 | Delete registry repo file entirely | Designer rejection root cause | Keep optional sync file |
 | D-058-2 | Delete envelope + filekey audit rules | Spurious FAIL on Untitled files | Repurpose against pluginData |
-| D-058-3 | figmint.json optional with defaults | Never block connect | Require figmint.json |
-| D-058-4 | Paths only from figmint.json | Remove Settings path inputs | Keep tokensPath override in Settings |
-| D-058-5 | Push commits as OAuth user | No Figmint bot account | Machine account |
+| D-058-3 | fighub.json optional with defaults | Never block connect | Require fighub.json |
+| D-058-4 | Paths only from fighub.json | Remove Settings path inputs | Keep tokensPath override in Settings |
+| D-058-5 | Push commits as OAuth user | No FigHub bot account | Machine account |
 | D-058-6 | Three build phases | De-risk snapshot before UI | Single big-bang PR |
 | D-058-7 | Pull Phase 1 = tokens only | Scope control | Full spec pull |
 | D-058-8 | Snapshot module under `src/core/sync/` | Separates from drift detect logic | Collapse into drift/ |
@@ -366,8 +366,8 @@ Remove:
 | -------- | --------- | ------------- | ------ |
 | SPK-058-1 | Sandbox: write/read 50KB snapshot JSON on hidden frame | Round-trip + reopen plugin | ☐ pending `/build` |
 | SPK-058-2 | Scaffold Button in Plugin Sandbox after migration | Zero envelope/filekey FAIL rows | ☐ VQA |
-| SPK-058-3 | Fetch with missing figmint.json | Defaults applied; no error banner | ☐ unit test |
-| SPK-058-4 | Fetch with malformed figmint.json | Warning banner; defaults | ☐ unit test |
+| SPK-058-3 | Fetch with missing fighub.json | Defaults applied; no error banner | ☐ unit test |
+| SPK-058-4 | Fetch with malformed fighub.json | Warning banner; defaults | ☐ unit test |
 | SPK-058-5 | Push opens PR on test repo via relay | PR URL returned | ☐ manual OAuth |
 | SPK-058-6 | Components tab without "Load sync registry" | Registry from snapshot on mount | ☐ UI test |
 
@@ -396,9 +396,9 @@ Remove:
 5. Delete `loadRegistryFromRepo.ts` GitHub fetch path
 6. Update unit tests
 
-### Phase 2 — figmint.json + Settings UI (Build Agent: code + UI)
+### Phase 2 — fighub.json + Settings UI (Build Agent: code + UI)
 
-1. Add `figmintJson.v1.ts` + parser + defaults
+1. Add `fighubJson.v1.ts` + parser + defaults
 2. Implement `github/repo/fetch` + `github/repo/pull` handlers in `main.ts`
 3. Replace Settings.tsx with `RepoSyncCard.tsx`
 4. Remove path fields from session/storage/messages
@@ -409,7 +409,7 @@ Remove:
 1. Wire Push button → `createPullRequestFlow` with staged files
 2. Close WO-026 on GitHub
 3. Add drift summary placeholder on repo card (counts stub until WO-029)
-4. Extend WO-057 preflight for malformed figmint.json
+4. Extend WO-057 preflight for malformed fighub.json
 5. Designer VQA on Plugin Sandbox
 
 ---
@@ -418,7 +418,7 @@ Remove:
 
 | ID | Question | Status |
 | -- | -------- | ------ |
-| OQ-058-1 | Final figmint.json fields beyond minimum | **RESOLVED** — see §7 schema |
+| OQ-058-1 | Final fighub.json fields beyond minimum | **RESOLVED** — see §7 schema |
 | OQ-058-2 | Push commit author | **RESOLVED** — OAuth user |
 | OQ-058-3 | Repurpose vs delete registry audit rules | **RESOLVED** — delete envelope + filekey |
 | OQ-058-4 | Keep dev PR smoke test in Settings? | **Default:** remove; Push button replaces |

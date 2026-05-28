@@ -31,7 +31,7 @@ function defaultBaseName(doc: LoadedDocument): string {
 
 function defaultLabel(doc: LoadedDocument): string {
   const generatedAt = readGeneratedAt(doc);
-  return 'figmint/' + doc.kind + '/' + generatedAt;
+  return 'fighub/' + doc.kind + '/' + generatedAt;
 }
 
 function serializePayload(doc: LoadedDocument): { json: string; markdown: string } {

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import foundationsMinimal from '@/core/canvas/__fixtures__/foundations-minimal.v1.json';
 import { publishTypographyStyles } from '@/core/canvas/publishTypographyStyles';
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 describe('publishTypographyStyles', () => {
   beforeEach(() => {

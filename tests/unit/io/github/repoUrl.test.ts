@@ -44,8 +44,8 @@ describe('repoUrl', () => {
 
   it('builds storage keys from normalized repo URL', () => {
     const url = 'https://github.com/acme/widgets';
-    expect(tokenStorageKey(url)).toBe('figmint:github:token:https://github.com/acme/widgets');
-    expect(configStorageKey(url)).toBe('figmint:github:config:https://github.com/acme/widgets');
+    expect(tokenStorageKey(url)).toBe('fighub:github:token:https://github.com/acme/widgets');
+    expect(configStorageKey(url)).toBe('fighub:github:config:https://github.com/acme/widgets');
   });
 
   it('validates repo URLs without throwing', () => {

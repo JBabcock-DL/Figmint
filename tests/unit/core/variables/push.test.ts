@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import foundationsMinimal from '@/core/variables/__fixtures__/foundations-minimal.v1.json';
 import { COLLECTION_ORDER, ensureCollections } from '@/core/variables/collections';

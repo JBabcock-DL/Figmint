@@ -23,9 +23,9 @@ WO-025 implements **FR-SCAF-5**: after the forward scaffold pipeline produces a 
 
 ## Key Findings
 
-### 1. Naming collision — legacy "usage" ≠ Figmint FR-SCAF-5
+### 1. Naming collision — legacy "usage" ≠ FigHub FR-SCAF-5
 
-| Term | Legacy DesignOps | Figmint WO-025 |
+| Term | Legacy DesignOps | FigHub WO-025 |
 | ---- | ---------------- | -------------- |
 | `cc-usage` bundle step | Fifth MCP call; fills `doc/component/{name}/usage` Do/Don't cards | **Not ported** in v1 |
 | `_usage-runner.fragment.js` | Doc-only runner tail: find `docRoot` → `buildUsageNotes()` | **Misleading lift pointer** — no instance gallery |
@@ -233,7 +233,7 @@ All `component-*.mcp.js` bundles share the same header shape (example `component
 | `ComponentSetNode.createInstance()` | Default instance, then override props | [ComponentSetNode](https://developers.figma.com/docs/plugins/api/componentsetnode/) |
 | `InstanceNode.setProperties()` | Apply curated VARIANT combo | [InstanceNode.setProperties](https://developers.figma.com/docs/plugins/api/instancenode/#setproperties) |
 | `figma.loadFontAsync()` | Before label `characters` | Required before text mutation |
-| `node.setPluginData()` | Optional `figmint:usageFrame:v1:…` idempotency | 100 kB/key limit |
+| `node.setPluginData()` | Optional `fighub:usageFrame:v1:…` idempotency | 100 kB/key limit |
 
 **ES2017:** no `?.`, `??`, `replaceAll` in `usageFrame.ts` (main thread).
 

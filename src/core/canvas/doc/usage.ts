@@ -1,4 +1,4 @@
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { createHugFrame } from '@/core/canvas/helpers/autoLayout';
 import { DOC_FRAME_WIDTH } from '@/core/canvas/doc/constants';

@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { findFigmaVariable, isIosDotSegmentFormat } from './_helpers';
 import type { RuleInput } from '../types';

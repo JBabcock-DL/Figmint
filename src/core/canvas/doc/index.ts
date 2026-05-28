@@ -1,4 +1,4 @@
-import type { AuditRuleResult, ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult, ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { reassertHug } from '@/core/canvas/helpers/autoLayout';
 import { pluginLog } from '@/core/pluginLog';
@@ -183,9 +183,9 @@ export async function buildDocPipeline(
 
   const pluginDataKey =
     ctx.scaffoldId !== undefined
-      ? 'figmint:docPipeline:v1:' + ctx.scaffoldId
-      : 'figmint:docPipeline:v1:' + spec.name;
-  usage.setPluginData('figmint.usageFrame', pluginDataKey);
+      ? 'fighub:docPipeline:v1:' + ctx.scaffoldId
+      : 'fighub:docPipeline:v1:' + spec.name;
+  usage.setPluginData('fighub.usageFrame', pluginDataKey);
 
   pluginLog('[doc-pipeline] build done', {
     sections: docRoot.children.length,

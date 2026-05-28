@@ -91,7 +91,7 @@ function applyLoadedDocument(doc: LoadedDocument) {
 
 **Validation gate before Scaffold CTA:**
 
-- Run `@detroitlabs/figmint-contracts` JSON Schema validate (`componentSpec.v1.schema.json`) on draft in UI (async import schema or precompiled AJV in Vitest only — `/plan` decides bundle cost).
+- Run `@detroitlabs/fighub-contracts` JSON Schema validate (`componentSpec.v1.schema.json`) on draft in UI (async import schema or precompiled AJV in Vitest only — `/plan` decides bundle cost).
 - Block scaffold if `bindings[]` empty when `confidence.bindings !== 'high'` is optional warn, not hard block (PRD preview culture).
 
 ### 3. Registry pick path (UC-2) — GitHub read + key selection + spec resolution
@@ -107,7 +107,7 @@ function applyLoadedDocument(doc: LoadedDocument) {
 
 **Gap:** Settings stores `tokensPath` only (`StoredGitHubConfig` in `src/io/github/storage.ts`) — **no `registryPath` yet**.
 
-**Locked registry path default:** `.figmint-registry.json` at repo root (matches WO-020 `defaultPaths.ts` basename `.figmint-registry` → `.figmint-registry.json`).
+**Locked registry path default:** `.fighub-registry.json` at repo root (matches WO-020 `defaultPaths.ts` basename `.fighub-registry` → `.fighub-registry.json`).
 
 **Locked UC-2 flow:**
 
@@ -176,7 +176,7 @@ sequenceDiagram
 | 4 | WO-025 | `buildUsageFrame(componentSet, spec)` → `FrameNode` | FR-SCAF-5 |
 | 5 | WO-026 | `mergeRegistryEntry(spec, scaffoldResult, existingRegistry)` → `RegistryV1` | FR-SCAF-6 |
 
-**Target page (locked):** Find or create page named `Components` (or `Figmint / Components`) — mirror Bootstrap style-guide page discovery in `ensureStyleGuideScaffold.ts` pattern; idempotent `figma.root.findOne` by name.
+**Target page (locked):** Find or create page named `Components` (or `FigHub / Components`) — mirror Bootstrap style-guide page discovery in `ensureStyleGuideScaffold.ts` pattern; idempotent `figma.root.findOne` by name.
 
 **Do not** call export sinks inside main-thread loop — UI opens ExportSheet **after** `scaffold/result` with staged `RegistryV1` (WO-026 returns document; WO-020 sheet handles sinks).
 
@@ -221,7 +221,7 @@ On any step `error`, abort pipeline, post `scaffold/error`, preserve partial can
 | Module | Fact |
 | ------ | ---- |
 | `src/ui/components/ExportSheet.tsx` | Accepts `ContractDocument`; `registry` kind → title "Export registry" |
-| `src/ui/export/defaultPaths.ts` | `registry` → basename `.figmint-registry` |
+| `src/ui/export/defaultPaths.ts` | `registry` → basename `.fighub-registry` |
 | `src/ui/export/runExport.ts` | GitHub PR requires connected OAuth |
 | WO-026 ticket | Merge produces updated `RegistryV1`; output via export sheet |
 
@@ -229,7 +229,7 @@ On any step `error`, abort pipeline, post `scaffold/error`, preserve partial can
 
 1. `scaffold/result.ok === true` → set `showRegistryExport = true`
 2. Render `<ExportSheet document={{ kind: 'registry', payload: result.registry }} defaultSinks={...} />` inline below progress (or modal overlay — `/plan` picks; inline matches Export tab sandbox)
-3. Pre-fill export path `.figmint-registry.json` (editable)
+3. Pre-fill export path `.fighub-registry.json` (editable)
 4. Default sinks: `['download', 'github-pr']` when `github.connected`, else `['download']`
 
 **FR-SCAF-6 trace:** Designer confirms export (never silent PR) — sheet is the confirmation gate.
@@ -248,7 +248,7 @@ On any step `error`, abort pipeline, post `scaffold/error`, preserve partial can
 
 ### 9. Figma VQA — Components tab mock vs Plugin Sandbox execution
 
-**Evidence:** Ticket design reference: "Components tab UI mock lives in the Figmint design file" — **no `file_key` / `node_id` in repo today**.
+**Evidence:** Ticket design reference: "Components tab UI mock lives in the FigHub design file" — **no `file_key` / `node_id` in repo today**.
 
 **Locked VQA strategy for `/plan` + `/vqa`:**
 
@@ -256,7 +256,7 @@ On any step `error`, abort pipeline, post `scaffold/error`, preserve partial can
 | ----- | ----- |
 | `file_key` | `cVdPraIafWFBRZnzMPhtrW` (Plugin Sandbox — memory.md locked) |
 | `node_id` | TBD during `/plan` when mock frame is identified in file, OR `**N/A — compare implemented plugin panel only**` until design file linked |
-| Frame / scope | Figmint plugin window — **Components** tab (not Bootstrap) |
+| Frame / scope | FigHub plugin window — **Components** tab (not Bootstrap) |
 | Precondition | Run Bootstrap with `bootstrap-complete` fixture first so variables exist for bindings |
 
 **Research note for ticket.md:** VQA compares **plugin panel layout** (tab nav, entry sections, preview, Scaffold CTA, progress list, export sheet) — not canvas ComponentSet geometry (that is WO-022..025 subsystem VQA). Split assertions: rows 1–8 panel chrome; canvas spot-check optional row 11 "ComponentSet exists on Components page".
@@ -311,7 +311,6 @@ On any step `error`, abort pipeline, post `scaffold/error`, preserve partial can
 | WO-026 | `mergeRegistryEntry()` → `RegistryV1` | **Consumes** — step 5; **Produces** export payload |
 | WO-010 | `AuditReportV1`, `scope: 'component'` | **Consumes** — display in tab |
 | WO-044 | Import tab UI | **Blocks on** WO-027 tab shell existing |
-| WO-051 | Sunset DesignOps | **Blocks on** WO-027 GA |
 
 ---
 
@@ -323,7 +322,7 @@ On any step `error`, abort pipeline, post `scaffold/error`, preserve partial can
 | D2 | Clone Bootstrap source widgets into Components tab | DRY via shared props; avoids coupling Bootstrap token state | Duplicate paste logic inline |
 | D3 | `AppTab` includes `'components'` between Bootstrap and Export | PRD §7.3 tab order; Phase 2 feature visible | Hide behind feature flag (unnecessary — flags all true) |
 | D4 | Spec draft editable as JSON for matrix/props/bindings | Fastest path to GA; satisfies ticket #3 | Full form builder per axis (over-engineered for v1) |
-| D5 | Registry path default `.figmint-registry.json` | WO-020 basename + PRD §8.6 | Only under `design/` subfolder (deferred to config) |
+| D5 | Registry path default `.fighub-registry.json` | WO-020 basename + PRD §8.6 | Only under `design/` subfolder (deferred to config) |
 | D6 | Auto-open ExportSheet on success; no silent PR | FR-SCAF-6 + §11.4 preview | Auto-open PR without confirmation |
 | D7 | Reject non-`component-spec`/`registry` ingest in Components tab | Clear designer feedback | Silently ignore like Bootstrap |
 | D8 | Pass `RegistryV1` into scaffold for composed archetypes | WO-022 research §10 | Require manual instance setup |
@@ -337,7 +336,7 @@ On any step `error`, abort pipeline, post `scaffold/error`, preserve partial can
 | -------- | --------- | ------------- | ------ |
 | SPK-027-1 | Sandbox: Bootstrap complete → Components tab → registry pick Button (or canonical fixture) → Scaffold → measure `totalDurationMs` | < 5000 ms p50 over 3 runs | ☐ deferred — requires WO-022..026 built; run at `/vqa` |
 | SPK-027-2 | Desktop: paste canonical `component-spec.v1.json` in Components textarea → preview shows 12 variants | Count matches matrix | ☐ deferred — UI unit test acceptable for `/plan` |
-| SPK-027-3 | GitHub connected: scaffold success → ExportSheet → download `.figmint-registry.json` | Valid `RegistryV1` schema | ☐ deferred — depends WO-026 |
+| SPK-027-3 | GitHub connected: scaffold success → ExportSheet → download `.fighub-registry.json` | Valid `RegistryV1` schema | ☐ deferred — depends WO-026 |
 
 **Research-complete gate:** All spikes deferred to build/VQA with explicit owners — no architectural unknowns remain.
 
@@ -362,7 +361,7 @@ On any step `error`, abort pipeline, post `scaffold/error`, preserve partial can
 2. **Add `src/io/messages/scaffold.ts`** — full contract in §6 below; wire `main.ts` dispatch before UI.
 3. **Implement `runScaffold.ts`** — thin sequencer calling dependency functions; post progress after each boundary.
 4. **Build `Components.tsx`** — sections: Entry (registry | paste), Preview, Actions (Scaffold), Progress, Audit, Export sheet.
-5. **Extend `StoredGitHubConfig`** with optional `registryPath?: string` (default `.figmint-registry.json`); Settings field optional in WO-027 or follow-up.
+5. **Extend `StoredGitHubConfig`** with optional `registryPath?: string` (default `.fighub-registry.json`); Settings field optional in WO-027 or follow-up.
 6. **Add canonical fixture** `tests/fixtures/component-spec-button-canonical.json` for Vitest + VQA.
 7. **Vitest:** UI reducer tests + message guard tests; integration mock `runScaffold` via message listener.
 8. **Figma VQA checklist:** Pre-fill sandbox `file_key`; add row 11 canvas spot-check; note mock frame TBD.

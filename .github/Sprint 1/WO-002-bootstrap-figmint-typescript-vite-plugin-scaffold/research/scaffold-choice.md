@@ -1,12 +1,12 @@
 # Scaffold choice — raw Vite vs create-figma-plugin
 
-**Ticket:** [WO-002](../ticket.md) — Bootstrap Figmint TypeScript + Vite plugin scaffold
+**Ticket:** [WO-002](../ticket.md) — Bootstrap FigHub TypeScript + Vite plugin scaffold
 **Research date:** 2026-05-27
 **Scope:** PRD §6.1, §7.3, §11.5, §13 — pick the toolchain for the plugin source tree.
 
 ## Summary
 
-Two Figma-plugin scaffolders dominate as of May 2026: Yuanqing Liu's [`create-figma-plugin`](https://yuanqing.github.io/create-figma-plugin/) (v4.0.3, esbuild + Preact, opinionated end-to-end) and raw Vite with `@figma/plugin-typings` + `vite-plugin-singlefile` (the de-facto pattern used by every community React/Vue/Svelte boilerplate). For Figmint's specific constraints — dual `manifest.community.json` / `manifest.org.json` builds (PRD §13.2), a fixed `src/{core,ops,io,contracts,ui,config}` layout (PRD §7.3), a published workspace package `@detroitlabs/figmint-contracts` (PRD §7.4), React UI shell (PRD §7.3), and an eventual external CLI shell reading the same deterministic core (PRD §7.1) — the opinionated scaffolder fights us on every one of those requirements while the raw Vite path absorbs them with ~80 lines of additional `vite.config.ts` + script glue.
+Two Figma-plugin scaffolders dominate as of May 2026: Yuanqing Liu's [`create-figma-plugin`](https://yuanqing.github.io/create-figma-plugin/) (v4.0.3, esbuild + Preact, opinionated end-to-end) and raw Vite with `@figma/plugin-typings` + `vite-plugin-singlefile` (the de-facto pattern used by every community React/Vue/Svelte boilerplate). For FigHub's specific constraints — dual `manifest.community.json` / `manifest.org.json` builds (PRD §13.2), a fixed `src/{core,ops,io,contracts,ui,config}` layout (PRD §7.3), a published workspace package `@detroitlabs/fighub-contracts` (PRD §7.4), React UI shell (PRD §7.3), and an eventual external CLI shell reading the same deterministic core (PRD §7.1) — the opinionated scaffolder fights us on every one of those requirements while the raw Vite path absorbs them with ~80 lines of additional `vite.config.ts` + script glue.
 
 **Recommendation: raw Vite + `@figma/plugin-typings` + `vite-plugin-singlefile`, React 19, TypeScript 6.0.3, Node ≥ 20.**
 
@@ -39,7 +39,7 @@ Two Figma-plugin scaffolders dominate as of May 2026: Yuanqing Liu's [`create-fi
 - **Build output:** Produces loadable Figma plugin bundles (`manifest.json` + `build/main.js` + `build/ui.html`). Suitable for both Community and Org channels.
 - **Bundle size:** esbuild-powered, sub-second builds, very small Preact UI bundles. Marginal win vs Vite + React 19 (Preact is ~3 KB vs React 19's ~45 KB), but Figma plugins don't ship bundles over the network so cold-start cost is minor.
 - **Lock-in:** Medium. Tearing out `build-figma-plugin` post-Sprint 4 means writing a custom Vite/esbuild config and porting any `@create-figma-plugin/ui` and `@create-figma-plugin/utilities` usage. Workspace-package wiring and an external CLI shell (PRD §7.1) both require leaving the scaffolder's happy path eventually.
-- **Drawbacks for Figmint specifically:**
+- **Drawbacks for FigHub specifically:**
   - Fights dual-manifest (the single biggest architectural reason this scaffold exists).
   - Preact-by-default conflicts with PRD §7.3's React `.tsx` shell directories.
   - `@create-figma-plugin/ui` is Figma UI3 — useful, but PRD doesn't mention any UI3 dependency, and lock-in to a Preact component library is worse than rolling our own ~10 controls.
@@ -47,7 +47,7 @@ Two Figma-plugin scaffolders dominate as of May 2026: Yuanqing Liu's [`create-fi
 
 ### Other options considered
 
-- **praizjosh/create-figma-react-plugin** — Community wrapper that scaffolds Vite + React + TS specifically, with optional Tailwind / shadcn. Closer match to Figmint's stack than the Yuanqing scaffolder, but it's a project-bootstrapper (one-shot generator), not a maintained framework. Its output is the same shape as the raw Vite path below, so adopting it would mean accepting one one-shot scaffold and then hand-tuning everything afterwards. No reason to use it over raw Vite when we already know the target layout from PRD §7.3.
+- **praizjosh/create-figma-react-plugin** — Community wrapper that scaffolds Vite + React + TS specifically, with optional Tailwind / shadcn. Closer match to FigHub's stack than the Yuanqing scaffolder, but it's a project-bootstrapper (one-shot generator), not a maintained framework. Its output is the same shape as the raw Vite path below, so adopting it would mean accepting one one-shot scaffold and then hand-tuning everything afterwards. No reason to use it over raw Vite when we already know the target layout from PRD §7.3.
 - **CoconutGoodie/figma-plugin-react-vite** — Community boilerplate (template repo); good reference for the dual-thread Vite split and the `vite-plugin-singlefile` configuration. Use it as a reference, not a dependency. Cited below.
 - **gnchrv/figma-plugin-boilerplate** — Similar reference; demonstrates the two-tsconfig pattern (one per logical side) which is a useful refinement when the main thread and UI thread need different DOM lib targets.
 - **Webpack + ts-loader** (official Figma docs example) — Works but Vite is significantly faster (esbuild transpile vs ts-loader) and has better DX. No reason to choose Webpack in 2026.
@@ -72,7 +72,7 @@ Two Figma-plugin scaffolders dominate as of May 2026: Yuanqing Liu's [`create-fi
 
 ## Recommendation
 
-**Use raw Vite 8.0.14 + `@figma/plugin-typings` 1.127.0 + `vite-plugin-singlefile` 2.3.3, with React 19.2.6 and TypeScript 6.0.3 on Node ≥ 20.** This is the option that costs ~80 lines more boilerplate upfront and zero compromises afterwards. Every PRD constraint that pushes against the toolchain — dual `manifest.community.json` / `manifest.org.json` (PRD §13.2), the fixed `src/{core,ops,io,contracts,ui,config}` layout (PRD §7.3), the published `@detroitlabs/figmint-contracts` workspace package (PRD §7.4), real React 19 (not Preact), and an eventual CLI shell sharing the same deterministic core (PRD §7.1) — is a feature of raw Vite and a workaround in `create-figma-plugin`. The legacy `DesignOps-plugin/package.json` is informational only (esbuild 0.24 + terser); none of its dev deps carry forward.
+**Use raw Vite 8.0.14 + `@figma/plugin-typings` 1.127.0 + `vite-plugin-singlefile` 2.3.3, with React 19.2.6 and TypeScript 6.0.3 on Node ≥ 20.** This is the option that costs ~80 lines more boilerplate upfront and zero compromises afterwards. Every PRD constraint that pushes against the toolchain — dual `manifest.community.json` / `manifest.org.json` (PRD §13.2), the fixed `src/{core,ops,io,contracts,ui,config}` layout (PRD §7.3), the published `@detroitlabs/fighub-contracts` workspace package (PRD §7.4), real React 19 (not Preact), and an eventual CLI shell sharing the same deterministic core (PRD §7.1) — is a feature of raw Vite and a workaround in `create-figma-plugin`. The legacy `DesignOps-plugin/package.json` is informational only (esbuild 0.24 + terser); none of its dev deps carry forward.
 
 The headline cost of `create-figma-plugin` is that its core selling point — generating `manifest.json` from `package.json` — is exactly the surface that PRD §13.2 needs to vary by build target. Twisting the scaffolder to emit two manifests would burn more time than just writing the 30-line Node script that copies `manifest.community.json` or `manifest.org.json` into `dist/` based on an environment variable. Add the React-vs-Preact mismatch, the lock-in risk against a future CLI shell, and the fact that we're not gaining a UI component library we plan to use (PRD doesn't depend on UI3), and the scaffolder's wins (one fewer config file, Figma-themed components, opinionated dev script) don't pay for the architectural friction.
 

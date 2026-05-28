@@ -6,7 +6,7 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt4BCg
 
 ## Goal
 
-Stand up `@detroitlabs/figmint-contracts` as a workspace package inside the figmint monorepo, with versioned TypeScript types for all 5 contract documents defined in PRD §8 (`ops-program`, `tokens`, `component-spec`, `drift-report`, `handoff-context`, `registry`). Other Sprint 1+ tickets import from this package — it's the cross-runtime contract surface (PRD §7.4).
+Stand up `@detroitlabs/fighub-contracts` as a workspace package inside the fighub monorepo, with versioned TypeScript types for all 5 contract documents defined in PRD §8 (`ops-program`, `tokens`, `component-spec`, `drift-report`, `handoff-context`, `registry`). Other Sprint 1+ tickets import from this package — it's the cross-runtime contract surface (PRD §7.4).
 
 PRD anchors: `Docs/PRD.md` §7.4 (Cross-repo contract package), §8.1–§8.6 (the 5 contracts).
 
@@ -14,17 +14,17 @@ PRD anchors: `Docs/PRD.md` §7.4 (Cross-repo contract package), §8.1–§8.6 (t
 
 ## Problem story
 
-As a Figmint developer building any feature that emits or consumes a contract document (token push, drift report, handoff capture, component scaffold, ops program), I want a single typed source of truth I can import so no two features can ever disagree on schema.
+As a FigHub developer building any feature that emits or consumes a contract document (token push, drift report, handoff capture, component scaffold, ops program), I want a single typed source of truth I can import so no two features can ever disagree on schema.
 
 ## Hypothesis (optional)
 
-A shared contracts package — published from figmint and consumed by both the plugin and any external CLI/CI tooling — eliminates the largest source of drift bugs we'd otherwise see when the same documents flow through multiple runtimes.
+A shared contracts package — published from fighub and consumed by both the plugin and any external CLI/CI tooling — eliminates the largest source of drift bugs we'd otherwise see when the same documents flow through multiple runtimes.
 
 ---
 
 ## User stories
 
-- [ ] As a Figmint plugin developer, I can `import { OpsProgramV1 } from '@detroitlabs/figmint-contracts'` and TS resolves.
+- [ ] As a FigHub plugin developer, I can `import { OpsProgramV1 } from '@detroitlabs/fighub-contracts'` and TS resolves.
 - [ ] As an external consumer (CLI / CI / agent), I can read a JSON Schema artifact and validate a document without TypeScript.
 - [ ] As a maintainer, I can bump a contract's `v1` → `v2` by adding `v2` alongside `v1` (versions coexist; never breaking).
 
@@ -38,7 +38,7 @@ A shared contracts package — published from figmint and consumed by both the p
 
 ### Functional
 
-1. New workspace package `packages/contracts/` with `package.json` name `@detroitlabs/figmint-contracts`.
+1. New workspace package `packages/contracts/` with `package.json` name `@detroitlabs/fighub-contracts`.
 2. One TS file per contract (PRD §7.3 layout):
    - `src/opsProgram.v1.ts`
    - `src/tokens.v1.ts` (must define the W3C DTCG shape AND the legacy `DesignOps-plugin` shape as discriminated input adapters, plus the canonical internal `TokensV1` shape — see CTX-002 for the canonical decision)
@@ -70,7 +70,7 @@ A shared contracts package — published from figmint and consumed by both the p
 
 ## Acceptance criteria _(definition of done)_
 
-- [ ] WO-002 plugin can `import { OpsProgramV1, TokensV1, ComponentSpecV1, DriftReportV1, HandoffContextV1, RegistryV1 } from '@detroitlabs/figmint-contracts'` and TS resolves with strict mode.
+- [ ] WO-002 plugin can `import { OpsProgramV1, TokensV1, ComponentSpecV1, DriftReportV1, HandoffContextV1, RegistryV1 } from '@detroitlabs/fighub-contracts'` and TS resolves with strict mode.
 - [ ] `npm run build` in `packages/contracts/` emits both `.d.ts` and `.schema.json` files for each contract under `packages/contracts/dist/`.
 - [ ] Each contract type has every field shown in PRD §8 examples (verified by spot-check).
 - [ ] `tokens.v1.ts` exports `TokensV1` (canonical internal) PLUS `TokensV1WC3DTCG` and `TokensV1Legacy` input adapter shapes.

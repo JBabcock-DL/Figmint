@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { applyBindings } from '@/core/components/scaffold/applyBindings';
 import type { VariablePathMap } from '@/core/canvas/lib/variables';

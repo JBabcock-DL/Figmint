@@ -1,4 +1,4 @@
-import type { DriftReportV1 } from '@detroitlabs/figmint-contracts';
+import type { DriftReportV1 } from '@detroitlabs/fighub-contracts';
 
 import driftPayload from '../../../tests/fixtures/ui/export/drift-report.json';
 

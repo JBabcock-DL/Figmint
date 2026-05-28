@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { resolveTokens } from '../../variables/resolveTokens';
 import type { RuleInput } from '../types';

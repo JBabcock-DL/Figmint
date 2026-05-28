@@ -1,4 +1,4 @@
-import type { AuditReportSummary, AuditRuleResult, TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditReportSummary, AuditRuleResult, TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { scanCodeSyntaxCoverage, scanModeCoverage } from './rules/_helpers';
 import type { FigmaCollectionSnapshot, PushResult } from './types';

@@ -122,7 +122,7 @@ function buildGithubPRPayload(
     const ownerRepo = parseOwnerRepo(repoUrl);
     const contractKind = doc.kind;
     const headBranch = buildDefaultHeadBranch(contractKind, new Date());
-    const commitMessage = 'figmint: export ' + contractKind;
+    const commitMessage = 'fighub: export ' + contractKind;
     const prFiles: Array<{ path: string; content: string }> = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];

@@ -14,7 +14,7 @@ PRD anchors: `Docs/PRD.md` §11.5 (Compatibility / Node 20+ / TS strict).
 
 ## Problem story
 
-As a Figmint developer working on parallel feature branches, I want PRs to fail before merge if they don't build, lint, or typecheck, so we never regress the foundation while Sprint 2+ work lands in parallel.
+As a FigHub developer working on parallel feature branches, I want PRs to fail before merge if they don't build, lint, or typecheck, so we never regress the foundation while Sprint 2+ work lands in parallel.
 
 ## Hypothesis (optional)
 
@@ -61,7 +61,7 @@ A lightweight ESLint + Prettier + `tsc --noEmit` + dual `npm run build` workflow
 ### Technical / architectural
 
 - **Lift reference (steal patterns):**
-  - `DesignOps-plugin/package.json` colon-namespaced script convention (e.g. `build:docs:check`, `qa:assembled-size`) — adopt the colon style for Figmint scripts where QA / verify variants emerge in Sprint 2+.
+  - `DesignOps-plugin/package.json` colon-namespaced script convention (e.g. `build:docs:check`, `qa:assembled-size`) — adopt the colon style for FigHub scripts where QA / verify variants emerge in Sprint 2+.
   - ~~`DesignOps-plugin` existing ESLint/Prettier rules~~ — **none exist in the legacy repo** (confirmed by research 2026-05-27). Toolchain is designed fresh on 2026-current versions.
 - Workflow concurrency: cancel in-progress runs on the same branch when a new push lands (pattern locked in research doc).
 - Cache `~/.npm` between runs for faster CI — accomplished by setting `packageManager` in `package.json` so `setup-node@v6` auto-caches (no explicit `actions/cache@v4` step needed).

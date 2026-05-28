@@ -6,7 +6,7 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt4AWc
 
 ## Goal
 
-Bring up the Figmint plugin source tree so the repo can build a valid Figma plugin bundle from TypeScript. This is the foundation every other Sprint 1 ticket depends on.
+Bring up the FigHub plugin source tree so the repo can build a valid Figma plugin bundle from TypeScript. This is the foundation every other Sprint 1 ticket depends on.
 
 PRD anchors: `Docs/PRD.md` §7.3 (Repo layout), §13.2 (Feature-gating mechanism).
 
@@ -14,7 +14,7 @@ PRD anchors: `Docs/PRD.md` §7.3 (Repo layout), §13.2 (Feature-gating mechanism
 
 ## Problem story
 
-As a Figmint developer, I want a working TypeScript + Vite + `@figma/plugin-typings` scaffold so I can start porting deterministic logic from `DesignOps-plugin` without first reinventing build tooling.
+As a FigHub developer, I want a working TypeScript + Vite + `@figma/plugin-typings` scaffold so I can start porting deterministic logic from `DesignOps-plugin` without first reinventing build tooling.
 
 ## Hypothesis (optional)
 
@@ -30,7 +30,7 @@ A standard Vite + `@figma/plugin-typings` setup with dual manifests (community +
 
 ## Design reference _(when UI work applies)_
 
-**N/A — no Figma artifact (foundation / build-tooling ticket).** Only a minimal "Figmint" placeholder window is in scope here.
+**N/A — no Figma artifact (foundation / build-tooling ticket).** Only a minimal "FigHub" placeholder window is in scope here.
 
 ---
 
@@ -43,12 +43,12 @@ A standard Vite + `@figma/plugin-typings` setup with dual manifests (community +
 3. Two-thread Vite build: one `vite.config.ts` (or two configs sharing a base) compiles `src/main.ts` → `dist/code.js` (Plugin API sandbox thread, Vite library mode) and `src/ui/index.tsx` → `dist/ui.html` (UI iframe thread, `vite-plugin-singlefile` inlines JS + CSS into one HTML file per Figma's single-file rule).
 4. `manifest.community.json` and `manifest.org.json` exist at repo root; a small Node build script (`scripts/build-community.mjs` and `scripts/build-org.mjs` per PRD §7.3) copies the right one into `dist/manifest.json` based on `BUILD_TARGET`. They differ only by manifest fields the feature-gate distinguishes (per PRD §13.2).
 5. `src/` directory tree matches PRD §7.3: `core/`, `ops/`, `io/`, `contracts/` (placeholder — actual contracts package lives in `packages/contracts/` per WO-003), `ui/`, `config/`.
-6. `src/ui/App.tsx` renders a minimal "Figmint" placeholder window (React 19 component).
+6. `src/ui/App.tsx` renders a minimal "FigHub" placeholder window (React 19 component).
 7. `src/config/flags.community.ts` and `src/config/flags.org.ts` exist with the same exported `flags` const shape and differing values; Vite resolves `@/config/flags` to the right file based on `BUILD_TARGET`.
 
 ### Visual / UX
 
-- Plugin window: 320 × 240 minimum, centered text "Figmint" + version string from `package.json`.
+- Plugin window: 320 × 240 minimum, centered text "FigHub" + version string from `package.json`.
 
 ### Technical / architectural
 
@@ -64,7 +64,7 @@ A standard Vite + `@figma/plugin-typings` setup with dual manifests (community +
 - **Toolchain decision:** raw Vite (NOT `create-figma-plugin`). Rationale: native dual-manifest support, no Preact/React compat shim, full control over PRD §7.3 layout, no lock-in for the eventual CLI shell (PRD §7.1), and the workspace package (`packages/contracts/` per WO-003) is wired via plain npm workspaces.
 - **Lift reference (do NOT rebuild from scratch):**
   - `DesignOps-plugin/package.json` — informational only; that repo is a Cursor / Claude skill pack (esbuild + terser), not a Figma plugin. Do not copy its dev deps.
-  - `DesignOps-plugin/CLAUDE.md`, `memory.md` — agent rules pattern (Figmint already has its own — cross-reference, do not copy)
+  - `DesignOps-plugin/CLAUDE.md`, `memory.md` — agent rules pattern (FigHub already has its own — cross-reference, do not copy)
 - **Do NOT port yet:** `canvas-templates/`, `scripts/`, or any skill source — those lift in WO-005 / Sprint 2+ / Sprint 3+ as scoped.
 
 ---

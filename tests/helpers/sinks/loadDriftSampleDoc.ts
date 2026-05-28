@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { DriftReportV1 } from '@detroitlabs/figmint-contracts';
+import type { DriftReportV1 } from '@detroitlabs/fighub-contracts';
 
 import type { LoadedDocument } from '@/io/sources/types';
 

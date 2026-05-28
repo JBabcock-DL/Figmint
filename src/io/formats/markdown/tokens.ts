@@ -1,4 +1,4 @@
-import type { Token, TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { Token, TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { renderGfmTable } from './shared';
 

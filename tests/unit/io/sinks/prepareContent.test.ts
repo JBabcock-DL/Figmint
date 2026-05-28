@@ -10,7 +10,7 @@ describe('prepareSinkContent', () => {
     const prepared = prepareSinkContent(doc, { format: 'json' });
 
     expect(prepared.baseName).toBe('drift-report-2026-05-27');
-    expect(prepared.label).toBe('figmint/drift-report/2026-05-27T12:00:00.000Z');
+    expect(prepared.label).toBe('fighub/drift-report/2026-05-27T12:00:00.000Z');
   });
 
   it('respects explicit baseName and label overrides', () => {
@@ -18,11 +18,11 @@ describe('prepareSinkContent', () => {
     const prepared = prepareSinkContent(doc, {
       format: 'md',
       baseName: 'custom-export',
-      label: 'figmint/custom/label',
+      label: 'fighub/custom/label',
     });
 
     expect(prepared.baseName).toBe('custom-export');
-    expect(prepared.label).toBe('figmint/custom/label');
+    expect(prepared.label).toBe('fighub/custom/label');
   });
 
   it('serializes drift-report via WO-019 format()', () => {

@@ -2,8 +2,8 @@
 
 ## Meta
 - generatedAt: 2026-05-27T12:00:00.000Z
-- figmaFileKey: FigmintDemo
-- repoUrl: https://github.com/detroitlabs/figmint
+- figmaFileKey: FigHubDemo
+- repoUrl: https://github.com/detroitlabs/fighub
 
 ## Summary
 | Direction | Count |

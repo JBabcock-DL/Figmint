@@ -1,7 +1,7 @@
 {
   "v": 1,
   "kind": "registry",
-  "fileKey": "FigmintDemo",
+  "fileKey": "FigHubDemo",
   "components": {
     "Button": {
       "nodeId": "1:10",

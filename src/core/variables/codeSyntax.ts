@@ -1,6 +1,6 @@
 /// <reference types="@figma/plugin-typings" />
 
-import type { CanonicalToken, CodeSyntaxPlatform } from '@detroitlabs/figmint-contracts';
+import type { CanonicalToken, CodeSyntaxPlatform } from '@detroitlabs/fighub-contracts';
 
 import { pluginLog } from '../pluginLog';
 import { deriveCodeSyntax } from './deriveCodeSyntax';

@@ -1,4 +1,4 @@
-import type { RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { RegistryV1 } from '@detroitlabs/fighub-contracts';
 import { describe, expect, it, vi } from 'vitest';
 
 import * as flagsModule from '@/config/flags';
@@ -48,7 +48,7 @@ describe('registryExportSandbox', () => {
     const props = prepareRegistryExport(registryPayload);
     const state = createRegistryExportSheetInitialState(registryPayload);
     expect(state.formats).toEqual({ json: true, md: false });
-    expect(state.path).toBe('docs/figmint/registry-export');
+    expect(state.path).toBe('docs/fighub/registry-export');
     expect(props.document.payload).toEqual(registryPayload);
   });
 });

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { ComponentSpecV1, RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1, RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 import { assertNoOnePxMaster } from '@/core/canvas/helpers/autoLayout';
 import { buildComposedVariant } from '@/core/components/scaffold/archetypes/composed';

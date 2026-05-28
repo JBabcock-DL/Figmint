@@ -33,9 +33,9 @@ Eight decisions unblock WO-013 `/plan`:
 
 ## Key Findings
 
-### 1. File map — legacy → Figmint
+### 1. File map — legacy → FigHub
 
-| Legacy                                | Lines | Figmint target                           | Notes                          |
+| Legacy                                | Lines | FigHub target                           | Notes                          |
 | ------------------------------------- | ----- | ---------------------------------------- | ------------------------------ |
 | `layout.js`                           | ~210  | `src/core/canvas/layout.ts`              | `buildLayoutPage(ctx)` export  |
 | `effects.js`                          | ~293  | `src/core/canvas/effects.ts`             | `buildEffectsPage(ctx)` export |
@@ -191,7 +191,7 @@ export function resolveEffectsRows(
 - Layout aliases: read `valuesByMode.Default` alias target name.
 - Effects blur aliases: identical Light/Dark; color: resolve per mode.
 
-**Page discovery:** `findDesignOpsPage('layout' | 'effects')` — port slug + legacy name fallbacks (`↳ Layout`, `↳ Effects`). Figmint should write page slugs at bootstrap (Sprint 4); until then, keep legacy regex fallbacks.
+**Page discovery:** `findDesignOpsPage('layout' | 'effects')` — port slug + legacy name fallbacks (`↳ Layout`, `↳ Effects`). FigHub should write page slugs at bootstrap (Sprint 4); until then, keep legacy regex fallbacks.
 
 ### 7. Idempotency
 

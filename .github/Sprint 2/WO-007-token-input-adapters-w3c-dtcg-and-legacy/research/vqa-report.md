@@ -77,7 +77,7 @@ None.
 ## Backend action
 
 - **Backend:** GitHub
-- **Issue:** [#10](https://github.com/JBabcock-DL/Figmint/issues/10)
+- **Issue:** [#10](https://github.com/JBabcock-DL/FigHub/issues/10)
 - **Project item:** `PVTI_lAHOD9B30s4BY4aYzgt49nM`
 - **Action:** Moved to **Completed** (`167fdd81`) — all checks passed
 

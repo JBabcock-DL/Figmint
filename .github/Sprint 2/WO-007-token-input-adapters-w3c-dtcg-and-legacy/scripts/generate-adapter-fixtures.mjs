@@ -54,7 +54,7 @@ const fixtures = {
             $type: 'color',
             $value: '#6366f1',
             $extensions: {
-              figmint: {
+              fighub: {
                 modes: {
                   Light: '#6366f1',
                   Dark: '#818cf8',
@@ -72,7 +72,7 @@ const fixtures = {
               $type: 'color',
               $value: '#ffffff',
               $extensions: {
-                figmint: {
+                fighub: {
                   modes: { Light: '#ffffff', Dark: '#0f172a' },
                 },
               },
@@ -84,7 +84,7 @@ const fixtures = {
             $type: 'color',
             $value: '{primitives.color.neutral.100}',
             $extensions: {
-              figmint: {
+              fighub: {
                 modes: {
                   Light: '{primitives.color.neutral.100}',
                   Dark: '{primitives.color.neutral.900}',
@@ -100,7 +100,7 @@ const fixtures = {
             $deprecated: true,
             $description: 'Deprecated disabled surface',
             $extensions: {
-              figmint: {
+              fighub: {
                 modes: { Light: '{color.neutral.100}', Dark: '{color.neutral.900}' },
               },
               'tokens-studio': { original: 'disabled' },
@@ -120,7 +120,7 @@ const fixtures = {
             lineHeight: '64px',
           },
           $extensions: {
-            figmint: {
+            fighub: {
               codeSyntax: {
                 WEB: 'var(--typography-display-lg)',
                 ANDROID: 'text-display-lg',
@@ -152,7 +152,7 @@ const fixtures = {
           $type: 'color',
           $value: 'rgba(0, 0, 0, 0.12)',
           $extensions: {
-            figmint: {
+            fighub: {
               modes: {
                 Light: 'rgba(0, 0, 0, 0.12)',
                 Dark: 'rgba(0, 0, 0, 0.45)',
@@ -165,7 +165,7 @@ const fixtures = {
             $value: '{primitives.elevation.100}',
             $type: 'dimension',
             $extensions: {
-              figmint: {
+              fighub: {
                 modes: {
                   Light: '{primitives.elevation.100}',
                   Dark: '{primitives.elevation.100}',
@@ -394,7 +394,7 @@ const fixtures = {
           $type: 'color',
           $value: '#0055ff',
           $extensions: {
-            figmint: {
+            fighub: {
               modes: { Light: '#0055ff', Dark: '#3388ff' },
               codeSyntax: { WEB: 'var(--color-accent)' },
             },
@@ -416,7 +416,7 @@ const fixtures = {
           $type: 'color',
           $value: 'rgba(0,0,0,0.1)',
           $extensions: {
-            figmint: { modes: { Light: 'rgba(0,0,0,0.1)', Dark: 'rgba(0,0,0,0.4)' } },
+            fighub: { modes: { Light: 'rgba(0,0,0,0.1)', Dark: 'rgba(0,0,0,0.4)' } },
           },
         },
       },

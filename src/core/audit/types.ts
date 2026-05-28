@@ -5,7 +5,7 @@ import type {
   AuditReportV1,
   AuditRuleResult,
   AuditScope,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 export type { AuditReportSummary, AuditReportV1, AuditRuleResult, AuditScope };
 
@@ -37,13 +37,13 @@ export interface PushResult {
 export type PushResultWithAudit = PushResult & { audit: AuditReportV1 };
 
 export interface VariablesAuditInput {
-  canonical: import('@detroitlabs/figmint-contracts').TokensV1;
+  canonical: import('@detroitlabs/fighub-contracts').TokensV1;
   figmaCollections: FigmaCollectionSnapshot[];
   pushResult: PushResult;
 }
 
 export interface RuleInput {
-  canonical: import('@detroitlabs/figmint-contracts').TokensV1;
+  canonical: import('@detroitlabs/fighub-contracts').TokensV1;
   figmaCollections: FigmaCollectionSnapshot[];
   pushResult: PushResult;
 }
@@ -57,7 +57,7 @@ export interface CanvasAuditInput {
 }
 
 export interface ComponentAuditInput {
-  spec: import('@detroitlabs/figmint-contracts').ComponentSpecV1;
+  spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1;
   componentSet: ComponentSetNode;
   bindingsResult?: import('@/core/components/scaffold/types').ApplyBindingsResult;
   applyPropertiesResult?: import('@/core/components/scaffold/types').ApplyPropertiesResult;

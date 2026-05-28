@@ -3,12 +3,12 @@ type: work-order
 github_issue: 29
 project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JOI
 superseded_by: WO-058
-note: `.figmint-registry.json` envelope is deleted in WO-058 — canvas pluginData snapshots become single source of truth (PRD §6.4 FR-DRIFT-1). DO NOT move this ticket to Completed; close as Won't Do when WO-058 enters /research. 2026-05-28 architectural lock.
+note: `.fighub-registry.json` envelope is deleted in WO-058 — canvas pluginData snapshots become single source of truth (PRD §6.4 FR-DRIFT-1). DO NOT move this ticket to Completed; close as Won't Do when WO-058 enters /research. 2026-05-28 architectural lock.
 ---
 
 ## Goal
 
-After each successful scaffold, emit an updated `.figmint-registry.json` (or stage one for emission via export sheet) so the consumer repo stays in sync with what exists in Figma. Implements FR-SCAF-6.
+After each successful scaffold, emit an updated `.fighub-registry.json` (or stage one for emission via export sheet) so the consumer repo stays in sync with what exists in Figma. Implements FR-SCAF-6.
 
 PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-6, §8.6.
 
@@ -22,7 +22,7 @@ When a designer scaffolds a component (e.g. Button), Figma gains a ComponentSet 
 
 ## User stories
 
-- [ ] As a designer, after scaffolding Button I can export an updated `.figmint-registry.json` without hand-editing JSON.
+- [ ] As a designer, after scaffolding Button I can export an updated `.fighub-registry.json` without hand-editing JSON.
 - [ ] As a designer on Org build, GitHub PR is pre-selected as the default export sink for registry updates.
 - [ ] As a designer re-scaffolding Button, the registry entry is replaced and its version increments — no duplicate rows.
 
@@ -38,12 +38,12 @@ When a designer scaffolds a component (e.g. Button), Figma gains a ComponentSet 
 
 1. **`src/core/components/registry.ts`** — pure module with:
    - `normalizeRegistryInput` — accept `RegistryV1` or legacy `{ fileKey, components }` bodies.
-   - `loadRegistryFromGitHub(repoUrl, path?)` — wrap `loadFromGitHub`; 404 → greenfield empty registry; default path `.figmint-registry.json`.
+   - `loadRegistryFromGitHub(repoUrl, path?)` — wrap `loadFromGitHub`; 404 → greenfield empty registry; default path `.fighub-registry.json`.
    - `buildRegistryEntry` — from `ScaffoldResult` + `ComponentSpecV1` + target page: populate `nodeId`, `key`, `pageName`, `publishedAt`, `version`, optional `cvaHash`, optional `composedChildVersions`.
    - `mergeRegistryEntry` — upsert by **`spec.name`** map key; refuse merge on `fileKey` mismatch; increment `version` on re-scaffold.
 2. Registry entry fields per **`RegistryComponentEntry`** (WO-003): `nodeId` (ComponentSet), `key` (Figma component key), `pageName`, `publishedAt`, `version` (≥ 1). Optional: `cvaHash`, `composedChildVersions` for composites. **Not** in registry row: archetype, variant matrix, props (those remain in `component-spec.v1.json`).
 3. Post-scaffold: build `ContractDocument { kind: 'registry', payload: RegistryV1 }` and open **WO-020 ExportSheet** — default sinks: **`github-pr`** when `flags.githubOAuth && flags.githubPRSink`, else **`download`**. No silent PR; designer confirms export (FR-SCAF-6, preview-first).
-4. Serialize via `stableStringify` / existing export path → `.figmint-registry.json` (basename `.figmint-registry`).
+4. Serialize via `stableStringify` / existing export path → `.fighub-registry.json` (basename `.fighub-registry`).
 
 ### Visual / UX
 
@@ -79,7 +79,7 @@ When a designer scaffolds a component (e.g. Button), Figma gains a ComponentSet 
 
 ## Product semantics _(for UI copy — 2026-05-28)_
 
-**`.figmint-registry.json` is not "all components in my repo."** It records components **already scaffolded in Figma** (nodeId, key, page, version) so re-scaffold, composed children, and drift can resolve Figma nodes. Spec content stays in `component-spec.v1.json` files. First-time users often have **no registry file** until after first scaffold + export — empty load is expected, not an error.
+**`.fighub-registry.json` is not "all components in my repo."** It records components **already scaffolded in Figma** (nodeId, key, page, version) so re-scaffold, composed children, and drift can resolve Figma nodes. Spec content stays in `component-spec.v1.json` files. First-time users often have **no registry file** until after first scaffold + export — empty load is expected, not an error.
 
 **Settings vs Components:** Registry **path** configuration is a connection/setup concern; prefer **Settings** tab for path + helper text; Components tab should only **load** the sync file and show linked component names (WO-027 UX follow-on).
 

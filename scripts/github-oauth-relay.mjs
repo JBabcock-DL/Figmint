@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '..');
-const PORT = Number(process.env.FIGMINT_OAUTH_RELAY_PORT ?? 8787);
+const PORT = Number(process.env.FIGHUB_OAUTH_RELAY_PORT ?? 8787);
 
 function loadClientId() {
   const envPath = resolve(rootDir, '.env.local');
@@ -181,7 +181,7 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Figmint OAuth relay listening on http://localhost:${PORT}`);
+  console.log(`FigHub OAuth relay listening on http://localhost:${PORT}`);
   console.log(`  client_id: ${CLIENT_ID ? 'configured' : 'MISSING'}`);
   console.log('  Endpoints: POST /oauth/device/code, POST /oauth/device/poll, POST /github/api/proxy, GET /github/api');
   console.log('  Add to manifest.json devAllowedDomains: ["http://localhost:8787"]');
@@ -192,7 +192,7 @@ server.on('error', (error) => {
     console.error(`Port ${PORT} is already in use.`);
     console.error('  If you started the relay in another terminal, leave it running.');
     console.error(`  Health check: curl http://localhost:${PORT}/health`);
-    console.error(`  Or use another port: FIGMINT_OAUTH_RELAY_PORT=8788 npm run spike:oauth-relay`);
+    console.error(`  Or use another port: FIGHUB_OAUTH_RELAY_PORT=8788 npm run spike:oauth-relay`);
     process.exit(1);
   }
   throw error;

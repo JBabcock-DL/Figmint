@@ -44,9 +44,9 @@ Per `Docs/lift-sources.md` §0 and §3:
 | `step-15c-text-styles.mcp.js`   | `canvas-templates/text-styles.js` + `_step15c-text-styles-runner.fragment.js` + `_lib.js` |
 | `step-17-token-overview.mcp.js` | `canvas-templates/token-overview.js` + `_lib.js`                                          |
 
-Bundles inline `_lib.js` (~724 lines) + page template + runner. Figmint splits `_lib.js` into:
+Bundles inline `_lib.js` (~724 lines) + page template + runner. FigHub splits `_lib.js` into:
 
-| Legacy `_lib.js` concern                                 | Figmint target                                               |
+| Legacy `_lib.js` concern                                 | FigHub target                                               |
 | -------------------------------------------------------- | ------------------------------------------------------------ |
 | Font loading                                             | `src/core/canvas/lib/fonts.ts`                               |
 | Variable map + canonical alias map                       | `src/core/canvas/lib/variableMap.ts`                         |
@@ -125,7 +125,7 @@ Legacy Step 17 is an **update pass** on the `/new-project` 05d scaffold, not a f
 | `token-overview/platform-mapping` | Cross-collection platform-mapping table                                        |
 | `token-overview/mode-row`         | Dark-mode + font-scale panels                                                  |
 | `token-overview/how-to-bind`      | Static doc                                                                     |
-| `token-overview/claude-commands`  | Static doc (sunsets in Figmint — replace with plugin Output pointer or delete) |
+| `token-overview/claude-commands`  | Static doc (sunsets in FigHub — replace with plugin Output pointer or delete) |
 
 **Platform-mapping table** (`doc/table/token-overview/platform-mapping`):
 
@@ -144,9 +144,9 @@ Legacy Step 17 is an **update pass** on the `/new-project` 05d scaffold, not a f
 - Rebind `phone-frame/light|dark` fills.
 - Delete `placeholder/*` nodes; replace `TBD` text with resolved `color/primary/500` hex.
 
-**Figmint delta vs legacy:**
+**FigHub delta vs legacy:**
 
-- Remove `token-overview/claude-commands` section (agent-orchestration artifact) OR replace with static “Figmint Bootstrap” help — **recommend delete** during port; WO-015 UI owns commands.
+- Remove `token-overview/claude-commands` section (agent-orchestration artifact) OR replace with static “FigHub Bootstrap” help — **recommend delete** during port; WO-015 UI owns commands.
 - Font-scale panel: implement appendix bind (`scale-cell/{mode}` → Typography variable per mode) when time permits; mark optional in plan if scaffold nodes missing.
 
 ### 4. TokensV1 + pushed variables — data flow
@@ -321,7 +321,7 @@ Log via `pluginLog()` (not `console.debug` — Figma main thread lacks it). Targ
 
 1. **Doc/slot text style publisher:** Legacy Step 15c §0 creates `_Doc/*` + 27 slot styles before canvas draw. Should this live in WO-012, WO-008 push tail, or a shared `src/core/canvas/publishTypographyStyles.ts` used by WO-015 bootstrap? **Recommend:** shared prep module called by bootstrap orchestrator before any canvas builder — WO-012 assumes it ran.
 2. **Font-scale panel binding:** Legacy appendix is optional. Include in WO-012 MVP or defer to WO-013/WO-015? **Recommend:** defer unless 05d scaffold nodes exist in Plugin Sandbox test file.
-3. **`token-overview/claude-commands` section:** Delete on refresh or leave untouched? **Recommend:** delete placeholders + claude section; replace with single Figmint help caption.
+3. **`token-overview/claude-commands` section:** Delete on refresh or leave untouched? **Recommend:** delete placeholders + claude section; replace with single FigHub help caption.
 4. **Parallel WO-011 lib extraction:** If WO-011 builds `src/core/canvas/lib/table.ts` first, WO-012 imports it. Plan should assign lib extraction to WO-011 Phase 0 or a shared Sprint 3 spike to avoid duplicate `_lib.js` ports.
 
 ---

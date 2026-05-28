@@ -6,9 +6,9 @@
 
 Implement **`detectComponentDrift(repoSpecs, figmaComponents, snapshot)`** in `src/core/drift/components.ts` applying the same 3-way classification as WO-029 for **component specs ↔ Figma ComponentSets**, with **granular deltas** for variant matrix changes, binding changes, and prop additions/removals (PRD FR-DRIFT-6, ticket requirements).
 
-**Locked recommendation:** Drift unit = **registry component key** (spec `name`, e.g. `Button`). Compare three facets: (1) **variant matrix hash** (`cvaHash` via `hashVariantMatrix`), (2) **props** deep-equal, (3) **bindings** deep-equal. Figma side introspects live ComponentSet via scaffold helpers; repo side reads `ComponentSpecV1` from paths in snapshot registry or `figmint.json` defaults. Emit granular diff object in each drift entry's `figma`/`repo`/`lastSynced` fields.
+**Locked recommendation:** Drift unit = **registry component key** (spec `name`, e.g. `Button`). Compare three facets: (1) **variant matrix hash** (`cvaHash` via `hashVariantMatrix`), (2) **props** deep-equal, (3) **bindings** deep-equal. Figma side introspects live ComponentSet via scaffold helpers; repo side reads `ComponentSpecV1` from paths in snapshot registry or `fighub.json` defaults. Emit granular diff object in each drift entry's `figma`/`repo`/`lastSynced` fields.
 
-**Critical dependency:** WO-058 deletes `.figmint-registry.json` — component drift reads **`snapshot.registry.components`** not repo registry file.
+**Critical dependency:** WO-058 deletes `.fighub-registry.json` — component drift reads **`snapshot.registry.components`** not repo registry file.
 
 ---
 
@@ -50,7 +50,7 @@ For drift detect on main thread:
 2. UI or main fetches spec JSON via existing `loadFromGitHub(repoUrl, specsPath + name + '.json')`
 3. Parse as `ComponentSpecV1`
 
-**WO-058 `figmint.json`:** `specsPath` default `components/` — drift uses same paths.
+**WO-058 `fighub.json`:** `specsPath` default `components/` — drift uses same paths.
 
 ### 4. Classification (shared with WO-029)
 
@@ -140,7 +140,7 @@ Expected: **<200ms** compare-only for 20 components.
 | ---- | --- | --- | ---------- |
 | ComponentSet not found for registry entry | Med | Med | Classify as pull (spec exists, Figma missing) or push (inverse) |
 | Binding scan expensive | Med | Low | Cache scan per detect; only on hash/props match failure |
-| Spec path convention drift | Med | Med | Centralize in figmint.json parser (WO-058) |
+| Spec path convention drift | Med | Med | Centralize in fighub.json parser (WO-058) |
 | Renamed component in Figma | Low | Med | nodeId mismatch → push with meta delta |
 
 ---
@@ -151,7 +151,7 @@ Expected: **<200ms** compare-only for 20 components.
 2. Share `classifyThreeWay` with WO-029 in `src/core/drift/classify.ts`.
 3. Fixture: `tests/fixtures/drift/component-button-loading-push.v1.json`.
 4. Integration test with `tests/helpers/scaffold/mockVariantTree.ts`.
-5. Update ticket requirement: repo source = **spec files + snapshot registry**, not `.figmint-registry.json`.
+5. Update ticket requirement: repo source = **spec files + snapshot registry**, not `.fighub-registry.json`.
 
 ---
 

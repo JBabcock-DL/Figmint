@@ -226,7 +226,7 @@ Create `src/core/canvas/` as the **typed, Vitest-covered foundation** for all Sp
 
 **Lift sources (read one at a time — never load `.mcp.js` bundles):**
 
-| Legacy                                                           | Figmint                              |
+| Legacy                                                           | FigHub                              |
 | ---------------------------------------------------------------- | ------------------------------------ |
 | `_lib.js` `makeBodyCell`, `rehugCell`, `makeBodyRow`, `rehugRow` | `tableCells.ts` + `autoLayout.ts`    |
 | `_lib.js` `bindPaintToVar`, `bindStrokeToVar`                    | `bindings.ts`                        |

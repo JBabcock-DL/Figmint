@@ -1,6 +1,6 @@
 /// <reference types="@figma/plugin-typings" />
 
-import type { CollectionId, ColorValue, Token, TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { CollectionId, ColorValue, Token, TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { CODE_SYNTAX_PLATFORMS, COLLECTION_DISPLAY_NAMES, COLOR_EPSILON } from '../constants';
 import type { FigmaCollectionSnapshot, FigmaVariableSnapshot } from '../types';
@@ -236,13 +236,13 @@ export function isIosDotSegmentFormat(value: string): boolean {
 export function passResult(
   ruleId: string,
   diagnostic: string,
-): import('@detroitlabs/figmint-contracts').AuditRuleResult {
+): import('@detroitlabs/fighub-contracts').AuditRuleResult {
   return { ruleId, pass: true, diagnostic, severity: 'error' };
 }
 
 export function failResult(
   ruleId: string,
   diagnostic: string,
-): import('@detroitlabs/figmint-contracts').AuditRuleResult {
+): import('@detroitlabs/fighub-contracts').AuditRuleResult {
   return { ruleId, pass: false, diagnostic, severity: 'error' };
 }

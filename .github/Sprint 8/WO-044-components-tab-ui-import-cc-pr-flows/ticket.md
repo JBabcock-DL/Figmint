@@ -22,7 +22,7 @@ _Derived from Goal — see ticket-level scope._
 
 ## Design reference _(when UI work applies)_
 
-Components tab Import + CC PR UI mock lives in the Figmint design file.
+Components tab Import + CC PR UI mock lives in the FigHub design file.
 
 ---
 
@@ -102,7 +102,7 @@ Manual VQA surfaced a mental model overlap with **WO-056** (committed roadmap) a
 | `file_key`      | `<!-- filled during /plan or /vqa -->`                |
 | `node_id`       | `<!-- filled during /plan or /vqa -->`                |
 | Figma deep link | `<!-- filled -->`                                     |
-| Frame / scope   | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
+| Frame / scope   | `<!-- e.g. FigHub plugin window — Bootstrap tab -->` |
 | Captured at     | `<!-- ISO date -->`                                   |
 
 **Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_

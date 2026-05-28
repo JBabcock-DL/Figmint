@@ -1,4 +1,4 @@
-# WO-057 — Doc-pipeline lift map (legacy `cc-doc-*.js` + `draw-engine.figma.js` → Figmint TS)
+# WO-057 — Doc-pipeline lift map (legacy `cc-doc-*.js` + `draw-engine.figma.js` → FigHub TS)
 
 > **Status:** Research-complete · 2026-05-28
 > **Quality bar:** `.github/templates/research-quality-bar.md`
@@ -25,7 +25,7 @@ Lift map: write **6 new TS modules** under `src/core/canvas/doc/` (header, prope
 
 ### F2 — `cc-doc-*.js` files are tiny and per-section — lift verbatim
 
-| Source file | Lines | What it produces | Figmint target |
+| Source file | Lines | What it produces | FigHub target |
 | ----------- | ----- | ---------------- | -------------- |
 | `cc-doc-constants.js` | 3 | `DOC_FRAME_WIDTH = 1640`, `GUTTER_W_SIZE = 60`, `GUTTER_W_VARIANT = 160` | `src/core/canvas/doc/constants.ts` |
 | `cc-doc-page-header.js` | 50 | `__ccDocPageHeader()` — creates `_PageContent` (1800×AUTO) + `docRoot` (1640×AUTO) + `header` (title + summary) | `src/core/canvas/doc/header.ts` (Section 1 emitter) — also subsumes the `_PageContent` + `docRoot` create logic currently in `ensureComponentScaffoldTarget.ts` |
@@ -52,11 +52,11 @@ The cc-doc-* modular files cover the section bodies. The properties-table **chro
 
 Lines 100-132 implement `bindColor` (variable resolution + hex fallback + miss recording) and `bindNum` (variable + numeric fallback + miss recording). Lines 70-89 implement `readTypoString` for reading Typography mode-100 string values. Lines 134-152 explain why `figma.getLocalTextStylesAsync()` MUST be awaited at script top-level before any synchronous text-style consumer is declared.
 
-**Figmint already has working equivalents** (see F5). The legacy `bindColor` / `bindNum` are the contract; do NOT copy them verbatim — use the existing Figmint helpers.
+**FigHub already has working equivalents** (see F5). The legacy `bindColor` / `bindNum` are the contract; do NOT copy them verbatim — use the existing FigHub helpers.
 
-### F5 — Figmint already has working equivalents for most low-level helpers
+### F5 — FigHub already has working equivalents for most low-level helpers
 
-| Legacy helper (DesignOps) | Figmint equivalent | Path |
+| Legacy helper (DesignOps) | FigHub equivalent | Path |
 | ------------------------- | ------------------ | ---- |
 | `bindColor(node, varName, hex, target)` | `bindPaintToVar(node, varRef, hex, target)` | `src/core/canvas/helpers/bindings.ts` |
 | `bindNum(node, field, varName, fallback)` | (similar pattern in `src/core/canvas/helpers/bindings.ts`) | same |
@@ -69,21 +69,21 @@ Lines 100-132 implement `bindColor` (variable resolution + hex fallback + miss r
 | `_Doc/Section` / `_Doc/TokenName` / `_Doc/Code` / `_Doc/Caption` styles | already published by bootstrap | `src/core/canvas/publishTypographyStyles.ts` line 19 |
 | `Label/SM` / `Label/MD` / `Label/LG` font-family variables | already pushed by bootstrap | `src/core/variables/__fixtures__/bootstrap-complete.v1.json` line 2845 |
 
-**Implication:** WO-057 does NOT need to port low-level helpers. The new `src/core/canvas/doc/*.ts` emitters consume the existing Figmint helpers. The lift work is **section-emitter logic**: how each section assembles its frame tree, what frame names / sizes / paddings / strokes / item-spacings / per-cell instance-overrides to apply.
+**Implication:** WO-057 does NOT need to port low-level helpers. The new `src/core/canvas/doc/*.ts` emitters consume the existing FigHub helpers. The lift work is **section-emitter logic**: how each section assembles its frame tree, what frame names / sizes / paddings / strokes / item-spacings / per-cell instance-overrides to apply.
 
-### F6 — Naming convention: legacy uses `_` prefix, Figmint already does too
+### F6 — Naming convention: legacy uses `_` prefix, FigHub already does too
 
-Text-style naming in Figmint = `_Doc/Section` (underscore-prefixed). The lift-source contract (`04-doc-pipeline-contract.md` §11) names them `Doc/Section` (no underscore). The Figmint convention prevails — emitters apply `_Doc/*` from `findTextStyleByName(existing, '_Doc/Section')`.
+Text-style naming in FigHub = `_Doc/Section` (underscore-prefixed). The lift-source contract (`04-doc-pipeline-contract.md` §11) names them `Doc/Section` (no underscore). The FigHub convention prevails — emitters apply `_Doc/*` from `findTextStyleByName(existing, '_Doc/Section')`.
 
-**Decision (locked):** Keep Figmint's `_` prefix. Update the ticket-text "Doc/Section, Doc/TokenName, Doc/Code, Doc/Caption" references to read `_Doc/Section` etc. when applied — they map 1:1. No bootstrap change needed for these four — they already ship.
+**Decision (locked):** Keep FigHub's `_` prefix. Update the ticket-text "Doc/Section, Doc/TokenName, Doc/Code, Doc/Caption" references to read `_Doc/Section` etc. when applied — they map 1:1. No bootstrap change needed for these four — they already ship.
 
 ### F7 — Label/SM, Label/MD, Label/LG are PUBLISHED VARIABLES, not text styles
 
-The ticket (Requirement 7) asks bootstrap to push "Label/SM, Label/MD, Label/LG **text styles**". This is wrong. In the Figmint bootstrap they are **Typography slot variables** (font-family, font-size, font-weight, line-height per slot — see `src/core/canvas/data/typography-slots.json`). The 27 slot text styles (`Label/MD`, etc.) ARE published by `publishTypographyStyles.ts` lines 74-98 via `listExpectedSlotStyleNames()`. **They already exist.**
+The ticket (Requirement 7) asks bootstrap to push "Label/SM, Label/MD, Label/LG **text styles**". This is wrong. In the FigHub bootstrap they are **Typography slot variables** (font-family, font-size, font-weight, line-height per slot — see `src/core/canvas/data/typography-slots.json`). The 27 slot text styles (`Label/MD`, etc.) ARE published by `publishTypographyStyles.ts` lines 74-98 via `listExpectedSlotStyleNames()`. **They already exist.**
 
 **Decision (locked):** Drop Requirement 7's text-styles push. Replace with "verify slot text styles `Label/SM`, `Label/MD`, `Label/LG` are present" (covered by `verifySlotTextStyles()` line 115). The pre-flight audit gate (R8) handles the miss case.
 
-### F8 — Current Figmint `usageFrame.ts` has 443 lines — most is reusable
+### F8 — Current FigHub `usageFrame.ts` has 443 lines — most is reusable
 
 `src/core/components/scaffold/usageFrame.ts` already implements:
 
@@ -111,7 +111,7 @@ shadcn shape (locked decision 2026-05-28, per `04-doc-pipeline-contract.md` §13
 
 ## Validated evidence
 
-### Repo inventory — Figmint targets (will create)
+### Repo inventory — FigHub targets (will create)
 
 | Path | Status | Role |
 | ---- | ------ | ---- |
@@ -124,7 +124,7 @@ shadcn shape (locked decision 2026-05-28, per `04-doc-pipeline-contract.md` §13
 | `src/core/canvas/doc/index.ts` | greenfield | Section orchestrator (`buildDocPipeline(componentSet, spec, ctx) → DocPipelineResult`) |
 | `src/core/canvas/doc/applyStateOverride.ts` | greenfield | Per-cell opacity overlay (`applyButtonStateOverride(instance, stateKey)`) |
 
-### Repo inventory — Figmint targets (will modify)
+### Repo inventory — FigHub targets (will modify)
 
 | Path | Lines now | What changes |
 | ---- | --------- | ------------ |
@@ -139,7 +139,7 @@ shadcn shape (locked decision 2026-05-28, per `04-doc-pipeline-contract.md` §13
 | `src/io/formats/__fixtures__/component-spec-button.md` | (exists) | Update the matching Markdown sidecar. |
 | `src/core/components/scaffold/__fixtures__/component-spec-button-chip.v1.json` | (exists) | Same shape; archetype stays `chip`. |
 
-### Repo inventory — Figmint targets (already shipped — DO NOT recreate)
+### Repo inventory — FigHub targets (already shipped — DO NOT recreate)
 
 | Path | Role |
 | ---- | ---- |
@@ -202,7 +202,7 @@ shadcn shape (locked decision 2026-05-28, per `04-doc-pipeline-contract.md` §13
 | # | Decision | Rationale | Alternatives rejected | Owner |
 | --- | -------- | --------- | --------------------- | ----- |
 | D1 | Port modular `cc-doc-*.js` (644 lines total) — NOT `draw-engine.figma.js` (which does not exist on disk) | Source files in `templates/` are missing; modular `canvas-templates/cc-doc-*.js` are the only readable per-section source | Loading any `bundles/*.mcp.js` whole as primary lift source — wastes 1k+ lines of context per bundle | code-build |
-| D2 | Keep Figmint's `_Doc/Section` underscore-prefixed text-style names | Existing bootstrap (`publishTypographyStyles.ts` line 19) already uses `_Doc/*`; renaming would break WO-011..013 callers | Renaming to legacy `Doc/Section` (no `_`) — would require migration + breaking change | code-build |
+| D2 | Keep FigHub's `_Doc/Section` underscore-prefixed text-style names | Existing bootstrap (`publishTypographyStyles.ts` line 19) already uses `_Doc/*`; renaming would break WO-011..013 callers | Renaming to legacy `Doc/Section` (no `_`) — would require migration + breaking change | code-build |
 | D3 | Drop Requirement 7 "push Label/SM, Label/MD, Label/LG text styles" — they already exist as **variables + slot styles** | `bootstrap-complete.v1.json` line 2845+ has Label/* font-family/size/weight/line-height variables; `verifySlotTextStyles` line 115 verifies 27 slot styles | Pushing duplicates would break the bootstrap fixture (167 tokens) | code-build |
 | D4 | Replace canonical Button spec with shadcn shape — drop `disabled` axis, add per-cell `instance.opacity` overlay | Per `04-doc-pipeline-contract.md` §13.1.a + 2026-05-28 locked decision in `memory.md` | Keeping `disabled` as a variant — would produce `6 × 4 × 2 = 48` master components instead of 24, and break the matrix's expected `6 variants × 4 sizes` shape | code-build |
 | D5 | Extend `usageFrame.ts` in-place — keep `ensureComponentSetGroup`, `findUsageSection`, etc.; replace only the instance-gallery loop (lines 348-443) | WO-022..026 callers depend on the `ensure*Section` exports; replacing the whole file would break them | Replacing the file wholesale would require touching every caller — too many surface-area changes for a single WO | code-build |
@@ -234,7 +234,7 @@ shadcn shape (locked decision 2026-05-28, per `04-doc-pipeline-contract.md` §13
 | **R2** Section 3 set-group title/caption/dashed-outline extension breaks WO-022..026 `findComponentSetGroup` lookups | Medium | Low | Keep the frame name (`doc/component/{key}/component-set-group`) unchanged; only add children (title + caption + the existing reparented ComponentSet) and apply dashed-outline + WRAP grid to the **child** ComponentSet, not the section frame. Verified by reading existing `ensureComponentSetGroup` (lines 119-141). |
 | **R3** Bootstrap-complete fixture only has 167 tokens — required tokens may not include all 4 audit-gate tokens | Medium | Medium | Pre-flight: grep `bootstrap-complete.v1.json` for `color/border/subtle`, `color/background/variant`, `color/background/content`, `color/background/content-muted`. If any missing, escalate as a fixture bug. See OQ-2. |
 | **R4** Preflight audit gate may incorrectly fail on Untitled / unsaved Figma files where `figma.fileKey === ''` | Medium | High | The gate inspects variable presence, not `fileKey`. Mirror the existing `runScaffold.ts` `readFileKey` pattern (lines 33-38) and accept empty string. Per memory.md "do not repeat" 2026-05-28. |
-| **R5** Properties table chrome ported from `properties.mcp.js` may use `figma.variables.getLocalVariableCollections()` (sync API removed in some Figma versions) | Medium | Low | Use Figmint's existing `ensureLocalVariableMap` from `src/core/canvas/lib/variables.ts` instead. The legacy sync API call is at `properties.mcp.js` line 20; replace with the async helper. |
+| **R5** Properties table chrome ported from `properties.mcp.js` may use `figma.variables.getLocalVariableCollections()` (sync API removed in some Figma versions) | Medium | Low | Use FigHub's existing `ensureLocalVariableMap` from `src/core/canvas/lib/variables.ts` instead. The legacy sync API call is at `properties.mcp.js` line 20; replace with the async helper. |
 | **R6** Per-cell opacity overrides on Figma instances may not survive Save → Reopen on older Figma desktop versions | Low | Low | `instance.opacity` is a stable persisted property on InstanceNode (Plugin API ≥1.84). Document in plan; no fallback needed. |
 | **R7** Matrix renders 96 instances (24 variants × 4 states) — may exceed perf budget for `/build` end-to-end < 5s | Low | Low | Spike SPK-S5-DOC-1.B measures end-to-end time; cap matrix at 96 instances total. Per WO-005 spike, 96 createInstance + setProperties calls ≈ 50 ms. Negligible. |
 | **R8** WO-027 UI preview rendering tab expects 2-section output (set-group + usage); 5-section output may overflow the preview frame | Medium | Medium | Add a coordination note in plan.md for WO-027. The WO-057 plan must read WO-027's plan.md first (per ticket dependency block). |
@@ -266,7 +266,7 @@ shadcn shape (locked decision 2026-05-28, per `04-doc-pipeline-contract.md` §13
 - **OQ-2 (BLOCKS BUILD)** — Does `bootstrap-complete.v1.json` already include all 4 required tokens (`color/border/subtle`, `color/background/variant`, `color/background/content`, `color/background/content-muted`)? Owner: build agent on Phase 1 day 1. _Resolution suggestion:_ Phase 0 grep; if any missing, file a quick fixture-fix WO (1-line change) that runs ahead of Phase 1.
 - **OQ-3 (BLOCKS BUILD COORDINATION)** — WO-027 In Build — does its preview render path consume `setGroup` + `usage` as separate frames, or does it look up by `doc/component/{key}/usage` (the section the new emitter still produces)? Owner: build agent on Phase 1 day 1 (read WO-027 `plan.md`). _Resolution suggestion:_ Read WO-027 plan.md first thing in Phase 3.
 - **OQ-4 (RESOLVED)** — Does `auditReport.v1.ts` need a v2 bump for the new pre-flight gate? **NO** (D10). The new rule just adds an entry to `AuditRuleResult[]` with `ruleId: 'doc-pipeline/required-tokens'`.
-- **OQ-5 (RESOLVED)** — Does the existing `_Doc/*` text-style naming with underscore prefix need to be migrated to match the legacy `Doc/*` (no underscore)? **NO** (D2). Keep Figmint's `_` prefix.
+- **OQ-5 (RESOLVED)** — Does the existing `_Doc/*` text-style naming with underscore prefix need to be migrated to match the legacy `Doc/*` (no underscore)? **NO** (D2). Keep FigHub's `_` prefix.
 - **OQ-6 (RESOLVED)** — Does bootstrap need to push new Label/SM, Label/MD, Label/LG **text styles**? **NO** (D3). They already exist as Typography slot styles (`Label/MD` etc.) published by `publishTypographyStyles.ts` line 74. Bootstrap is already complete.
 
 ## References
@@ -277,11 +277,11 @@ shadcn shape (locked decision 2026-05-28, per `04-doc-pipeline-contract.md` §13
 - `DesignOps-plugin/skills/create-component/canvas-templates/bundles/matrix.mcp.js` (737 lines) — matrix bundle (sequential-read only).
 - `DesignOps-plugin/skills/create-component/canvas-templates/bundles/usage.mcp.js` (604 lines) — usage bundle (sequential-read only).
 - `DesignOps-plugin/skills/create-component/templates/README.md` — explains the build script + bundle assembly (notes that `draw-engine.figma.js` is the SOURCE the build script splits — but no copy lives on disk).
-- `Figmint/Docs/lift-sources.md` §0 (drift corrections) — already noted `*.min.mcp.js` are off-limits; this research confirms `bundles/*.mcp.js` should be read sequentially.
-- `Figmint/.github/Sprint 5/research/designops-canvas-parity-bug-register.md` — BUG-S5-001..008 register; BUG-S5-004 is what WO-057 closes.
-- `Figmint/memory.md` — 2026-05-28 entry locking 3 decisions: full pipeline in one WO, shadcn-shape Button spec, bootstrap text-style + audit gate.
-- `Figmint/src/core/canvas/publishTypographyStyles.ts` line 19 + 74 — proves `_Doc/*` and slot text styles already published.
-- `Figmint/src/core/variables/__fixtures__/bootstrap-complete.v1.json` line 2845+ — proves Label/SM/MD/LG variables already pushed.
-- `Figmint/src/core/components/scaffold/usageFrame.ts` (443 lines) — current Section 3 + 5 emitter (extend in-place).
-- `Figmint/src/core/components/scaffold/runScaffold.ts` (333 lines) — current orchestrator (call doc-pipeline orchestrator instead).
-- `Figmint/src/core/audit/runAudit.ts` (190 lines) — current audit entry point (add preflight rule).
+- `FigHub/Docs/lift-sources.md` §0 (drift corrections) — already noted `*.min.mcp.js` are off-limits; this research confirms `bundles/*.mcp.js` should be read sequentially.
+- `FigHub/.github/Sprint 5/research/designops-canvas-parity-bug-register.md` — BUG-S5-001..008 register; BUG-S5-004 is what WO-057 closes.
+- `FigHub/memory.md` — 2026-05-28 entry locking 3 decisions: full pipeline in one WO, shadcn-shape Button spec, bootstrap text-style + audit gate.
+- `FigHub/src/core/canvas/publishTypographyStyles.ts` line 19 + 74 — proves `_Doc/*` and slot text styles already published.
+- `FigHub/src/core/variables/__fixtures__/bootstrap-complete.v1.json` line 2845+ — proves Label/SM/MD/LG variables already pushed.
+- `FigHub/src/core/components/scaffold/usageFrame.ts` (443 lines) — current Section 3 + 5 emitter (extend in-place).
+- `FigHub/src/core/components/scaffold/runScaffold.ts` (333 lines) — current orchestrator (call doc-pipeline orchestrator instead).
+- `FigHub/src/core/audit/runAudit.ts` (190 lines) — current audit entry point (add preflight rule).

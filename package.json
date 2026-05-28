@@ -1,5 +1,5 @@
 {
-  "name": "figmint",
+  "name": "fighub",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -24,10 +24,11 @@
     "format:check": "prettier . --check",
     "typecheck": "tsc --noEmit -p .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:sprint6-drift": "vitest run tests/unit/core/drift tests/integration/core/drift tests/unit/ui/drift tests/unit/ui/components/DriftList tests/integration/ui/drift"
   },
   "dependencies": {
-    "@detroitlabs/figmint-contracts": "workspace:*",
+    "@detroitlabs/fighub-contracts": "workspace:*",
     "@figma/plugin-typings": "^1.127.0",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",

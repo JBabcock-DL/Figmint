@@ -4,7 +4,7 @@
 - generatedAt: 2026-05-27T12:00:00.000Z
 - scope: variables
 - operation: push-variables
-- figmaFileKey: FigmintDemo
+- figmaFileKey: FigHubDemo
 
 ## Summary
 

@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { mapCodeSyntax } from '../../variables/codeSyntax';
 import { CODE_SYNTAX_PLATFORMS } from '../constants';

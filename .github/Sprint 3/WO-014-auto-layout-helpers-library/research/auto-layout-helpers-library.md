@@ -2,9 +2,9 @@
 
 ## Summary
 
-WO-014 is the **Sprint 3 foundation ticket** for all style-guide canvas builders (WO-011, WO-012, WO-013) and, later, component scaffold matrix/doc frames (Sprint 5). DesignOps encodes auto-layout invariants as Markdown convention shards plus inlined helpers in `canvas-templates/_lib.js`; Figmint must lift those helpers into typed, unit-tested TypeScript under `src/core/canvas/helpers/`.
+WO-014 is the **Sprint 3 foundation ticket** for all style-guide canvas builders (WO-011, WO-012, WO-013) and, later, component scaffold matrix/doc frames (Sprint 5). DesignOps encodes auto-layout invariants as Markdown convention shards plus inlined helpers in `canvas-templates/_lib.js`; FigHub must lift those helpers into typed, unit-tested TypeScript under `src/core/canvas/helpers/`.
 
-**Current Figmint state:** `src/core/canvas/` does **not** exist yet (`src/core/` holds `variables/`, `audit/`, `pluginLog.ts` only). WO-010 audit is **variables-only** (`runAudit('variables')`); canvas geometry rules live in DesignOps `14-audit.md` and are **not** ported yet — WO-014 helpers should be written so a future `runAudit('canvas')` scope can reuse the same invariants.
+**Current FigHub state:** `src/core/canvas/` does **not** exist yet (`src/core/` holds `variables/`, `audit/`, `pluginLog.ts` only). WO-010 audit is **variables-only** (`runAudit('variables')`); canvas geometry rules live in DesignOps `14-audit.md` and are **not** ported yet — WO-014 helpers should be written so a future `runAudit('canvas')` scope can reuse the same invariants.
 
 **Lift source of truth:** Prefer modular `DesignOps-plugin/skills/create-design-system/canvas-templates/_lib.js` + `conventions/column-widths.json` over bundled `.mcp.js` files. Cross-reference convention prose in `00-gotchas.md`, `08-hierarchy-and-09-autolayout.md`, `10-column-spec.md`, `11-cells-12-bindings-13-build-order.md`, and `create-component/conventions/03-auto-layout-invariants.md`.
 
@@ -66,7 +66,7 @@ These belong in `matrixSpecimen.ts` but share core logic with `autoLayout.ts`.
 
 `conventions/column-widths.json` is the machine-readable source for 13 table profiles (primitives color ramp through token-overview platform-mapping). Every profile sums to **1640** (`sumTarget`). `columnSpec.ts` should:
 
-- Port JSON as typed `ColumnSpec` records (lift file into Figmint repo, e.g. `src/core/canvas/data/column-widths.json`)
+- Port JSON as typed `ColumnSpec` records (lift file into FigHub repo, e.g. `src/core/canvas/data/column-widths.json`)
 - Export `getColumnSpec(tableKey)` + `assertColumnsSum1640(columns)` for builder use
 - Cell **patterns** (swatch, theme dual-preview, preview bar, two-line meta) stay documented in `10-column-spec.md` / §11 — expose as typed `CellPattern` enums + doc comments, not runtime Figma calls
 
@@ -87,7 +87,7 @@ These belong in `matrixSpecimen.ts` but share core logic with `autoLayout.ts`.
 
 ### 8. `_lib.js` helpers to extract (direct lift map)
 
-| Legacy helper                                               | Figmint target                                                            | Notes                                                                |
+| Legacy helper                                               | FigHub target                                                            | Notes                                                                |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `makeText`                                                  | `helpers/textCell.ts`                                                     | §0.2 pipeline + optional style/fill bind                             |
 | `makeHeaderCell`                                            | `helpers/tableCells.ts`                                                   | §0.5                                                                 |
@@ -101,9 +101,9 @@ These belong in `matrixSpecimen.ts` but share core logic with `autoLayout.ts`.
 
 ### 9. Drift: `_lib.js` vs convention prose
 
-When conventions and `_lib.js` disagree, **follow convention prose** for Figmint (legacy `_lib.js` has known drift):
+When conventions and `_lib.js` disagree, **follow convention prose** for FigHub (legacy `_lib.js` has known drift):
 
-| Property                | `_lib.js` | Conventions (`08`, `10`, `14-audit`) | Figmint decision |
+| Property                | `_lib.js` | Conventions (`08`, `10`, `14-audit`) | FigHub decision |
 | ----------------------- | --------- | ------------------------------------ | ---------------- |
 | Header band height      | 48px      | 56px                                 | **56px**         |
 | Body row `minHeight`    | 56        | 64                                   | **64**           |

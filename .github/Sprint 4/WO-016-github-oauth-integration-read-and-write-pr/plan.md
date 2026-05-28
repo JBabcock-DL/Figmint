@@ -32,7 +32,7 @@ Promote WO-016 **research spike** into durable GitHub integration: **Device Flow
 ```ts
 const DEFAULT_RELAY = 'http://localhost:8787';
 
-function relayBase(): string; // import.meta.env.FIGMINT_OAUTH_RELAY_URL || DEFAULT
+function relayBase(): string; // import.meta.env.FIGHUB_OAUTH_RELAY_URL || DEFAULT
 
 export async function requestDeviceCodeViaRelay(scope: string): Promise<DeviceCodeResponse>;
 export async function pollDeviceTokenViaRelay(deviceCode: string): Promise<DeviceTokenPollResult>;
@@ -62,10 +62,10 @@ export function normalizeRepoUrl(input: string): string;
 export function parseOwnerRepo(normalizedUrl: string): { owner: string; repo: string };
 
 export function tokenStorageKey(repoUrl: string): string;
-// 'figmint:github:token:' + normalizeRepoUrl(repoUrl)
+// 'fighub:github:token:' + normalizeRepoUrl(repoUrl)
 
 export function configStorageKey(repoUrl: string): string;
-// 'figmint:github:config:' + normalizeRepoUrl(repoUrl)
+// 'fighub:github:config:' + normalizeRepoUrl(repoUrl)
 ```
 
   - Reject `github.enterprise.com` for MVP.
@@ -299,11 +299,11 @@ export async function createPullRequestFlow(
   - **Done when:** `tests/unit/io/github/createPullRequestFlow.test.ts` asserts call order with mocked relay.
 
 - [x] **Step 15** — Implement `src/io/github/prBody.ts` + `branchName.ts` (shared with WO-018):
-  - `buildDefaultHeadBranch(contractKind, dateUtc)` → `figmint/{kind}-{yyyy-MM-dd}`
+  - `buildDefaultHeadBranch(contractKind, dateUtc)` → `fighub/{kind}-{yyyy-MM-dd}`
   - `buildPrBody(...)` per research template
 
 - [x] **Step 16** — Settings "Open test PR" dev action (or unit-only if no UI time):
-  - Single file `docs/figmint/test-export.v1.json` commit to prove WO-016 AC.
+  - Single file `docs/fighub/test-export.v1.json` commit to prove WO-016 AC.
   - **Done when:** manual PR opened on test repo OR full mock test only + VQA note.
 
 - [x] **Step 17** — Update `manifest.json`:
@@ -312,7 +312,7 @@ export async function createPullRequestFlow(
 "networkAccess": {
   "allowedDomains": ["https://YOUR-PRODUCTION-RELAY.example.com"],
   "devAllowedDomains": ["http://localhost:8787"],
-  "reasoning": "GitHub OAuth + API via Figmint relay (CORS-safe). Direct github.com blocked in plugin sandbox."
+  "reasoning": "GitHub OAuth + API via FigHub relay (CORS-safe). Direct github.com blocked in plugin sandbox."
 }
 ```
 
@@ -321,7 +321,7 @@ export async function createPullRequestFlow(
 - [x] **Step 18** — Update `vite.config.ts` `sharedDefine`:
 
 ```ts
-'import.meta.env.FIGMINT_OAUTH_RELAY_URL': JSON.stringify(env.FIGMINT_OAUTH_RELAY_URL ?? ''),
+'import.meta.env.FIGHUB_OAUTH_RELAY_URL': JSON.stringify(env.FIGHUB_OAUTH_RELAY_URL ?? ''),
 ```
 
   - Add to `src/vite-env.d.ts` interface.

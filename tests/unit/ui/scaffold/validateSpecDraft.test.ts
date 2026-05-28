@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { validateComponentSpecDraft } from '@/ui/components/scaffold/validateSpecDraft';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import canonicalFixture from '../../../fixtures/component-spec-button-canonical.json';
 

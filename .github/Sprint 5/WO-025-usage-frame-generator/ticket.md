@@ -43,7 +43,7 @@ After forward scaffold (WO-022..024), designers need a compact, labeled preview 
 4. **Layout** — reparent `ComponentSet` into `{spec.name}/forward-scaffold` (HORIZONTAL, spacing 48); add `{spec.name}/usage-examples` column (VERTICAL) with `createHorizontalUsageRow` for the instance row.
 5. **WO-014 helpers** — import from `src/core/canvas/helpers/autoLayout.ts` (`createHugFrame`, `reassertHug`, `assertNoOnePxMaster`) and `src/core/canvas/helpers/matrixSpecimen.ts` (`createHorizontalUsageRow`). Call `figma.loadFontAsync` before label text.
 6. **Pipeline position** — run **after** `applyProperties()` (WO-024); **after** `applyBindings()` (WO-023); **after** `scaffold()` (WO-022).
-7. **Idempotency** — on rescaffold, remove/rebuild `usage-examples` subtree (preserve ComponentSet id); optional `pluginData` key `figmint:usageFrame:v1:…`.
+7. **Idempotency** — on rescaffold, remove/rebuild `usage-examples` subtree (preserve ComponentSet id); optional `pluginData` key `fighub:usageFrame:v1:…`.
 
 ### Visual / UX
 

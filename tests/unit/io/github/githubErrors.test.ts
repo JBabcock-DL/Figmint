@@ -56,10 +56,10 @@ describe('mapGitHubHttpError', () => {
       name: '422 branch already exists',
       status: 422,
       body: { message: 'Reference already exists' },
-      context: { branch: 'figmint/drift-report-2026-05-27' },
+      context: { branch: 'fighub/drift-report-2026-05-27' },
       expected: {
         code: 'branch-exists',
-        message: 'A branch named `figmint/drift-report-2026-05-27` already exists.',
+        message: 'A branch named `fighub/drift-report-2026-05-27` already exists.',
         hint: 'Change branch pattern or delete the remote branch.',
       },
     },

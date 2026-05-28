@@ -78,7 +78,7 @@ None.
 ## Backend action
 
 - **Backend:** GitHub
-- **Issue:** [#12](https://github.com/JBabcock-DL/Figmint/issues/12)
+- **Issue:** [#12](https://github.com/JBabcock-DL/FigHub/issues/12)
 - **Project item:** `PVTI_lAHOD9B30s4BY4aYzgt5I8M`
 - **Action:** No project status mutation requested for this ticket in the VQA run scope
 

@@ -1,4 +1,4 @@
-import type { DriftReportV1, DriftEntry } from '@detroitlabs/figmint-contracts';
+import type { DriftReportV1, DriftEntry } from '@detroitlabs/fighub-contracts';
 
 import { renderGfmTable, renderMetaBullets, truncateUnknown } from './shared';
 

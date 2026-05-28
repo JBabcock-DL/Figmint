@@ -1,4 +1,4 @@
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { buildDocPipeline } from '@/core/canvas/doc';
 import { pluginLog } from '@/core/pluginLog';

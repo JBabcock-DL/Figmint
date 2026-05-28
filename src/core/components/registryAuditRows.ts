@@ -1,4 +1,4 @@
-import type { AuditRuleResult, RegistryComponentEntry, RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult, RegistryComponentEntry, RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 export function buildRegistryAuditRows(
   registry: RegistryV1,

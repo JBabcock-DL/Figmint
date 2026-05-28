@@ -15,7 +15,7 @@
 
 Manual Components tab VQA (checklist items **C** and **D**) exposed **four independent failure classes** after tab persistence was fixed. The plugin **panel UI is healthy**; failures are on the **canvas output** of the forward-scaffold pipeline.
 
-**C — Registry + property audit:** The message `No registry file at packages\contracts\dist\registry.v1.schema.json` is expected when the registry path points at a **JSON Schema contract file** (`registry.v1.schema.json`) instead of a **RegistryV1 instance document** (`.figmint-registry.json`). Scaffold correctly starts an empty registry. The audit block `2 passed · 4 failed` maps to **WO-024 component property rules** — specifically `comp/prop-label-text`, `comp/prop-leading-icon-boolean`, `comp/prop-trailing-icon-boolean`, and `comp/prop-add-zero-failures` with **48 failures = 12 variants × 4 properties** (`loading` + 3 implicit props). This arithmetic proves **`addComponentProperty` threw on every variant for every non-VARIANT property** — not a partial wiring miss.
+**C — Registry + property audit:** The message `No registry file at packages\contracts\dist\registry.v1.schema.json` is expected when the registry path points at a **JSON Schema contract file** (`registry.v1.schema.json`) instead of a **RegistryV1 instance document** (`.fighub-registry.json`). Scaffold correctly starts an empty registry. The audit block `2 passed · 4 failed` maps to **WO-024 component property rules** — specifically `comp/prop-label-text`, `comp/prop-leading-icon-boolean`, `comp/prop-trailing-icon-boolean`, and `comp/prop-add-zero-failures` with **48 failures = 12 variants × 4 properties** (`loading` + 3 implicit props). This arithmetic proves **`addComponentProperty` threw on every variant for every non-VARIANT property** — not a partial wiring miss.
 
 **D — Canvas geometry + documentation:** The Button ComponentSet / variant masters collapsed to **1×1 px** on canvas. Usage/documentation output landed on the **Components** page in a minimal instance gallery (`Button/forward-scaffold`, `Button/usage-examples`) rather than the **Foundations documentation tree** the user expected (v60 reference). The broken gallery is largely a **downstream symptom** of 1×1 masters (instances inherit collapsed geometry).
 
@@ -24,7 +24,7 @@ Manual Components tab VQA (checklist items **C** and **D**) exposed **four indep
 1. **WO-024 (blocker):** Fix property application timing/API — move non-VARIANT property creation to **pre-`combineAsVariants`** on each variant `ComponentNode` (legacy-proven), or spike **`ComponentSetNode.addComponentProperty`** post-combine; stop iterating post-combine per-variant adds if Figma rejects them.
 2. **WO-022 (blocker):** Add **post-combine variant master normalization** — `layoutSizingHorizontal/Vertical = 'HUG'`, `reassertHug`, minimum height floor — on chip (Button) archetype; mocks mask `combineAsVariants` sizing reset.
 3. **WO-025 (follow-on):** Keep FR-SCAF-5 instance gallery on Components page for Phase 2, but **harden layout** after geometry fix; document that **Foundations-style doc pages** (properties table, matrix specimen, Do/Don't cards) remain **out of scope** until a doc-pipeline ticket — set user expectation in UI copy.
-4. **WO-027 (UX):** Registry path validation — reject schema paths, suggest `.figmint-registry.json`; clarify audit panel scope (component audits show `variablesCreated: 0` — not a push failure).
+4. **WO-027 (UX):** Registry path validation — reject schema paths, suggest `.fighub-registry.json`; clarify audit panel scope (component audits show `variablesCreated: 0` — not a push failure).
 
 ---
 
@@ -39,14 +39,14 @@ Manual Components tab VQA (checklist items **C** and **D**) exposed **four indep
 | Path | File role | Valid registry load? |
 | ---- | --------- | -------------------- |
 | `packages/contracts/dist/registry.v1.schema.json` | JSON Schema for `RegistryV1` contract | ❌ — no `kind: "registry"` instance |
-| `.figmint-registry.json` (default) | Runtime registry document in consumer repo | ✅ when present on GitHub |
+| `.fighub-registry.json` (default) | Runtime registry document in consumer repo | ✅ when present on GitHub |
 | `tests/fixtures/*.json` | Test RegistryV1 payloads | ✅ in tests only |
 
 **Code:** `src/ui/components/scaffold/loadRegistryFromRepo.ts` L13–18 returns `registry: null` with that message when `loadRegistryFromGitHub` gets 404. `normalizeRegistryInput` in `src/core/components/registry.ts` validates `kind: 'registry'`, `v: 1` — a schema file fails validation if fetched.
 
-**Implication:** User pointed registry path at the **contracts package schema artifact** (visible in IDE) instead of a repo-root `.figmint-registry.json`. Scaffold + export still work; registry starts empty and upserts after scaffold.
+**Implication:** User pointed registry path at the **contracts package schema artifact** (visible in IDE) instead of a repo-root `.fighub-registry.json`. Scaffold + export still work; registry starts empty and upserts after scaffold.
 
-**Fix (WO-027):** When loaded JSON fails normalization, surface: *"Path exists but is not a RegistryV1 document (found JSON Schema?). Use `.figmint-registry.json` at repo root."* Add path hint in Settings/Components registry field placeholder.
+**Fix (WO-027):** When loaded JSON fails normalization, surface: *"Path exists but is not a RegistryV1 document (found JSON Schema?). Use `.fighub-registry.json` at repo root."* Add path hint in Settings/Components registry field placeholder.
 
 ---
 
@@ -131,7 +131,7 @@ Canonical Button spec (`tests/fixtures/component-spec-button-canonical.json`):
 
 **Symptom:** Documentation "drew on the wrong page and was broken"; should resemble [v60 Foundations Button doc frame](https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/v60-updates-%E2%80%94-Foundations?node-id=433-335).
 
-**Evidence — what Figmint builds today (WO-025):**
+**Evidence — what FigHub builds today (WO-025):**
 
 | Artifact | Page | Purpose |
 | -------- | ---- | ------- |
@@ -263,7 +263,7 @@ Canonical Button spec (`tests/fixtures/component-spec-button-canonical.json`):
 | # | Question | Status |
 | - | -------- | ------ |
 | OQ-1 | Exact Figma error string for post-combine `addComponentProperty` | **OPEN** — capture in SPK-027-2 |
-| OQ-2 | Should registry default path in UI show monorepo `.figmint-registry.json` example for Figmint dev repo? | **OPEN** — product call |
+| OQ-2 | Should registry default path in UI show monorepo `.fighub-registry.json` example for FigHub dev repo? | **OPEN** — product call |
 | OQ-3 | Phase 2 GA requires Foundations doc page or only ComponentSet + gallery? | **RESOLVED** — Phase 2 = ComponentSet + FR-SCAF-5 gallery per PRD §12; Foundations doc = later phase (user expectation noted) |
 
 ---

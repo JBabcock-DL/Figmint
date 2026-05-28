@@ -1,0 +1,169 @@
+{
+  "v": 1,
+  "kind": "drift-report",
+  "meta": {
+    "generatedAt": "2026-05-28T12:00:00.000Z",
+    "figmaFileKey": "FigmintResolutionAC",
+    "repoUrl": "https://github.com/detroitlabs/figmint"
+  },
+  "summary": {
+    "push": 4,
+    "pull": 3,
+    "conflict": 3,
+    "synced": 0
+  },
+  "drifts": [
+    {
+      "id": "var/Layout/spacing-4",
+      "kind": "variable",
+      "direction": "push",
+      "figma": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 16 }, "codeSyntax": {} },
+      "repo": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 12 }, "codeSyntax": {} },
+      "lastSynced": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 12 }, "codeSyntax": {} }
+    },
+    {
+      "id": "var/Layout/spacing-8",
+      "kind": "variable",
+      "direction": "push",
+      "figma": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 32 }, "codeSyntax": {} },
+      "repo": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 24 }, "codeSyntax": {} },
+      "lastSynced": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 24 }, "codeSyntax": {} }
+    },
+    {
+      "id": "var/Theme/radius-md",
+      "kind": "variable",
+      "direction": "push",
+      "figma": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 8 }, "codeSyntax": {} },
+      "repo": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 6 }, "codeSyntax": {} },
+      "lastSynced": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 6 }, "codeSyntax": {} }
+    },
+    {
+      "id": "cmp/button",
+      "kind": "component",
+      "direction": "push",
+      "figma": {
+        "comparable": {
+          "specName": "Button",
+          "variantMatrixHash": "figma-push",
+          "variantMatrix": { "variant": ["default", "primary"] },
+          "props": [],
+          "bindings": []
+        }
+      },
+      "repo": {
+        "comparable": {
+          "specName": "Button",
+          "variantMatrixHash": "repo-base",
+          "variantMatrix": { "variant": ["default"] },
+          "props": [],
+          "bindings": []
+        }
+      },
+      "lastSynced": {
+        "comparable": {
+          "specName": "Button",
+          "variantMatrixHash": "repo-base",
+          "variantMatrix": { "variant": ["default"] },
+          "props": [],
+          "bindings": []
+        }
+      }
+    },
+    {
+      "id": "var/Theme/color/background",
+      "kind": "variable",
+      "direction": "pull",
+      "figma": { "resolvedType": "COLOR", "valuesByMode": { "Light": { "r": 1, "g": 1, "b": 1, "a": 1 } }, "codeSyntax": {} },
+      "repo": { "resolvedType": "COLOR", "valuesByMode": { "Light": { "r": 0.98, "g": 0.98, "b": 0.98, "a": 1 } }, "codeSyntax": {} },
+      "lastSynced": { "resolvedType": "COLOR", "valuesByMode": { "Light": { "r": 1, "g": 1, "b": 1, "a": 1 } }, "codeSyntax": {} }
+    },
+    {
+      "id": "var/Typography/body/size",
+      "kind": "variable",
+      "direction": "pull",
+      "figma": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 14 }, "codeSyntax": {} },
+      "repo": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 16 }, "codeSyntax": {} },
+      "lastSynced": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 14 }, "codeSyntax": {} }
+    },
+    {
+      "id": "cmp/chip",
+      "kind": "component",
+      "direction": "pull",
+      "figma": {
+        "comparable": {
+          "specName": "Chip",
+          "variantMatrixHash": "figma-pull",
+          "variantMatrix": { "size": ["sm"] },
+          "props": [],
+          "bindings": []
+        }
+      },
+      "repo": {
+        "comparable": {
+          "specName": "Chip",
+          "variantMatrixHash": "repo-pull",
+          "variantMatrix": { "size": ["sm", "md"] },
+          "props": [],
+          "bindings": []
+        }
+      },
+      "lastSynced": {
+        "comparable": {
+          "specName": "Chip",
+          "variantMatrixHash": "figma-pull",
+          "variantMatrix": { "size": ["sm"] },
+          "props": [],
+          "bindings": []
+        }
+      }
+    },
+    {
+      "id": "var/Effects/shadow/md",
+      "kind": "variable",
+      "direction": "conflict",
+      "figma": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 8 }, "codeSyntax": {} },
+      "repo": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 12 }, "codeSyntax": {} },
+      "lastSynced": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 6 }, "codeSyntax": {} }
+    },
+    {
+      "id": "var/Primitives/neutral/500",
+      "kind": "variable",
+      "direction": "conflict",
+      "figma": { "resolvedType": "COLOR", "valuesByMode": { "Default": { "r": 0.4, "g": 0.4, "b": 0.4, "a": 1 } }, "codeSyntax": {} },
+      "repo": { "resolvedType": "COLOR", "valuesByMode": { "Default": { "r": 0.5, "g": 0.5, "b": 0.5, "a": 1 } }, "codeSyntax": {} },
+      "lastSynced": { "resolvedType": "COLOR", "valuesByMode": { "Default": { "r": 0.45, "g": 0.45, "b": 0.45, "a": 1 } }, "codeSyntax": {} }
+    },
+    {
+      "id": "cmp/input",
+      "kind": "component",
+      "direction": "conflict",
+      "figma": {
+        "comparable": {
+          "specName": "Input",
+          "variantMatrixHash": "figma-conflict",
+          "variantMatrix": { "state": ["default", "error"] },
+          "props": [{ "name": "disabled", "type": "boolean", "default": false }],
+          "bindings": []
+        }
+      },
+      "repo": {
+        "comparable": {
+          "specName": "Input",
+          "variantMatrixHash": "repo-conflict",
+          "variantMatrix": { "state": ["default", "focused"] },
+          "props": [{ "name": "disabled", "type": "boolean", "default": true }],
+          "bindings": []
+        }
+      },
+      "lastSynced": {
+        "comparable": {
+          "specName": "Input",
+          "variantMatrixHash": "sync-conflict",
+          "variantMatrix": { "state": ["default"] },
+          "props": [{ "name": "disabled", "type": "boolean", "default": false }],
+          "bindings": []
+        }
+      }
+    }
+  ]
+}

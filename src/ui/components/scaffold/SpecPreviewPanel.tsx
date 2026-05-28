@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import type { SpecValidationResult } from '@/ui/components/scaffold/validateSpecDraft';
 

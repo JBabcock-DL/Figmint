@@ -18,7 +18,7 @@
         "$type": "color",
         "$value": "rgba(0,0,0,0.1)",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "Light": "rgba(0,0,0,0.1)",
               "Dark": "rgba(0,0,0,0.4)"

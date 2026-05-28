@@ -55,6 +55,6 @@ Doc-focused: tests/unit/core/canvas/doc/* + docPipeline.integration.test.ts
 
 ## Recommendation
 
-**Ship** — move GitHub issue [#60](https://github.com/JBabcock-DL/Figmint/issues/60) to **Completed**. Closes BUG-S5-004; unblocks WO-027.
+**Ship** — move GitHub issue [#60](https://github.com/JBabcock-DL/FigHub/issues/60) to **Completed**. Closes BUG-S5-004; unblocks WO-027.
 
 **Backend:** Project item `PVTI_lAHOD9B30s4BY4aYzguFS5g` → Completed (`167fdd81`).

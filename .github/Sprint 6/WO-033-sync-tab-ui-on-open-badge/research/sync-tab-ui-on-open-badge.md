@@ -75,7 +75,7 @@ Figma plugins cannot background. On-open + manual refresh only (ticket confirmed
 
 ### 6. Design reference
 
-Ticket cites "Sync tab + badge design lives in Figmint design file" — **translate to repo card mock** during WO-058 `/plan`. No Figma VQA node IDs filled yet.
+Ticket cites "Sync tab + badge design lives in FigHub design file" — **translate to repo card mock** during WO-058 `/plan`. No Figma VQA node IDs filled yet.
 
 ---
 

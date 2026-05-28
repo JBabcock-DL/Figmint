@@ -6,7 +6,7 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5I90
 
 ## Goal
 
-Port the step-15a (Primitives page) and step-15b (Theme page) canvas builders from DesignOps-plugin into figmint as deterministic TypeScript modules. Together these build the foundational color portion of the style-guide canvas.
+Port the step-15a (Primitives page) and step-15b (Theme page) canvas builders from DesignOps-plugin into fighub as deterministic TypeScript modules. Together these build the foundational color portion of the style-guide canvas.
 
 PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-7.
 
@@ -14,7 +14,7 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-7.
 
 ## Problem story
 
-After WO-008 pushes the five variable collections, designers need the Primitives and Theme style-guide pages populated with bound swatch tables — the visual reference for every color token, alias chain, and platform codeSyntax. Today that logic lives in DesignOps-plugin canvas templates invoked via MCP bundles; Figmint must run the same deterministic draw inside the plugin sandbox with no 50 kB payload cap.
+After WO-008 pushes the five variable collections, designers need the Primitives and Theme style-guide pages populated with bound swatch tables — the visual reference for every color token, alias chain, and platform codeSyntax. Today that logic lives in DesignOps-plugin canvas templates invoked via MCP bundles; FigHub must run the same deterministic draw inside the plugin sandbox with no 50 kB payload cap.
 
 ---
 

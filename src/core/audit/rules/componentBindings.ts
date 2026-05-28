@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { parseBindingSelector, resolveNodeByPath } from '@/core/components/scaffold/selector';
 import type { ComponentAuditInput } from '@/core/components/scaffold/types';

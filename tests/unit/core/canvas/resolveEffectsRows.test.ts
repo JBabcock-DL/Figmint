@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import layoutEffectsFixture from '@/core/canvas/__fixtures__/layout-effects.v1.json';
 import { loadLayoutEffectsReference } from '@/core/canvas/data/loadCanvasData';

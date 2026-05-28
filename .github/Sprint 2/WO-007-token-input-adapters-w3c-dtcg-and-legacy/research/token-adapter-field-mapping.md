@@ -53,7 +53,7 @@ The `TokensV1Legacy` wire shape (`collections[].variables[].valuesByMode`) is th
 | `$type` on ancestor group                                          | (resolved onto leaf)                | Walk accumulates `$type` from parent chain; leaf `$type` overrides.                                                                                                                                                                                                         |
 | `$value` string `#RRGGBB` or `#RRGGBBAA`                           | `ColorValue` `{r,g,b,a}` 0..1       | Parse hex; alpha defaults to 1 if omitted.                                                                                                                                                                                                                                  |
 | `$value` string `rgb()` / `rgba()`                                 | `ColorValue`                        | Parse to 0..1 RGBA.                                                                                                                                                                                                                                                         |
-| `$value` dimension `"16px"`, `"1.5rem"`                            | `number` (FLOAT token)              | Strip unit; store numeric px as FLOAT (`rem` → px at 16px base unless `$extensions.figmint.unit` overrides).                                                                                                                                                                |
+| `$value` dimension `"16px"`, `"1.5rem"`                            | `number` (FLOAT token)              | Strip unit; store numeric px as FLOAT (`rem` → px at 16px base unless `$extensions.fighub.unit` overrides).                                                                                                                                                                |
 | `$value` plain number                                              | `number`                            | FLOAT token literal.                                                                                                                                                                                                                                                        |
 | `$value` boolean                                                   | `boolean`                           | BOOLEAN token literal.                                                                                                                                                                                                                                                      |
 | `$value` string (non-color, non-alias)                             | `string`                            | STRING token literal (e.g. font family name when `$type: 'fontFamily'`).                                                                                                                                                                                                    |
@@ -62,12 +62,12 @@ The `TokensV1Legacy` wire shape (`collections[].variables[].valuesByMode`) is th
 | `$value` `"{group.token.ref}"` (curly alias)                       | `{ aliasOf: { collection, name } }` | Strip `{}`; split on `.`; **first segment** = `collection` (must match `CollectionId`); remaining segments joined with `/` after dot→slash on each segment → `name`. Example: `{primitives.color.primary.500}` → `{ collection: 'primitives', name: 'color/primary/500' }`. |
 | `$value` same-collection alias `{color.primary.500}`               | `{ aliasOf: { collection, name } }` | If first segment is NOT a known `CollectionId`, treat current walk's top-level group as `collection`; join rest with `/`.                                                                                                                                                   |
 | Default single-mode value in `$value`                              | `valuesByMode['Default']`           | When no mode extensions present and collection is Primitives or Layout.                                                                                                                                                                                                     |
-| `$extensions.figmint.modes`                                        | `valuesByMode`                      | Keys = mode names (`Light`, `Dark`, `85`…`200`); values parsed per same rules as `$value`. Fold into `valuesByMode`; do not duplicate default mode.                                                                                                                         |
-| `$extensions.figmint.modes` missing; collection = Theme or Effects | `valuesByMode`                      | Infer `Light`/`Dark` from dual `$value` pattern not used — require extensions or error.                                                                                                                                                                                     |
-| `$extensions.figmint.codeSyntax`                                   | `Token.codeSyntax`                  | Copy `{ WEB?, ANDROID?, iOS? }` verbatim; validate keys ∈ `CodeSyntaxPlatform`.                                                                                                                                                                                             |
+| `$extensions.fighub.modes`                                        | `valuesByMode`                      | Keys = mode names (`Light`, `Dark`, `85`…`200`); values parsed per same rules as `$value`. Fold into `valuesByMode`; do not duplicate default mode.                                                                                                                         |
+| `$extensions.fighub.modes` missing; collection = Theme or Effects | `valuesByMode`                      | Infer `Light`/`Dark` from dual `$value` pattern not used — require extensions or error.                                                                                                                                                                                     |
+| `$extensions.fighub.codeSyntax`                                   | `Token.codeSyntax`                  | Copy `{ WEB?, ANDROID?, iOS? }` verbatim; validate keys ∈ `CodeSyntaxPlatform`.                                                                                                                                                                                             |
 | `$description`                                                     | `Token.description`                 | Direct copy.                                                                                                                                                                                                                                                                |
 | `$deprecated`                                                      | `Token.deprecated`                  | Direct copy (`boolean \| string`).                                                                                                                                                                                                                                          |
-| Other `$extensions.*` (non-figmint)                                | `Token.extensions`                  | Preserve vendor keys verbatim for round-trip.                                                                                                                                                                                                                               |
+| Other `$extensions.*` (non-fighub)                                | `Token.extensions`                  | Preserve vendor keys verbatim for round-trip.                                                                                                                                                                                                                               |
 | `$schema`                                                          | (ignored on ingest)                 | May re-emit on export; not stored in canonical.                                                                                                                                                                                                                             |
 | (derived)                                                          | `collections[]` metadata            | Emit five `Collection` entries in dependency order with locked mode lists (see below).                                                                                                                                                                                      |
 
@@ -172,7 +172,7 @@ JSON string → detectContract → 'tokens-dtcg' | 'tokens-legacy'
 
 | Direction                   | Serializer owner                  | Lossless fields                                                                                                        | Intentional non-round-trip                                                                 |
 | --------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| DTCG → canonical → DTCG     | WO-019 (Sprint 4) / stub in tests | All tokens, `$type`, `$value`, `$extensions.figmint.*`, vendor `$extensions`, aliases as `{collection.path.with.dots}` | `$schema` URL may differ; group re-nesting uses locked top-level=`CollectionId` convention |
+| DTCG → canonical → DTCG     | WO-019 (Sprint 4) / stub in tests | All tokens, `$type`, `$value`, `$extensions.fighub.*`, vendor `$extensions`, aliases as `{collection.path.with.dots}` | `$schema` URL may differ; group re-nesting uses locked top-level=`CollectionId` convention |
 | Legacy → canonical → legacy | WO-019 / test stub                | `collections[]`, modes, variables, codeSyntax triples, alias strings                                                   | Collection order normalized; mode key casing normalized to Title-Case names                |
 
 **DTCG re-nesting algorithm (export):**
@@ -182,7 +182,7 @@ for each Token t:
   ensure root[t.collection] exists
   walk segments of t.name split by '/':
     create nested groups; at leaf emit { $type, $value, $extensions... }
-fold valuesByMode → $extensions.figmint.modes when |modes| > 1 or collection requires multi-mode
+fold valuesByMode → $extensions.fighub.modes when |modes| > 1 or collection requires multi-mode
 emit aliases: canonical { aliasOf: { collection, name } } → `{${collection}.${name with slashes→dots}}`
 ```
 
@@ -203,7 +203,7 @@ src/io/sources/adapters/
 
 Pure functions only — no Figma API, no network, no `figma.*`.
 
-Import types from `@detroitlabs/figmint-contracts` (`TokensV1`, `TokensV1WC3DTCG`, `TokensV1Legacy`, `DtcgTokenType`, …).
+Import types from `@detroitlabs/fighub-contracts` (`TokensV1`, `TokensV1WC3DTCG`, `TokensV1Legacy`, `DtcgTokenType`, …).
 
 ### G. Test fixtures plan
 
@@ -211,7 +211,7 @@ Import types from `@detroitlabs/figmint-contracts` (`TokensV1`, `TokensV1WC3DTCG
 
 | Fixture file                                                                    | Token count | Coverage                                                                                                                                                                                                                                                                                                                                                               |
 | ------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dtcg-foundations-min.json`                                                     | ≥24         | Top-level groups: all 5 collections; color hex + rgba(); dimension px; typography composite (1 slot decomposed); shadow tier; alias `{primitives.color.primary.500}` cross-collection; `$extensions.figmint.modes` Light/Dark; `$extensions.figmint.codeSyntax` triple; inherited `$type` from parent group; `$description`; vendor `$extensions`; `$deprecated: true` |
+| `dtcg-foundations-min.json`                                                     | ≥24         | Top-level groups: all 5 collections; color hex + rgba(); dimension px; typography composite (1 slot decomposed); shadow tier; alias `{primitives.color.primary.500}` cross-collection; `$extensions.fighub.modes` Light/Dark; `$extensions.fighub.codeSyntax` triple; inherited `$type` from parent group; `$description`; vendor `$extensions`; `$deprecated: true` |
 | `legacy-foundations-min.json`                                                   | ≥24         | All 5 `collections[]`; Theme alias rows + `rawLiterals` RGBA; Layout `Space/*` aliases; Typography mode `100` slot + alias to `typeface/display`; Effects Light/Dark `shadow/color` RGBA + blur alias; `codeSyntax` on every row; multi-mode Typography (≥2 modes on one token)                                                                                        |
 | `invalid-ambiguous.json`                                                        | 3           | `{}`, `{ collections: [{ name: 'Unknown' }] }`, `{ color: { x: { $value: '#000' } } }` ($type missing)                                                                                                                                                                                                                                                                 |
 | `roundtrip-dtcg-a.json`, `roundtrip-dtcg-b.json`, `roundtrip-dtcg-c.json`       | 8–15 each   | Representative docs for serialize→adapt cycle                                                                                                                                                                                                                                                                                                                          |
@@ -223,14 +223,14 @@ Import types from `@detroitlabs/figmint-contracts` (`TokensV1`, `TokensV1WC3DTCG
 
 ```ts
 // src/io/sources/adapters/dtcg.ts
-import type { TokensV1, TokensV1WC3DTCG } from '@detroitlabs/figmint-contracts';
+import type { TokensV1, TokensV1WC3DTCG } from '@detroitlabs/fighub-contracts';
 
 export function adaptDTCG(input: TokensV1WC3DTCG): TokensV1;
 ```
 
 ```ts
 // src/io/sources/adapters/legacy.ts
-import type { TokensV1, TokensV1Legacy } from '@detroitlabs/figmint-contracts';
+import type { TokensV1, TokensV1Legacy } from '@detroitlabs/fighub-contracts';
 
 export function adaptLegacy(input: TokensV1Legacy): TokensV1;
 ```
@@ -244,7 +244,7 @@ export function detectFormat(raw: unknown): TokenWireFormat | null;
 
 ```ts
 // src/io/sources/adapters/index.ts
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 export interface FormatError {
   kind: 'format-error';
@@ -292,7 +292,7 @@ export type { FormatError };
 - [W3C Design Tokens Format Module](https://design-tokens.github.io/community-group/format/) — §5.2.2 Type inheritance, §6 Groups, §6.4 Aliases
 - [Figma Plugin API — CodeSyntaxPlatform](https://developers.figma.com/docs/plugins/api/CodeSyntaxPlatform/)
 
-### Internal — Figmint
+### Internal — FigHub
 
 - `Docs/PRD.md` §6.1 FR-BOOT-1..2, §7.3, §8.2
 - `Docs/lift-sources.md` §0 (step-15a drift), §4 (convention shards)

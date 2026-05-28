@@ -106,9 +106,9 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 - [x] **Step 2** — Implement `src/core/components/scaffold/types.ts`:
 
   ```ts
-  import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
-  import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
-  import type { RegistryV1 } from '@detroitlabs/figmint-contracts';
+  import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
+  import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
+  import type { RegistryV1 } from '@detroitlabs/fighub-contracts';
 
   export type VariantCombo = Record<string, string | boolean>;
 
@@ -152,8 +152,8 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
     ctx: ScaffoldBuildContext,
   ) => Promise<VariantBuildResult>;
 
-  export const PLUGIN_DATA_SCAFFOLD_ID = 'figmint.scaffoldId';
-  export const PLUGIN_DATA_SPEC_VERSION = 'figmint.specVersion';
+  export const PLUGIN_DATA_SCAFFOLD_ID = 'fighub.scaffoldId';
+  export const PLUGIN_DATA_SPEC_VERSION = 'fighub.specVersion';
   ```
 
   **Done when:** types exported; no optional chaining in file (ES2017).
@@ -177,7 +177,7 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
   2. Cartesian product in stable nested-loop order (outer = first sorted key).
   3. Booleans → `"true"` / `"false"` strings in names.
   4. `hashVariantMatrix`: canonical JSON of sorted keys + values → FNV-1a 32-bit hex (match WO-005 generator pattern).
-  5. `buildScaffoldId`: `` `figmint:scaffold:v1:${specName}:${hash}` ``.
+  5. `buildScaffoldId`: `` `fighub:scaffold:v1:${specName}:${hash}` ``.
 
   **Done when:** `variantMatrix.test.ts` asserts 3×2×2 → 12 combos; sample name `disabled=false, size=sm, variant=a`; hash stable across key insertion order; `parseVariantName` round-trips.
 
@@ -267,7 +267,7 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 
   **Behavior:**
   - Create `ComponentNode`; root auto-layout HORIZONTAL; `resizeThenApplySizing` / `createHugFrame` per WO-014.
-  - Name label text node `text/label` (Figmint fix — legacy left unnamed).
+  - Name label text node `text/label` (FigHub fix — legacy left unnamed).
   - Optional leading/trailing icon slots from `ctx.spec.iconSlots`.
   - Hex fills from `ctx.styleByVariantKey[variantKey]`.
   - Return `{ component }`.
@@ -440,7 +440,7 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 
 | Dependency | Role in WO-022 |
 | ---------- | -------------- |
-| **WO-003** | `ComponentSpecV1`, `RegistryV1`, `AuditRuleResult` from `@detroitlabs/figmint-contracts` |
+| **WO-003** | `ComponentSpecV1`, `RegistryV1`, `AuditRuleResult` from `@detroitlabs/fighub-contracts` |
 | **WO-008** | Variables exist in file for optional manual smoke — not required for unit tests |
 | **WO-014** | `resizeThenApplySizing`, `createHugFrame`, `assertValidAxisAlign`, `assertNoOnePxMaster` from `@/core/canvas/helpers/autoLayout` |
 | **WO-010** | `AuditRuleResult` shape — full `runAudit('component')` extension deferred |
@@ -474,8 +474,8 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 
 ### Idempotency pluginData contract
 
-- Key `figmint.scaffoldId` — value `` figmint:scaffold:v1:{spec.name}:{hashVariantMatrix} ``.
-- Key `figmint.specVersion` — value `'1'`.
+- Key `fighub.scaffoldId` — value `` fighub:scaffold:v1:{spec.name}:{hashVariantMatrix} ``.
+- Key `fighub.specVersion` — value `'1'`.
 - Replace semantics: remove prior ComponentSet + staging frames; no in-place patch (research D4).
 - 100 kB pluginData limit per key — id string well under cap.
 

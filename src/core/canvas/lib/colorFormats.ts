@@ -1,4 +1,4 @@
-import type { ColorValue } from '@detroitlabs/figmint-contracts';
+import type { ColorValue } from '@detroitlabs/fighub-contracts';
 
 export interface RgbUnit {
   r: number;

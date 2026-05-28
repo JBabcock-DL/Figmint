@@ -7,7 +7,7 @@
         "$type": "color",
         "$value": "#2d38c5",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#2d38c5",
               "dark": "#e2ed8b"
@@ -24,7 +24,7 @@
         "$type": "color",
         "$value": "#c0b347",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#c0b347",
               "dark": "#adc4ed"
@@ -41,7 +41,7 @@
         "$type": "color",
         "$value": "#04626e",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#04626e",
               "dark": "#c4f776"
@@ -58,7 +58,7 @@
         "$type": "color",
         "$value": "#c154d9",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#c154d9",
               "dark": "#b4a4a7"
@@ -75,7 +75,7 @@
         "$type": "color",
         "$value": "#d5ea90",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#d5ea90",
               "dark": "#f23a40"
@@ -92,7 +92,7 @@
         "$type": "color",
         "$value": "#7d4af3",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#7d4af3",
               "dark": "#f3bea1"
@@ -109,7 +109,7 @@
         "$type": "color",
         "$value": "#cbbf5a",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#cbbf5a",
               "dark": "#bb106a"
@@ -126,7 +126,7 @@
         "$type": "color",
         "$value": "#98e6b5",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#98e6b5",
               "dark": "#9439db"
@@ -143,7 +143,7 @@
         "$type": "color",
         "$value": "#98d9ac",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#98d9ac",
               "dark": "#275fc4"
@@ -160,7 +160,7 @@
         "$type": "color",
         "$value": "#414ccf",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": {
               "light": "#414ccf",
               "dark": "#73dc65"

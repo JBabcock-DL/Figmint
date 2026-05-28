@@ -1,4 +1,4 @@
-import type { CodeSyntaxPlatform, Token as TokenV1 } from '@detroitlabs/figmint-contracts';
+import type { CodeSyntaxPlatform, Token as TokenV1 } from '@detroitlabs/fighub-contracts';
 
 import { isTokenAliasRef } from './types';
 

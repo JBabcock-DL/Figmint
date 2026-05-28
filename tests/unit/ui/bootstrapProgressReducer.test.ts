@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { AuditReportV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditReportV1 } from '@detroitlabs/fighub-contracts';
 
 import {
   createInitialBootstrapProgressState,

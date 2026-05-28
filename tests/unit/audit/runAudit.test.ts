@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { runAudit } from '@/core/audit/runAudit';
 import type { FigmaCollectionSnapshot } from '@/core/audit/types';
@@ -71,7 +71,7 @@ describe('runAudit variables scope', () => {
     const chipSpec = await import('../../fixtures/components/button-chip-bindings.v1.json');
 
     const audit = await runAudit('component', {
-      spec: chipSpec.default as import('@detroitlabs/figmint-contracts').ComponentSpecV1,
+      spec: chipSpec.default as import('@detroitlabs/fighub-contracts').ComponentSpecV1,
       componentSet: componentSet as unknown as ComponentSetNode,
       bindingsResult: { applied: 11, failed: [], passed: true },
     });

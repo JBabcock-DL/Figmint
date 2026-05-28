@@ -1,6 +1,6 @@
 /// <reference types="@figma/plugin-typings" />
 
-import type { RegistryV1, SnapshotV1 } from '@detroitlabs/figmint-contracts';
+import type { RegistryV1, SnapshotV1 } from '@detroitlabs/fighub-contracts';
 
 import { upsertRegistryEntry } from '@/core/components/registry';
 import type { UpsertRegistryEntryInput } from '@/core/components/registry.types';
@@ -8,6 +8,8 @@ import { pluginLog } from '@/core/pluginLog';
 import { findOrCreateOutputPage } from '@/io/sinks/outputPage';
 
 import {
+  LEGACY_SNAPSHOT_FRAME_NAMES,
+  LEGACY_SNAPSHOT_PLUGIN_DATA_KEY,
   SNAPSHOT_FRAME_NAME,
   SNAPSHOT_MAX_BYTES,
   SNAPSHOT_PLUGIN_DATA_KEY,
@@ -32,11 +34,23 @@ function createEmptySnapshot(fileKey?: string): SnapshotV1 {
   };
 }
 
+function isSnapshotFrame(name: string): boolean {
+  if (name === SNAPSHOT_FRAME_NAME) {
+    return true;
+  }
+  for (let i = 0; i < LEGACY_SNAPSHOT_FRAME_NAMES.length; i++) {
+    if (name === LEGACY_SNAPSHOT_FRAME_NAMES[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function findOrCreateSnapshotFrame(): FrameNode {
   const page = findOrCreateOutputPage();
   for (let i = 0; i < page.children.length; i++) {
     const child = page.children[i];
-    if (child.type === 'FRAME' && child.name === SNAPSHOT_FRAME_NAME) {
+    if (child.type === 'FRAME' && isSnapshotFrame(child.name)) {
       return child;
     }
   }
@@ -53,7 +67,11 @@ export function findOrCreateSnapshotFrame(): FrameNode {
 export function readSnapshotRaw(): string | null {
   const frame = findOrCreateSnapshotFrame();
   const raw = frame.getPluginData(SNAPSHOT_PLUGIN_DATA_KEY);
-  return raw.length > 0 ? raw : null;
+  if (raw.length > 0) {
+    return raw;
+  }
+  const legacy = frame.getPluginData(LEGACY_SNAPSHOT_PLUGIN_DATA_KEY);
+  return legacy.length > 0 ? legacy : null;
 }
 
 export function parseSnapshot(raw: string | null): SnapshotV1 {

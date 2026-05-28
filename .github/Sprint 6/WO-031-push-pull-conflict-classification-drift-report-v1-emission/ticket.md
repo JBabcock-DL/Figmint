@@ -34,9 +34,9 @@ _Derived from Goal — see ticket-level scope._
 2. Summary fields: `push`, `pull`, `conflict`, `synced` — invariant: first three match `drifts[]` filter; `synced` count only.
 3. Sort `drifts[]` by `id` ascending for deterministic output.
 4. Markdown rendering via **existing** WO-019 `renderDriftReportMarkdown` — sections `## ↑ Push (N)`, `## ↓ Pull (N)`, `## ⚠ Conflicts (N)`.
-5. JSON validates against `DriftReportV1` in `@detroitlabs/figmint-contracts` (WO-003).
+5. JSON validates against `DriftReportV1` in `@detroitlabs/fighub-contracts` (WO-003).
 6. **Main message:** `drift/build-report` orchestrates WO-029 + WO-030 → report → optional sink.
-7. **PR emission:** extend PR title pattern `DesignOps drift: N push, M pull, K conflicts`; body = rendered markdown; files `docs/figmint/drift-{date}.{json,md}` via WO-018 sink.
+7. **PR emission:** extend PR title pattern `DesignOps drift: N push, M pull, K conflicts`; body = rendered markdown; files `docs/fighub/drift-{date}.{json,md}` via WO-018 sink.
 8. Wire `detect-drift` op from `opsProgram.v1` in `main.ts`.
 
 ### Visual / UX

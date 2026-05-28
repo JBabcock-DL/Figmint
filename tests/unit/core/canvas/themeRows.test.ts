@@ -5,7 +5,7 @@ import {
   countThemeSwatches,
   projectThemeGroupsFromTokens,
 } from '@/core/canvas/projectRows/themeRows';
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 describe('themeRows', () => {
   it('projects background group with alias chain on Light mode', () => {

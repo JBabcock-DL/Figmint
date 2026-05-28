@@ -61,7 +61,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
     AuditReportV1,
     ComponentSpecV1,
     RegistryV1,
-  } from '@detroitlabs/figmint-contracts';
+  } from '@detroitlabs/fighub-contracts';
   import type { ApplyBindingsResult } from '@/core/components/scaffold/applyBindings';
   import type { ApplyPropertiesResult } from '@/core/components/scaffold/applyProperties';
   import type { ScaffoldResult } from '@/core/components/scaffold';
@@ -319,7 +319,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   ): Promise<SpecValidationResult>;
   ```
 
-  - Validate against JSON Schema (import schema from contracts package or AJV precompiled in test-only path — **bundle decision:** use `@detroitlabs/figmint-contracts` validator export if exists; else dynamic `fetch` of schema in UI is forbidden; prefer shared `validateComponentSpecV1` from contracts if available).
+  - Validate against JSON Schema (import schema from contracts package or AJV precompiled in test-only path — **bundle decision:** use `@detroitlabs/fighub-contracts` validator export if exists; else dynamic `fetch` of schema in UI is forbidden; prefer shared `validateComponentSpecV1` from contracts if available).
   - Parse-editable JSON fields: if user edits matrix/props/bindings textareas, `JSON.parse` errors surface as `{ ok: false, errors: ['Invalid JSON in bindings'] }`.
 
   **Done when:** invalid draft disables Scaffold CTA in component test; canonical fixture passes.
@@ -350,7 +350,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 - [x] **Step 15** — Accessibility pass on `App.tsx` nav:
 
-  - `nav` retains `aria-label="Figmint tabs"`.
+  - `nav` retains `aria-label="FigHub tabs"`.
   - Tab buttons keyboard-focusable; `aria-current` toggles per active tab.
   - **Done when:** ticket AC row 9 satisfied in VQA checklist.
 
@@ -367,7 +367,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   }
   ```
 
-  Default registry path constant: `DEFAULT_REGISTRY_PATH = '.figmint-registry.json'` in new `src/ui/components/scaffold/constants.ts`.
+  Default registry path constant: `DEFAULT_REGISTRY_PATH = '.fighub-registry.json'` in new `src/ui/components/scaffold/constants.ts`.
 
   Settings UI field for `registryPath` is **optional in WO-027** — if omitted, Components tab uses default. Document in Step 16 comment.
 
@@ -585,7 +585,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   )}
   ```
 
-  Pre-fill path: pass initial path via ExportSheet state — use `defaultExportBasename` → `.figmint-registry` + user-editable `.json` extension in path field (WO-020 `exportSheetReducer`).
+  Pre-fill path: pass initial path via ExportSheet state — use `defaultExportBasename` → `.fighub-registry` + user-editable `.json` extension in path field (WO-020 `exportSheetReducer`).
 
   Use `prepareRegistryExport(resultRegistry, { defaultSinks: github.connected ? ['download', 'github-pr'] : ['download'] })` from WO-026 — **not** `runRegistryExportFlow` (registry already merged on main thread).
 
@@ -669,10 +669,10 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   | 2 | Bootstrap tab → load `bootstrap-complete` bench fixture → Bootstrap run |
   | 3 | Components tab → registry pick Button OR paste `component-spec-button-canonical.json` |
   | 4 | Scaffold → record `totalDurationMs` from result (target p50 < 5000 ms over 3 runs) |
-  | 5 | ExportSheet → download `.figmint-registry.json` → validate schema |
+  | 5 | ExportSheet → download `.fighub-registry.json` → validate schema |
 
   Update ticket VQA table rows 1–11 during `/vqa`.
-  Design mock `node_id`: **N/A — panel-only VQA** until Figmint design file linked.
+  Design mock `node_id`: **N/A — panel-only VQA** until FigHub design file linked.
 
   **Done when:** SPK-027-1 logged in VQA report; G2 gate recorded.
 
@@ -740,7 +740,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 | Tool | Usage |
 | ---- | ----- |
 | Vitest + Testing Library | UI/reducer/integration tests |
-| `@detroitlabs/figmint-contracts` | `ComponentSpecV1`, `RegistryV1`, schema validation |
+| `@detroitlabs/fighub-contracts` | `ComponentSpecV1`, `RegistryV1`, schema validation |
 | Figma Plugin Sandbox | SPK-027-1 manual VQA |
 | `pluginLog()` / `console.debug` | Telemetry per ticket |
 
@@ -754,7 +754,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 | -- | -------- | ---------- |
 | OQ-1 | Design mock `node_id` for Components tab | **Deferred** — panel-only VQA on Plugin Sandbox until design file linked; fill `ticket.md` VQA table during `/vqa` |
 | OQ-2 | Structured editors vs JSON textareas | **RESOLVED:** JSON textareas v1 (research D4) |
-| OQ-3 | Settings `registryPath` input field | **RESOLVED:** optional — default `.figmint-registry.json` in Components tab; Settings field follow-on if needed |
+| OQ-3 | Settings `registryPath` input field | **RESOLVED:** optional — default `.fighub-registry.json` in Components tab; Settings field follow-on if needed |
 | OQ-4 | ExportSheet inline vs modal | **RESOLVED:** inline below progress (matches Export tab sandbox + research D6) |
 | OQ-5 | Repo spec path convention | **RESOLVED:** ordered list in Step 18; document in `Docs/` only if ticket explicitly requires — otherwise constants in code |
 
@@ -836,4 +836,4 @@ Manual sandbox VQA confirmed **panel PASS**, **canvas FAIL**. See [scaffold-canv
 
 ### Registry UX intent (2026-05-28 — defer build)
 
-Designer expected **Load registry** = codebase component catalog + multiselect scaffold. Actual = **sync ledger** (`.figmint-registry.json`). Captured in [registry-ux-intent.md](research/registry-ux-intent.md): rename/copy, empty states, move registry path to **Settings**, future WO-044 / spec-discovery. See ticket **Deferred product intent** section.
+Designer expected **Load registry** = codebase component catalog + multiselect scaffold. Actual = **sync ledger** (`.fighub-registry.json`). Captured in [registry-ux-intent.md](research/registry-ux-intent.md): rename/copy, empty states, move registry path to **Settings**, future WO-044 / spec-discovery. See ticket **Deferred product intent** section.

@@ -6,9 +6,9 @@
 
 ## Summary
 
-The per-key "last synced" snapshot is the **common ancestor** for 3-way drift detection (PRD FR-DRIFT-1). It must live in **canvas pluginData** on a **hidden node** inside the existing **Figmint Output** page — not in `figma.clientStorage` (per-file, not fork-portable) and not in a repo file (WO-058 deletes `.figmint-registry.json`).
+The per-key "last synced" snapshot is the **common ancestor** for 3-way drift detection (PRD FR-DRIFT-1). It must live in **canvas pluginData** on a **hidden node** inside the existing **FigHub Output** page — not in `figma.clientStorage` (per-file, not fork-portable) and not in a repo file (WO-058 deletes `.fighub-registry.json`).
 
-**Locked recommendation:** Implement `SnapshotStoreV1` as a single JSON envelope at pluginData key `figmint:snapshot:v1` on a dedicated hidden frame `_FigmintSnapshotStore` sibling to `_FigmintOutputContent`. The envelope holds per-key entries `{ key, value, source, timestamp }` plus an embedded **registry map** (replaces repo-side `.figmint-registry.json`). Build this in **WO-058 Phase 1**; WO-028 ticket stays closed as absorbed.
+**Locked recommendation:** Implement `SnapshotStoreV1` as a single JSON envelope at pluginData key `fighub:snapshot:v1` on a dedicated hidden frame `_FigHubSnapshotStore` sibling to `_FigHubOutputContent`. The envelope holds per-key entries `{ key, value, source, timestamp }` plus an embedded **registry map** (replaces repo-side `.fighub-registry.json`). Build this in **WO-058 Phase 1**; WO-028 ticket stays closed as absorbed.
 
 API surface: `getSnapshot()`, `updateSnapshotKey(key, value, source)`, `updateSnapshotKeys(batch)`, `clearSnapshot()`, `ensureSnapshotNode()`.
 
@@ -20,8 +20,8 @@ API surface: `getSnapshot()`, `updateSnapshotKey(key, value, source)`, `updateSn
 
 `src/io/sinks/outputPage.ts` (lines 4–89) defines:
 
-- Page discovery: shared pluginData `figmint:pageRole=output`, fallback name `Figmint Output`
-- Content frame: `_FigmintOutputContent` (960px wide, vertical auto-layout)
+- Page discovery: shared pluginData `fighub:pageRole=output`, fallback name `FigHub Output`
+- Content frame: `_FigHubOutputContent` (960px wide, vertical auto-layout)
 
 **Finding:** Snapshot store should **reuse `findOrCreateOutputPage()`** but add a **separate hidden frame** — do not mix snapshot binary JSON into visible TEXT nodes.
 
@@ -29,10 +29,10 @@ API surface: `getSnapshot()`, `updateSnapshotKey(key, value, source)`, `updateSn
 
 From `src/io/sinks/pluginData.ts`:
 
-- Prefix: `figmint:` + kind (line 6–10)
+- Prefix: `fighub:` + kind (line 6–10)
 - Hard limit: **100,000 bytes** per key (line 7, Figma Plugin API — [Plugin Data limits](https://www.figma.com/plugin-docs/api/properties/nodes-setplugindata/), retrieved 2026-05-28)
 
-Existing contract keys use `figmint:{kind}` for export (e.g. `figmint:drift-report`). Snapshot uses **`figmint:snapshot:v1`** (versioned literal, distinct from per-export keys).
+Existing contract keys use `fighub:{kind}` for export (e.g. `fighub:drift-report`). Snapshot uses **`fighub:snapshot:v1`** (versioned literal, distinct from per-export keys).
 
 **Finding:** A 400-variable file with compact JSON (~200 bytes/var) ≈ 80 KB — within budget. Component registry + 20 specs adds ~5–15 KB. Monitor with unit test asserting serialized size < 90 KB for spike-400 + 20 components.
 
@@ -86,7 +86,7 @@ export interface SnapshotV1 {
 ### 5. Hidden node pattern
 
 ```typescript
-const SNAPSHOT_FRAME_NAME = '_FigmintSnapshotStore';
+const SNAPSHOT_FRAME_NAME = '_FigHubSnapshotStore';
 
 export function findOrCreateSnapshotFrame(page: PageNode): FrameNode {
   // find by name on Output page
@@ -149,7 +149,7 @@ Mirror pattern from `src/io/messages/export.ts` and `src/io/sinks/outputPageClie
 
 | ID | Decision | Rationale | Alternatives rejected |
 | -- | -------- | --------- | --------------------- |
-| D-028-1 | Single blob `figmint:snapshot:v1` | Simplest; fits 100KB for target scale | Sharded keys per collection (defer unless SPK-028-1 fails) |
+| D-028-1 | Single blob `fighub:snapshot:v1` | Simplest; fits 100KB for target scale | Sharded keys per collection (defer unless SPK-028-1 fails) |
 | D-028-2 | Hidden frame on Output page | Reuses page infra; invisible to designers | clientStorage (not fork-portable); repo JSON (WO-058 deletes) |
 | D-028-3 | Embed registry in snapshot | WO-058 architectural lock | Separate registry pluginData key |
 | D-028-4 | Implement in WO-058 not WO-028 | Ticket absorbed; avoids duplicate work | Re-open WO-028 |
@@ -181,7 +181,7 @@ Mirror pattern from `src/io/messages/export.ts` and `src/io/sinks/outputPageClie
 ## Recommendations
 
 1. **WO-058 `/plan` Step 1:** Add `snapshot.v1.ts` contract + `src/core/drift/snapshot.ts` (or `src/core/sync/snapshotStore.ts`).
-2. **Migrate registry callers** (`Components.tsx`, `registryExport.ts`) to read `snapshot.registry` not GitHub `.figmint-registry.json`.
+2. **Migrate registry callers** (`Components.tsx`, `registryExport.ts`) to read `snapshot.registry` not GitHub `.fighub-registry.json`.
 3. **Hook WO-008 push completion** to batch-update variable keys in snapshot.
 4. **Export `ensureSnapshotNode()`** for WO-029–032 integration tests with mock frames.
 5. **Keep WO-028 closed** — track build under WO-058 acceptance criteria.
@@ -229,7 +229,7 @@ await updateSnapshotKeys(updates);
 
 ### Registry migration (WO-058)
 
-On scaffold upsert, write to `snapshot.registry.components[name]` instead of staging `.figmint-registry.json` for ExportSheet.
+On scaffold upsert, write to `snapshot.registry.components[name]` instead of staging `.fighub-registry.json` for ExportSheet.
 
 ---
 

@@ -3,14 +3,14 @@
   "kind": "handoff-context",
   "meta": {
     "capturedAt": "2026-05-27T12:00:00.000Z",
-    "figmaFileKey": "FigmintDemo",
-    "frameUrl": "https://www.figma.com/design/FigmintDemo/Handoff?node-id=1-2"
+    "figmaFileKey": "FigHubDemo",
+    "frameUrl": "https://www.figma.com/design/FigHubDemo/Handoff?node-id=1-2"
   },
   "frames": [
     {
       "nodeId": "1:2",
       "name": "Login Screen",
-      "deepLink": "https://www.figma.com/design/FigmintDemo/Handoff?node-id=1-2"
+      "deepLink": "https://www.figma.com/design/FigHubDemo/Handoff?node-id=1-2"
     }
   ],
   "components": [{ "name": "Button", "instances": 2 }],

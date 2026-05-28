@@ -3,7 +3,7 @@ import type {
   Token as TokenV1,
   TokenAliasRef,
   TokensV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import { isTokenAliasRef } from './types';
 

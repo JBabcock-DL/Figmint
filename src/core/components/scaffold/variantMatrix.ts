@@ -70,7 +70,7 @@ export function hashVariantMatrix(matrix: Record<string, (string | boolean)[]>):
 }
 
 export function buildScaffoldId(specName: string, matrix: Record<string, (string | boolean)[]>): string {
-  return 'figmint:scaffold:v1:' + specName + ':' + hashVariantMatrix(matrix);
+  return 'fighub:scaffold:v1:' + specName + ':' + hashVariantMatrix(matrix);
 }
 
 export function parseVariantName(name: string): VariantCombo | null {

@@ -104,7 +104,7 @@ These phases are stored on each ticket:
 
 <!-- CONFIGURE: Fill this section only if Backend is `github`. If Backend is `jira`, replace this entire section with: "**N/A** — this project uses the Jira backend; see the Jira section below." -->
 
-- **Project name:** Figmint
+- **Project name:** FigHub
 - **Project ID:** `PVT_kwHOD9B30s4BY4aY`
 - **Owner:** `JBabcock-DL`
 - **Status field ID:** `PVTSSF_lAHOD9B30s4BY4aYzhT7CAM`
@@ -127,10 +127,10 @@ These phases are stored on each ticket:
 
 ```bash
 # Create a GitHub issue
-gh issue create --repo JBabcock-DL/Figmint --title "..." --label "..." --body "..."
+gh issue create --repo JBabcock-DL/FigHub --title "..." --label "..." --body "..."
 
 # Add issue to project board
-gh project item-add 9 --owner JBabcock-DL --url https://github.com/JBabcock-DL/Figmint/issues/{N}
+gh project item-add 9 --owner JBabcock-DL --url https://github.com/JBabcock-DL/FigHub/issues/{N}
 
 # Move issue to a status column
 gh api graphql -f query='
@@ -213,7 +213,7 @@ Use when a work order involves:
 
 ---
 
-## Planning & build defaults (Figmint — mandatory)
+## Planning & build defaults (FigHub — mandatory)
 
 These defaults apply **without asking the user** unless they explicitly override in the same session.
 

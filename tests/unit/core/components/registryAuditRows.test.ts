@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildRegistryAuditRows } from '@/core/components/registryAuditRows';
-import type { RegistryComponentEntry, RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { RegistryComponentEntry, RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 const registry: RegistryV1 = {
   v: 1,

@@ -2,7 +2,7 @@ import type {
   AuditReportV1,
   ComponentSpecV1,
   RegistryV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import type {
   ApplyBindingsResult,

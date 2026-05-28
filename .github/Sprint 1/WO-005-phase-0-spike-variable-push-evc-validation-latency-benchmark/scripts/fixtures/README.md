@@ -10,7 +10,7 @@
 | `spike-100.json` | 100    | 1 (`Default`)      | **Latency mid-point** (Plan Step 8). Representative of one realistic design-system collection.                      |
 | `spike-400.json` | 400    | 1 (`Default`)      | **Latency stress point** (Plan Step 8). Drives PRD §14 G1 verdict — see `../../research/latency-benchmark.md` §6.5. |
 
-All three are valid W3C DTCG JSON with the `$extensions.figmint.{modes, codeSyntax}` envelope from `research/spike-runbook.md` §1.1.
+All three are valid W3C DTCG JSON with the `$extensions.fighub.{modes, codeSyntax}` envelope from `research/spike-runbook.md` §1.1.
 
 ## How they're generated
 

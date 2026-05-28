@@ -6,7 +6,7 @@ import type {
   Token as TokenV1,
   TokenAliasRef,
   TokensV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import { buildFigmaVariableStateFromLocalSnapshot } from '../audit/readFigmaVariableState';
 import { pluginLog } from '../pluginLog';
@@ -410,7 +410,7 @@ async function runPhase<T>(phase: string, fn: () => Promise<T> | T): Promise<T> 
 export async function pushTokens(
   tokens: TokensV1,
   options?: PushOptions,
-): Promise<PushResult & { audit: import('@detroitlabs/figmint-contracts').AuditReportV1 }> {
+): Promise<PushResult & { audit: import('@detroitlabs/fighub-contracts').AuditReportV1 }> {
   const started = Date.now();
   const continueOnAuditFail =
     options !== undefined && options.continueOnAuditFail !== undefined

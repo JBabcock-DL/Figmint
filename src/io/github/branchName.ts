@@ -1,4 +1,4 @@
-export const DEFAULT_BRANCH_PATTERN = 'figmint/{contractKind}-{date}';
+export const DEFAULT_BRANCH_PATTERN = 'fighub/{contractKind}-{date}';
 
 export const MAX_BRANCH_ATTEMPTS = 5;
 

@@ -6,7 +6,7 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt32a4
 
 ## Goal
 
-Ensure `.github/templates/workflow.md` contains the canonical Figmint project goal so all agents share the same source-of-truth description.
+Ensure `.github/templates/workflow.md` contains the canonical FigHub project goal so all agents share the same source-of-truth description.
 
 ---
 
@@ -16,7 +16,7 @@ As a workflow agent, I want the project goal documented in `workflow.md` so that
 
 ## Hypothesis (optional)
 
-We believe a single documented goal in `workflow.md` for Figmint will reduce repeated onboarding questions across agent sessions.
+We believe a single documented goal in `workflow.md` for FigHub will reduce repeated onboarding questions across agent sessions.
 
 ---
 
@@ -42,7 +42,7 @@ We believe a single documented goal in `workflow.md` for Figmint will reduce rep
 
 ### Technical / architectural
 
-- Goal text matches the Figmint PRD executive summary intent.
+- Goal text matches the FigHub PRD executive summary intent.
 
 ---
 

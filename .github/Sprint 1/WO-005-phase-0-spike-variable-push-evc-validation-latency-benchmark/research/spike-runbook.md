@@ -15,7 +15,7 @@ Before doing anything in Figma:
 2. **Branch:** `git checkout -b spike/phase-0` off `main`. Do not push anywhere; this branch is throwaway (Sprint 11 WO-051 hard-delete list confirms; `Docs/lift-sources.md` §0).
 3. **Sandbox Figma file:** designer to provide a fresh, empty Detroit Labs sandbox file with at least an Enterprise-tier seat available on the operator's account.
    - If only Professional/Organization seats are available, the **EVC verification tests will fail with the documented `"in extend: Cannot create extended collections outside of enterprise plan."` error** — record that error as the §3 Test 1 result and skip Tests 2–4. This is an expected fallback path (see `research/extended-collections.md` §4.1).
-4. **Plugin UI scope for the spike** — minimal: one paste `<textarea>`, one **Push** button, one **EVC Tests** button (for §3 EVC verification), one result `<pre>` block. No design polish. **W3C DTCG only** (`$value` / `$type` keys); no legacy `.figmint-registry.json` adapter for the spike (Sprint 2 owns adapters).
+4. **Plugin UI scope for the spike** — minimal: one paste `<textarea>`, one **Push** button, one **EVC Tests** button (for §3 EVC verification), one result `<pre>` block. No design polish. **W3C DTCG only** (`$value` / `$type` keys); no legacy `.fighub-registry.json` adapter for the spike (Sprint 2 owns adapters).
 5. **Read these files before opening Figma:**
    - `Docs/PRD.md` §6.1 FR-BOOT-3..6, §14 G1.
    - `Docs/lift-sources.md` §0 (drift corrections — `phases/04-step11-push.md` is the source of truth; `step-15a-primitives.mcp.js` is NOT).
@@ -34,7 +34,7 @@ Before doing anything in Figma:
 
 ### 1.1 Sample input — `spike/phase-0/fixtures/spike-10.json` (W3C DTCG)
 
-Create a fixture file with this shape (10 color tokens, two modes implied by `$extensions.figmint.modes`):
+Create a fixture file with this shape (10 color tokens, two modes implied by `$extensions.fighub.modes`):
 
 ```json
 {
@@ -45,7 +45,7 @@ Create a fixture file with this shape (10 color tokens, two modes implied by `$e
         "$type": "color",
         "$value": "#eef5ff",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": { "light": "#eef5ff", "dark": "#0b1b2e" },
             "codeSyntax": {
               "WEB": "var(--color-primary-50)",
@@ -59,7 +59,7 @@ Create a fixture file with this shape (10 color tokens, two modes implied by `$e
         "$type": "color",
         "$value": "#3366ff",
         "$extensions": {
-          "figmint": {
+          "fighub": {
             "modes": { "light": "#3366ff", "dark": "#3366ff" },
             "codeSyntax": {
               "WEB": "var(--color-primary-500)",

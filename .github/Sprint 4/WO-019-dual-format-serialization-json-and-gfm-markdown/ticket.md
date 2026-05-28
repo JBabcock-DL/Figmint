@@ -30,7 +30,7 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. **`src/io/formats/index.ts`** — export `format(doc, 'json' | 'md')` dispatching on `doc.kind` over `FormattableDocument` (`OpsProgramV1 | TokensV1 | ComponentSpecV1 | DriftReportV1 | HandoffContextV1` from `@detroitlabs/figmint-contracts`).
+1. **`src/io/formats/index.ts`** — export `format(doc, 'json' | 'md')` dispatching on `doc.kind` over `FormattableDocument` (`OpsProgramV1 | TokensV1 | ComponentSpecV1 | DriftReportV1 | HandoffContextV1` from `@detroitlabs/fighub-contracts`).
 2. **`src/io/formats/json.ts`** — `serializeJson` via recursive **stable key order** (`stableStringify`) + `JSON.stringify` (2-space indent); byte-identical output regardless of object construction order.
 3. **`src/io/formats/markdown.ts`** — five pure renderers (no Figma/fs side effects):
    - `ops-program` — meta + ops summary table
@@ -49,7 +49,7 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 - **Lift reference (DesignOps-plugin):**
   - _None — new code designed in PRD._
-- **Dependencies:** WO-003 (`@detroitlabs/figmint-contracts`); WO-006 ingest paths unchanged
+- **Dependencies:** WO-003 (`@detroitlabs/fighub-contracts`); WO-006 ingest paths unchanged
 - **Out of union:** `registry.v1`, input wire shapes (`tokens-dtcg` / `tokens-legacy`); resolve `audit-report` markdown in `/plan` (WO-010 deferred — see research)
 
 ---

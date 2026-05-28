@@ -80,7 +80,7 @@ languageOptions: {
   ```
 - Place `eslintConfigPrettier` **last** in the config array so it disables any conflicting style rules from earlier presets (Prettier owns formatting; ESLint owns correctness).
 
-**Recommended `.prettierrc.json` for Figmint:**
+**Recommended `.prettierrc.json` for FigHub:**
 
 ```json
 {
@@ -105,7 +105,7 @@ Rationale per option:
 
 ### 4. Plugin-specific lint — keep the surface small
 
-Figmint's source surface is small (`src/{core,ops,io,contracts,ui,config}` per PRD §7.3 + WO-002). Each plugin is a maintenance cost — pick only ones that catch real bugs.
+FigHub's source surface is small (`src/{core,ops,io,contracts,ui,config}` per PRD §7.3 + WO-002). Each plugin is a maintenance cost — pick only ones that catch real bugs.
 
 | Plugin                                                                          | Verdict                 | Why                                                                                                                                                                                                                                        |
 | ------------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -113,9 +113,9 @@ Figmint's source surface is small (`src/{core,ops,io,contracts,ui,config}` per P
 | `typescript-eslint` `strict-type-checked` + `stylistic-type-checked`            | **YES**                 | PRD §11.2 alignment.                                                                                                                                                                                                                       |
 | `eslint-plugin-react-hooks` v7+ (`flat.recommended`)                            | **YES** for `src/ui/**` | Bug catcher. `rules-of-hooks` + `exhaustive-deps` prevent the "stale closure" determinism failure.                                                                                                                                         |
 | `eslint-plugin-react`                                                           | **DEFER**               | Mostly stylistic. UI shell is small. Revisit when Bootstrap tab (Sprint 4) lands.                                                                                                                                                          |
-| `eslint-plugin-import-x` (`flatConfigs.recommended` + `flatConfigs.typescript`) | **YES** (light touch)   | Module hygiene matters once `@detroitlabs/figmint-contracts` workspace lands in WO-003. Picks up unresolved imports, circular deps, missing extensions. Maintained fork of abandoned `eslint-plugin-import` per [e18e replacements][e18e]. |
+| `eslint-plugin-import-x` (`flatConfigs.recommended` + `flatConfigs.typescript`) | **YES** (light touch)   | Module hygiene matters once `@detroitlabs/fighub-contracts` workspace lands in WO-003. Picks up unresolved imports, circular deps, missing extensions. Maintained fork of abandoned `eslint-plugin-import` per [e18e replacements][e18e]. |
 | `eslint-plugin-prettier`                                                        | **NO**                  | Anti-pattern in 2026 — running Prettier as an ESLint rule slows the linter and noise-floods the editor. Run Prettier separately (`prettier --check` in CI, `prettier --write` in editor).                                                  |
-| `eslint-plugin-promise`, `eslint-plugin-node`, `eslint-plugin-jsdoc`            | **NO**                  | Not needed for Figmint scope.                                                                                                                                                                                                              |
+| `eslint-plugin-promise`, `eslint-plugin-node`, `eslint-plugin-jsdoc`            | **NO**                  | Not needed for FigHub scope.                                                                                                                                                                                                              |
 
 ### 5. GitHub Actions — 2026-current patterns
 
@@ -127,7 +127,7 @@ Figmint's source surface is small (`src/{core,ops,io,contracts,ui,config}` per P
 | Install                           | `npm ci` (not `npm install`) — uses lockfile, no resolution step, 2–3× faster than `install`.                                                                                                                                     | [dev.to GHA pipeline guide 2026][gha-pipeline-2026]                                              |
 | Concurrency / cancel-on-push      | `concurrency.group = ${{ github.workflow }}-${{ github.event.pull_request.number \|\| github.ref }}` + `cancel-in-progress: true`                                                                                                 | [GitHub docs — concurrency][gha-concurrency], [Stack Overflow — cancel previous][so-cancel-prev] |
 | Runner                            | `ubuntu-latest` (currently `ubuntu-24.04`). Pinning to `ubuntu-24.04` makes "no surprises" upgrades explicit; `ubuntu-latest` makes upgrades free but unannounced. WO-004 picks `ubuntu-latest` (the ticket already declares it). |                                                                                                  |
-| Matrix vs sequential              | **Sequential** for Figmint — two manifests (community + org) is too few to justify matrix overhead. A single job runs `build:community` then `build:org` after lint + typecheck.                                                  | (Judgment — not a sourced recommendation.)                                                       |
+| Matrix vs sequential              | **Sequential** for FigHub — two manifests (community + org) is too few to justify matrix overhead. A single job runs `build:community` then `build:org` after lint + typecheck.                                                  | (Judgment — not a sourced recommendation.)                                                       |
 
 **Step ordering (cheapest → most expensive, fail fast):**
 
@@ -160,7 +160,7 @@ Reviewed `c:\Users\jbabc\Documents\GitHub\DesignOps-plugin\package.json`. Findin
 - **No ESLint, Prettier, or TypeScript anywhere** — the legacy repo is a Claude Code skill pack that ships Markdown + raw JS bundles, not a TS application. Only `esbuild` and `terser` as devDependencies (for the now-deprecated bundling pipeline).
 - **No `.eslintrc.*`, `.prettierrc.*`, or `eslint.config.*`** in the legacy repo (confirmed via Glob).
 - **No `.github/workflows/`** in the legacy repo — there's no existing CI to port.
-- **Script naming pattern:** colon-namespaced (e.g. `build:docs`, `build:docs:check`, `qa:assembled-size`, `qa:config-projection`). Adopt this convention for Figmint scripts (`build:community`, `build:org`, `lint:check`, etc.) — matches WO-004 ticket text.
+- **Script naming pattern:** colon-namespaced (e.g. `build:docs`, `build:docs:check`, `qa:assembled-size`, `qa:config-projection`). Adopt this convention for FigHub scripts (`build:community`, `build:org`, `lint:check`, etc.) — matches WO-004 ticket text.
 
 **Net:** lift reference produces **zero portable code/config**. WO-004 designs the toolchain from scratch on 2026-current versions.
 
@@ -378,7 +378,7 @@ jobs:
 ## Open Questions for `/plan`
 
 1. **Node minimum version — PRD §11.5 conflict.** PRD says "Node 20+ for build tooling" and WO-002 Functional #1 says `engines.node ≥ 20`. **Node 20 reached EOL on 2026-04-30.** Recommend `/plan` to bump to `engines.node: ">=22"` (covers Maintenance LTS users) and CI to `node-version: '24'` (Active LTS). May require updating WO-002 ticket if WO-002 is not yet built. Also flag PRD §11.5 for a small follow-up patch.
-2. **`strict-type-checked` semver caveat.** typescript-eslint docs explicitly note `strict-type-checked` rules can shift in minor releases. Is the team OK accepting that churn, or should we pin to `recommended-type-checked` instead? My recommendation: take `strict-type-checked` — Figmint is in early dev, every new bug rule pays dividends.
+2. **`strict-type-checked` semver caveat.** typescript-eslint docs explicitly note `strict-type-checked` rules can shift in minor releases. Is the team OK accepting that churn, or should we pin to `recommended-type-checked` instead? My recommendation: take `strict-type-checked` — FigHub is in early dev, every new bug rule pays dividends.
 3. **No-LLM-import rule.** Should `eslint.config.mjs` add `'@typescript-eslint/no-restricted-imports'` rules that block `@anthropic-ai/*`, `openai`, `langchain`, `@google/generative-ai`, etc., to enforce PRD G5 ("Zero LLM tokens consumed inside the plugin") at lint time? Cheap insurance. Add during `/plan`.
 4. **Default-export ban.** Add `'import-x/no-default-export'`? Aligns with the contracts-package import patterns. Defer to `/plan`.
 5. **Lint script aggregation.** Should `npm run lint` cover both ESLint and Prettier (chained), or remain ESLint-only with a separate `npm run prettier:check`? The skeleton above keeps them separate so CI failure logs are immediately attributable. `/plan` decides.

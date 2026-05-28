@@ -11,7 +11,7 @@ import type {
   TokensV1,
   TokensV1Legacy,
   TokensV1WC3DTCG,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import { loadAdapterFixture, normalizeJson } from './helpers';
 
@@ -96,14 +96,14 @@ function serializeDTCG(canonical: TokensV1): TokensV1WC3DTCG {
     };
 
     if (multiMode) {
-      const figmintModes: Record<string, unknown> = {};
+      const fighubModes: Record<string, unknown> = {};
       for (const [mode, value] of Object.entries(token.valuesByMode)) {
-        figmintModes[mode] = serializeModeValue(value, token.type, token.name);
+        fighubModes[mode] = serializeModeValue(value, token.type, token.name);
       }
       leaf.$value = serializeModeValue(token.valuesByMode[defaultMode], token.type, token.name);
       leaf.$extensions = {
-        figmint: {
-          modes: figmintModes,
+        fighub: {
+          modes: fighubModes,
           ...(token.codeSyntax ? { codeSyntax: token.codeSyntax } : {}),
         },
         ...(token.extensions ?? {}),
@@ -112,7 +112,7 @@ function serializeDTCG(canonical: TokensV1): TokensV1WC3DTCG {
       leaf.$value = serializeModeValue(token.valuesByMode[defaultMode], token.type, token.name);
       if (token.codeSyntax || token.extensions) {
         leaf.$extensions = {
-          ...(token.codeSyntax ? { figmint: { codeSyntax: token.codeSyntax } } : {}),
+          ...(token.codeSyntax ? { fighub: { codeSyntax: token.codeSyntax } } : {}),
           ...(token.extensions ?? {}),
         };
       }

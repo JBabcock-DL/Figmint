@@ -3,11 +3,11 @@ import type { ContractKind, LoadedDocument } from '@/io/sources/types';
 import type { PreparedContent } from './prepareContent';
 import type { SinkResult } from './types';
 
-export const FIGMINT_PLUGIN_DATA_PREFIX = 'figmint:';
+export const FIGHUB_PLUGIN_DATA_PREFIX = 'fighub:';
 export const PLUGIN_DATA_MAX_BYTES = 100_000;
 
 export function pluginDataKey(kind: ContractKind): string {
-  return FIGMINT_PLUGIN_DATA_PREFIX + kind;
+  return FIGHUB_PLUGIN_DATA_PREFIX + kind;
 }
 
 export function writeToPluginData(

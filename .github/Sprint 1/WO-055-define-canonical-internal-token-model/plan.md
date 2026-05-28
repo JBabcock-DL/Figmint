@@ -11,10 +11,10 @@ This WO is a contracts-only build: replace the WO-003 `TokensV1` stub in `packag
 - [x] **Step 3 — Do not create `tokensInput.v1.ts` in this WO.** Per research recommendation, adapter input shapes (`TokensV1WC3DTCG`, `TokensV1Legacy`, `TokensInput`) are owned by Sprint 2 WO-007 in `packages/contracts/src/adapters/` (exact filenames TBD in WO-007's plan). WO-055 removes them entirely; WO-007 reintroduces them when adapters ship.
 - [x] **Step 4 — Update `packages/contracts/src/index.ts` exports.** Remove exports of deleted stub types (`DtcgTokenLeaf`, `DtcgTokenType`, `LegacyCodeSyntaxTriple`, `LegacyTokenCollection`, `LegacyTokenVariable`, `TokensInput`, `TokensV1Legacy`, `TokensV1WC3DTCG`, `TokensV1WC3DTCGGroup`, `TokensV1WC3DTCGNode`). Add exports for all new public types: `CollectionId`, `CodeSyntaxPlatform`, `ModeName`, `ColorValue`, `TokenAliasRef`, `Token`, `TokenColor`, `TokenFloat`, `TokenString`, `TokenBoolean`, `Collection`, `ThemeExtension`, and the updated `TokensV1`.
 - [x] **Step 5 — Trim `packages/contracts/scripts/build-schemas.mjs`.** Remove the three WO-007-owned schema entries (lines 14–16): `TokensV1WC3DTCG` → `tokens.v1.w3c-dtcg.schema.json`, `TokensV1Legacy` → `tokens.v1.legacy.schema.json`, `TokensInput` → `tokens.v1.input.schema.json`. Keep only the `TokensV1` → `tokens.v1.schema.json` entry for this file.
-- [x] **Step 6 — Regenerate JSON Schema.** Run `npm run build:schemas -w @detroitlabs/figmint-contracts`. Confirm `packages/contracts/dist/tokens.v1.schema.json` is rewritten and the three removed schema files are either deleted from `dist/` or left stale (prefer deleting stale outputs if the build script no longer emits them).
+- [x] **Step 6 — Regenerate JSON Schema.** Run `npm run build:schemas -w @detroitlabs/fighub-contracts`. Confirm `packages/contracts/dist/tokens.v1.schema.json` is rewritten and the three removed schema files are either deleted from `dist/` or left stale (prefer deleting stale outputs if the build script no longer emits them).
 - [x] **Step 7 — Verify `@TJS-type string` on `CollectionId`.** Inspect generated schema: if `CollectionId` already emits `enum: ['primitives', 'theme', 'typography', 'layout', 'effects']` without the JSDoc annotation, remove `@TJS-type string` from the TS source and regenerate. If the generator needs it, keep it and note why in the build commit message.
 - [x] **Step 8 — Spot-check generated schema shape.** Manually confirm in `dist/tokens.v1.schema.json`: (a) `CollectionId` and `CodeSyntaxPlatform` enums populated; (b) `Token` is a `oneOf` of four variants discriminated by `type`; (c) each token variant's `valuesByMode` is `additionalProperties` with a `oneOf` of primitive value + `TokenAliasRef`; (d) no `$ref` cycles or generator warnings in stdout.
-- [x] **Step 9 — Run contracts package build.** Run `npm run build -w @detroitlabs/figmint-contracts` to confirm the package compiles and dist artifacts are consistent.
+- [x] **Step 9 — Run contracts package build.** Run `npm run build -w @detroitlabs/fighub-contracts` to confirm the package compiles and dist artifacts are consistent.
 - [x] **Step 10 — Run full-repo typecheck.** From repo root: `npm run typecheck`. Must pass with zero errors — any consumer importing the removed stub types must be updated in this same diff (grep for `TokensV1WC3DTCG`, `TokensV1Legacy`, `TokensInput`, `DtcgTokenLeaf` across the repo).
 - [x] **Step 11 — Run full-repo lint + format.** From repo root: `npm run lint` and `npm run format:check` (or `npx prettier --check` on changed files). Fix any violations in the touched contracts files.
 
@@ -42,8 +42,8 @@ This WO is a contracts-only build: replace the WO-003 `TokensV1` stub in `packag
 **Tools (no MCP required):**
 
 - Node 22 LTS (`engines.node: ">=22.0.0"`)
-- `npm run build:schemas -w @detroitlabs/figmint-contracts`
-- `npm run build -w @detroitlabs/figmint-contracts`
+- `npm run build:schemas -w @detroitlabs/fighub-contracts`
+- `npm run build -w @detroitlabs/fighub-contracts`
 - `npm run typecheck` (repo root)
 - `npm run lint` (repo root)
 - `rg` / grep for orphan imports of deleted types

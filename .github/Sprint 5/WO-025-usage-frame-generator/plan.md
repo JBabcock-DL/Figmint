@@ -80,9 +80,9 @@ tests/fixtures/                    # symlink or re-export path ticket cites
 
 ---
 
-## Lift map (DesignOps → Figmint)
+## Lift map (DesignOps → FigHub)
 
-| Legacy source | Figmint target | Action |
+| Legacy source | FigHub target | Action |
 | ------------- | -------------- | ------ |
 | `matrix.mcp.js` L676–691 | `usageFrame.ts` `createUsageInstanceCell` | Port centered instance in cell frame |
 | `04-doc-pipeline-contract.md` §3 step 4 | `comboToSetProperties` | VARIANT `setProperties` map |
@@ -103,7 +103,7 @@ tests/fixtures/                    # symlink or re-export path ticket cites
 | `USAGE_CELL_PAD` | `16` | Research node tree |
 | `USAGE_CELL_GAP` | `8` | Vertical cell itemSpacing |
 | `USAGE_TITLE` | `"Usage examples"` | Plain caption above row |
-| `PLUGIN_DATA_USAGE_FRAME` | `figmint:usageFrame:v1:{scaffoldId}` | Idempotency marker on usage-examples frame |
+| `PLUGIN_DATA_USAGE_FRAME` | `fighub:usageFrame:v1:{scaffoldId}` | Idempotency marker on usage-examples frame |
 | Label font | `{ family: 'Inter', style: 'Regular' }`, `fontSize: 13` | Doc/Caption equivalent |
 
 ---
@@ -389,7 +389,7 @@ pluginLog('[scaffold] buildUsageFrame', {
 | WO-023 `applyBindings()` | Visual binds before usage frame | Phase 4 ordering |
 | WO-024 `applyProperties()` | Runs immediately before usage frame | Phase 4 ordering |
 | WO-014 `helpers/autoLayout.ts`, `matrixSpecimen.ts` | Hug frames, horizontal row, one-px audit | Phase 2 |
-| WO-003 `@detroitlabs/figmint-contracts` | `ComponentSpecV1.variantMatrix` | Phase 1 |
+| WO-003 `@detroitlabs/fighub-contracts` | `ComponentSpecV1.variantMatrix` | Phase 1 |
 | WO-027 forward-flow UI | Consumes `buildUsageFrame` in `scaffold/run` | Downstream — stub export sufficient |
 | WO-026 registry | Optional usage frame nodeId metadata | **Deferred** (OQ-1) |
 

@@ -11,7 +11,7 @@ import type {
   TokensV1WC3DTCG,
   TokensV1WC3DTCGGroup,
   TokensV1WC3DTCGNode,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import {
   AdapterFormatError,
@@ -29,7 +29,7 @@ import { normalizeDtcgTopLevel } from './normalizeDtcgTopLevel';
 
 type ParsedModeValue = ColorValue | number | boolean | string | TokenAliasRef;
 
-interface FigmintExtensions {
+interface FigHubExtensions {
   modes?: Record<string, unknown>;
   codeSyntax?: Partial<Record<CodeSyntaxPlatform, string>>;
 }
@@ -136,14 +136,25 @@ function readCodeSyntax(value: unknown): Partial<Record<CodeSyntaxPlatform, stri
   return Object.keys(output).length > 0 ? output : undefined;
 }
 
-function extractFigmintExtensions(
+function readExtensionBlock(
   extensions: Record<string, unknown> | undefined,
-): FigmintExtensions {
-  const figmint = extensions?.figmint;
-  if (typeof figmint !== 'object' || figmint === null) {
+  key: string,
+): Record<string, unknown> | null {
+  const block = extensions?.[key];
+  if (typeof block === 'object' && block !== null) {
+    return block as Record<string, unknown>;
+  }
+  return null;
+}
+
+function extractFigHubExtensions(
+  extensions: Record<string, unknown> | undefined,
+): FigHubExtensions {
+  const candidate =
+    readExtensionBlock(extensions, 'fighub') ?? readExtensionBlock(extensions, 'figmint');
+  if (candidate === null) {
     return {};
   }
-  const candidate = figmint as Record<string, unknown>;
   return {
     modes:
       typeof candidate.modes === 'object' && candidate.modes !== null
@@ -161,7 +172,7 @@ function splitVendorExtensions(
   }
   const vendor: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(extensions)) {
-    if (key !== 'figmint') {
+    if (key !== 'fighub' && key !== 'figmint') {
       vendor[key] = value;
     }
   }
@@ -258,7 +269,7 @@ function decomposeTypographyLeaf(
 ): void {
   const composite = node.$value as Record<string, unknown>;
   const slotPrefix = pathSegments.join('/');
-  const figmint = extractFigmintExtensions(node.$extensions);
+  const fighub = extractFigHubExtensions(node.$extensions);
   const vendorExtensions = splitVendorExtensions(node.$extensions);
 
   const properties: { suffix: string; type: DtcgTokenType; value: unknown }[] = [];
@@ -292,8 +303,8 @@ function decomposeTypographyLeaf(
         `${path}/${property.suffix}`,
       ),
     };
-    if (figmint.modes) {
-      for (const [modeKey, modeValue] of Object.entries(figmint.modes)) {
+    if (fighub.modes) {
+      for (const [modeKey, modeValue] of Object.entries(fighub.modes)) {
         if (
           typeof modeValue === 'object' &&
           modeValue !== null &&
@@ -322,7 +333,7 @@ function decomposeTypographyLeaf(
       collection: collectionId,
       name,
       description: node.$description,
-      codeSyntax: figmint.codeSyntax,
+      codeSyntax: fighub.codeSyntax,
       extensions: vendorExtensions,
     };
 
@@ -361,13 +372,13 @@ function emitLeafToken(
   const name = pathSegments.join('/');
   rejectDotInName(name, path);
   const tokenType = mapDtcgTypeToTokenType(dtcgType);
-  const figmint = extractFigmintExtensions(node.$extensions);
+  const fighub = extractFigHubExtensions(node.$extensions);
   const vendorExtensions = splitVendorExtensions(node.$extensions);
   const defaultMode = defaultModeForCollection(collectionId);
   const valuesByMode: Record<string, ParsedModeValue> = {};
 
-  if (figmint.modes && Object.keys(figmint.modes).length > 0) {
-    for (const [modeKey, modeValue] of Object.entries(figmint.modes)) {
+  if (fighub.modes && Object.keys(fighub.modes).length > 0) {
+    for (const [modeKey, modeValue] of Object.entries(fighub.modes)) {
       valuesByMode[modeKey] = parseLeafValue(
         modeValue,
         dtcgType,
@@ -377,7 +388,7 @@ function emitLeafToken(
     }
   } else if (collectionId === 'theme' || collectionId === 'effects') {
     throw new AdapterFormatError(
-      `Theme/Effects tokens require $extensions.figmint.modes: ${path}`,
+      `Theme/Effects tokens require $extensions.fighub.modes: ${path}`,
       path,
     );
   } else {
@@ -392,7 +403,7 @@ function emitLeafToken(
       valuesByMode: valuesByMode as Record<string, ColorValue | TokenAliasRef>,
       description: node.$description,
       deprecated: node.$deprecated,
-      codeSyntax: figmint.codeSyntax,
+      codeSyntax: fighub.codeSyntax,
       extensions: vendorExtensions,
     });
     return;
@@ -405,7 +416,7 @@ function emitLeafToken(
       valuesByMode: valuesByMode as Record<string, number | TokenAliasRef>,
       description: node.$description,
       deprecated: node.$deprecated,
-      codeSyntax: figmint.codeSyntax,
+      codeSyntax: fighub.codeSyntax,
       extensions: vendorExtensions,
     });
     return;
@@ -418,7 +429,7 @@ function emitLeafToken(
       valuesByMode: valuesByMode as Record<string, string | TokenAliasRef>,
       description: node.$description,
       deprecated: node.$deprecated,
-      codeSyntax: figmint.codeSyntax,
+      codeSyntax: fighub.codeSyntax,
       extensions: vendorExtensions,
     });
     return;
@@ -430,7 +441,7 @@ function emitLeafToken(
     valuesByMode: valuesByMode as Record<string, boolean | TokenAliasRef>,
     description: node.$description,
     deprecated: node.$deprecated,
-    codeSyntax: figmint.codeSyntax,
+    codeSyntax: fighub.codeSyntax,
     extensions: vendorExtensions,
   });
 }

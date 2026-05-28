@@ -8,7 +8,7 @@ import type {
   TokenAliasRef,
   TokensV1,
   TokensV1Legacy,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import {
   AdapterFormatError,

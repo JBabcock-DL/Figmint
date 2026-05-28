@@ -8,7 +8,7 @@
 
 ## Summary
 
-Designers may interpret **"Load registry"** as **"show me all components in my codebase I can push to Figma."** Phase 2 implements **UC-2**: load **`.figmint-registry.json`**, a **sync ledger** of components **already scaffolded in Figma**, then resolve one `component-spec.v1.json` per pick. That gap causes empty lists, schema-path confusion, and the feeling that paste is the only viable path.
+Designers may interpret **"Load registry"** as **"show me all components in my codebase I can push to Figma."** Phase 2 implements **UC-2**: load **`.fighub-registry.json`**, a **sync ledger** of components **already scaffolded in Figma**, then resolve one `component-spec.v1.json` per pick. That gap causes empty lists, schema-path confusion, and the feeling that paste is the only viable path.
 
 **Deferred product intent (not WO-027):** repo-wide **component discovery** (spec files and/or source), **multiselect**, and **batch scaffold** — closer to **UC-4 / WO-044** and a future bulk-scaffold ticket.
 
@@ -28,7 +28,7 @@ This is **valid product intent** but **out of scope for Phase 2 GA** (WO-027 exp
 
 | User expectation | Phase 2 reality |
 | ---------------- | --------------- |
-| Catalog of scaffoldable components in repo | Only keys in `.figmint-registry.json` (often empty on first run) |
+| Catalog of scaffoldable components in repo | Only keys in `.fighub-registry.json` (often empty on first run) |
 | Multiselect + batch run | Single `<select>`, one scaffold per run |
 | Discover from code / file tree | Fixed spec paths after picking a registry key; no repo scan |
 | "Registry" = component library index | "Registry" = **Figma ↔ repo sync record** (nodeId, version, page) |
@@ -48,7 +48,7 @@ This is **valid product intent** but **out of scope for Phase 2 GA** (WO-027 exp
 **Lifecycle:**
 
 ```text
-First visit (no .figmint-registry.json on GitHub)
+First visit (no .fighub-registry.json on GitHub)
   → Load sync registry → empty list (expected)
   → Paste spec OR pick after first scaffold + export
 
@@ -76,7 +76,7 @@ After scaffold + export
 When registry load returns null or zero keys:
 
 ```text
-No sync registry yet (.figmint-registry.json).
+No sync registry yet (.fighub-registry.json).
 
 This file tracks components already scaffolded in Figma — not every
 component in your repo. To add your first component:
@@ -114,7 +114,7 @@ Components tab keeps **Load sync registry** button + read-only status (`3 compon
 **ⓘ Sync registry** → modal or expandable:
 
 - What the file contains (name, nodeId, version — not full specs)
-- Default path `.figmint-registry.json`
+- Default path `.fighub-registry.json`
 - Difference from JSON Schema in `packages/contracts`
 - Link to export after scaffold
 
@@ -144,7 +144,7 @@ Components tab keeps **Load sync registry** button + read-only status (`3 compon
 | - | -------- | ----- |
 | OQ-1 | Should Components show read-only repo summary from Settings only? | WO-027 follow-on UX |
 | OQ-2 | Spec-discovery WO before WO-044 as interim multiselect? | Product / backlog |
-| OQ-3 | Auto-create empty `.figmint-registry.json` on first export vs explicit greenfield | WO-026 |
+| OQ-3 | Auto-create empty `.fighub-registry.json` on first export vs explicit greenfield | WO-026 |
 
 ---
 

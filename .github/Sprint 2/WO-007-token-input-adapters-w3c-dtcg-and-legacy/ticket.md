@@ -6,7 +6,7 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt49nM
 
 ## Goal
 
-Implement the two token-input adapters that normalize external token formats into Figmint's canonical internal token model: (a) **W3C DTCG** (`$value` / `$type` style) and (b) **legacy Detroit Labs Foundations** shape (carried forward from `DesignOps-plugin`). Both adapters return the same `TokensV1` canonical shape. This is what FR-BOOT-2 requires before the variable push engine (WO-008) can consume tokens uniformly.
+Implement the two token-input adapters that normalize external token formats into FigHub's canonical internal token model: (a) **W3C DTCG** (`$value` / `$type` style) and (b) **legacy Detroit Labs Foundations** shape (carried forward from `DesignOps-plugin`). Both adapters return the same `TokensV1` canonical shape. This is what FR-BOOT-2 requires before the variable push engine (WO-008) can consume tokens uniformly.
 
 PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-1..2, §8.2 (`tokens` hybrid contract).
 
@@ -14,7 +14,7 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-1..2, §8.2 (`tokens` hybrid contract).
 
 ## Problem story
 
-As Figmint's variable-push engine, I want a single canonical `TokensV1` shape on input so I never branch on token format below the adapter layer.
+As FigHub's variable-push engine, I want a single canonical `TokensV1` shape on input so I never branch on token format below the adapter layer.
 
 ## Hypothesis (optional)
 
@@ -24,7 +24,7 @@ Two thin adapters + one canonical shape (locked in WO-055) keep token-format sup
 
 ## User stories
 
-- [ ] As an engine developer, `import { adapt } from '@figmint/io/sources/adapters'` returns `TokensV1` for any supported input.
+- [ ] As an engine developer, `import { adapt } from '@fighub/io/sources/adapters'` returns `TokensV1` for any supported input.
 - [ ] As a future maintainer, I can add a new format adapter by implementing one function and registering it.
 
 ## Design reference _(when UI work applies)_
@@ -37,7 +37,7 @@ Two thin adapters + one canonical shape (locked in WO-055) keep token-format sup
 
 ### Functional
 
-1. `src/io/sources/adapters/dtcg.ts` — `adaptDTCG(input: TokensV1WC3DTCG): TokensV1`. Top-level DTCG groups **must** be kebab-case `CollectionId` keys (`primitives`, `theme`, `typography`, `layout`, `effects`); nested groups flatten to slash `name`. Parse DTCG aliases `{primitives.color.primary.500}` → `{ aliasOf: { collection: 'primitives', name: 'color/primary/500' } }` (dot→slash; first segment = collection). Fold `$extensions.figmint.modes` → `valuesByMode`; `$extensions.figmint.codeSyntax` → flat `codeSyntax` (`WEB` / `ANDROID` / `iOS`).
+1. `src/io/sources/adapters/dtcg.ts` — `adaptDTCG(input: TokensV1WC3DTCG): TokensV1`. Top-level DTCG groups **must** be kebab-case `CollectionId` keys (`primitives`, `theme`, `typography`, `layout`, `effects`); nested groups flatten to slash `name`. Parse DTCG aliases `{primitives.color.primary.500}` → `{ aliasOf: { collection: 'primitives', name: 'color/primary/500' } }` (dot→slash; first segment = collection). Fold `$extensions.fighub.modes` → `valuesByMode`; `$extensions.fighub.codeSyntax` → flat `codeSyntax` (`WEB` / `ANDROID` / `iOS`).
 2. `src/io/sources/adapters/legacy.ts` — `adaptLegacy(input: TokensV1Legacy): TokensV1`. Map Title-Case `collections[].name` → kebab `CollectionId`; preserve slash `variables[].name` verbatim (never dots). Bare alias strings (Theme→Primitives default) → structured `aliasOf`. Normalize mode keys to Figma casing (`Light`/`Dark`, not `light`/`dark`).
 3. `src/io/sources/adapters/detect.ts` — `detectFormat(raw: unknown): 'dtcg' | 'legacy' | null`. Reuse WO-006 stage-2 legacy whitelist + stage-3 DTCG leaf walk on **parsed** JSON only (not raw string — that is `detectContract`'s job at IO layer).
 4. `src/io/sources/adapters/index.ts` — `adapt(raw: unknown): TokensV1 | FormatError` (top-level entry; dispatches via `detectFormat`; passthrough when already `v: 1 && kind: 'tokens'`).

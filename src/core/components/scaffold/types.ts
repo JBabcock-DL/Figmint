@@ -1,4 +1,4 @@
-import type { AuditRuleResult, ComponentSpecV1, RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult, ComponentSpecV1, RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 /** Parsed binding kind — suffix of selector after final '.' */
 export type BindingKind =
@@ -83,9 +83,9 @@ export interface ScaffoldResult {
 
 export type ArchetypeBuilder = (ctx: ScaffoldBuildContext) => Promise<VariantBuildResult>;
 
-export const PLUGIN_DATA_SCAFFOLD_ID = 'figmint.scaffoldId';
-export const PLUGIN_DATA_SPEC_VERSION = 'figmint.specVersion';
-export const PLUGIN_DATA_USAGE_FRAME = 'figmint.usageFrame';
+export const PLUGIN_DATA_SCAFFOLD_ID = 'fighub.scaffoldId';
+export const PLUGIN_DATA_SPEC_VERSION = 'fighub.specVersion';
+export const PLUGIN_DATA_USAGE_FRAME = 'fighub.usageFrame';
 
 import type { ComponentScaffoldTarget } from './ensureComponentScaffoldTarget';
 
@@ -138,6 +138,6 @@ export interface ApplyPropertiesResult {
 
 /** WO-023 hook — caller supplies applyBindings until WO-023 merges into scaffold index. */
 export type ApplyBindingsRunner = (
-  spec: import('@detroitlabs/figmint-contracts').ComponentSpecV1,
+  spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1,
   componentSet: ComponentSetNode,
 ) => void | Promise<void>;

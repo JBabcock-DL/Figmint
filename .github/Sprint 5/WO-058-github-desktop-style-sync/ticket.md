@@ -10,15 +10,15 @@ note: Phase 1 of this WO must implement the snapshot mechanism originally scoped
 
 ## Goal
 
-Figmint behaves like GitHub Desktop for designers. The user connects GitHub once (existing OAuth Device Flow + relay), then fetches / pulls / pushes repos that hold design systems, components, updates, or any Figmint contract document. Users never see internal paths (tokens path, Figma sync file path, registry file path). All in-repo configuration lives in a single `figmint.json` at repo root (convention-driven, optional, sensible defaults when absent). Canvas pluginData snapshots (PRD §6.4 FR-DRIFT-1) become the single source of truth for registry state — `.figmint-registry.json` is deleted at the root.
+FigHub behaves like GitHub Desktop for designers. The user connects GitHub once (existing OAuth Device Flow + relay), then fetches / pulls / pushes repos that hold design systems, components, updates, or any FigHub contract document. Users never see internal paths (tokens path, Figma sync file path, registry file path). All in-repo configuration lives in a single `fighub.json` at repo root (convention-driven, optional, sensible defaults when absent). Canvas pluginData snapshots (PRD §6.4 FR-DRIFT-1) become the single source of truth for registry state — `.fighub-registry.json` is deleted at the root.
 
 ---
 
 ## Problem story
 
-As a designer, I want to connect my GitHub once and then fetch/pull/push my design system repo from inside Figmint — without managing tokens-path / Figma-sync-file-path / registry-path inputs — so syncing a design system feels like clicking Fetch in GitHub Desktop, not configuring a build pipeline.
+As a designer, I want to connect my GitHub once and then fetch/pull/push my design system repo from inside FigHub — without managing tokens-path / Figma-sync-file-path / registry-path inputs — so syncing a design system feels like clicking Fetch in GitHub Desktop, not configuring a build pipeline.
 
-**Problem today (2026-05-28 designer rejection):** Settings tab requires three user-managed paths. Components tab requires a "Load sync registry" action. WO-026 emits `.figmint-registry.json` into the repo. The scaffold attempt on `Dw8NkEiG91NhjYqRPNTOOu` fired `comp/registry-envelope` (`expected v=1 kind=registry`) and `comp/registry-filekey` (`fileKey must be non-empty`) — both direct symptoms of the duplicate registry state (repo JSON + canvas pluginData) AND of `figma.fileKey` being empty in Untitled / unsaved files. Both go away when the registry JSON is removed.
+**Problem today (2026-05-28 designer rejection):** Settings tab requires three user-managed paths. Components tab requires a "Load sync registry" action. WO-026 emits `.fighub-registry.json` into the repo. The scaffold attempt on `Dw8NkEiG91NhjYqRPNTOOu` fired `comp/registry-envelope` (`expected v=1 kind=registry`) and `comp/registry-filekey` (`fileKey must be non-empty`) — both direct symptoms of the duplicate registry state (repo JSON + canvas pluginData) AND of `figma.fileKey` being empty in Untitled / unsaved files. Both go away when the registry JSON is removed.
 
 **Opportunity:** Collapse Settings to "Connect GitHub" + per-repo Fetch/Pull/Push card; sync becomes implicit and event-driven; canvas pluginData becomes the only registry record; audit gate stops failing on a layer that should not exist.
 
@@ -27,8 +27,8 @@ As a designer, I want to connect my GitHub once and then fetch/pull/push my desi
 ## Locked architectural decisions (do not re-decide at planning)
 
 1. **Repo role = two-way GitHub-Desktop style.** Pull (fetch design system + tokens + component specs) AND push (write back specs, Code Connect mappings, doc updates). Auth via existing GitHub OAuth + relay (WO-016 SPK-016-1). Clone-or-pull semantics analogous to GitHub Desktop's Fetch / Pull / Push.
-2. **`.figmint-registry.json` envelope deleted.** Canvas pluginData snapshots (PRD §6.4 FR-DRIFT-1, hidden node on the Figmint Output page) are the SINGLE source of truth. `comp/registry-envelope` and `comp/registry-filekey` audit rules are dropped (or repurposed against pluginData if drift detection still wants them). WO-026 'Registry update emission' is reverted — its emitted file path and audit rows are removed from the codebase. WO-026 ticket gets closed as 'Won't Do (superseded by WO-058)'.
-3. **`figmint.json` at repo root** is the only repo-side config the plugin reads. Schema TBD in `/research`, minimum: `{ v: 1, tokensPath: string (default 'tokens/'), specsPath: string (default 'components/'), designSystemBranch?: string }`. Absent `figmint.json` → fall back to conventional defaults; never block.
+2. **`.fighub-registry.json` envelope deleted.** Canvas pluginData snapshots (PRD §6.4 FR-DRIFT-1, hidden node on the FigHub Output page) are the SINGLE source of truth. `comp/registry-envelope` and `comp/registry-filekey` audit rules are dropped (or repurposed against pluginData if drift detection still wants them). WO-026 'Registry update emission' is reverted — its emitted file path and audit rows are removed from the codebase. WO-026 ticket gets closed as 'Won't Do (superseded by WO-058)'.
+3. **`fighub.json` at repo root** is the only repo-side config the plugin reads. Schema TBD in `/research`, minimum: `{ v: 1, tokensPath: string (default 'tokens/'), specsPath: string (default 'components/'), designSystemBranch?: string }`. Absent `fighub.json` → fall back to conventional defaults; never block.
 4. **Settings tab UX collapses** to: "Connect GitHub" (existing OAuth Device Flow), then per-repo card showing repo name + Fetch/Pull/Push buttons + last-synced timestamp. No path inputs. No "Load sync registry" button on Components tab — sync is implicit and event-driven.
 5. **Component scaffold + variable push remain the deterministic-canvas-emit core**; only the I/O layer (`src/io/github/*`, `src/io/messages/github.ts`, `src/ui/tabs/Settings.tsx`, `src/ui/components/AuditPanel.tsx`) changes. PRD G5 still holds (zero LLM in plugin runtime).
 
@@ -39,7 +39,7 @@ As a designer, I want to connect my GitHub once and then fetch/pull/push my desi
 - [ ] As a designer, I click **Connect GitHub** once and never have to enter a tokens path or Figma sync file path.
 - [ ] As a designer, I see a per-repo card with **Fetch**, **Pull**, **Push** buttons and a `last-synced` timestamp — like GitHub Desktop.
 - [ ] As a designer, I open the Components tab and the active repo's registry is already loaded (no "Load sync registry" button).
-- [ ] As a developer, I commit a `figmint.json` at the repo root to tell Figmint where my tokens and component specs live; if I don't commit one, Figmint uses sensible defaults.
+- [ ] As a developer, I commit a `fighub.json` at the repo root to tell FigHub where my tokens and component specs live; if I don't commit one, FigHub uses sensible defaults.
 - [ ] As a designer, my scaffold attempt on a Figma file no longer fails `comp/registry-envelope` / `comp/registry-filekey` audits.
 
 ---
@@ -59,32 +59,32 @@ The Settings tab redesign should evoke [GitHub Desktop](https://desktop.github.c
 #### Phase 1 — Snapshot + registry migration (absorbs WO-028)
 
 1. **Add `packages/contracts/src/snapshot.v1.ts`** — envelope with `keys`, `registry.components`, `fileKey`, `updatedAt` (see WO-028 research).
-2. **Add `src/core/sync/snapshotStore.ts`** — `getSnapshot()`, `persistSnapshot()`, `getRegistryFromSnapshot()`, `upsertSnapshotRegistryEntry()`, hidden frame `_FigmintSnapshotStore` on Figmint Output page, pluginData key `figmint:snapshot:v1`.
-3. **Delete `.figmint-registry.json` read/write paths** — no GitHub fetch or ExportSheet emission of registry to repo.
+2. **Add `src/core/sync/snapshotStore.ts`** — `getSnapshot()`, `persistSnapshot()`, `getRegistryFromSnapshot()`, `upsertSnapshotRegistryEntry()`, hidden frame `_FigHubSnapshotStore` on FigHub Output page, pluginData key `fighub:snapshot:v1`.
+3. **Delete `.fighub-registry.json` read/write paths** — no GitHub fetch or ExportSheet emission of registry to repo.
 4. **Delete audit rules `comp/registry-envelope` and `comp/registry-filekey`** from `registryAuditRows.ts`; keep entry-level rows (present, nodeId, key, version).
 5. **Revert WO-026 production path** — remove registry PR flow from Components tab; Export sandbox sample may remain dev-only.
 6. **Migrate scaffold** — `runScaffold.ts` upserts snapshot registry; `Components.tsx` loads registry from snapshot on mount (no "Load sync registry").
 
-#### Phase 2 — `figmint.json` + Settings collapse
+#### Phase 2 — `fighub.json` + Settings collapse
 
-7. **Add `packages/contracts/src/figmintJson.v1.ts`** — `{ v: 1, kind: 'figmint-config', tokensPath?, specsPath?, designSystemBranch?, exportBasePath? }`.
-8. **Add `src/io/formats/figmintJson.ts`** — parse + `FIGMINT_JSON_DEFAULTS` (`design/tokens.json`, `components/`, `docs/figmint/`); absent file → defaults; malformed → `{ ok: false }` + non-blocking warning.
-9. **Fetch on connect** — `github/repo/fetch` loads `figmint.json` at default branch HEAD, resolves branch, caches config + `lastFetchedAt`.
+7. **Add `packages/contracts/src/fighubJson.v1.ts`** — `{ v: 1, kind: 'fighub-config', tokensPath?, specsPath?, designSystemBranch?, exportBasePath? }`.
+8. **Add `src/io/formats/fighubJson.ts`** — parse + `FIGHUB_JSON_DEFAULTS` (`design/tokens.json`, `components/`, `docs/fighub/`); absent file → defaults; malformed → `{ ok: false }` + non-blocking warning.
+9. **Fetch on connect** — `github/repo/fetch` loads `fighub.json` at default branch HEAD, resolves branch, caches config + `lastFetchedAt`.
 10. **Collapse Settings UI** — replace path inputs with repo card: repo name, last-synced, **Fetch latest**, **Pull design system**, **Push updates**; keep Connect/Disconnect OAuth.
-11. **Remove from session/storage/messages:** `tokensPath`, `registryPath` user-editable fields — paths resolved only from `figmint.json` defaults.
+11. **Remove from session/storage/messages:** `tokensPath`, `registryPath` user-editable fields — paths resolved only from `fighub.json` defaults.
 12. **Pull** — download tokens from resolved `tokensPath`; cache per repo; update `lastPulledAt`.
 
 #### Phase 3 — Push + gates
 
 13. **Push** — stage files under resolved `exportBasePath`; open PR via OAuth relay (`createPullRequestFlow`); PR body via `buildPrBody()`; commit author = authenticated user.
-14. **Extend WO-057 preflight** — fail on **malformed** `figmint.json`; pass on absent file.
+14. **Extend WO-057 preflight** — fail on **malformed** `fighub.json`; pass on absent file.
 15. **Drift badge placeholder** on repo card (WO-033 tail) — stub counts until WO-029 lands.
 16. **Close WO-026 (#29)** as Won't Do when this WO ships.
 
 #### Cross-cutting
 
 17. All Sprint 5 callers read registry from canvas snapshot, not repo file.
-18. No reference to `.figmint-registry.json` in `src/` or `packages/contracts/src/` after merge.
+18. No reference to `.fighub-registry.json` in `src/` or `packages/contracts/src/` after merge.
 
 ### Visual / UX
 
@@ -96,26 +96,26 @@ The Settings tab redesign should evoke [GitHub Desktop](https://desktop.github.c
 ### Technical / architectural
 
 - **Phase 1:** `packages/contracts/src/snapshot.v1.ts`, `src/core/sync/snapshotStore.ts`, `src/io/messages/snapshot.ts`
-- **Phase 2:** `packages/contracts/src/figmintJson.v1.ts`, `src/io/formats/figmintJson.ts`, `src/ui/components/RepoSyncCard.tsx`, `src/ui/sync/useRepoSync.ts`
+- **Phase 2:** `packages/contracts/src/fighubJson.v1.ts`, `src/io/formats/fighubJson.ts`, `src/ui/components/RepoSyncCard.tsx`, `src/ui/sync/useRepoSync.ts`
 - **Edits:** `src/io/github/storage.ts`, `src/io/github/githubUiBridge.ts`, `src/io/messages/github.ts`, `src/ui/tabs/Settings.tsx`, `src/ui/tabs/Components.tsx`, `src/core/components/registryAuditRows.ts`, `src/core/components/scaffold/runScaffold.ts`, `src/ui/components/registryExport.ts` (rewrite → snapshot-only)
 - **Deletes:** `src/ui/components/scaffold/loadRegistryFromRepo.ts` GitHub registry fetch (or gut to snapshot loader)
-- **Removes:** `.figmint-registry.json` paths, `comp/registry-envelope`, `comp/registry-filekey`, Settings path inputs, Components "Load sync registry"
-- Push uses OAuth relay; branch `figmint/push-{date}`; main-only
+- **Removes:** `.fighub-registry.json` paths, `comp/registry-envelope`, `comp/registry-filekey`, Settings path inputs, Components "Load sync registry"
+- Push uses OAuth relay; branch `fighub/push-{date}`; main-only
 - PRD G5 preserved
 
 ---
 
 ## Acceptance criteria _(definition of done)_
 
-- [ ] `.figmint-registry.json` is not written, read, or referenced anywhere in `src/` or `packages/contracts/src/`.
+- [ ] `.fighub-registry.json` is not written, read, or referenced anywhere in `src/` or `packages/contracts/src/`.
 - [ ] `comp/registry-envelope` and `comp/registry-filekey` audit rules are removed (or explicitly repurposed against pluginData with a passing unit test).
-- [ ] `packages/contracts/src/figmintJson.v1.ts` exists with `v: 1` discriminator and the locked schema.
-- [ ] `src/io/formats/figmintJson.ts` parses valid `figmint.json`, returns defaults on absence, surfaces a non-blocking warning on malformed content.
+- [ ] `packages/contracts/src/fighubJson.v1.ts` exists with `v: 1` discriminator and the locked schema.
+- [ ] `src/io/formats/fighubJson.ts` parses valid `fighub.json`, returns defaults on absence, surfaces a non-blocking warning on malformed content.
 - [ ] Settings tab shows: `Connect GitHub` action + per-repo card (name, last-synced, Fetch, Pull, Push). No tokens-path or Figma-sync-file-path inputs remain.
 - [ ] Components tab has no "Load sync registry" button.
 - [ ] All Sprint 5 callers (WO-022..027) read registry state from canvas pluginData, not from a repo file.
-- [ ] Push flow writes a PR to the active repo via the OAuth relay; PR title + body identify Figmint as the author.
-- [ ] WO-057 audit gate fails fast on malformed `figmint.json` and passes on absent `figmint.json`.
+- [ ] Push flow writes a PR to the active repo via the OAuth relay; PR title + body identify FigHub as the author.
+- [ ] WO-057 audit gate fails fast on malformed `fighub.json` and passes on absent `fighub.json`.
 - [ ] WO-026 GitHub issue (#29) closed as "Won't Do (superseded by WO-058)".
 - [ ] Designer scaffold attempt on `Dw8NkEiG91NhjYqRPNTOOu` no longer raises `comp/registry-envelope` or `comp/registry-filekey` FAIL (confirmed in Plugin Sandbox `cVdPraIafWFBRZnzMPhtrW`).
 - [ ] All four CI legs (typecheck, lint, format, dual build) green.
@@ -149,7 +149,7 @@ The Settings tab redesign should evoke [GitHub Desktop](https://desktop.github.c
 
 ### Accessibility _(WCAG AA where applicable)_
 
-- Fetch / Pull / Push buttons reach minimum hit target (44×44 pt) and have visible focus rings using Figmint's existing token-based focus style.
+- Fetch / Pull / Push buttons reach minimum hit target (44×44 pt) and have visible focus rings using FigHub's existing token-based focus style.
 
 ### Telemetry / observability _(if needed)_
 
@@ -183,16 +183,16 @@ WO-057 shipped. Research signed off. `/plan` writes three-phase execution contra
 
 ## 🛠️ Ready for `/build`
 
-After `/plan` — phased: Phase 1 snapshot → Phase 2 UI + figmint.json → Phase 3 Push.
+After `/plan` — phased: Phase 1 snapshot → Phase 2 UI + fighub.json → Phase 3 Push.
 
 ---
 
 ## Notes for build agent
 
-- **Designer rejection motivation:** 2026-05-28 scaffold attempt on `Dw8NkEiG91NhjYqRPNTOOu` raised `comp/registry-envelope` + `comp/registry-filekey` FAIL — both caused by the now-redundant `.figmint-registry.json` layer. Removing the file at the root removes the audit failures at the root.
+- **Designer rejection motivation:** 2026-05-28 scaffold attempt on `Dw8NkEiG91NhjYqRPNTOOu` raised `comp/registry-envelope` + `comp/registry-filekey` FAIL — both caused by the now-redundant `.fighub-registry.json` layer. Removing the file at the root removes the audit failures at the root.
 - **`figma.fileKey` is empty on Untitled / unsaved files** (memory.md "Do not repeat" — `comp/registry-filekey` audit will spuriously fail there). Validate all forward-scaffold flows in Plugin Sandbox (`cVdPraIafWFBRZnzMPhtrW`), not in a fresh Untitled file.
 - **Do not use `console.debug` in `code.js`** — main-thread sandbox throws. Use `pluginLog()` (memory.md "Do not repeat").
-- **GitHub OAuth requires the HTTPS relay** (WO-016 SPK-016-1) — Push code must hit `FIGMINT_OAUTH_RELAY_URL`, never `api.github.com` directly from the plugin.
+- **GitHub OAuth requires the HTTPS relay** (WO-016 SPK-016-1) — Push code must hit `FIGHUB_OAUTH_RELAY_URL`, never `api.github.com` directly from the plugin.
 - **Bundle code path safety:** scaffold output never uses `String.prototype.replace` with the bundle as the replacement string (memory.md "Do not repeat" — `$` patterns expand backreferences and corrupt React 19 bundles). If Push needs to template a PR body containing JSON literals, build the string with `slice`/concat or a function callback.
 
 ---

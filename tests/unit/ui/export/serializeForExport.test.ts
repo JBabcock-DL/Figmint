@@ -1,4 +1,4 @@
-import type { DriftReportV1 } from '@detroitlabs/figmint-contracts';
+import type { DriftReportV1 } from '@detroitlabs/fighub-contracts';
 import { describe, expect, it } from 'vitest';
 
 import driftFixture from '@/io/formats/__fixtures__/drift-report-ac.json';
@@ -12,7 +12,7 @@ const driftDoc: ContractDocument = {
 
 describe('buildExportFiles', () => {
   it('produces json and markdown files for drift-report when both formats selected', () => {
-    const basename = 'docs/figmint/drift-2026-05-27';
+    const basename = 'docs/fighub/drift-2026-05-27';
     const files = buildExportFiles(driftDoc, { json: true, md: true }, basename);
 
     expect(files).toHaveLength(2);
@@ -41,11 +41,11 @@ describe('buildExportFiles', () => {
     const files = buildExportFiles(
       registryDoc,
       { json: true, md: true },
-      'docs/figmint/registry-export',
+      'docs/fighub/registry-export',
     );
 
     expect(files).toHaveLength(1);
-    expect(files[0].path).toBe('docs/figmint/registry-export.json');
+    expect(files[0].path).toBe('docs/fighub/registry-export.json');
     expect(files[0].format).toBe('json');
     expect(files[0].content).toContain('"kind": "registry"');
   });

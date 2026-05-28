@@ -1,14 +1,14 @@
-# Figmint — Product Requirements Document
+# FigHub — Product Requirements Document
 
 **Status:** Draft for planning breakdown
 **Author:** Detroit Labs DesignOps
 **Date:** 2026-05-26
-**Repo:** `figmint`
+**Repo:** `fighub`
 **Supersedes:** Agent-driven workflow in `DesignOps-plugin`
 **Sprint roadmap & ticket breakdown:** [breakdown-the-plan-and-mellow-whale.md](file:///C:/Users/jbabc/.claude/plans/breakdown-the-plan-and-mellow-whale.md) — multi-sprint plan + per-ticket lift-source pointers (canonical companion to this PRD; lives at `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`)
 **Legacy lift source:** `c:\Users\jbabc\Documents\GitHub\DesignOps-plugin\` — port working deterministic logic, do not rebuild from scratch
 
-> Figmint is a native Figma plugin for design system management, component architecture, and design token workflows. This document is its canonical scope artifact. The legacy `DesignOps-plugin` repo enters managed sunset (see §17).
+> FigHub is a native Figma plugin for design system management, component architecture, and design token workflows. This document is its canonical scope artifact. The legacy `DesignOps-plugin` repo enters managed sunset (see §17).
 
 ---
 
@@ -49,7 +49,7 @@ The plugin's center of gravity is bootstrap speed (design system setup measured 
 
 ### 2.1 Mission Statement
 
-> **Figmint is a deterministic context bridge between agents.** Zero LLM tokens consumed internally; first-class file I/O in both directions; agents are optional upstream/downstream users that the plugin is designed _for_ but does not depend _on_.
+> **FigHub is a deterministic context bridge between agents.** Zero LLM tokens consumed internally; first-class file I/O in both directions; agents are optional upstream/downstream users that the plugin is designed _for_ but does not depend _on_.
 
 ### 2.2 Why now
 
@@ -109,7 +109,7 @@ For everything else, the plugin produces context documents (Markdown + JSON) tha
 | -------------------------------- | ------------------------------------------------------------------------------ | ---------------------------- |
 | **Designer**                     | Primary plugin user; drives all interactions                                   | Yes                          |
 | **Engineer**                     | Owns `tokens.json`, reviews PRs from plugin, updates component implementations | Yes (project-side)           |
-| **Figmint**                      | Deterministic execution engine in Figma sandbox                                | Yes                          |
+| **FigHub**                      | Deterministic execution engine in Figma sandbox                                | Yes                          |
 | **Claude (CLI / Cursor / chat)** | Optional pre/post-processing agent for context                                 | Optional                     |
 | **Figma Agent**                  | Optional on-canvas agent for free-form, translation, a11y                      | Optional                     |
 | **CI (GitHub Actions)**          | Validates contracts; runs `figma connect publish`                              | Yes for Code Connect publish |
@@ -131,7 +131,7 @@ The designer is the **only** human required in every workflow. Every other actor
 
 **Actor:** Designer
 **Trigger:** Designer needs a known component (e.g. shadcn Button)
-**Outcome:** Component scaffolded on canvas with variant matrix and variable bindings; `.figmint-registry.json` updated via GitHub PR
+**Outcome:** Component scaffolded on canvas with variant matrix and variable bindings; `.fighub-registry.json` updated via GitHub PR
 **Latency target:** <5s scaffold time
 
 ### 5.3 UC-3: Add component (agent-emitted spec)
@@ -177,7 +177,7 @@ The designer is the **only** human required in every workflow. Every other actor
 
 | ID        | Requirement                                                                                                                        |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| FR-BOOT-1 | Read tokens from any I/O source (§10) supporting W3C DTCG **or** legacy `.figmint-registry.json` shape (hybrid auto-detect)        |
+| FR-BOOT-1 | Read tokens from any I/O source (§10) supporting W3C DTCG **or** legacy `.fighub-registry.json` shape (hybrid auto-detect)        |
 | FR-BOOT-2 | Normalize input to canonical internal token model                                                                                  |
 | FR-BOOT-3 | Create / update 5 variable collections: Primitives, Theme, Typography, Layout, Effects                                             |
 | FR-BOOT-4 | Support modes per collection (Light/Dark on Theme; type-scale modes on Typography per Detroit Labs Foundations)                    |
@@ -196,7 +196,7 @@ The designer is the **only** human required in every workflow. Every other actor
 | FR-SCAF-3 | Apply variable bindings (fill, stroke, radius, padding, gap, text styles) per spec                                                                                                        |
 | FR-SCAF-4 | Generate component property definitions matching spec props (Boolean, Text, Variant, InstanceSwap)                                                                                        |
 | FR-SCAF-5 | Create a usage frame with example instances                                                                                                                                               |
-| FR-SCAF-6 | Append to `.figmint-registry.json` payload; offer registry export via any sink                                                                                                            |
+| FR-SCAF-6 | Append to `.fighub-registry.json` payload; offer registry export via any sink                                                                                                            |
 | FR-SCAF-7 | Encode auto-layout invariants (resize-then-sizing-mode order; counter-axis AUTO for matrix specimens; row counter-axis AUTO; no 1px master heights) as helper functions, not prompt rules |
 
 ### 6.3 Component import — reverse path (FR-IMP)
@@ -217,7 +217,7 @@ The designer is the **only** human required in every workflow. Every other actor
 
 | ID         | Requirement                                                                                                          |
 | ---------- | -------------------------------------------------------------------------------------------------------------------- |
-| FR-DRIFT-1 | Maintain a "last synced" snapshot per key, stored in canvas pluginData on a hidden node in the Figmint Output page   |
+| FR-DRIFT-1 | Maintain a "last synced" snapshot per key, stored in canvas pluginData on a hidden node in the FigHub Output page   |
 | FR-DRIFT-2 | On detect: pull current repo state, compare against last-synced snapshot AND Figma current state — 3-way             |
 | FR-DRIFT-3 | Classify each drift as `push` (Figma moved), `pull` (Repo moved), or `conflict` (both moved, disagree)               |
 | FR-DRIFT-4 | Emit `drift-report.v1.{json,md}` to any chosen sink                                                                  |
@@ -261,7 +261,7 @@ See §10 for full spec. Summary:
 | ID      | Requirement                                                                                                                             |
 | ------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | FR-IO-1 | Four input ports: paste, file picker, clipboard auto-detect on open, GitHub OAuth pull, frame pluginData                                |
-| FR-IO-2 | Four output sinks: download file, copy to clipboard, write to Figmint Output page text node, write to frame pluginData, open GitHub PR  |
+| FR-IO-2 | Four output sinks: download file, copy to clipboard, write to FigHub Output page text node, write to frame pluginData, open GitHub PR  |
 | FR-IO-3 | Every contract document serializes as both `.v1.json` AND `.v1.md` (GFM tables + headings); markdown derived from JSON to prevent drift |
 | FR-IO-4 | Designer picks file path + format at export time via a unified export sheet                                                             |
 
@@ -329,7 +329,7 @@ See §10 for full spec. Summary:
 ### 7.3 Repo layout
 
 ```
-figmint/
+fighub/
   src/
     core/                           # Deterministic engines (pure TS)
       variables/
@@ -399,7 +399,7 @@ figmint/
     contracts/                      # Public schema docs for agent consumers
     architecture.md
   packages/
-    contracts/                      # @detroitlabs/figmint-contracts (published)
+    contracts/                      # @detroitlabs/fighub-contracts (published)
   tests/
     fixtures/                       # canonical inputs per contract type
     unit/
@@ -408,7 +408,7 @@ figmint/
 
 ### 7.4 Cross-repo contract package
 
-`@detroitlabs/figmint-contracts` is published from the new repo and consumed by both:
+`@detroitlabs/fighub-contracts` is published from the new repo and consumed by both:
 
 - The plugin itself
 - Any CLI / CI tooling that validates contract documents
@@ -572,7 +572,7 @@ Markdown rendering uses `## Push (4)`, `## Pull (2)`, `## Conflicts (1)` heading
 }
 ```
 
-### 8.6 `registry.v1` (`.figmint-registry.json`)
+### 8.6 `registry.v1` (`.fighub-registry.json`)
 
 **Direction:** Both (read for context, write on scaffold/import/sync)
 **Purpose:** Single source of truth for what components exist in both Figma and code
@@ -588,7 +588,7 @@ The ops protocol is the contract between any **shell** (UI, agent, CLI) and the 
 
 | Property                                         | Direct calls                          | Ops JSON                                                      |
 | ------------------------------------------------ | ------------------------------------- | ------------------------------------------------------------- |
-| Replayable / auditable                           | No                                    | Yes — drop a `.figmint.ops.json` next to the file             |
+| Replayable / auditable                           | No                                    | Yes — drop a `.fighub.ops.json` next to the file             |
 | Agent-friendly                                   | Moderate — agents write code OK       | Best fit — JSON emission is well-trained                      |
 | Inter-runtime portable                           | No — TS functions can't cross sandbox | Yes — JSON crosses any boundary                               |
 | Bridges "external agent can't invoke plugin" gap | No                                    | Yes — agent writes to canvas pluginData, plugin reads on open |
@@ -603,7 +603,7 @@ The ops protocol is the contract between any **shell** (UI, agent, CLI) and the 
 | Handoff      | `emit-handoff`                           |
 | Code Connect | `emit-code-connect-pr`                   |
 
-Each op has a typed payload (validated against `@detroitlabs/figmint-contracts`) and a typed return result included in the audit log.
+Each op has a typed payload (validated against `@detroitlabs/fighub-contracts`) and a typed return result included in the audit log.
 
 ### 9.3 Execution semantics
 
@@ -632,7 +632,7 @@ Each op has a typed payload (validated against `@detroitlabs/figmint-contracts`)
 | ----------------------------- | ---------------------------------------------------------------- | ------- |
 | Download as `.json` / `.md`   | Designer carries file manually                                   | 1       |
 | Copy to clipboard             | Most common — paste to chat/ticket/agent                         | 1       |
-| Figmint Output page text node | Persistent labeled node; agent with file access can read via MCP | 3       |
+| FigHub Output page text node | Persistent labeled node; agent with file access can read via MCP | 3       |
 | Frame pluginData              | Compact machine-readable handoff for round-trips                 | 3       |
 | GitHub PR (write via OAuth)   | Engineer-reviewable, mergeable change to consumer repo           | 3 (Org) |
 
@@ -656,10 +656,10 @@ Single component used across all flows:
 │  Destinations:                              │
 │   ☑ Download file(s)                        │
 │   ☐ Copy markdown to clipboard              │
-│   ☐ Write to Figmint Output page          │
+│   ☐ Write to FigHub Output page          │
 │   ☐ Write to frame pluginData               │
 │   ☑ Open GitHub PR                          │
-│      Path: docs/figmint/drift-{date}.md   │
+│      Path: docs/fighub/drift-{date}.md   │
 │                                             │
 │  [Cancel]                          [Export] │
 └─────────────────────────────────────────────┘
@@ -920,7 +920,7 @@ A single dedicated PR after Plugin Phase 3 ships:
 | **Conflict**            | Drift where both Figma and Repo moved since last sync and now disagree                                     |
 | **Contract document**   | One of the 5 versioned JSON documents the plugin produces or consumes                                      |
 | **Deterministic**       | Same input → same output; no LLM, no randomness; all behavior reproducible                                 |
-| **Figmint Output page** | Hidden-or-named Figma page where plugin writes labeled text-node outputs and snapshot pluginData           |
+| **FigHub Output page** | Hidden-or-named Figma page where plugin writes labeled text-node outputs and snapshot pluginData           |
 | **Forward path**        | Component scaffold direction: spec → Figma component                                                       |
 | **Org build**           | Private Detroit Labs Figma org build with GitHub OAuth + Code Connect + import features gated on           |
 | **Pull**                | Drift resolution direction: Repo → Figma (apply locally)                                                   |
@@ -932,4 +932,4 @@ A single dedicated PR after Plugin Phase 3 ships:
 
 ---
 
-_End of PRD. Next step: planning breakdown into stories/epics here in the `figmint` repo._
+_End of PRD. Next step: planning breakdown into stories/epics here in the `fighub` repo._

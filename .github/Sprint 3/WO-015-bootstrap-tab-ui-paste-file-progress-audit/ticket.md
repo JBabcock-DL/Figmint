@@ -14,7 +14,7 @@ PRD anchors: `Docs/PRD.md` §6.1 FR-BOOT-_, §6.8 FR-IO-_.
 
 ## Problem story
 
-As a designer, I want to paste or pick a `tokens.json`, preview what Figmint detected, press one button, and watch the plugin push variables, build the style-guide canvas, and show me any audit failures — without leaving the Bootstrap tab.
+As a designer, I want to paste or pick a `tokens.json`, preview what FigHub detected, press one button, and watch the plugin push variables, build the style-guide canvas, and show me any audit failures — without leaving the Bootstrap tab.
 
 ---
 
@@ -27,7 +27,7 @@ As a designer, I want to paste or pick a `tokens.json`, preview what Figmint det
 
 ## Design reference _(when UI work applies)_
 
-Bootstrap tab UI mock — first end-user-visible Figmint surface. Design lives in the Figmint design file (`file_key` to be assigned during `/plan`).
+Bootstrap tab UI mock — first end-user-visible FigHub surface. Design lives in the FigHub design file (`file_key` to be assigned during `/plan`).
 
 ---
 

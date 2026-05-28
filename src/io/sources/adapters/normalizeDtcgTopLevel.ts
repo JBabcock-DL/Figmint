@@ -3,7 +3,7 @@ import type {
   TokensV1WC3DTCG,
   TokensV1WC3DTCGGroup,
   TokensV1WC3DTCGNode,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import { COLLECTION_IDS, COLLECTION_ID_SET } from './internal/constants';
 import { AdapterFormatError } from './internal/names';
@@ -36,7 +36,7 @@ function mergeOrphanGroupsIntoPrimitives(
 }
 
 /**
- * Figmint DTCG expects top-level keys to be collection ids (`primitives`, `theme`, …).
+ * FigHub DTCG expects top-level keys to be collection ids (`primitives`, `theme`, …).
  * Generic W3C exports (Tokens Studio, Style Dictionary, hand-authored palettes) often
  * use semantic groups (`color`, `spacing`) at the root — fold those under `primitives`.
  */

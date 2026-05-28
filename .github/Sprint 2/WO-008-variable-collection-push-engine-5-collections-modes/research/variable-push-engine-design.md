@@ -234,7 +234,7 @@ From `04-step11-push.md` §"Plugin API — values and aliases" (Plugin API path 
 
 ```ts
 async function isEnterprise(): Promise<boolean> {
-  var probe = figma.variables.createVariableCollection('__figmint_evc_probe__');
+  var probe = figma.variables.createVariableCollection('__fighub_evc_probe__');
   try {
     probe.extend('__probe__');
     return true;
@@ -399,7 +399,7 @@ WO-010 implements `runAudit`; WO-008 **must invoke it** and treat audit FAIL as 
 1. Lock three build agents in Phase 1: `code-build` (`collections.ts`, `modes.ts`, `push.ts`, `types.ts`, `detectPlan.ts`, stubs for audit + codeSyntax); `code-build` tests; optional bench harness mirroring WO-005 fixture sizes.
 2. Declare WO-007 (`TokensV1` input) and WO-009 (`deriveCodeSyntax`) as **interface dependencies** — push engine compiles against stubs until those land.
 3. Fix ticket lift references: remove `step-15a-primitives.mcp.js`; cite `04-step11-push.md` only.
-4. Add `PushResult` to `@detroitlabs/figmint-contracts` only if ops-program audit log requires it — otherwise keep in `src/core/variables/types.ts` until contract bump is justified.
+4. Add `PushResult` to `@detroitlabs/fighub-contracts` only if ops-program audit log requires it — otherwise keep in `src/core/variables/types.ts` until contract bump is justified.
 
 ### For `/build`
 
@@ -428,7 +428,7 @@ WO-010 implements `runAudit`; WO-008 **must invoke it** and treat audit FAIL as 
 
 ## Sources
 
-### Internal — Figmint
+### Internal — FigHub
 
 - `memory.md` — WO-005 headline (606 ms); EVC projector; no spike lift; ES2017 / no `performance.now()`
 - `.github/Sprint 1/WO-055-…/research/canonical-token-model.md` — `TokensV1` shape; EVC §6 projection

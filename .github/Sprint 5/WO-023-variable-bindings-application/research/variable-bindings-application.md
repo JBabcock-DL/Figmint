@@ -11,7 +11,7 @@
 
 ## Summary
 
-WO-023 adds a **post-scaffold pass** that reads `ComponentSpecV1.bindings[]` and applies Figma variable bindings to every variant inside a `ComponentSetNode`. The pass is **deterministic, non-silent, and audit-backed**: missing variables or unresolvable selectors become **`AuditReportV1` FAIL rows** with the selector path — never hex fallbacks (DesignOps §7.6 banned strategy; Figmint PRD §11.4 preview/confirm culture extends to “no silent unbound chrome”).
+WO-023 adds a **post-scaffold pass** that reads `ComponentSpecV1.bindings[]` and applies Figma variable bindings to every variant inside a `ComponentSetNode`. The pass is **deterministic, non-silent, and audit-backed**: missing variables or unresolvable selectors become **`AuditReportV1` FAIL rows** with the selector path — never hex fallbacks (DesignOps §7.6 banned strategy; FigHub PRD §11.4 preview/confirm culture extends to “no silent unbound chrome”).
 
 **Locked recommendation:** implement `src/core/components/scaffold/applyBindings.ts` as a pure orchestrator that (1) builds a `VariablePathMap` once via `ensureLocalVariableMap()`, (2) walks **each variant `ComponentNode`** under the scaffolded `ComponentSetNode`, (3) parses selectors as `{nodePath}.{kind}`, (4) dispatches to shared canvas helpers for paint/number binds, and (5) returns `ApplyBindingsResult` consumed by a new **`scope: 'component'`** audit branch (WO-010 extension — rules locked below, implementation owned by WO-023 `/plan` Phase 1).
 
@@ -38,7 +38,7 @@ There is **no separate `kind` or `property` field**. The selector string must en
 
 **PRD drift:** `Docs/PRD.md` §8.3 example uses `{ "selector": "root.fill", "variable": "Theme/Primary" }` and `{ "selector": "label.text", "variable": "Typography/Body/medium" }`. Those paths **violate** `07-token-paths.md` (collection prefixes + non-canonical Theme tiers). Canonical examples:
 
-| Stale PRD example | Locked Figmint path |
+| Stale PRD example | Locked FigHub path |
 | ----------------- | ------------------- |
 | `Theme/Primary` | `color/primary/default` |
 | `Typography/Body/medium` | TextStyle name `Body/MD` for `.text-style` kind, or `Body/MD/font-size` only if future sub-kinds added |
@@ -78,7 +78,7 @@ There is **no separate `kind` or `property` field**. The selector string must en
 - [Working with Variables](https://developers.figma.com/docs/plugins/working-with-variables/) — `setBoundVariable(field, variable)` for numeric/simple fields; paints use boundVariables on paint objects via `setBoundVariableForPaint`.
 - [setBoundVariable](https://developers.figma.com/docs/plugins/api/properties/nodes-setboundvariable/) — pass `Variable` object; `null` unbinds.
 
-**Numeric bind order (lift):** DesignOps `bindNum` sets fallback scalar **first**, then `setBoundVariable` (L124–131). Figmint scaffold already has geometry from WO-022; still set explicit pixel fallback from current node value before bind so Figma never reads an invalid state if bind throws.
+**Numeric bind order (lift):** DesignOps `bindNum` sets fallback scalar **first**, then `setBoundVariable` (L124–131). FigHub scaffold already has geometry from WO-022; still set explicit pixel fallback from current node value before bind so Figma never reads an invalid state if bind throws.
 
 **Text-style kind locked semantics:** `variable` holds the **TextStyle name** (e.g. `Label/MD`, `Body/SM/regular`), resolved via `figma.getLocalTextStylesAsync()`. Individual Typography variable binds (`fontSize`, `fontFamily`, …) on text nodes are **not** FR-SCAF-3 v1 — they remain the style-guide publisher’s job (`typographyStyleBinding.ts`). If TextStyle missing → `missing-variable` audit row (treat as unresolved reference).
 
@@ -309,7 +309,7 @@ tests/
 ### Locked API — `applyBindings.ts`
 
 ```ts
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 import type { VariablePathMap } from '@/core/canvas/lib/variables';
 
 /** Parsed binding kind — suffix of selector after final '.' */

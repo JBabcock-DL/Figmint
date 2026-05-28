@@ -32,7 +32,7 @@ _Derived from Goal — see ticket-level scope._
 
 1. `src/core/import/shared/dependencyScanner.ts` — `scanDependencies(file: string): DependencyTree`.
 2. Pre-scan via regex / lightweight AST (don't full-parse if not needed).
-3. Check `.figmint-registry.json` from connected repo for each ref.
+3. Check `.fighub-registry.json` from connected repo for each ref.
 4. Returns a tree: each node = { name, status: 'registered' | 'unknown' | 'circular' }.
 5. UI integration: dependency tree preview before import (WO-044).
 

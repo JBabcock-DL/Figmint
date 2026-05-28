@@ -46,7 +46,7 @@ Per [`section-contract-trace.md`](./section-contract-trace.md) §11 chrome table
 | `color/background/content` | Section 1 (title text), Section 2 (description text), Section 4 (size label), Section 5 (card text) |
 | `color/background/content-muted` | Section 1 (summary), Section 2 (caption), Section 4 (header group + state header + variant row label) |
 
-These are Theme collection variables. The gate looks up via `figma.variables.getLocalVariableCollectionsAsync()` → find `Theme` → enumerate variables — or via the existing Figmint helper `ensureLocalVariableMap` (`src/core/canvas/lib/variables.ts`).
+These are Theme collection variables. The gate looks up via `figma.variables.getLocalVariableCollectionsAsync()` → find `Theme` → enumerate variables — or via the existing FigHub helper `ensureLocalVariableMap` (`src/core/canvas/lib/variables.ts`).
 
 #### F2.b — Text styles (4 required) — already published by bootstrap
 
@@ -72,7 +72,7 @@ Used by Section 4 cell instances (font-family inheritance through the ComponentS
 ### F3 — Audit row shape (verbatim TS contract)
 
 ```ts
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 export function buildDocRequiredTokensRow(missing: {
   tokens: string[];        // color tokens
@@ -298,7 +298,7 @@ if (scope === 'variables') {
 | D12 | Add `'doc-preflight'` to `ScaffoldStepId` union | Required for `postProgress` typing |
 | D13 | On gate fail, orchestrator skips ALL downstream steps (scaffold, bindings, properties, doc pipeline, registry) | Avoids partial scaffold + half-broken canvas. Frame count = 0, registry unchanged. |
 | D14 | Preflight audit is **not** added to the `audits[]` array at end; it's emitted via `postProgress` only | Avoids confusing "audit summary" UI where preflight + post-scaffold audits mix; preflight is gate state, not result |
-| D15 | If `figma.variables.getLocalVariableCollectionsAsync` is unavailable in the test sandbox, fall back to the sync `getLocalVariableCollections()` with same shape | Mirror the existing audit-rule patterns; tests use Figmint's Figma mock |
+| D15 | If `figma.variables.getLocalVariableCollectionsAsync` is unavailable in the test sandbox, fall back to the sync `getLocalVariableCollections()` with same shape | Mirror the existing audit-rule patterns; tests use FigHub's Figma mock |
 
 ## Pre-plan spikes
 
@@ -315,7 +315,7 @@ if (scope === 'variables') {
 | Risk | Severity | Likelihood | Mitigation |
 | ---- | -------- | ---------- | ---------- |
 | R1 — `bootstrap-complete.v1.json` may be missing one of the 4 color tokens; would block scaffold on every bootstrap+scaffold run | High | Medium | SPK-AUDIT-5 pre-flight grep; **RESOLVED Phase 0 Step 6** — all 4 tokens present (lines 997, 1021, 1045, 1093). |
-| R2 — Figma `getLocalVariableCollectionsAsync` may not be available in all Figmint test mocks | Low | Low | Use sync variant — already in legacy code (`properties.mcp.js:20`); both APIs exist in the Plugin types. |
+| R2 — Figma `getLocalVariableCollectionsAsync` may not be available in all FigHub test mocks | Low | Low | Use sync variant — already in legacy code (`properties.mcp.js:20`); both APIs exist in the Plugin types. |
 | R3 — Audit panel may not surface multi-line diagnostic well (line breaks may be stripped) | Low | Medium | Use space separator instead of `\n`; tested against `AuditPanel.tsx` rendering. |
 | R4 — Variable lookup by `name` is O(n); 167 tokens × 11 names = 1837 string compares per scaffold | Low | Low | Negligible. Could build a Set once if perf is ever a concern. |
 | R5 — `getLocalTextStylesAsync` returns styles from the entire file, not scoped to local — may match a style imported from a library | Low | Low | Name match by `style.name`; same logic as `publishTypographyStyles.ts:21`. |
@@ -340,15 +340,15 @@ if (scope === 'variables') {
 
 ## References
 
-- `Figmint/packages/contracts/src/auditReport.v1.ts` (42 lines) — v1 contract for `AuditRuleResult` and `AuditReportV1`.
-- `Figmint/src/core/audit/runAudit.ts` (190 lines) — current audit dispatcher; pattern to mirror.
-- `Figmint/src/core/audit/rules/index.ts` — current rule exports.
-- `Figmint/src/core/audit/rules/componentBindings.ts:116` — `'missing-variable'` reason pattern.
-- `Figmint/src/core/canvas/publishTypographyStyles.ts:19` — proves `_Doc/*` styles published by bootstrap.
-- `Figmint/src/core/canvas/data/typography-slots.json` — proves Label/SM/MD/LG slot definitions.
-- `Figmint/src/core/components/scaffold/runScaffold.ts` (333 lines) — orchestrator integration point.
-- `Figmint/src/io/messages/scaffold.ts` — `ScaffoldStepId` union to extend.
-- `Figmint/src/ui/components/AuditPanel.tsx` — UI consumer.
-- `Figmint/memory.md` 2026-05-28 — "do not repeat" rule on empty `figma.fileKey`.
+- `FigHub/packages/contracts/src/auditReport.v1.ts` (42 lines) — v1 contract for `AuditRuleResult` and `AuditReportV1`.
+- `FigHub/src/core/audit/runAudit.ts` (190 lines) — current audit dispatcher; pattern to mirror.
+- `FigHub/src/core/audit/rules/index.ts` — current rule exports.
+- `FigHub/src/core/audit/rules/componentBindings.ts:116` — `'missing-variable'` reason pattern.
+- `FigHub/src/core/canvas/publishTypographyStyles.ts:19` — proves `_Doc/*` styles published by bootstrap.
+- `FigHub/src/core/canvas/data/typography-slots.json` — proves Label/SM/MD/LG slot definitions.
+- `FigHub/src/core/components/scaffold/runScaffold.ts` (333 lines) — orchestrator integration point.
+- `FigHub/src/io/messages/scaffold.ts` — `ScaffoldStepId` union to extend.
+- `FigHub/src/ui/components/AuditPanel.tsx` — UI consumer.
+- `FigHub/memory.md` 2026-05-28 — "do not repeat" rule on empty `figma.fileKey`.
 - [`doc-pipeline-lift-map.md`](./doc-pipeline-lift-map.md) — broader lift map.
 - [`section-contract-trace.md`](./section-contract-trace.md) — section emitter contracts (Sections 1-5).

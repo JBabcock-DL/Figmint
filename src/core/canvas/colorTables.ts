@@ -1,4 +1,4 @@
-import type { TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { pluginLog } from '@/core/pluginLog';
 import type {

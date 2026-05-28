@@ -22,7 +22,7 @@ _Derived from Goal — see ticket-level scope._
 
 ## Design reference _(when UI work applies)_
 
-Sync tab resolution UI mock lives in the Figmint design file.
+Sync tab resolution UI mock lives in the FigHub design file.
 
 ---
 
@@ -95,7 +95,7 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 | `file_key`      | `<!-- filled during /plan or /vqa -->`                |
 | `node_id`       | `<!-- filled during /plan or /vqa -->`                |
 | Figma deep link | `<!-- filled -->`                                     |
-| Frame / scope   | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
+| Frame / scope   | `<!-- e.g. FigHub plugin window — Bootstrap tab -->` |
 | Captured at     | `<!-- ISO date -->`                                   |
 
 **Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_

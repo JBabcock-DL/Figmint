@@ -52,7 +52,7 @@ for (const { file, type, out } of CONTRACTS) {
   });
   const schema = generator.createSchema(type);
   schema.$schema = 'https://json-schema.org/draft/2020-12/schema';
-  schema.$id = `https://figmint.detroitlabs.com/schemas/${out}`;
+  schema.$id = `https://fighub.detroitlabs.com/schemas/${out}`;
   await writeFile(join(distDir, out), `${JSON.stringify(schema, null, 2)}\n`, 'utf8');
   console.log(`✓ ${out}`);
 }

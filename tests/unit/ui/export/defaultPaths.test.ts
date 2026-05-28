@@ -5,7 +5,7 @@ import type {
   OpsProgramV1,
   RegistryV1,
   TokensV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 import { describe, expect, it } from 'vitest';
 
 import componentSpecFixture from '@/io/formats/__fixtures__/component-spec-button.json';
@@ -41,12 +41,12 @@ const minimalDocs: ContractDocument[] = [
 
 describe('defaultExportBasename', () => {
   it.each([
-    ['drift-report', 'docs/figmint/drift-2026-05-27'],
-    ['handoff-context', 'docs/figmint/handoff-2026-05-27'],
-    ['ops-program', 'docs/figmint/ops-2026-05-27'],
-    ['component-spec', 'docs/figmint/components/primary-button'],
-    ['registry', 'docs/figmint/registry-export'],
-    ['tokens', 'docs/figmint/tokens-2026-05-27'],
+    ['drift-report', 'docs/fighub/drift-2026-05-27'],
+    ['handoff-context', 'docs/fighub/handoff-2026-05-27'],
+    ['ops-program', 'docs/fighub/ops-2026-05-27'],
+    ['component-spec', 'docs/fighub/components/primary-button'],
+    ['registry', 'docs/fighub/registry-export'],
+    ['tokens', 'docs/fighub/tokens-2026-05-27'],
   ] as const)(
     'returns default basename for %s',
     function (kind, expected) {

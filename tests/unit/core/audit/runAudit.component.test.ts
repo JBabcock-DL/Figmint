@@ -15,7 +15,7 @@ describe('runAudit component scope', () => {
   it('returns apply-bindings report shape', async () => {
     const { componentSet } = buildMockVariantTree(1);
     const audit = await runAudit('component', {
-      spec: chipSpec as import('@detroitlabs/figmint-contracts').ComponentSpecV1,
+      spec: chipSpec as import('@detroitlabs/fighub-contracts').ComponentSpecV1,
       componentSet: componentSet as unknown as ComponentSetNode,
       bindingsResult: { applied: 11, failed: [], passed: true },
     });

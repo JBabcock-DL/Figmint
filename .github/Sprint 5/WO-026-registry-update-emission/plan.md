@@ -4,7 +4,7 @@
 
 Implement **registry upsert + staged export** after a successful forward-path scaffold (WO-022). A pure core module **`src/core/components/registry.ts`** ports DesignOps **`merge-registry.mjs`** upsert semantics into TypeScript, wraps bodies in the **`RegistryV1`** envelope (`v: 1`, `kind: 'registry'`), and upserts by **`spec.name`** (PascalCase map key, e.g. `"Button"`). **`upsertRegistryEntry(registry, input)`** is the single merge entry point: it calls **`buildRegistryEntry`** from `ScaffoldResult` + live `ComponentSetNode` + target page, then **`mergeRegistryEntry`** with version auto-increment and fresh `publishedAt`.
 
-The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`**) and **`prepareRegistryExport`** (builds `ContractDocument { kind: 'registry', payload: RegistryV1 }` + default sinks + ExportSheet title). Post-scaffold flow: merge in memory → open **WO-020 ExportSheet** — **no silent PR** (FR-SCAF-6). Default sinks: **`['download', 'github-pr']`** when GitHub connected + `flags.githubOAuth && flags.githubPRSink`, else **`['download']`** only. Serialize via existing **`stableStringify`** path in **`serializeForExport.ts`** → `.figmint-registry.json`.
+The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`**) and **`prepareRegistryExport`** (builds `ContractDocument { kind: 'registry', payload: RegistryV1 }` + default sinks + ExportSheet title). Post-scaffold flow: merge in memory → open **WO-020 ExportSheet** — **no silent PR** (FR-SCAF-6). Default sinks: **`['download', 'github-pr']`** when GitHub connected + `flags.githubOAuth && flags.githubPRSink`, else **`['download']`** only. Serialize via existing **`stableStringify`** path in **`serializeForExport.ts`** → `.fighub-registry.json`.
 
 **In scope:** `registry.ts`, `registry.types.ts`, `registryAuditRows.ts`, UI bridge `src/ui/components/registryExport.ts`, golden fixtures, Vitest unit + AJV schema gate, fix invalid UI export fixture, optional thin demo hook in `App.tsx` for manual VQA (WO-027 replaces with Components tab).
 
@@ -50,7 +50,7 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 ## Lift map
 
-| Legacy (DesignOps-plugin) | Figmint target | Notes |
+| Legacy (DesignOps-plugin) | FigHub target | Notes |
 | ------------------------- | -------------- | ----- |
 | `skills/create-component/resolver/merge-registry.mjs` L67–87 upsert | `mergeRegistryEntry()` | Replace, never duplicate row |
 | `merge-registry.mjs` L74–78 fileKey guard | `assertRegistryFileKey()` → throw | Error code `REGISTRY_FILE_KEY_MISMATCH` |
@@ -99,11 +99,11 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
     ComponentSpecV1,
     RegistryComponentEntry,
     RegistryV1,
-  } from '@detroitlabs/figmint-contracts';
+  } from '@detroitlabs/fighub-contracts';
   import type { ScaffoldResult } from '@/core/components/scaffold/types';
 
   export const REGISTRY_FILE_KEY_MISMATCH = 'REGISTRY_FILE_KEY_MISMATCH';
-  export const DEFAULT_REGISTRY_PATH = '.figmint-registry.json';
+  export const DEFAULT_REGISTRY_PATH = '.fighub-registry.json';
   export const LEGACY_REGISTRY_PATH = '.designops-registry.json';
 
   export class RegistryMergeError extends Error {
@@ -219,7 +219,7 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 - [x] **Step 7** — Implement `resolveRegistryReadPath(path?: string, tryLegacy?: boolean): string` helper (in `registry.ts` or `registryExport.ts`):
 
-  - Default `path = DEFAULT_REGISTRY_PATH` (`.figmint-registry.json`).
+  - Default `path = DEFAULT_REGISTRY_PATH` (`.fighub-registry.json`).
   - When `tryLegacy === true` and primary 404, caller may retry `LEGACY_REGISTRY_PATH` (UI layer only).
 
   **Done when:** unit test asserts default constant matches ticket.
@@ -260,7 +260,7 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 - [x] **Step 10** — Implement `src/core/components/registryAuditRows.ts`:
 
   ```ts
-  import type { AuditRuleResult, RegistryV1 } from '@detroitlabs/figmint-contracts';
+  import type { AuditRuleResult, RegistryV1 } from '@detroitlabs/fighub-contracts';
 
   export function buildRegistryAuditRows(
     registry: RegistryV1,
@@ -343,7 +343,7 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
   5. `console.debug('[registry]', 'merge', spec.name, entry.version)` (UI iframe only)
   6. Return `prepareRegistryExport(registry)`
 
-  **GitHub PR metadata** (when user exports): reuse `runExport.ts` — `buildDefaultHeadBranch('registry', date)` → `figmint/registry-YYYY-MM-DD`; commit message `figmint: update registry — {spec.name}` (extend `runExport` only if not already parameterized — add optional `commitMessage` in test seam).
+  **GitHub PR metadata** (when user exports): reuse `runExport.ts` — `buildDefaultHeadBranch('registry', date)` → `fighub/registry-YYYY-MM-DD`; commit message `fighub: update registry — {spec.name}` (extend `runExport` only if not already parameterized — add optional `commitMessage` in test seam).
 
   **Done when:** unit test mocks merge; debug log grep in implementation.
 
@@ -384,7 +384,7 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
   - `defaultRegistryExportSinks(true)` returns `['download', 'github-pr']` when flags true (mock flags module).
   - `defaultRegistryExportSinks(false)` returns `['download']`.
-  - `prepareRegistryExport` → ExportSheet initial state: json only, path default `.figmint-registry` from `defaultExportBasename`.
+  - `prepareRegistryExport` → ExportSheet initial state: json only, path default `.fighub-registry` from `defaultExportBasename`.
   - `loadRegistryFromGitHub` 404 → null.
 
   **Done when:** `@testing-library/react` smoke passes.
@@ -475,7 +475,7 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 | ID | Question | Status |
 | -- | -------- | ------ |
-| OQ-1 | Configurable registry path in Settings (FR-CONF-5)? | **OPEN** — `registryPath` param on APIs; default `.figmint-registry.json` |
+| OQ-1 | Configurable registry path in Settings (FR-CONF-5)? | **OPEN** — `registryPath` param on APIs; default `.fighub-registry.json` |
 | OQ-2 | Code Connect URL in registry? | **RESOLVED — no** (Sprint 8); use `key` + `nodeId` |
 | OQ-3 | Legacy kebab read alias? | **RESOLVED** — read alias in Step 9; write `spec.name` |
 | OQ-4 | Auto-open ExportSheet vs banner? | **RESOLVED** — WO-027 auto-opens ExportSheet via `prepareRegistryExport(result.registry)` after `scaffold/result`; WO-026 `runRegistryExportFlow` is optional for standalone demos |

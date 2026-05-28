@@ -14,7 +14,7 @@ PRD anchors: `Docs/PRD.md` §6.2 FR-SCAF-7.
 
 ## Problem story
 
-Style-guide and component doc draws in DesignOps depend on ~15 convention shards and inlined `_lib.js` helpers to avoid 1px sliver / 10px collapse bugs. Figmint has no `src/core/canvas/` yet; WO-011..013 would re-implement these rules ad hoc without this library. WO-014 ports the invariant logic once, with Vitest coverage and locked geometry constants, so all Sprint 3 canvas builders and Sprint 5 matrix/doc frames share one source of truth.
+Style-guide and component doc draws in DesignOps depend on ~15 convention shards and inlined `_lib.js` helpers to avoid 1px sliver / 10px collapse bugs. FigHub has no `src/core/canvas/` yet; WO-011..013 would re-implement these rules ad hoc without this library. WO-014 ports the invariant logic once, with Vitest coverage and locked geometry constants, so all Sprint 3 canvas builders and Sprint 5 matrix/doc frames share one source of truth.
 
 ---
 

@@ -14,7 +14,7 @@ PRD anchors: `Docs/PRD.md` §6.8 FR-IO-1, §10.1 (Sources).
 
 ## Problem story
 
-As a designer driving Figmint, I want to bring tokens/specs/ops into the plugin without switching tools — by pasting, picking a file, or having the plugin notice valid JSON already on my clipboard.
+As a designer driving FigHub, I want to bring tokens/specs/ops into the plugin without switching tools — by pasting, picking a file, or having the plugin notice valid JSON already on my clipboard.
 
 ## Hypothesis (optional)
 

@@ -5,7 +5,7 @@ import {
   detectCssSelectorWarnings,
 } from '@/ui/components/variantMatrixPreview';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import canonicalFixture from '../../../fixtures/component-spec-button-canonical.json';
 

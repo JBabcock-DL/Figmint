@@ -91,7 +91,7 @@ Port **`text-styles.js`** (Typography specimen) and **`token-overview.js`** (Ste
   Step 17 passes (order matters):
   1. `findStyleGuidePage('token-overview')`
   2. Locate sections: `token-overview/architecture`, `platform-mapping`, `mode-row`, `how-to-bind`
-  3. **Delete** `token-overview/claude-commands` section (Figmint — agent artifact) OR replace with static Figmint help frame
+  3. **Delete** `token-overview/claude-commands` section (FigHub — agent artifact) OR replace with static FigHub help frame
   4. Rebind `arch-box/{Primitives,Theme,Typography,Layout,Effects}` fills from variable map
   5. Sync `doc/table/token-overview/platform-mapping` rows — columns TOKEN 400 · WEB 420 · ANDROID 340 · iOS 480
   6. §0.9 shadow hygiene: strip effects from platform-mapping subtree; elevation only on outer shell

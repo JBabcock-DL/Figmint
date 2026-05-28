@@ -2,7 +2,7 @@
 
 ## Approach
 
-Port Step **15a (Primitives page)** and **15b (Theme page)** from modular DesignOps sources (`primitives.js`, `theme.js`, shared `_lib.js` glue) into Figmint TypeScript. **Variable push is WO-008 — these builders only read/bind existing variables and draw tables.** Split: `lib/` (shared Figma draw helpers reused by WO-012/013) → `projectRows/` (pure `TokensV1` projectors, Vitest-only) → `colorTables.ts` / `themeTables.ts` (page orchestrators). All cell geometry via **WO-014 imports only** — grep gate: zero `node.resize(` in builder files except inside WO-014 re-exports. Idempotency = `buildPageContent` destructive wipe + full redraw.
+Port Step **15a (Primitives page)** and **15b (Theme page)** from modular DesignOps sources (`primitives.js`, `theme.js`, shared `_lib.js` glue) into FigHub TypeScript. **Variable push is WO-008 — these builders only read/bind existing variables and draw tables.** Split: `lib/` (shared Figma draw helpers reused by WO-012/013) → `projectRows/` (pure `TokensV1` projectors, Vitest-only) → `colorTables.ts` / `themeTables.ts` (page orchestrators). All cell geometry via **WO-014 imports only** — grep gate: zero `node.resize(` in builder files except inside WO-014 re-exports. Idempotency = `buildPageContent` destructive wipe + full redraw.
 
 **Drift guard:** Do **not** open `bundles/step-15a-primitives.mcp.js` or `step-15b-theme.mcp.js` for porting (wire format only). Do **not** call `createVariable` / `setValueForMode` in canvas code.
 

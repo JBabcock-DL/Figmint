@@ -1,6 +1,6 @@
 import { configStorageKey, normalizeRepoUrl, tokenStorageKey } from '@/io/github/repoUrl';
 
-const LAST_REPO_STORAGE_KEY = 'figmint:github:lastRepoUrl';
+const LAST_REPO_STORAGE_KEY = 'fighub:github:lastRepoUrl';
 
 export interface StoredGitHubToken {
   accessToken: string;

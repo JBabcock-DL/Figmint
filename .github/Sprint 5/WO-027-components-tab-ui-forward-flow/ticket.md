@@ -24,13 +24,13 @@ Phase 1 delivered Bootstrap (tokens + style-guide). Phase 2 requires a **designe
 
 - As a designer, I pick **Button** from the connected repo's registry and scaffold it with one click after previewing the spec.
 - As a designer, I paste an agent-generated `component-spec.v1.json` and scaffold it the same way.
-- As a designer, I see step-by-step progress and audit results, then export the updated `.figmint-registry.json` via the unified export sheet (never a silent PR).
+- As a designer, I see step-by-step progress and audit results, then export the updated `.fighub-registry.json` via the unified export sheet (never a silent PR).
 
 ---
 
 ## Design reference _(when UI work applies)_
 
-Components tab UI mock lives in the Figmint design file. **VQA execution** uses the locked [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox) (`file_key=cVdPraIafWFBRZnzMPhtrW`) for the implemented plugin panel; link mock `node_id` during `/plan` when the design frame is identified.
+Components tab UI mock lives in the FigHub design file. **VQA execution** uses the locked [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox) (`file_key=cVdPraIafWFBRZnzMPhtrW`) for the implemented plugin panel; link mock `node_id` during `/plan` when the design frame is identified.
 
 ---
 
@@ -39,14 +39,14 @@ Components tab UI mock lives in the Figmint design file. **VQA execution** uses 
 ### Functional
 
 1. **`src/ui/tabs/Components.tsx`** — full tab UI; register in `App.tsx` as `AppTab` value `'components'` (nav between Bootstrap and Export).
-2. **Registry entry path (UC-2):** When GitHub is connected (Settings), load `.figmint-registry.json` via `loadFromGitHub(repoUrl, registryPath)`; list `RegistryV1.components` keys; on select, resolve `component-spec.v1.json` from repo (`design/components/{key}.component-spec.v1.json` first, then `design/component-specs/{key}.v1.json`); surface clear error if spec file missing.
-3. **Registry path validation (remediation):** Reject JSON Schema paths (e.g. `*.schema.json`, `packages/contracts/dist/*`) with actionable copy — registry path must point to a **`RegistryV1` instance document** (`kind: "registry"`, `v: 1`), default `.figmint-registry.json` at repo root. Do not treat schema files as missing registry silently.
+2. **Registry entry path (UC-2):** When GitHub is connected (Settings), load `.fighub-registry.json` via `loadFromGitHub(repoUrl, registryPath)`; list `RegistryV1.components` keys; on select, resolve `component-spec.v1.json` from repo (`design/components/{key}.component-spec.v1.json` first, then `design/component-specs/{key}.v1.json`); surface clear error if spec file missing.
+3. **Registry path validation (remediation):** Reject JSON Schema paths (e.g. `*.schema.json`, `packages/contracts/dist/*`) with actionable copy — registry path must point to a **`RegistryV1` instance document** (`kind: "registry"`, `v: 1`), default `.fighub-registry.json` at repo root. Do not treat schema files as missing registry silently.
 4. **Paste/load spec path (UC-3):** Reuse WO-006 ports (`SourcePasteTextarea`, `SourceFilePicker`, `ClipboardBanner`) — accept only `component-spec` or `registry` kinds; reject tokens with actionable message.
 5. **Spec preview + edit:** Show draft `ComponentSpecV1` with editable `variantMatrix`, `props[]`, `bindings[]` (JSON editor minimum); display variant cross-product count; validate against `componentSpec.v1` schema before enabling Scaffold.
 6. **Scaffold orchestration:** `Scaffold` button sends `scaffold/run` to main thread; main runs `scaffold` → `applyBindings` → `applyProperties` → `buildUsageFrame` → registry merge (WO-022..026); stream `scaffold/progress`; terminal `scaffold/result` or `scaffold/error`.
 7. **Canvas output quality (remediation — depends WO-022/024):** Button canonical fixture (12 variants) must produce variant masters **≥ 48×32 px** on Components page; component property audit **6/6 pass** (`comp/prop-*` rules); not 1×1 collapsed masters.
 8. **Progress + audit:** Reuse Bootstrap-style step list + `AuditPanel`; steps: geometry, bindings, properties, usage frame, registry update, component audit. Hide variable **Push stats** row when audit `scope === 'component'` (avoid misleading `created 0` beside property failures).
-9. **Registry export:** On success, show `ExportSheet` with `{ kind: 'registry', payload: RegistryV1 }`; default path `.figmint-registry.json`; sinks: download + GitHub PR when connected (FR-SCAF-6, never silent apply).
+9. **Registry export:** On success, show `ExportSheet` with `{ kind: 'registry', payload: RegistryV1 }`; default path `.fighub-registry.json`; sinks: download + GitHub PR when connected (FR-SCAF-6, never silent apply).
 10. **Pass `registry` into scaffold** when loaded — required for composed archetypes (WO-022).
 11. **Usage frame expectation:** FR-SCAF-5 instance gallery lives on **Components** page (`{name}/usage-examples`). Foundations-style doc pages (properties table, matrix specimen, Do/Don't cards per v60 reference) are **out of scope** for WO-027 — label UI accordingly.
 
@@ -111,7 +111,7 @@ Captured from manual VQA; full UX notes in [registry-ux-intent](research/registr
 
 **What Phase 2 actually ships (UC-2):**
 
-- **Load sync registry** → read `.figmint-registry.json` (**Figma ↔ repo sync ledger**: name → nodeId, version). Often **empty on first run**.
+- **Load sync registry** → read `.fighub-registry.json` (**Figma ↔ repo sync ledger**: name → nodeId, version). Often **empty on first run**.
 - Single-select from that list → resolve one `component-spec.v1.json` from fixed repo paths → preview → one scaffold.
 
 **Future mapping (roadmap — committed):**
@@ -155,7 +155,7 @@ Captured from manual VQA; full UX notes in [registry-ux-intent](research/registr
 | `file_key`      | `cVdPraIafWFBRZnzMPhtrW`                                                                                   |
 | `node_id`       | N/A — panel-only code VQA (design mock not linked)                                                        |
 | Figma deep link | `https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox`                                       |
-| Frame / scope   | Figmint plugin window — **Components** tab (panel chrome; canvas ComponentSet = subsystem spot-check)      |
+| Frame / scope   | FigHub plugin window — **Components** tab (panel chrome; canvas ComponentSet = subsystem spot-check)      |
 | Captured at     | 2026-05-28                                                                                                 |
 
 **Precondition:** Bootstrap `bootstrap-complete` fixture run once in same file session so WO-023 bindings resolve.

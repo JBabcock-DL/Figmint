@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { HEX_FALLBACK_PALETTE, createScaffoldContext, ensureScaffoldFonts } from '@/core/components/scaffold/context';
 import {

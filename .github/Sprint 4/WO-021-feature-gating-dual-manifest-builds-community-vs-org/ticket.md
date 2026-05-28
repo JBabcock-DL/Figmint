@@ -7,7 +7,7 @@ status: deferred
 
 ## Status: **Deferred → Context Backlog** (2026-05-27)
 
-**Decision:** Ship **one Figmint build** with all Phase 1 features enabled (`manifest.json` + `src/config/flags.ts`). Community vs Org dual manifests and build-time gating are **out of scope until this ticket is re-prioritized**.
+**Decision:** Ship **one FigHub build** with all Phase 1 features enabled (`manifest.json` + `src/config/flags.ts`). Community vs Org dual manifests and build-time gating are **out of scope until this ticket is re-prioritized**.
 
 **Current repo state:**
 
@@ -15,7 +15,7 @@ status: deferred
 - `flags.githubOAuth`, `flags.githubPRSink`, etc. are all `true` — use for future optional UI toggles only, not build variants
 - Archived dual-build notes: [archived/dual-build-deferred.md](archived/dual-build-deferred.md)
 
-**Re-open when:** Figmint Community public listing needs a network-isolated build per PRD §13.
+**Re-open when:** FigHub Community public listing needs a network-isolated build per PRD §13.
 
 ---
 
@@ -45,7 +45,7 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. **Shared flags type** — `src/config/flags.types.ts` (or equivalent) defines `FigmintFlags`; `flags.community.ts` and `flags.org.ts` export `flags` with identical shape, differing values per PRD §13.1.
+1. **Shared flags type** — `src/config/flags.types.ts` (or equivalent) defines `FigHubFlags`; `flags.community.ts` and `flags.org.ts` export `flags` with identical shape, differing values per PRD §13.1.
 2. **I/O flags** — extend beyond Phase 4 stubs with at least `githubOAuth` (WO-016 source + settings) and `githubPRSink` (WO-018/WO-020 PR output). Community sinks (download, clipboard, Output page, pluginData) need **no** flag — always enabled in both builds.
 3. **Build scripts unchanged in behavior** — `scripts/build-community.mjs` and `scripts/build-org.mjs` continue to set `BUILD_TARGET`, run UI → finalize → main, and copy the matching manifest. Vite aliases `@/config/flags` per target (already wired in WO-002).
 4. **UI gating** — every gated affordance reads `flags.xxx` only. No `BUILD_TARGET` conditionals for feature visibility, no conditional/dynamic imports, no Vite aliases that stub out GitHub modules in community builds. All I/O modules ship in both bundles; community manifest `networkAccess: ["none"]` is the hard backstop.
@@ -133,4 +133,4 @@ N/A — no Figma artifact (subsystem ticket)
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
 - Research: [Feature gating & dual build](research/feature-gating-dual-build.md)
-- Scaffold: [WO-002 scaffold choice](../../Sprint%201/WO-002-bootstrap-figmint-typescript-vite-plugin-scaffold/research/scaffold-choice.md)
+- Scaffold: [WO-002 scaffold choice](../../Sprint%201/WO-002-bootstrap-fighub-typescript-vite-plugin-scaffold/research/scaffold-choice.md)

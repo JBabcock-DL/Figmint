@@ -1,4 +1,4 @@
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 export function countVariantCrossProduct(
   matrix: ComponentSpecV1['variantMatrix'],

@@ -105,9 +105,9 @@ src/core/audit/rules/
 
 ---
 
-## Lift map (DesignOps → Figmint)
+## Lift map (DesignOps → FigHub)
 
-| Legacy source | Figmint target | Action |
+| Legacy source | FigHub target | Action |
 | ------------- | -------------- | ------ |
 | `create-component/conventions/01-config-schema.md` §3.3 | `propFilter.ts`, `propBindings.ts` | Port element prop semantics + soft-fail |
 | `create-component/shadcn-props.schema.json` | `propFilter.ts` | Reference prop shapes; consume normalized contract only |
@@ -312,7 +312,7 @@ const propsResult = applyProperties(spec, set);
 | WO-022 `scaffold()` | Produces `ComponentSetNode`, variant names, layer tree, VARIANT defs via `combineAsVariants` | Phase 3 pipeline wire; SPK-024-3 VQA |
 | WO-023 `applyBindings()` | Runs **before** `applyProperties`; may export `resolveBindingTarget` | Phase 3 ordering; Step 10 import |
 | WO-010 `runAudit` | Extend `scope: 'component'` | Phase 4 |
-| WO-003 `@detroitlabs/figmint-contracts` | `ComponentSpecV1`, `ComponentSpecProp` | Phase 1 |
+| WO-003 `@detroitlabs/fighub-contracts` | `ComponentSpecV1`, `ComponentSpecProp` | Phase 1 |
 | WO-025 usage frame | Consumes `ApplyPropertiesResult.propKeys` | Downstream — not built here |
 | WO-027 Components tab | Imports `applyProperties` from `applyProperties.ts` (not `properties.ts`) | Downstream |
 

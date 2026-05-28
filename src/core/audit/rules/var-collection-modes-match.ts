@@ -1,4 +1,4 @@
-import type { AuditRuleResult } from '@detroitlabs/figmint-contracts';
+import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
 import { ALL_COLLECTION_IDS } from '../constants';
 import { findFigmaCollectionByDisplayName, getCanonicalCollectionModes } from './_helpers';

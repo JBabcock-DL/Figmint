@@ -46,12 +46,12 @@ export function defaultExportBasename(
 
 | `kind` | Return (no extension) |
 | ------ | ----------------------- |
-| `drift-report` | `docs/figmint/drift-{YYYY-MM-DD}` |
-| `handoff-context` | `docs/figmint/handoff-{date}` |
-| `ops-program` | `docs/figmint/ops-{date}` |
-| `component-spec` | `docs/figmint/components/{kebab(name)}` |
-| `registry` | `.figmint-registry` |
-| `tokens` | `docs/figmint/tokens-{date}` |
+| `drift-report` | `docs/fighub/drift-{YYYY-MM-DD}` |
+| `handoff-context` | `docs/fighub/handoff-{date}` |
+| `ops-program` | `docs/fighub/ops-{date}` |
+| `component-spec` | `docs/fighub/components/{kebab(name)}` |
+| `registry` | `.fighub-registry` |
+| `tokens` | `docs/fighub/tokens-{date}` |
 
   - `kebab(name)` from `payload.name` on component-spec.
   - **Done when:** `tests/unit/ui/export/defaultPaths.test.ts` — 6 rows + component slug.

@@ -10,7 +10,7 @@
 
 ## Summary
 
-WO-011 ports **Step 15a (Primitives page)** and **Step 15b (Theme page)** canvas-table builders from DesignOps-plugin into Figmint TypeScript. Per `Docs/lift-sources.md` §0, **`step-15a-primitives.mcp.js` and `step-15b-theme.mcp.js` are CANVAS builders — they read variables that already exist and draw style-guide tables; they do NOT create variables.** Variable creation remains WO-008.
+WO-011 ports **Step 15a (Primitives page)** and **Step 15b (Theme page)** canvas-table builders from DesignOps-plugin into FigHub TypeScript. Per `Docs/lift-sources.md` §0, **`step-15a-primitives.mcp.js` and `step-15b-theme.mcp.js` are CANVAS builders — they read variables that already exist and draw style-guide tables; they do NOT create variables.** Variable creation remains WO-008.
 
 **Locked decisions:**
 
@@ -35,7 +35,7 @@ WO-011 ports **Step 15a (Primitives page)** and **Step 15b (Theme page)** canvas
 
 Bundle size reference (`Docs/lift-sources.md` §3):
 
-| Legacy bundle | Lines | Bytes  | Figmint target                   |
+| Legacy bundle | Lines | Bytes  | FigHub target                   |
 | ------------- | ----- | ------ | -------------------------------- |
 | step-15a      | 1,314 | 57,033 | `colorTables.ts` + shared `lib/` |
 | step-15b      | 1,163 | 49,916 | `themeTables.ts` + shared `lib/` |
@@ -44,12 +44,12 @@ Bundle size reference (`Docs/lift-sources.md` §3):
 
 **Port (from `_lib.js`):**
 
-| Helper                                                    | Role                                                                                       | Figmint target                                                                           |
+| Helper                                                    | Role                                                                                       | FigHub target                                                                           |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
 | `ensureLocalVariableMapOnCtx`                             | Rebuild `path → variableId` from `getLocalVariablesAsync()` — ignores host-injected maps   | `lib/variables.ts` → `ensureLocalVariableMap()`                                          |
 | `bindPaintToVar` / `bindStrokeToVar`                      | §0.7: clone paint → `setBoundVariableForPaint` → reassign fills/strokes                    | `lib/variables.ts`                                                                       |
 | `buildPageContent`                                        | Delete non-header nodes; create `_PageContent` frame at y=320                              | `lib/pages.ts`                                                                           |
-| `findDesignOpsPage`                                       | Resolve page by shared slug `primitives` / `theme`, then legacy names                      | `lib/pages.ts` (Figmint namespace TBD — see Open Questions)                              |
+| `findDesignOpsPage`                                       | Resolve page by shared slug `primitives` / `theme`, then legacy names                      | `lib/pages.ts` (FigHub namespace TBD — see Open Questions)                              |
 | `buildTable`                                              | Detached-build table (C1): group → table → header/body → single append                     | `lib/table.ts`                                                                           |
 | `makeThemeModeColumn`                                     | Light/Dark swatch + hex (+ optional HSL stack) with `setExplicitVariableModeForCollection` | `lib/themeCells.ts` or inline in `themeTables.ts`                                        |
 | `makeBodyCell`, `makeHeaderCell`, `rehugCell`, `rehugRow` | Cell recipes + §0.1 hug rules                                                              | `lib/cells.ts` — **delegate sizing to WO-014** where applicable                          |
@@ -70,7 +70,7 @@ Bundle size reference (`Docs/lift-sources.md` §3):
 
 **Re-home from runner fragments (NOT port as files):**
 
-| Runner logic                                 | Purpose                                                 | Figmint target                                                                         |
+| Runner logic                                 | Purpose                                                 | FigHub target                                                                         |
 | -------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `_step15a-runner` collection finder          | Fuzzy match Primitives collection                       | Use WO-008 canonical names first; fuzzy fallback for foreign files                     |
 | `_step15a-runner` ramp discovery             | COLOR vars with numeric last segment → ramp key         | `projectColorRampsFromTokens()` + optional `discoverColorRampsFromFigma()`             |
@@ -210,7 +210,7 @@ node.fills = [bound];
 | `colorTables` | `primitives` | `↳ Primitives`    | `/primitives/i`  |
 | `themeTables` | `theme`      | `↳ Theme`         | `/^↳?\s*theme/i` |
 
-Legacy uses `getSharedPluginData('labs.designops', 'pageSlug')` on pages. Figmint should read the same slug namespace until Sprint 4 foundations shell defines a Figmint-native registry (`foundations-shell-and-preflight.md`).
+Legacy uses `getSharedPluginData('labs.designops', 'pageSlug')` on pages. FigHub should read the same slug namespace until Sprint 4 foundations shell defines a FigHub-native registry (`foundations-shell-and-preflight.md`).
 
 **Precondition:** Target page exists with `_Header` (or `/^header/i`) child. `buildPageContent` preserves header, wipes everything else.
 
@@ -224,7 +224,7 @@ Legacy idempotency is **destructive redraw**, not incremental update:
 2. Create fresh `_PageContent` frame.
 3. Append all table groups anew.
 
-**Implications for Figmint:**
+**Implications for FigHub:**
 
 - Re-running `buildPrimitivesPage` / `buildThemePage` is safe — output replaces prior tables.
 - No need to diff `doc/table-group/{slug}` nodes by slug (legacy doesn't).
@@ -293,7 +293,7 @@ export async function runCanvasBench(
 ## Open Questions
 
 1. **WO-014 sequencing:** Can WO-011 `/build` start before WO-014 lands, or is WO-014 a hard gate? Recommendation: soft gate — stubs OK if migrated before VQA.
-2. **Figmint page slug namespace:** Keep `labs.designops` shared plugin data for Sprint 3 compatibility, or introduce `figmint.pageSlug` now? Recommendation: read legacy slug first, write both when creating pages (Sprint 4 shell owns final call).
+2. **FigHub page slug namespace:** Keep `labs.designops` shared plugin data for Sprint 3 compatibility, or introduce `fighub.pageSlug` now? Recommendation: read legacy slug first, write both when creating pages (Sprint 4 shell owns final call).
 3. **Non-color primitive tables in WO-011:** Ticket name says "color and theme" but 15a includes space/radius/elevation/typeface/font-weight. Recommendation: include all 15a tables in `colorTables.ts` per lift-sources §3 — out-of-scope only typography/layout/effects/overview (WO-012/013).
-4. **Runner `ensureCodeSyntax` side effects:** Legacy 15b runner mutates variables missing codeSyntax. Figmint push (WO-009) should make this redundant — confirm no canvas-time mutation unless audit finds gaps.
+4. **Runner `ensureCodeSyntax` side effects:** Legacy 15b runner mutates variables missing codeSyntax. FigHub push (WO-009) should make this redundant — confirm no canvas-time mutation unless audit finds gaps.
 5. **Canvas audit scope:** New WO-010 rules ticket vs fold into WO-011 acceptance — recommend separate thin ticket for `scope: 'canvas'` after builders land.

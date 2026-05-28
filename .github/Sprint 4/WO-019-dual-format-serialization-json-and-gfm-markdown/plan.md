@@ -2,7 +2,7 @@
 
 ## Approach
 
-Stand up **`src/io/formats/`** as a pure, side-effect-free serialization layer: canonical `@detroitlabs/figmint-contracts` objects in → deterministic **JSON** (`stableStringify`) or **GFM markdown** out. Public API is `format(doc, 'json' | 'md')` dispatching on `doc.kind`. Six markdown renderers (five ticket kinds + **`audit-report`** to close WO-010 deferral). **No** md→json, **no** imports from `src/io/sources/`, **no** Figma API.
+Stand up **`src/io/formats/`** as a pure, side-effect-free serialization layer: canonical `@detroitlabs/fighub-contracts` objects in → deterministic **JSON** (`stableStringify`) or **GFM markdown** out. Public API is `format(doc, 'json' | 'md')` dispatching on `doc.kind`. Six markdown renderers (five ticket kinds + **`audit-report`** to close WO-010 deferral). **No** md→json, **no** imports from `src/io/sources/`, **no** Figma API.
 
 Downstream consumers (WO-017 sinks, WO-018 PR, WO-020 ExportSheet) call `format()` only — they never hand-author markdown.
 
@@ -233,7 +233,7 @@ hint: 'Markdown is export-only. Paste or load JSON.',
 
 | Dependency | Status |
 | ---------- | ------ |
-| WO-003 `@detroitlabs/figmint-contracts` | ✅ |
+| WO-003 `@detroitlabs/fighub-contracts` | ✅ |
 | WO-006 `file.ts` | ✅ hint update only |
 | Vitest + jsdom | ✅ |
 | WO-017/018/020 | Downstream consumers |

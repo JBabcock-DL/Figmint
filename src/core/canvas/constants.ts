@@ -1,7 +1,7 @@
 /**
  * Locked style-guide geometry (convention prose wins over legacy `_lib.js` drift).
  *
- * | Property              | `_lib.js` | Conventions (08, 10, 14) | Figmint |
+ * | Property              | `_lib.js` | Conventions (08, 10, 14) | FigHub |
  * | --------------------- | --------- | ------------------------ | ------- |
  * | Header band height    | 48px      | 56px                     | 56      |
  * | Body row minHeight    | 56        | 64                       | 64      |

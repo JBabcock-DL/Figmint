@@ -1,4 +1,4 @@
-# Plan quality bar — Figmint (mandatory for `/plan`)
+# Plan quality bar — FigHub (mandatory for `/plan`)
 
 > **Who must read this:** any agent running `/plan`, `/build`, or reviewing whether a ticket is ready to build.
 
@@ -86,7 +86,7 @@ Each step must be executable **without interpretation**. Include **all** that ap
 **Port / lift tickets** (ticket cites DesignOps or `Docs/lift-sources.md`):
 
 - Drift guard — what **not** to copy (bundles, wrong source files)
-- Lift map table — legacy → Figmint module
+- Lift map table — legacy → FigHub module
 - Wrong vs correct table when lift-sources documents common mistakes
 
 **Code-build tickets:**
@@ -115,7 +115,7 @@ Prefer **completeness over brevity**. Expand until:
 
 Use line count only as a sanity check: thin outlines (~50 lines) for multi-file work orders are almost always insufficient. When in doubt, **add another step** rather than merge vague work.
 
-### Minimum line-count gates (Figmint default — do not move to In Planning below these)
+### Minimum line-count gates (FigHub default — do not move to In Planning below these)
 
 | Ticket shape | Minimum `plan.md` lines | Must include |
 | ------------ | ------------------------ | ------------ |

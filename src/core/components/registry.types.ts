@@ -2,7 +2,7 @@ import type {
   ComponentSpecV1,
   RegistryComponentEntry,
   RegistryV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import type { ScaffoldResult } from '@/core/components/scaffold/types';
 

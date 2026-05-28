@@ -9,10 +9,10 @@ import type { GithubPRSinkContext } from '@/io/sinks/types';
 import { loadDriftSampleDoc } from '../../../helpers/sinks/loadDriftSampleDoc';
 
 const REPO_URL = 'https://github.com/acme/widgets';
-const HEAD_BRANCH = 'figmint/drift-report-2026-05-27';
-const HEAD_BRANCH_ENCODED = 'figmint%2Fdrift-report-2026-05-27';
-const JSON_PATH = 'docs/figmint/drift-report-2026-05-27.v1.json';
-const MD_PATH = 'docs/figmint/drift-report-2026-05-27.v1.md';
+const HEAD_BRANCH = 'fighub/drift-report-2026-05-27';
+const HEAD_BRANCH_ENCODED = 'fighub%2Fdrift-report-2026-05-27';
+const JSON_PATH = 'docs/fighub/drift-report-2026-05-27.v1.json';
+const MD_PATH = 'docs/fighub/drift-report-2026-05-27.v1.md';
 
 function installClientStorageMock() {
   const store = new Map<string, string>();
@@ -47,9 +47,9 @@ function buildDriftGithubPRContext(
       owner: 'acme',
       repo: 'widgets',
       baseBranch: 'main',
-      commitMessage: 'figmint: drift report export',
+      commitMessage: 'fighub: drift report export',
       headBranch: HEAD_BRANCH,
-      prTitle: 'figmint: drift report export',
+      prTitle: 'fighub: drift report export',
     },
     figmaFileKey: 'abc123',
     figmaFileName: 'Design System',
@@ -165,7 +165,7 @@ describe('executeGithubPRSink', () => {
     });
 
     expect(pullBodies[0]).toMatchObject({
-      title: 'figmint: drift report export',
+      title: 'fighub: drift report export',
       head: HEAD_BRANCH,
       base: 'main',
     });

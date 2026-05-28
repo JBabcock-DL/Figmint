@@ -1,6 +1,6 @@
 /// <reference types="@figma/plugin-typings" />
 
-import type { AuditReportV1, AuditRuleResult, ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditReportV1, AuditRuleResult, ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { runAudit, runDocPipelinePreflightAudit } from '@/core/audit/runAudit';
 import { buildRegistryAuditRows } from '@/core/components/registryAuditRows';

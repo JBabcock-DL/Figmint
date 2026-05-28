@@ -2,11 +2,11 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { prepareSinkContent } from '@/io/sinks/prepareContent';
 import {
-  FIGMINT_OUTPUT_CONTENT_FRAME,
-  FIGMINT_OUTPUT_PAGE_NAME,
-  FIGMINT_PAGE_ROLE_KEY,
-  FIGMINT_PAGE_ROLE_OUTPUT,
-  FIGMINT_SHARED_NS,
+  FIGHUB_OUTPUT_CONTENT_FRAME,
+  FIGHUB_OUTPUT_PAGE_NAME,
+  FIGHUB_PAGE_ROLE_KEY,
+  FIGHUB_PAGE_ROLE_OUTPUT,
+  FIGHUB_SHARED_NS,
   findOrCreateContentFrame,
   findOrCreateOutputPage,
   writeToOutputPage,
@@ -26,14 +26,22 @@ describe('outputPage', () => {
     installMockFigmaOutputPage();
   });
 
-  it('creates Figmint Output page on first use', () => {
+  it('creates FigHub Output page on first use', () => {
     const page = findOrCreateOutputPage();
 
-    expect(page.name).toBe(FIGMINT_OUTPUT_PAGE_NAME);
-    expect(page.getSharedPluginData(FIGMINT_SHARED_NS, FIGMINT_PAGE_ROLE_KEY)).toBe(
-      FIGMINT_PAGE_ROLE_OUTPUT,
+    expect(page.name).toBe(FIGHUB_OUTPUT_PAGE_NAME);
+    expect(page.getSharedPluginData(FIGHUB_SHARED_NS, FIGHUB_PAGE_ROLE_KEY)).toBe(
+      FIGHUB_PAGE_ROLE_OUTPUT,
     );
     expect(getMockOutputPages().length).toBe(2);
+  });
+
+  it('resolves legacy Figmint Output page by name', () => {
+    const legacy = new MockPage('Figmint Output');
+    getMockOutputPages().push(legacy);
+
+    const page = findOrCreateOutputPage();
+    expect(page.name).toBe('Figmint Output');
   });
 
   it('resolves legacy DesignOps Output page by name', () => {
@@ -48,7 +56,7 @@ describe('outputPage', () => {
     const page = findOrCreateOutputPage() as unknown as MockPage;
     const frame = findOrCreateContentFrame(page as unknown as PageNode);
 
-    expect(frame.name).toBe(FIGMINT_OUTPUT_CONTENT_FRAME);
+    expect(frame.name).toBe(FIGHUB_OUTPUT_CONTENT_FRAME);
     expect(frame.layoutMode).toBe('VERTICAL');
   });
 
@@ -56,7 +64,7 @@ describe('outputPage', () => {
     const page = findOrCreateOutputPage() as unknown as MockPage;
     const frame = findOrCreateContentFrame(page as unknown as PageNode);
     const existing = figma.createText();
-    existing.name = 'figmint/drift-report/2026-05-27T12:00:00.000Z';
+    existing.name = 'fighub/drift-report/2026-05-27T12:00:00.000Z';
     existing.characters = 'old content';
     frame.appendChild(existing);
 
@@ -94,8 +102,8 @@ describe('outputPage', () => {
     getMockOutputPages().push(other);
     setMockCurrentPage(other);
 
-    const existing = new MockPage(FIGMINT_OUTPUT_PAGE_NAME);
-    existing.setSharedPluginData(FIGMINT_SHARED_NS, FIGMINT_PAGE_ROLE_KEY, FIGMINT_PAGE_ROLE_OUTPUT);
+    const existing = new MockPage(FIGHUB_OUTPUT_PAGE_NAME);
+    existing.setSharedPluginData(FIGHUB_SHARED_NS, FIGHUB_PAGE_ROLE_KEY, FIGHUB_PAGE_ROLE_OUTPUT);
     getMockOutputPages().push(existing);
 
     findOrCreateOutputPage();

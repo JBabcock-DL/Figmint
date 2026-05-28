@@ -6,7 +6,7 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzgt5JSY
 
 ## Goal
 
-Same 3-way classification as WO-029, but for components. Compares current Figma ComponentSets against repo `.figmint-registry.json` and per-component specs in the connected repo, using the snapshot as common ancestor.
+Same 3-way classification as WO-029, but for components. Compares current Figma ComponentSets against repo `.fighub-registry.json` and per-component specs in the connected repo, using the snapshot as common ancestor.
 
 PRD anchors: `Docs/PRD.md` §6.4 FR-DRIFT-2..3.
 
@@ -37,7 +37,7 @@ _Derived from Goal — see ticket-level scope._
    - Variant matrix via `hashVariantMatrix` (fast path) + granular `{ added, removed }` combo names on drift
    - Props deep-equal vs `ComponentSpecV1.props`
    - Bindings deep-equal (selector + variable) vs `ComponentSpecV1.bindings`
-5. **Repo source:** `ComponentSpecV1` JSON from `figmint.json` `specsPath` (WO-058); **not** `.figmint-registry.json` (deleted).
+5. **Repo source:** `ComponentSpecV1` JSON from `fighub.json` `specsPath` (WO-058); **not** `.fighub-registry.json` (deleted).
 6. **Snapshot source:** `snapshot.registry.components` + per-key `cmp/{name}` comparable values (WO-058 envelope).
 7. Classification rules same as WO-029 (`classifyThreeWay` shared module).
 8. Each drift entry includes granular `ComponentDiff` in `figma` / `repo` / `lastSynced` fields.

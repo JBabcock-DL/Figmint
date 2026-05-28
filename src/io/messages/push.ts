@@ -1,4 +1,4 @@
-import type { AuditReportV1, TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditReportV1, TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import type { PushResult } from '@/core/variables/types';
 import { isTokensV1 } from '@/io/sources/adapters/internal';

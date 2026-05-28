@@ -1,12 +1,14 @@
 import type { FormatOptions, OutputFormat, SinkResult } from './types';
 import type { PreparedContent } from './prepareContent';
 
-export const FIGMINT_OUTPUT_PAGE_NAME = 'Figmint Output';
-export const LEGACY_OUTPUT_PAGE_NAMES = ['DesignOps Output'];
-export const FIGMINT_OUTPUT_CONTENT_FRAME = '_FigmintOutputContent';
-export const FIGMINT_SHARED_NS = 'figmint';
-export const FIGMINT_PAGE_ROLE_KEY = 'pageRole';
-export const FIGMINT_PAGE_ROLE_OUTPUT = 'output';
+export const FIGHUB_OUTPUT_PAGE_NAME = 'FigHub Output';
+export const LEGACY_OUTPUT_PAGE_NAMES = ['Figmint Output', 'DesignOps Output'];
+export const FIGHUB_OUTPUT_CONTENT_FRAME = '_FigHubOutputContent';
+export const LEGACY_OUTPUT_CONTENT_FRAMES = ['_FigmintOutputContent'];
+export const FIGHUB_SHARED_NS = 'fighub';
+export const LEGACY_FIGHUB_SHARED_NS = 'figmint';
+export const FIGHUB_PAGE_ROLE_KEY = 'pageRole';
+export const FIGHUB_PAGE_ROLE_OUTPUT = 'output';
 
 const CONTENT_FRAME_WIDTH = 960;
 
@@ -22,7 +24,11 @@ function listPages(): PageNode[] {
 }
 
 function readOutputPageRole(page: PageNode): string {
-  return page.getSharedPluginData(FIGMINT_SHARED_NS, FIGMINT_PAGE_ROLE_KEY) || '';
+  const role = page.getSharedPluginData(FIGHUB_SHARED_NS, FIGHUB_PAGE_ROLE_KEY);
+  if (role.length > 0) {
+    return role;
+  }
+  return page.getSharedPluginData(LEGACY_FIGHUB_SHARED_NS, FIGHUB_PAGE_ROLE_KEY) || '';
 }
 
 function findPagesByName(name: string): PageNode[] {
@@ -40,14 +46,14 @@ export function findOrCreateOutputPage(): PageNode {
   const pages = listPages();
 
   for (let i = 0; i < pages.length; i++) {
-    if (readOutputPageRole(pages[i]) === FIGMINT_PAGE_ROLE_OUTPUT) {
+    if (readOutputPageRole(pages[i]) === FIGHUB_PAGE_ROLE_OUTPUT) {
       return pages[i];
     }
   }
 
-  const figmintMatches = findPagesByName(FIGMINT_OUTPUT_PAGE_NAME);
-  if (figmintMatches.length > 0) {
-    return figmintMatches[0];
+  const fighubMatches = findPagesByName(FIGHUB_OUTPUT_PAGE_NAME);
+  if (fighubMatches.length > 0) {
+    return fighubMatches[0];
   }
 
   for (let li = 0; li < LEGACY_OUTPUT_PAGE_NAMES.length; li++) {
@@ -59,27 +65,39 @@ export function findOrCreateOutputPage(): PageNode {
   }
 
   const page = figma.createPage();
-  page.name = FIGMINT_OUTPUT_PAGE_NAME;
+  page.name = FIGHUB_OUTPUT_PAGE_NAME;
   page.setSharedPluginData(
-    FIGMINT_SHARED_NS,
-    FIGMINT_PAGE_ROLE_KEY,
-    FIGMINT_PAGE_ROLE_OUTPUT,
+    FIGHUB_SHARED_NS,
+    FIGHUB_PAGE_ROLE_KEY,
+    FIGHUB_PAGE_ROLE_OUTPUT,
   );
   figma.root.appendChild(page);
   figma.currentPage = page;
   return page;
 }
 
+function isOutputContentFrame(name: string): boolean {
+  if (name === FIGHUB_OUTPUT_CONTENT_FRAME) {
+    return true;
+  }
+  for (let i = 0; i < LEGACY_OUTPUT_CONTENT_FRAMES.length; i++) {
+    if (name === LEGACY_OUTPUT_CONTENT_FRAMES[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function findOrCreateContentFrame(page: PageNode): FrameNode {
   for (let i = 0; i < page.children.length; i++) {
     const child = page.children[i];
-    if (child.type === 'FRAME' && child.name === FIGMINT_OUTPUT_CONTENT_FRAME) {
+    if (child.type === 'FRAME' && isOutputContentFrame(child.name)) {
       return child;
     }
   }
 
   const frame = figma.createFrame();
-  frame.name = FIGMINT_OUTPUT_CONTENT_FRAME;
+  frame.name = FIGHUB_OUTPUT_CONTENT_FRAME;
   frame.layoutMode = 'VERTICAL';
   frame.resize(CONTENT_FRAME_WIDTH, 100);
   frame.primaryAxisSizingMode = 'AUTO';

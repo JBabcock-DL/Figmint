@@ -13,10 +13,10 @@ import { Settings } from '@/ui/tabs/Settings';
 type AppTab = 'bootstrap' | 'components' | 'export' | 'settings';
 
 const TAB_PANEL_IDS: Record<AppTab, string> = {
-  bootstrap: 'figmint-tabpanel-bootstrap',
-  components: 'figmint-tabpanel-components',
-  export: 'figmint-tabpanel-export',
-  settings: 'figmint-tabpanel-settings',
+  bootstrap: 'fighub-tabpanel-bootstrap',
+  components: 'fighub-tabpanel-components',
+  export: 'fighub-tabpanel-export',
+  settings: 'fighub-tabpanel-settings',
 };
 
 export function App() {
@@ -47,21 +47,21 @@ export function App() {
       }}
     >
       <header>
-        <h1 style={{ fontSize: '18px', margin: '0 0 4px' }}>Figmint</h1>
+        <h1 style={{ fontSize: '18px', margin: '0 0 4px' }}>FigHub</h1>
         <p style={{ color: '#666', fontSize: '11px', margin: 0 }}>
           v{import.meta.env.PACKAGE_VERSION}
         </p>
       </header>
 
       <nav
-        aria-label="Figmint tabs"
+        aria-label="FigHub tabs"
         role="tablist"
         style={{ borderBottom: '1px solid #ddd', paddingBottom: '6px' }}
       >
         <button
           type="button"
           role="tab"
-          id="figmint-tab-bootstrap"
+          id="fighub-tab-bootstrap"
           aria-controls={TAB_PANEL_IDS.bootstrap}
           aria-selected={activeTab === 'bootstrap'}
           aria-current={activeTab === 'bootstrap' ? 'page' : undefined}
@@ -82,7 +82,7 @@ export function App() {
         <button
           type="button"
           role="tab"
-          id="figmint-tab-components"
+          id="fighub-tab-components"
           aria-controls={TAB_PANEL_IDS.components}
           aria-selected={activeTab === 'components'}
           aria-current={activeTab === 'components' ? 'page' : undefined}
@@ -104,7 +104,7 @@ export function App() {
         <button
           type="button"
           role="tab"
-          id="figmint-tab-export"
+          id="fighub-tab-export"
           aria-controls={TAB_PANEL_IDS.export}
           aria-selected={activeTab === 'export'}
           aria-current={activeTab === 'export' ? 'page' : undefined}
@@ -126,7 +126,7 @@ export function App() {
         <button
           type="button"
           role="tab"
-          id="figmint-tab-settings"
+          id="fighub-tab-settings"
           aria-controls={TAB_PANEL_IDS.settings}
           aria-selected={activeTab === 'settings'}
           aria-current={activeTab === 'settings' ? 'page' : undefined}

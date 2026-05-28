@@ -145,7 +145,7 @@ import type {
   TokensV1WC3DTCG,
   TokensV1Legacy,
   DtcgTokenType,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 export type ContractKind =
   | 'ops-program'
@@ -494,7 +494,7 @@ One forward-looking question that lands in CTX-002 / WO-019 territory:
 - [Async clipboard read denied — StackOverflow (Nov 2023)](https://stackoverflow.com/questions/77422790/uncaught-in-promise-domexception-read-permission-denied) — failure-mode catalog (`NotAllowedError` shapes).
 - [copyToClipboard TypeScript: 4 Cases Nobody Documents](https://juanchi.dev/en/blog/clipboard-api-typescript-fails-undocumented-cases-copytext) — cross-origin iframe + `allow="clipboard-*"` attribute requirement.
 
-### Internal Figmint refs
+### Internal FigHub refs
 
 - `Docs/PRD.md` §6.8 FR-IO-1, §7.3 (`src/io/sources/` layout), §8.1–8.6 (contracts), §10.1 (sources), §10.3 (dual-format), §11.4 (always preview).
 - `Docs/lift-sources.md` §0 — IO subsystem is new code per the PRD; no DesignOps-plugin lift source.

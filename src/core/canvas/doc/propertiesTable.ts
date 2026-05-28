@@ -1,4 +1,4 @@
-import type { ComponentSpecProp, ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecProp, ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import {
   TABLE_HEADER_HEIGHT,

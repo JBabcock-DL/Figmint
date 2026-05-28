@@ -5,7 +5,7 @@ import type {
   HandoffContextV1,
   OpsProgramV1,
   TokensV1,
-} from '@detroitlabs/figmint-contracts';
+} from '@detroitlabs/fighub-contracts';
 
 import { serializeJson } from './json';
 import { serializeMarkdown } from './markdown';

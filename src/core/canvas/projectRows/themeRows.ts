@@ -1,4 +1,4 @@
-import type { Token, TokensV1 } from '@detroitlabs/figmint-contracts';
+import type { Token, TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import { colorToHex, colorToHsl, isColorValue } from '@/core/canvas/lib/colorFormats';
 import type { CodeSyntaxTriple, ThemeRow } from '@/core/canvas/types';

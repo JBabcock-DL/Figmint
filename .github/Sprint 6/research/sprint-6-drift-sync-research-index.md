@@ -1,6 +1,6 @@
 # Sprint 6 — Drift detection & sync research index
 
-> **Status:** `/research` complete (2026-05-28). Sprint 6 is **blocked on WO-058 Phase 1** (snapshot + GitHub-Desktop I/O) before `/build` on WO-029–032.
+> **Status:** `/research` complete (2026-05-28). **`/plan` complete** on WO-029..032 (2026-05-28). WO-058 Phase 1 **built**. Sprint 6 **`/build`** unblocked — run WO-029 ∥ WO-030 first.
 > **Quality bar:** [`.github/templates/research-quality-bar.md`](../../templates/research-quality-bar.md)
 
 ---
@@ -17,9 +17,9 @@ Ship **3-way drift detection** (Figma ↔ repo ↔ snapshot), **`drift-report.v1
 | ------ | ------ | ----- |
 | **WO-028** (#31) | **Closed — absorbed by WO-058** | Snapshot mechanism = WO-058 Phase 1; research retained for detector contracts |
 | **WO-033** (#36) | **Closed — absorbed by WO-058** | Sync tab → Settings GitHub-Desktop card; badge = follow-up on that card |
-| **WO-026** (#29, Sprint 5) | **Superseded by WO-058** | `.figmint-registry.json` deleted; registry SSOT = canvas pluginData snapshot |
+| **WO-026** (#29, Sprint 5) | **Superseded by WO-058** | `.fighub-registry.json` deleted; registry SSOT = canvas pluginData snapshot |
 
-**Build order:** WO-058 Phase 1 (snapshot + `figmint.json` + Settings card) → WO-029 ∥ WO-030 → WO-031 → WO-032 → badge follow-up (was WO-033 tail).
+**Build order:** WO-058 Phase 1 (snapshot + `fighub.json` + Settings card) → WO-029 ∥ WO-030 → WO-031 → WO-032 → badge follow-up (was WO-033 tail).
 
 WO-058 is **unblocked** (WO-057 shipped 2026-05-28). Run `/research` + `/plan` on WO-058 before Sprint 6 `/build`.
 
@@ -64,7 +64,7 @@ flowchart TD
   WO033 -.-> WO058
 ```
 
-1. **WO-058 Phase 1** — snapshot store, delete repo registry file, `figmint.json`, Settings Fetch/Pull/Push card
+1. **WO-058 Phase 1** — snapshot store, delete repo registry file, `fighub.json`, Settings Fetch/Pull/Push card
 2. **WO-029 + WO-030** — parallel detectors (share `SnapshotStore` API from WO-058)
 3. **WO-031** — wire detectors → existing format/sink pipeline
 4. **WO-032** — resolution UI (Settings-embedded or drift panel — see WO-032 research)
@@ -76,8 +76,8 @@ flowchart TD
 
 | # | Decision | Owner |
 | - | -------- | ----- |
-| 1 | Snapshot SSOT = hidden node pluginData on Figmint Output page (`figmint:snapshot:v1`) | WO-058 / WO-028 |
-| 2 | Registry SSOT = same snapshot envelope (delete `.figmint-registry.json`) | WO-058 |
+| 1 | Snapshot SSOT = hidden node pluginData on FigHub Output page (`fighub:snapshot:v1`) | WO-058 / WO-028 |
+| 2 | Registry SSOT = same snapshot envelope (delete `.fighub-registry.json`) | WO-058 |
 | 3 | 3-way classify: Figma≠snap ∧ repo=snap → push; repo≠snap ∧ Figma=snap → pull; both≠snap ∧ disagree → conflict; both=snap OR both≠snap ∧ agree → synced | WO-029 + WO-030 |
 | 4 | Variable key = slash path `{collection}/{variableName}` aligned with Figma `variable.name` | WO-029 |
 | 5 | Component drift granularity = variant matrix hash + props + bindings per spec name | WO-030 |
@@ -118,8 +118,8 @@ flowchart TD
 
 | ID | Question | Owner | Status |
 | -- | -------- | ----- | ------ |
-| OQ-S6-1 | Snapshot envelope: single JSON blob vs sharded pluginData keys per domain | WO-058 `/plan` | **Default: single `figmint:snapshot:v1` blob** — see WO-028 research |
-| OQ-S6-2 | Component repo side: read specs from `figmint.json` paths vs registry map in snapshot | WO-058 + WO-030 | **Default: snapshot registry map + lazy spec fetch by path** |
+| OQ-S6-1 | Snapshot envelope: single JSON blob vs sharded pluginData keys per domain | WO-058 `/plan` | **Default: single `fighub:snapshot:v1` blob** — see WO-028 research |
+| OQ-S6-2 | Component repo side: read specs from `fighub.json` paths vs registry map in snapshot | WO-058 + WO-030 | **Default: snapshot registry map + lazy spec fetch by path** |
 | OQ-S6-3 | Resolution UI surface: dedicated tab vs Settings drift drawer | WO-032 | **Default: Settings card expands drift panel** (WO-033 absorbed) |
 | OQ-S6-4 | Pull apply for components: full re-scaffold vs surgical patch | WO-032 `/plan` | Open — research recommends surgical for bindings/props, re-scaffold for matrix change |
 

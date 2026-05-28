@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useState, type CSSProperties } from 'react';
 
-import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import {
   isScaffoldErrorMessage,

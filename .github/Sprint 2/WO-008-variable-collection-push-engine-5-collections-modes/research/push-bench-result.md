@@ -2,7 +2,7 @@
 
 **Date:** 2026-05-27  
 **Fixture:** WO-005 `spike-400` (400 primitives color tokens via bench loader)  
-**Environment:** Figmint community build (`dist/manifest.json`), live Figma plugin UI push path  
+**Environment:** FigHub community build (`dist/manifest.json`), live Figma plugin UI push path  
 **Target:** p50 push **< 2 s** on 400-variable Foundations-scale input (ticket AC)
 
 ## Recorded run

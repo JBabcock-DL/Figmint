@@ -40,8 +40,8 @@ Build order is locked (from WO-002 / memory): **clean → UI build → finalize 
 
 | Field | `manifest.community.json` | `manifest.org.json` |
 | ----- | ------------------------- | ------------------- |
-| `name` | `Figmint` | `Figmint (Org)` |
-| `id` | `figmint-community-dev-placeholder` | `figmint-org-dev-placeholder` |
+| `name` | `FigHub` | `FigHub (Org)` |
+| `id` | `fighub-community-dev-placeholder` | `fighub-org-dev-placeholder` |
 | `networkAccess.allowedDomains` | `["none"]` | `["https://api.github.com", "https://github.com"]` |
 
 Figma's `"none"` value blocks all outbound network from the plugin sandbox and UI iframe. Org build explicitly opts into GitHub REST/OAuth endpoints only. Plugin IDs remain dev placeholders until publish tickets assign real Community / private-org IDs.
@@ -109,7 +109,7 @@ import { flags } from '@/config/flags';
 const SINK_CATALOG = [
   { id: 'download', label: 'Download file(s)', flag: null },
   { id: 'clipboard', label: 'Copy to clipboard', flag: null },
-  { id: 'outputPage', label: 'Figmint Output page', flag: null },
+  { id: 'outputPage', label: 'FigHub Output page', flag: null },
   { id: 'pluginData', label: 'Frame pluginData', flag: null },
   { id: 'githubPR', label: 'Open GitHub PR', flag: 'githubPRSink' as const },
 ] as const;
@@ -169,7 +169,7 @@ Derived from PRD §13.1, scoped to Sprint 4 I/O + existing bootstrap work. WO-02
 2. `npm run format:check`
 3. `npm run typecheck`
 4. `npm test`
-5. `npm run build --workspace=@detroitlabs/figmint-contracts`
+5. `npm run build --workspace=@detroitlabs/fighub-contracts`
 6. `npm run build:community`
 7. `npm run build:org`
 
@@ -188,7 +188,7 @@ WO-021 should **not** implement OAuth, sinks, serializer, or ExportSheet from sc
 | Step | Action |
 | ---- | ------ |
 | 1 | Land WO-016 → WO-020 on `main` (each uses local `flags.githubOAuth` / `flags.githubPRSink` checks as they merge) |
-| 2 | Introduce `FigmintFlags` shared type; extend both flag files with I/O keys |
+| 2 | Introduce `FigHubFlags` shared type; extend both flag files with I/O keys |
 | 3 | Centralize sink visibility helper (`visibleSinks()` or equivalent) consumed by ExportSheet |
 | 4 | Audit grep for `BUILD_TARGET`, dynamic imports, and GitHub UI not behind flags |
 | 5 | Add `npm run build` umbrella script |
@@ -203,7 +203,7 @@ WO-021 should **not** implement OAuth, sinks, serializer, or ExportSheet from sc
 ## Recommendations
 
 1. **Treat WO-021 as the "flags + audit + umbrella build" integration pass** once WO-016–WO-020 merge — do not start `/build` on WO-021 until ExportSheet and GitHub sinks exist to gate.
-2. **Extend flags with `githubPRSink`** (and shared `FigmintFlags` type) in WO-021; WO-016/018/020 should import `@/config/flags` and read the keys even if the keys are added in a small preparatory commit on WO-021 branch rebased atop 016–020.
+2. **Extend flags with `githubPRSink`** (and shared `FigHubFlags` type) in WO-021; WO-016/018/020 should import `@/config/flags` and read the keys even if the keys are added in a small preparatory commit on WO-021 branch rebased atop 016–020.
 3. **Keep all GitHub modules in both bundles** with UI + runtime guards; rely on community manifest `networkAccess: none` as the hard backstop.
 4. **Add `"build": "npm run build:community && npm run build:org"`** to satisfy ticket AC without changing CI step names.
 5. **Add org-flag Vitest coverage** for at least ExportSheet and GitHub settings panel render tests.
@@ -282,7 +282,7 @@ WO-021 should **not** implement OAuth, sinks, serializer, or ExportSheet from sc
 | Risk | Sev | Likelihood | Mitigation |
 | ---- | --- | ---------- | ---------- |
 | Missed UI gate ships GitHub button in Community | Med | Low | SPK-021-2 grep + manifest backstop |
-| Flags shape drift between community/org files | Med | Med | Shared `FigmintFlags` type |
+| Flags shape drift between community/org files | Med | Med | Shared `FigHubFlags` type |
 | WO-021 builds before sinks exist | High | Med | Dependency: merge 016–020 first |
 
 ---

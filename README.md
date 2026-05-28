@@ -1,4 +1,4 @@
-# Figmint
+# FigHub
 
 A native Figma plugin for design system management, component architecture, and design token workflows.
 
@@ -16,8 +16,8 @@ Pre-alpha — Sprint 1 in progress (scaffold + Phase 0 spike). See the canonical
 
 ## Project board
 
-[Figmint Project #9](https://github.com/users/JBabcock-DL/projects/9) on GitHub. **55 tickets** spanning Sprints 1–11 (WO-001 Completed; WO-002..054 + CTX-002 in Context Backlog). Sprint 1 tickets live under `.github/Sprint 1/`; later sprints under `.github/Sprint {N}/`.
+[FigHub Project #9](https://github.com/users/JBabcock-DL/projects/9) on GitHub. Sprint tickets live under `.github/Sprint {N}/`.
 
 ## Legacy lift source
 
-Most of Figmint's deterministic logic already exists in the legacy [`DesignOps-plugin`](../DesignOps-plugin/) repo. It is a Claude Code / Cursor **skill pack** — Markdown orchestration + committed Plugin API JavaScript bundles — not a shipped Figma UI plugin. ~80% portable by stripping MCP transport wrappers. **`Docs/lift-sources.md` is the canonical file-by-file map**, including drift corrections (e.g. variable-push primitives live in `phases/04-step11-push.md`, not in the canvas-table bundle `step-15a-primitives.mcp.js`).
+Most of FigHub's deterministic logic already exists in the legacy [`DesignOps-plugin`](../DesignOps-plugin/) repo. It is a Claude Code / Cursor **skill pack** — Markdown orchestration + committed Plugin API JavaScript bundles — not a shipped Figma UI plugin. ~80% portable by stripping MCP transport wrappers. **`Docs/lift-sources.md` is the canonical file-by-file map**, including drift corrections (e.g. variable-push primitives live in `phases/04-step11-push.md`, not in the canvas-table bundle `step-15a-primitives.mcp.js`).

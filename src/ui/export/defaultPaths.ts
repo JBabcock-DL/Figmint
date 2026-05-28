@@ -23,17 +23,17 @@ export function defaultExportBasename(doc: ContractDocument, now: Date = new Dat
 
   switch (doc.kind) {
     case 'drift-report':
-      return 'docs/figmint/drift-' + date;
+      return 'docs/fighub/drift-' + date;
     case 'handoff-context':
-      return 'docs/figmint/handoff-' + date;
+      return 'docs/fighub/handoff-' + date;
     case 'ops-program':
-      return 'docs/figmint/ops-' + date;
+      return 'docs/fighub/ops-' + date;
     case 'component-spec':
-      return 'docs/figmint/components/' + kebabCase(doc.payload.name);
+      return 'docs/fighub/components/' + kebabCase(doc.payload.name);
     case 'registry':
-      return 'docs/figmint/registry-export';
+      return 'docs/fighub/registry-export';
     case 'tokens':
-      return 'docs/figmint/tokens-' + date;
+      return 'docs/fighub/tokens-' + date;
     default: {
       const _exhaustive: never = doc;
       return _exhaustive;

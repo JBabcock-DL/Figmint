@@ -5,7 +5,25 @@
 
 import { runBootstrap } from '@/core/bootstrap/runBootstrap';
 import { runScaffoldComponent } from '@/core/components/scaffold/runScaffold';
-import { getRegistryFromSnapshot } from '@/core/sync/snapshotStore';
+import { readFigmaVariableState } from '@/core/audit/readFigmaVariableState';
+import {
+  detectComponentDrift,
+  detectVariableDrift,
+  flattenFigmaVariableSnapshots,
+  flattenRepoTokens,
+  buildRepoSpecMap,
+  readSnapshotComponentComparables,
+  readVariableSnapshotTokens,
+  runDetectDrift,
+} from '@/core/drift';
+import { collectFigmaComponentComparablesFromSnapshot } from '@/core/drift/detectOrchestration';
+import {
+  buildPushCommitFiles,
+  snapshotKeysForPushDrifts,
+} from '@/core/drift/applyPushResolutions';
+import { applyPullResolutions } from '@/core/drift/applyPullResolutions';
+import type { ComponentComparable } from '@/core/drift/types';
+import { getRegistryFromSnapshot, updateSnapshotKeys } from '@/core/sync/snapshotStore';
 import { pushTokens } from '@/core/variables';
 import { runCanvasBench } from '@/core/canvas/bench';
 import { buildPrimitivesPage } from '@/core/canvas/colorTables';
@@ -25,6 +43,23 @@ import {
 } from '@/io/messages/canvas';
 import { isBootstrapRunMessage } from '@/io/messages/bootstrap';
 import { isScaffoldRunMessage } from '@/io/messages/scaffold';
+import {
+  isDriftBuildReportMessage,
+  isDriftDetectComponentsMessage,
+  isDriftDetectQuickMessage,
+  isDriftDetectVariablesMessage,
+  isOpsDetectDriftMessage,
+  isResolutionBulkPullMessage,
+  isResolutionBulkPushMessage,
+  type DriftBuildReportResultMessage,
+  type DriftDetectComponentsResultMessage,
+  type DriftDetectQuickResultMessage,
+  type DriftDetectVariablesResultMessage,
+  type OpsDetectDriftResultMessage,
+  type ResolutionBulkPullMessage,
+  type ResolutionBulkPushMessage,
+  type ResolutionBulkResultMessage,
+} from '@/io/messages/drift';
 import {
   isSnapshotReadMessage,
   type SnapshotReadResultMessage,
@@ -52,6 +87,8 @@ import {
 } from '@/io/messages/github';
 import { fetchRepoFileContents, GitHubAuthError, GitHubNotFoundError } from '@/io/github/contents';
 import { createPullRequestFlow } from '@/io/github/createPullRequestFlow';
+import { buildDefaultHeadBranch } from '@/io/github/branchName';
+import { buildDriftReportPrTitle, buildPrBody } from '@/io/github/prBody';
 import { pollDeviceFlow, startDeviceFlow } from '@/io/github/oauth';
 import { normalizeRepoUrl, parseOwnerRepo } from '@/io/github/repoUrl';
 import {
@@ -243,6 +280,381 @@ function handleSnapshotRead(requestId: string): void {
   }
 }
 
+async function handleDriftDetectVariables(
+  requestId: string,
+  repoTokens: import('@detroitlabs/fighub-contracts').TokensV1,
+): Promise<void> {
+  try {
+    const figmaCollections = await readFigmaVariableState();
+    const figmaTokens = flattenFigmaVariableSnapshots(figmaCollections);
+    const snapshotTokens = readVariableSnapshotTokens();
+    const repoTokenMap = flattenRepoTokens(repoTokens);
+    const result = detectVariableDrift({
+      repoTokens: repoTokenMap,
+      figmaTokens: figmaTokens,
+      snapshotTokens: snapshotTokens,
+    });
+    const response: DriftDetectVariablesResultMessage = {
+      type: 'drift/detect-variables/result',
+      requestId: requestId,
+      ok: true,
+      result: result,
+    };
+    figma.ui.postMessage(response);
+    pluginLog(
+      '[main] drift/detect-variables ok',
+      String(result.drifts.length) + ' drifts',
+      String(result.syncedCount) + ' synced',
+    );
+  } catch (error) {
+    const errResponse: DriftDetectVariablesResultMessage = {
+      type: 'drift/detect-variables/result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+    pluginLog('[main] drift/detect-variables failed', errResponse.error !== undefined ? errResponse.error : '');
+  }
+}
+
+function collectFigmaComponentComparables(specNames: Record<string, boolean>): Record<string, ComponentComparable> {
+  return collectFigmaComponentComparablesFromSnapshot(specNames);
+}
+
+async function handleDriftBuildReport(
+  requestId: string,
+  repoUrl: string,
+  repoTokens: import('@detroitlabs/fighub-contracts').TokensV1,
+  repoSpecs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }>,
+  quickDetect?: boolean,
+): Promise<void> {
+  try {
+    const report = await runDetectDrift({
+      repoUrl: repoUrl,
+      repoTokens: repoTokens,
+      repoSpecs: repoSpecs,
+      quickDetect: quickDetect,
+    });
+    const response: DriftBuildReportResultMessage = {
+      type: 'drift/build-report/result',
+      requestId: requestId,
+      ok: true,
+      report: report,
+    };
+    figma.ui.postMessage(response);
+    pluginLog('[main] drift/build-report ok', String(report.drifts.length) + ' drifts');
+  } catch (error) {
+    const errResponse: DriftBuildReportResultMessage = {
+      type: 'drift/build-report/result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+    pluginLog('[main] drift/build-report failed', errResponse.error !== undefined ? errResponse.error : '');
+  }
+}
+
+function handleDriftDetectComponents(
+  requestId: string,
+  repoSpecs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }>,
+  quickDetect?: boolean,
+): void {
+  try {
+    const repoMap = buildRepoSpecMap(repoSpecs);
+    const snapshotComponents = readSnapshotComponentComparables();
+    const keySet: Record<string, boolean> = {};
+    for (const key of Object.keys(repoMap)) {
+      keySet[key] = true;
+    }
+    for (const key of Object.keys(snapshotComponents)) {
+      keySet[key] = true;
+    }
+    const figmaComponents = collectFigmaComponentComparables(keySet);
+    for (const key of Object.keys(figmaComponents)) {
+      keySet[key] = true;
+    }
+
+    const options =
+      quickDetect === true
+        ? { quickDetect: true }
+        : undefined;
+
+    const result = detectComponentDrift({
+      repoSpecs: repoMap,
+      figmaComponents: figmaComponents,
+      snapshotComponents: snapshotComponents,
+      options: options,
+    });
+
+    const response: DriftDetectComponentsResultMessage = {
+      type: 'drift/detect-components/result',
+      requestId: requestId,
+      ok: true,
+      result: result,
+    };
+    figma.ui.postMessage(response);
+    pluginLog(
+      '[main] drift/detect-components ok',
+      String(result.drifts.length) + ' drifts',
+      String(result.syncedCount) + ' synced',
+    );
+  } catch (error) {
+    const errResponse: DriftDetectComponentsResultMessage = {
+      type: 'drift/detect-components/result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+    pluginLog('[main] drift/detect-components failed', errResponse.error !== undefined ? errResponse.error : '');
+  }
+}
+
+async function handleDriftDetectQuick(
+  requestId: string,
+  repoUrl: string,
+  repoTokens: import('@detroitlabs/fighub-contracts').TokensV1,
+  repoSpecs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }>,
+): Promise<void> {
+  try {
+    const report = await runDetectDrift({
+      repoUrl: repoUrl,
+      repoTokens: repoTokens,
+      repoSpecs: repoSpecs,
+      quickDetect: true,
+    });
+    const response: DriftDetectQuickResultMessage = {
+      type: 'drift/detect-quick/result',
+      requestId: requestId,
+      ok: true,
+      summary: report.summary,
+      report: report,
+    };
+    figma.ui.postMessage(response);
+  } catch (error) {
+    const errResponse: DriftDetectQuickResultMessage = {
+      type: 'drift/detect-quick/result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+  }
+}
+
+async function handleOpsDetectDrift(
+  requestId: string,
+  repoUrl: string,
+  repoTokens: import('@detroitlabs/fighub-contracts').TokensV1,
+  repoSpecs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }>,
+  scope?: ('variables' | 'components')[],
+): Promise<void> {
+  try {
+    const report = await runDetectDrift({
+      repoUrl: repoUrl,
+      repoTokens: repoTokens,
+      repoSpecs: repoSpecs,
+      quickDetect: false,
+    });
+    let filteredReport = report;
+    if (scope !== undefined && scope.length > 0) {
+      const includeVariables = scope.indexOf('variables') >= 0;
+      const includeComponents = scope.indexOf('components') >= 0;
+      const drifts = report.drifts.filter(function (entry) {
+        if (entry.kind === 'variable') {
+          return includeVariables;
+        }
+        return includeComponents;
+      });
+      filteredReport = Object.assign({}, report, { drifts: drifts });
+    }
+    const response: OpsDetectDriftResultMessage = {
+      type: 'ops/detect-drift/result',
+      requestId: requestId,
+      ok: true,
+      report: filteredReport,
+    };
+    figma.ui.postMessage(response);
+    pluginLog('[main] ops/detect-drift ok', String(filteredReport.drifts.length) + ' drifts');
+  } catch (error) {
+    const errResponse: OpsDetectDriftResultMessage = {
+      type: 'ops/detect-drift/result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+  }
+}
+
+const DEFAULT_TOKENS_PATH = 'design/tokens.json';
+const DEFAULT_SPECS_PATH = 'components/';
+
+function buildFullSpecMap(
+  specs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }> | undefined,
+): Record<string, import('@detroitlabs/fighub-contracts').ComponentSpecV1> {
+  const result: Record<string, import('@detroitlabs/fighub-contracts').ComponentSpecV1> = {};
+  if (specs === undefined) {
+    return result;
+  }
+  for (let i = 0; i < specs.length; i++) {
+    result[specs[i].name] = specs[i].spec;
+  }
+  return result;
+}
+
+function figmaFileUrl(): string {
+  const fileKey = figma.fileKey !== undefined && figma.fileKey !== null ? figma.fileKey : 'unknown';
+  return 'https://www.figma.com/design/' + fileKey;
+}
+
+async function handleResolutionBulkPush(message: ResolutionBulkPushMessage): Promise<void> {
+  const requestId = message.requestId;
+  try {
+    const tokensPath =
+      message.tokensPath !== undefined && message.tokensPath.length > 0
+        ? message.tokensPath
+        : DEFAULT_TOKENS_PATH;
+    const specsPath =
+      message.specsPath !== undefined && message.specsPath.length > 0
+        ? message.specsPath
+        : DEFAULT_SPECS_PATH;
+    const repoSpecMap = buildFullSpecMap(message.repoSpecs);
+    const staged = buildPushCommitFiles({
+      report: message.report,
+      resolutions: message.resolutions,
+      driftIds: message.driftIds,
+      baseTokens: message.repoTokens,
+      tokensPath: tokensPath,
+      specsPath: specsPath,
+      repoSpecs: repoSpecMap,
+    });
+    if (staged.length === 0) {
+      const emptyResponse: ResolutionBulkResultMessage = {
+        type: 'resolution/bulk-result',
+        requestId: requestId,
+        ok: false,
+        error: 'No push resolutions in selection.',
+      };
+      figma.ui.postMessage(emptyResponse);
+      return;
+    }
+
+    const normalized = normalizeRepoUrl(message.repoUrl);
+    const token = await getToken(normalized);
+    if (token === null) {
+      const authResponse: ResolutionBulkResultMessage = {
+        type: 'resolution/bulk-result',
+        requestId: requestId,
+        ok: false,
+        error: 'GitHub is not connected for this repository.',
+      };
+      figma.ui.postMessage(authResponse);
+      return;
+    }
+
+    const ownerRepo = parseOwnerRepo(normalized);
+    const config = await getConfig(normalized);
+    const baseBranch =
+      config !== null && config.defaultBranch !== undefined ? config.defaultBranch : 'main';
+    const headBranch = buildDefaultHeadBranch('drift-resolution', new Date());
+    const commitMessage = 'FigHub: resolve design drift (push)';
+    const prTitle = buildDriftReportPrTitle(message.report.summary);
+    const prBody = buildPrBody({
+      commitMessage: commitMessage,
+      files: staged.map(function (file) {
+        return { path: file.path, format: file.format };
+      }),
+      pluginVersion: '0.0.0',
+      figmaFileUrl: figmaFileUrl(),
+      figmaFileName: figma.root.name,
+      contractKind: 'drift-report',
+    });
+
+    const prResult = await createPullRequestFlow({
+      token: token.accessToken,
+      owner: ownerRepo.owner,
+      repo: ownerRepo.repo,
+      baseBranch: baseBranch,
+      headBranch: headBranch,
+      commitMessage: commitMessage,
+      prTitle: prTitle,
+      prBody: prBody,
+      files: staged.map(function (file) {
+        return { path: file.path, content: file.content };
+      }),
+    });
+
+    const snapshotKeys = snapshotKeysForPushDrifts(
+      message.report,
+      message.resolutions,
+      message.driftIds,
+    );
+    if (snapshotKeys.length > 0) {
+      updateSnapshotKeys(
+        snapshotKeys.map(function (entry) {
+          return {
+            key: entry.key,
+            value: entry.value,
+            source: 'push' as const,
+          };
+        }),
+      );
+    }
+
+    const successResponse: ResolutionBulkResultMessage = {
+      type: 'resolution/bulk-result',
+      requestId: requestId,
+      ok: true,
+      prUrl: prResult.prUrl,
+    };
+    figma.ui.postMessage(successResponse);
+    pluginLog('[main] resolution/bulk-push ok', prResult.prUrl);
+  } catch (error) {
+    const errResponse: ResolutionBulkResultMessage = {
+      type: 'resolution/bulk-result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+    pluginLog('[main] resolution/bulk-push failed', errResponse.error !== undefined ? errResponse.error : '');
+  }
+}
+
+async function handleResolutionBulkPull(message: ResolutionBulkPullMessage): Promise<void> {
+  const requestId = message.requestId;
+  try {
+    const repoSpecMap = buildFullSpecMap(message.repoSpecs);
+    const appliedCount = await applyPullResolutions({
+      report: message.report,
+      resolutions: message.resolutions,
+      driftIds: message.driftIds,
+      repoSpecs: repoSpecMap,
+    });
+    const successResponse: ResolutionBulkResultMessage = {
+      type: 'resolution/bulk-result',
+      requestId: requestId,
+      ok: true,
+      appliedCount: appliedCount,
+    };
+    figma.ui.postMessage(successResponse);
+    pluginLog('[main] resolution/bulk-pull ok', String(appliedCount) + ' applied');
+  } catch (error) {
+    const errResponse: ResolutionBulkResultMessage = {
+      type: 'resolution/bulk-result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+      appliedCount: 0,
+    };
+    figma.ui.postMessage(errResponse);
+    pluginLog('[main] resolution/bulk-pull failed', errResponse.error !== undefined ? errResponse.error : '');
+  }
+}
+
 async function handleGitHubOAuthStart(requestId: string, scope: string): Promise<void> {
   try {
     const device = await startDeviceFlow(scope);
@@ -418,7 +830,7 @@ function isIoLoadedMessage(message: unknown): message is IoLoadedMessage {
 }
 
 async function handlePushVariables(
-  tokens: import('@detroitlabs/figmint-contracts').TokensV1,
+  tokens: import('@detroitlabs/fighub-contracts').TokensV1,
 ): Promise<void> {
   try {
     const outcome = await pushTokens(tokens);
@@ -455,7 +867,7 @@ async function handlePushVariables(
 
 async function handleCanvasBuildPage(
   page: 'primitives' | 'theme' | 'text-styles' | 'token-overview' | 'layout' | 'effects',
-  tokens: import('@detroitlabs/figmint-contracts').TokensV1,
+  tokens: import('@detroitlabs/fighub-contracts').TokensV1,
 ): Promise<void> {
   try {
     const target = { pageSlug: page };
@@ -681,7 +1093,7 @@ async function handleSinkPluginData(
 
 async function handleCanvasBench(
   page: 'primitives' | 'theme' | 'text-styles' | 'token-overview' | 'layout' | 'effects',
-  tokens: import('@detroitlabs/figmint-contracts').TokensV1,
+  tokens: import('@detroitlabs/fighub-contracts').TokensV1,
   label?: string,
 ): Promise<void> {
   try {
@@ -737,6 +1149,108 @@ async function handleCanvasBench(
 figma.ui.onmessage = (message: unknown) => {
   if (isSnapshotReadMessage(message)) {
     handleSnapshotRead(message.requestId);
+    return;
+  }
+
+  if (isDriftDetectVariablesMessage(message)) {
+    handleDriftDetectVariables(message.requestId, message.repoTokens).catch(function (error: unknown) {
+      const errResponse: DriftDetectVariablesResultMessage = {
+        type: 'drift/detect-variables/result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+      pluginLog('[main] drift/detect-variables unhandled', errResponse.error !== undefined ? errResponse.error : '');
+    });
+    return;
+  }
+
+  if (isDriftDetectComponentsMessage(message)) {
+    handleDriftDetectComponents(message.requestId, message.repoSpecs, message.quickDetect);
+    return;
+  }
+
+  if (isDriftBuildReportMessage(message)) {
+    handleDriftBuildReport(
+      message.requestId,
+      message.repoUrl,
+      message.repoTokens,
+      message.repoSpecs,
+      message.quickDetect,
+    ).catch(function (error: unknown) {
+      const errResponse: DriftBuildReportResultMessage = {
+        type: 'drift/build-report/result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+      pluginLog('[main] drift/build-report unhandled', errResponse.error !== undefined ? errResponse.error : '');
+    });
+    return;
+  }
+
+  if (isDriftDetectQuickMessage(message)) {
+    handleDriftDetectQuick(
+      message.requestId,
+      message.repoUrl,
+      message.repoTokens,
+      message.repoSpecs,
+    ).catch(function (error: unknown) {
+      const errResponse: DriftDetectQuickResultMessage = {
+        type: 'drift/detect-quick/result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
+  if (isOpsDetectDriftMessage(message)) {
+    handleOpsDetectDrift(
+      message.requestId,
+      message.repoUrl,
+      message.repoTokens,
+      message.repoSpecs,
+      message.scope,
+    ).catch(function (error: unknown) {
+      const errResponse: OpsDetectDriftResultMessage = {
+        type: 'ops/detect-drift/result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
+  if (isResolutionBulkPushMessage(message)) {
+    handleResolutionBulkPush(message).catch(function (error: unknown) {
+      const errResponse: ResolutionBulkResultMessage = {
+        type: 'resolution/bulk-result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
+  if (isResolutionBulkPullMessage(message)) {
+    handleResolutionBulkPull(message).catch(function (error: unknown) {
+      const errResponse: ResolutionBulkResultMessage = {
+        type: 'resolution/bulk-result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
     return;
   }
 

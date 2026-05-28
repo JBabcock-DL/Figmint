@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { prepareSinkContent } from '@/io/sinks/prepareContent';
 import {
-  FIGMINT_PLUGIN_DATA_PREFIX,
+  FIGHUB_PLUGIN_DATA_PREFIX,
   PLUGIN_DATA_MAX_BYTES,
   pluginDataKey,
   writeToPluginData,
@@ -16,8 +16,8 @@ describe('pluginData', () => {
     installMockFigmaOutputPage();
   });
 
-  it('returns pluginDataKey with figmint prefix', () => {
-    expect(pluginDataKey('drift-report')).toBe(FIGMINT_PLUGIN_DATA_PREFIX + 'drift-report');
+  it('returns pluginDataKey with fighub prefix', () => {
+    expect(pluginDataKey('drift-report')).toBe(FIGHUB_PLUGIN_DATA_PREFIX + 'drift-report');
   });
 
   it('writes JSON to selected node pluginData', async () => {
@@ -33,8 +33,8 @@ describe('pluginData', () => {
     const result = await writeToPluginData(doc, prepared);
 
     expect(result.ok).toBe(true);
-    expect(setPluginData).toHaveBeenCalledWith('figmint:drift-report', prepared.json);
-    expect(result.artifacts![0].destination).toBe('figmint:drift-report');
+    expect(setPluginData).toHaveBeenCalledWith('fighub:drift-report', prepared.json);
+    expect(result.artifacts![0].destination).toBe('fighub:drift-report');
   });
 
   it('errors when selection is empty', async () => {

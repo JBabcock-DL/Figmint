@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { AuditReportV1, ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
+import type { AuditReportV1, ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { runScaffoldComponent } from '@/core/components/scaffold/runScaffold';
 

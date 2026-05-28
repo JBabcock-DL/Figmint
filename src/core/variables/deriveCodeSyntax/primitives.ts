@@ -1,4 +1,4 @@
-import type { CanonicalToken, CodeSyntaxPlatform } from '@detroitlabs/figmint-contracts';
+import type { CanonicalToken, CodeSyntaxPlatform } from '@detroitlabs/fighub-contracts';
 
 import { splitIosSegments, toKebabPath } from './shared';
 

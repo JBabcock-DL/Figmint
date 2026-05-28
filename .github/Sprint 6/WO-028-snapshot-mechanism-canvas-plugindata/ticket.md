@@ -10,7 +10,7 @@ note: Snapshot mechanism becomes Phase 1 of WO-058 (GitHub-Desktop-style sync). 
 
 ## Goal
 
-Implement the per-key snapshot that serves as the 'common ancestor' for 3-way drift detection (push/pull/conflict). Stored in pluginData on a hidden node in the Figmint Output page; updated per-key after every successful push or pull.
+Implement the per-key snapshot that serves as the 'common ancestor' for 3-way drift detection (push/pull/conflict). Stored in pluginData on a hidden node in the FigHub Output page; updated per-key after every successful push or pull.
 
 PRD anchors: `Docs/PRD.md` §6.4 FR-DRIFT-1.
 
@@ -38,7 +38,7 @@ _Derived from Goal — see ticket-level scope._
 2. Per-key entries: `{ key: string, value: unknown, source: 'push' | 'pull', timestamp: ISO }`.
 3. API: `getSnapshot()`, `updateSnapshotKey(key, value, source)`, `clearSnapshot()`.
 4. Snapshot survives across plugin re-opens and Figma file forks.
-5. Stable namespace prefix (`figmint:snapshot:`).
+5. Stable namespace prefix (`fighub:snapshot:`).
 
 ### Visual / UX
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { adaptDTCG } from '@/io/sources/adapters/dtcg';
 import { normalizeDtcgTopLevel } from '@/io/sources/adapters/normalizeDtcgTopLevel';
-import type { TokensV1WC3DTCG } from '@detroitlabs/figmint-contracts';
+import type { TokensV1WC3DTCG } from '@detroitlabs/fighub-contracts';
 
 import { loadAdapterFixture } from './helpers';
 
@@ -45,7 +45,7 @@ describe('normalizeDtcgTopLevel', () => {
               $type: 'color',
               $value: '#ffffff',
               $extensions: {
-                figmint: {
+                fighub: {
                   modes: {
                     Light: '#ffffff',
                     Dark: '#0f172a',
@@ -98,7 +98,7 @@ describe('adaptDTCG', () => {
     });
   });
 
-  it('folds figmint modes extension into valuesByMode', () => {
+  it('folds fighub modes extension into valuesByMode', () => {
     const result = adaptDTCG(input);
     const primary = result.tokens.find(
       (token) => token.collection === 'theme' && token.name === 'color/primary/default',

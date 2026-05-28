@@ -71,5 +71,5 @@ None.
 ## Backend action
 
 - **Backend:** GitHub
-- **Issue:** [#22](https://github.com/JBabcock-DL/Figmint/issues/22)
+- **Issue:** [#22](https://github.com/JBabcock-DL/FigHub/issues/22)
 - **Action:** Project item → **Completed**
