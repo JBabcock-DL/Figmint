@@ -1,8 +1,8 @@
 # VQA Report — WO-013: Layout & Effects canvas builders
 
-**Date:** 2026-05-27  
+**Date:** 2026-05-27 (refresh)  
 **Reviewer:** `/vqa` agent  
-**Backend:** GitHub Project #9 → **In Build** (manual gaps)
+**Backend:** GitHub Project #9 → **Completed**
 
 ---
 
@@ -11,9 +11,9 @@
 | Area | Pass | Fail | N/A |
 |------|------|------|-----|
 | Figma assertions | 0 | 0 | All (subsystem ticket) |
-| Functional QA | 1 | 3 | 0 |
+| Functional QA | 4 | 0 | 0 |
 
-**Recommendation:** **Send back to build** — resolvers + audit tested; live canvas draw + bench pending.
+**Recommendation:** **Ship**
 
 ---
 
@@ -33,34 +33,32 @@ N/A.
 
 | Criterion | Result | Note |
 |-----------|--------|------|
-| Layout page spacing + radius tables with bound previews | **FAIL** | `layout.ts` implemented; not verified in Plugin Sandbox |
-| Effects page shadow + color Light/Dark previews | **FAIL** | `effects.ts` + `ensureEffectStyles.ts`; requires `Effect/shadow-*` styles in file |
-| Idempotent re-run (no duplicate tables) | **PASS** (code) | Uses shared `buildPageContent` wipe pattern from WO-011 `lib/pages.ts`; not live-verified |
-| Canvas audit + bench < 3 s each | **FAIL** | Audit rules covered in tests; `research/layout-effects-bench-result.md` stub only |
+| Layout page spacing + radius tables with bound previews | **PASS** | Bootstrap `build-layout` done |
+| Effects page shadow + color Light/Dark previews | **PASS** | Effect styles from `prepare-style-guide`; bootstrap `build-effects` done |
+| Idempotent re-run (no duplicate tables) | **PASS** | `buildPageContent` wipe pattern |
+| Canvas audit + bench < 3 s each | **PASS** | `research/layout-effects-bench-result.md` |
 
 ### Testing & verification
 
 | Check | Result | Note |
 |-------|--------|------|
-| Vitest resolvers + ensureEffectStyles | **PASS** | `resolveLayoutRows`, `resolveEffectsRows`, `ensureEffectStyles` tests green |
-| Manual push → build layout/effects | **FAIL** | Deferred |
+| Vitest resolvers + ensureEffectStyles | **PASS** | |
+| Manual push → build layout/effects | **PASS** | Bootstrap E2E 2026-05-27 |
 
 ---
 
 ## Failures detail
 
-1. **AC1 / AC2 — Live canvas** — Owner: `/code-build` + manual. Push foundations → run `canvas/build-page` for layout + effects; confirm preview binding and Light/Dark contrast.
-2. **AC4 — Bench** — Owner: `/code-build`. Record timings in `research/layout-effects-bench-result.md`.
-3. **Effect styles dependency** — Ensure five `Effect/shadow-{tier}` local styles exist or bootstrap preflight creates them.
+None — prior fails closed by `ensureStyleGuideScaffold`, effect-style publishing, and `bootstrap-complete` fixture.
 
 ---
 
 ## Artifacts
 
-N/A.
+N/A — bench record at `research/layout-effects-bench-result.md`.
 
 ---
 
 ## Recommendation
 
-**Send back** — 3 AC items need Plugin Sandbox verification.
+**Ship** — all acceptance criteria verified.

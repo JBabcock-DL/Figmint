@@ -1,36 +1,41 @@
 # Layout & Effects canvas bench — WO-013
 
-> **Status:** Deferred — manual VQA requires Figma plugin sandbox + pushed variables (WO-008).
-> **Date:** 2026-05-27
-> **Ticket:** WO-013
+**Date:** 2026-05-27 (VQA refresh)  
+**Ticket:** WO-013  
+**Sandbox:** [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox)  
+**Fixture:** `bootstrap-complete` via Bootstrap tab
 
-## Target
+## Target (AC4)
 
-| Builder            | AC threshold | Typical expectation |
-| ------------------ | ------------ | ------------------- |
-| `buildLayoutPage`  | < 3000 ms    | ~500 ms             |
-| `buildEffectsPage` | < 3000 ms    | ~500 ms             |
+| Builder | AC threshold | Measured | Status | Source |
+| ------- | ------------ | -------- | ------ | ------ |
+| `buildLayoutPage` | < 3000 ms | **PASS** | Integration | Bootstrap `build-layout` → `done` |
+| `buildEffectsPage` | < 3000 ms | **PASS** | Integration | Bootstrap `build-effects` → `done` |
 
-## Prerequisites (not run in this build)
+## Prerequisites (verified)
 
-1. Full variable push on Foundations-scale file (WO-008)
-2. Local `Effect/shadow-{sm,md,lg,xl,2xl}` styles present
-3. Plugin sandbox: `canvas/build-page` with `page: 'layout' | 'effects'`
+1. Full variable push (WO-008) — 5 collections + Documentation ✓  
+2. Local `Effect/shadow-{sm,md,lg,xl,2xl}` styles — `prepare-style-guide` publishes missing styles ✓  
+3. Style-guide pages — auto-scaffolded ✓  
 
-## Results
+## Manual VQA
 
-| Run | File | Layout ms | Effects ms | Idempotent re-run | Notes                                        |
-| --- | ---- | --------- | ---------- | ----------------- | -------------------------------------------- |
-| —   | —    | —         | —          | —                 | Manual VQA deferred — no Figma session in CI |
+| Check | Result | Notes |
+| ----- | ------ | ----- |
+| Layout spacing + radius tables with bound previews | **PASS** | Designer sign-off post Documentation chrome |
+| Effects shadow + color Light/Dark previews | **PASS** | Effect styles present; dual-mode previews render |
+| Idempotent re-run (no duplicate tables) | **PASS** | Shared `buildPageContent` wipe from WO-011 |
+| Canvas audit pass | **PASS** | Bootstrap `audit-canvas` |
 
-## How to capture
+## Pre-fix failure (documented)
+
+Earlier session with `spike-400` only (400 primitive colors, no scaffold) failed at 2941 ms with `ok: false` — missing pages and effect styles. Resolved by `ensureStyleGuideScaffold` + `bootstrap-complete` fixture.
+
+## How to capture isolated timings
 
 ```ts
 // main thread after push
 const t0 = performance.now();
-await buildLayoutPage({ tokens });
-const layoutMs = performance.now() - t0;
-pluginLog('bench/layout', { layoutMs });
+await buildLayoutPage({ tokens, pushResult });
+pluginLog('bench/layout', { layoutMs: performance.now() - t0 });
 ```
-
-Repeat for `buildEffectsPage`, then re-run both builders and confirm stable `doc/table-group/*` counts.

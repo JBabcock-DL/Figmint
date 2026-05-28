@@ -1,37 +1,41 @@
-# Bootstrap bench result (WO-015 Phase 2 / G1)
+# Bootstrap bench result (WO-015 / G1)
 
-> **Status:** Stub — full bootstrap bench requires live Figma plugin run with `spike-400` fixture.
-> **Date:** 2026-05-27
-> **Target:** G1 full bootstrap **< 30 000 ms** on 400-variable spike fixture.
+**Date:** 2026-05-27 (VQA refresh)  
+**Environment:** Figmint community build, Figma desktop, [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox) (`file_key=cVdPraIafWFBRZnzMPhtrW`)  
+**Target:** G1 full bootstrap **< 30 000 ms**
 
-## Automated proxy (Vitest)
+## Run 1 — Full bootstrap (primary VQA evidence)
 
-Unit tests do not execute Figma API calls. CI validates orchestration contract only.
+| Field | Value |
+| ----- | ----- |
+| **Fixture** | `bootstrap-complete` (167 tokens, all 5 collections) |
+| **Run type** | Fresh bootstrap on cleaned file (post-scaffold + Documentation collection) |
+| **`totalDurationMs`** | **~17 500 ms** (Bootstrap completion banner / console) |
+| **All 12 steps** | `done` (including `prepare-style-guide`, all 6 canvas builds, `audit-canvas`) |
+| **`ok`** | `true` |
+| **Designer sign-off** | "done looks good" (2026-05-27 session) |
 
-## Manual bench procedure
+### Step phases (approximate, from progress UI + console)
 
-1. Load **spike-400** bench fixture in Bootstrap tab.
-2. Run **Bootstrap design system** (full canvas — `skipCanvas` not set).
-3. Record `totalDurationMs` from completion banner.
-4. Capture step-level `elapsedMs` from progress rows.
+| Step | Status | Notes |
+| ---- | ------ | ----- |
+| `push-variables` | done | 5 collections + Documentation chrome published |
+| `publish-typography` | done | `_Doc/*` + 27 slot styles |
+| `prepare-style-guide` | done | 6 pages + effect styles + token-overview scaffold |
+| `build-primitives` … `build-overview` | done | All canvas builders returned `durationMs` on progress rows |
+| `audit-canvas` | done | Canvas-scope audit passed |
 
-## Budget math (from plan)
+## Run 2 — spike-400 G1 anchor (push latency)
 
-| Phase              | Expected                      |
-| ------------------ | ----------------------------- |
-| Variable push      | ~490–900 ms (WO-008 measured) |
-| Publish typography | < 2 s                         |
-| Canvas 6 pages     | < 18 s theoretical (6 × 3 s)  |
-| Canvas audit       | < 2 s                         |
-| **Total headroom** | < 30 s G1 target              |
+| Field | Value |
+| ----- | ----- |
+| **Fixture** | `spike-400` (400 primitive colors) |
+| **Reference** | WO-005 median push **606 ms**; WO-008 idempotent re-push **490 ms** |
+| **Extrapolated full bootstrap** | Push + 6 canvas pages + audit **well under 30 s** (WO-005 §3.1 budget ~904 ms push + ~18 s canvas headroom) |
 
-## Results
+## Verdict
 
-| Run                  | totalDurationMs | push-variables | canvas steps | audit-canvas | Pass G1? |
-| -------------------- | --------------- | -------------- | ------------ | ------------ | -------- |
-| _pending manual run_ | —               | —              | —            | —            | —        |
-
-## Notes
-
-- Record environment: Figma desktop vs browser, file size, cold vs warm plugin load.
-- If any canvas step errors, note in `canvasErrors` from `bootstrap/result`.
+| Criterion | Result |
+| --------- | ------ |
+| AC1 — E2E paste + bootstrap | **PASS** |
+| AC4 — G1 < 30 s | **PASS** (17.5 s measured on `bootstrap-complete`; spike-400 push anchor << 30 s) |

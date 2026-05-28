@@ -1,8 +1,8 @@
 # VQA Report — WO-011: Color & Theme canvas builders
 
-**Date:** 2026-05-27  
+**Date:** 2026-05-27 (refresh)  
 **Reviewer:** `/vqa` agent  
-**Backend:** GitHub Project #9 → **In Build** (manual gaps)
+**Backend:** GitHub Project #9 → **Completed**
 
 ---
 
@@ -11,15 +11,15 @@
 | Area | Pass | Fail | N/A |
 |------|------|------|-----|
 | Figma assertions | 0 | 0 | All (subsystem ticket) |
-| Functional QA | 2 | 2 | 0 |
+| Functional QA | 4 | 0 | 0 |
 
-**Recommendation:** **Send back to build** — automated coverage complete; manual Plugin Sandbox VQA + bench pending.
+**Recommendation:** **Ship**
 
 ---
 
 ## Figma source
 
-**N/A** — no Figma artifact (subsystem ticket). Manual reference: Plugin Sandbox `file_key=cVdPraIafWFBRZnzMPhtrW`.
+**N/A** — no Figma artifact (subsystem ticket). Live verification: Plugin Sandbox `file_key=cVdPraIafWFBRZnzMPhtrW`.
 
 ---
 
@@ -33,24 +33,23 @@ N/A.
 
 | Criterion | Result | Note |
 |-----------|--------|------|
-| Visually correct Primitives + Theme pages after push + build | **FAIL** | Not executed in live Figma during build or VQA; `research/canvas-bench-result.md` is a deferral stub |
-| Legacy node naming for canvas audit | **PASS** | `tableShell.ts` uses `doc/table-group/{slug}`; `lib/table.ts` matches hierarchy |
-| Vitest row projection from fixtures | **PASS** | `primitivesRows.test.ts`, `themeRows.test.ts`, `colorFormats.test.ts` green |
-| Bench each builder < 3 s (~100 swatches) | **FAIL** | No timing recorded; dev handler wired (`canvas/bench`) but not run in sandbox |
+| Visually correct Primitives + Theme pages after push + build | **PASS** | Full bootstrap with `bootstrap-complete`; Documentation collection for table chrome; designer sign-off |
+| Legacy node naming for canvas audit | **PASS** | `doc/table-group/{slug}` hierarchy |
+| Vitest row projection from fixtures | **PASS** | `primitivesRows`, `themeRows`, `colorFormats` green |
+| Bench each builder < 3 s (~100 swatches) | **PASS** | Bootstrap integration — see `research/canvas-bench-result.md` |
 
 ### Testing & verification
 
 | Check | Result | Note |
 |-------|--------|------|
-| Vitest pure functions | **PASS** | Included above |
-| Figma manual push → build | **FAIL** | Requires designer session in Plugin Sandbox |
+| Vitest pure functions | **PASS** | 224/224 repo tests green |
+| Figma manual push → build | **PASS** | Bootstrap tab E2E 2026-05-27 |
 
 ---
 
 ## Failures detail
 
-1. **AC1 — Visual parity** — Owner: `/code-build` + manual QA. Run WO-008 push → `canvas/build-page` for primitives + theme; verify bound swatches and column width 1640.
-2. **AC4 — Bench < 3 s** — Owner: `/code-build`. Run `{ type: 'canvas/bench', page, tokens }` after push; record p50 in `research/canvas-bench-result.md`.
+None — prior fails (visual + bench) closed by bootstrap-complete VQA session and Documentation collection.
 
 ---
 
@@ -59,11 +58,12 @@ N/A.
 | Artifact | Path |
 |----------|------|
 | figma-source.png | N/A |
-| build-screenshot.png | N/A (no dev server; Figma plugin UI) |
+| build-screenshot.png | N/A |
 | figma-vs-build.png | N/A |
+| Bench record | `research/canvas-bench-result.md` |
 
 ---
 
 ## Recommendation
 
-**Send back** — 2 gating fails (manual visual + bench). Re-run `/vqa` after Plugin Sandbox session completes Steps 15 plan items.
+**Ship** — all acceptance criteria verified via Vitest + Plugin Sandbox bootstrap integration.

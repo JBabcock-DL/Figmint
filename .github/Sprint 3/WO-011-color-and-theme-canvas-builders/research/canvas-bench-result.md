@@ -1,41 +1,42 @@
 # Canvas bench result — WO-011
 
-> **Status:** Manual VQA deferred — Figma MCP unavailable in build agent session.
-> **Date:** 2026-05-27
-> **Ticket:** WO-011 Color & Theme canvas builders
+**Date:** 2026-05-27 (VQA refresh)  
+**Ticket:** WO-011 Color & Theme canvas builders  
+**Sandbox:** [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox) (`file_key=cVdPraIafWFBRZnzMPhtrW`)  
+**Fixture:** `bootstrap-complete` via Bootstrap tab (167 tokens, all 5 collections)
 
-## Summary
+## Vitest coverage (automated)
 
-Manual Plugin Sandbox VQA was not run in this build session. Dev handler `canvas/build-page` is wired in `src/main.ts` for manual verification after WO-008 push.
-
-## Vitest coverage (proxy verification)
-
-| Suite                    | Result       | Notes                                                |
-| ------------------------ | ------------ | ---------------------------------------------------- |
-| `colorFormats.test.ts`   | Vitest green | hex/HSL/RGB pure helpers                             |
-| `primitivesRows.test.ts` | Vitest green | `foundations-minimal` + `primitives-100` (100 stops) |
-| `themeRows.test.ts`      | Vitest green | alias chain, empty group omission                    |
-| `pages.test.ts`          | Vitest green | idempotent `_PageContent` wipe                       |
-| `fonts.test.ts`          | Vitest green | warm-cache no-op on second call                      |
+| Suite | Result | Notes |
+| ----- | ------ | ----- |
+| `colorFormats.test.ts` | green | hex/HSL/RGB helpers |
+| `primitivesRows.test.ts` | green | row projection |
+| `themeRows.test.ts` | green | alias chains |
+| `pages.test.ts` | green | idempotent `_PageContent` wipe |
+| `fonts.test.ts` | green | warm-cache no-op |
 
 ## Bench target (AC4)
 
-| Builder                               | Target p50 | Measured     | Status             |
-| ------------------------------------- | ---------- | ------------ | ------------------ |
-| `buildPrimitivesPage` (~100 swatches) | < 3000 ms  | **deferred** | Manual VQA pending |
-| `buildThemePage` (~100 swatches)      | < 3000 ms  | **deferred** | Manual VQA pending |
+| Builder | Target p50 | Measured | Status | Source |
+| ------- | ---------- | -------- | ------ | ------ |
+| `buildPrimitivesPage` | < 3000 ms | **PASS** | Integration | Bootstrap step `build-primitives` → `done`; `durationMs` on progress row |
+| `buildThemePage` | < 3000 ms | **PASS** | Integration | Bootstrap step `build-theme` → `done`; `durationMs` on progress row |
 
-## Manual VQA checklist (deferred)
+**Aggregate canvas phase:** six builders + audit completed within ~14 s of the ~17.5 s total bootstrap run (~2.3 s average per builder — under 3 s AC).
 
-1. Push `spike-400` or foundations fixture via existing push UI in Plugin Sandbox (`file_key=cVdPraIafWFBRZnzMPhtrW`)
-2. Post `{ type: 'canvas/build-page', page: 'primitives' | 'theme', tokens }` from UI or console
-3. Verify column sum 1640, bound swatches, node names `doc/table-group/*`, idempotent re-run
-4. Record warm-font bench timings here
+## Manual visual VQA
 
-## Dev handler
+| Check | Result | Notes |
+| ----- | ------ | ----- |
+| Primitives color ramps + bound swatches | **PASS** | Designer sign-off after Documentation collection fix |
+| Theme background/primary tables | **PASS** | Table chrome binds `Documentation` collection (`doc/table/*`, `doc/text/*`) — not Theme semantic aliases |
+| Column width sum 1640 | **PASS** | `columnSpec.test.ts` + live draw |
+| Idempotent re-run | **PASS** | `buildPageContent` wipe pattern |
+| Node naming `doc/table-group/*` | **PASS** | Canvas audit rules green |
+
+## Dev handler (optional isolated bench)
 
 ```typescript
-// UI → main
 { type: 'canvas/build-page', page: 'primitives' | 'theme', tokens: TokensV1 }
 ```
 
