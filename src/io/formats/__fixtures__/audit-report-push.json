@@ -1,0 +1,50 @@
+{
+  "v": 1,
+  "kind": "audit-report",
+  "meta": {
+    "generatedAt": "2026-05-27T12:00:00.000Z",
+    "scope": "variables",
+    "figmaFileKey": "FigmintDemo",
+    "operation": "push-variables"
+  },
+  "passed": false,
+  "summary": {
+    "variablesCreated": 12,
+    "variablesUpdated": 3,
+    "variablesSkipped": 1,
+    "rulesPassed": 14,
+    "rulesFailed": 2,
+    "rulesWarned": 1,
+    "modeCoverage": {},
+    "codeSyntaxCoverage": {
+      "WEB": { "expected": 10, "missing": 1 },
+      "ANDROID": { "expected": 10, "missing": 0 },
+      "iOS": { "expected": 10, "missing": 2 }
+    }
+  },
+  "results": [
+    {
+      "ruleId": "var/mode-value-present",
+      "pass": false,
+      "diagnostic": "Theme token color/background/default missing Dark mode value",
+      "severity": "error"
+    },
+    {
+      "ruleId": "var/code-syntax-web",
+      "pass": false,
+      "diagnostic": "Missing WEB codeSyntax on theme/color/primary/default",
+      "severity": "error"
+    },
+    {
+      "ruleId": "var/alias-resolvable",
+      "pass": true,
+      "diagnostic": "All aliases resolve"
+    },
+    {
+      "ruleId": "var/naming-convention",
+      "pass": true,
+      "diagnostic": "Token names use slash paths",
+      "severity": "warn"
+    }
+  ]
+}

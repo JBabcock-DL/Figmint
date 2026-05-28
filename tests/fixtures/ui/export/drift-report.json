@@ -1,0 +1,20 @@
+{
+  "v": 1,
+  "kind": "drift-report",
+  "meta": {
+    "generatedAt": "2026-05-27T12:00:00.000Z",
+    "figmaFileKey": "FigmintDemo",
+    "repoUrl": "https://github.com/detroitlabs/figmint"
+  },
+  "summary": { "push": 1, "pull": 0, "conflict": 0, "synced": 10 },
+  "drifts": [
+    {
+      "id": "cmp/button/primary",
+      "kind": "component",
+      "direction": "push",
+      "figma": { "name": "Button/Primary" },
+      "repo": { "path": "src/components/Button.tsx" },
+      "lastSynced": "2026-05-20T00:00:00.000Z"
+    }
+  ]
+}

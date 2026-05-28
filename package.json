@@ -14,6 +14,9 @@
     "build": "node scripts/build.mjs",
     "build:community": "npm run build",
     "build:org": "npm run build",
+    "spike:oauth-relay": "node scripts/github-oauth-relay.mjs",
+    "spike:github-oauth": "node scripts/spike-github-device-flow.mjs",
+    "spike:github-oauth:probe": "node scripts/spike-github-device-flow.mjs --request-only",
     "dev": "node scripts/dev.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -38,6 +41,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.15.29",
     "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -46,7 +53,6 @@
     "jsdom": "^26.1.0",
     "prettier": "^3.8.3",
     "typescript-eslint": "^8.60.0",
-    "vitest": "^3.2.4",
-    "@types/node": "^22.15.29"
+    "vitest": "^3.2.4"
   }
 }

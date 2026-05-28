@@ -1,0 +1,37 @@
+{
+  "v": 1,
+  "kind": "handoff-context",
+  "meta": {
+    "capturedAt": "2026-05-27T12:00:00.000Z",
+    "figmaFileKey": "FigmintDemo",
+    "frameUrl": "https://www.figma.com/design/FigmintDemo/Handoff?node-id=1-2"
+  },
+  "frames": [
+    {
+      "nodeId": "1:2",
+      "name": "Login Screen",
+      "deepLink": "https://www.figma.com/design/FigmintDemo/Handoff?node-id=1-2",
+      "screenshot": {
+        "format": "png",
+        "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+      }
+    }
+  ],
+  "components": [
+    {
+      "name": "Button",
+      "instances": 4,
+      "codeConnectUrl": "https://github.com/detroitlabs/figmint/blob/main/src/components/Button.tsx"
+    },
+    {
+      "name": "Input",
+      "instances": 2
+    }
+  ],
+  "tokensUsed": ["Theme/Primary", "Layout/spacing/3", "Theme/color/background/default"],
+  "autoLayout": {
+    "direction": "vertical",
+    "gap": "Layout/spacing/4",
+    "padding": "Layout/spacing/6"
+  }
+}

@@ -6,6 +6,8 @@
   "ui": "ui.html",
   "editorType": ["figma"],
   "networkAccess": {
-    "allowedDomains": ["https://api.github.com", "https://github.com"]
+    "allowedDomains": ["none"],
+    "devAllowedDomains": ["http://localhost:8787"],
+    "reasoning": "GitHub OAuth + API via Figmint relay (CORS-safe). Direct github.com blocked in plugin sandbox."
   }
 }

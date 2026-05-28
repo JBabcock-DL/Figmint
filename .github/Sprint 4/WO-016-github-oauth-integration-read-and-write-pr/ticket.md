@@ -108,22 +108,23 @@ N/A — no Figma artifact (subsystem ticket)
 
 ## 🔍 Ready for `/research`
 
-- [x] [GitHub OAuth plugin flow](research/github-oauth-plugin-flow.md) — Device Flow vs PKCE, storage, messages, scopes, gating.
+- [x] [GitHub OAuth plugin flow](research/github-oauth-plugin-flow.md) — Device Flow vs PKCE, storage, messages, scopes
+- [x] [OAuth spike results](research/spike-github-oauth-results.md) — SPK-016-0 + SPK-016-1 ✅ (relay mandatory)
 
 ## 📋 Ready for `/plan`
 
-- Dependencies: WO-002.
-- `/plan` should lock: Device Flow MVP, clientStorage key schema, message types, OAuth App registration blocker.
+- ✅ `/plan` complete — see [plan.md](./plan.md). Relay architecture locked; spike UI removed during build (Step 15).
 
 ## 🛠️ Ready for `/build`
 
 - `/code-build` single domain unless plan adds others.
-- **Blocker:** Detroit Labs OAuth App `client_id` must exist before build VQA.
+- **Blocker:** SPK-016-1 Figma iframe spike; OAuth App `client_id` in `.env.local` ✅.
 
 ## References
 
 - PRD: `Docs/PRD.md` §10 (Sources/Sinks), §13.1 (feature gating), §11.3 (Security), §6.9 FR-CONF
-- Research: [GitHub OAuth plugin flow](research/github-oauth-plugin-flow.md)
+- Research: [GitHub OAuth plugin flow](research/github-oauth-plugin-flow.md), [OAuth spike results](research/spike-github-oauth-results.md)
+- Spike commands: `npm run spike:github-oauth:probe`, `npm run spike:github-oauth`
 - Lift reference: _None — new code designed in PRD._
 - Repo: `manifest.org.json`, `manifest.community.json`, `src/config/flags.*.ts`, `src/io/sources/*`
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

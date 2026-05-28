@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "kind": "ops-program",
+  "meta": {
+    "generatedAt": "2026-05-27T12:00:00.000Z",
+    "generatedBy": "cli"
+  },
+  "ops": [
+    {
+      "type": "push-tokens",
+      "source": {
+        "kind": "inline",
+        "tokens": {
+          "primitives": {},
+          "theme": {},
+          "layout": {}
+        }
+      }
+    },
+    {
+      "type": "build-style-guide",
+      "pages": ["color", "typography", "layout", "effects", "overview"]
+    },
+    {
+      "type": "scaffold-component",
+      "spec": {
+        "v": 1,
+        "kind": "component-spec",
+        "name": "Button",
+        "framework": "react",
+        "variantMatrix": { "size": ["md"] },
+        "props": [],
+        "bindings": [],
+        "layout": {
+          "direction": "horizontal",
+          "gap": "8",
+          "sizing": { "horizontal": "hug", "vertical": "hug" }
+        }
+      }
+    },
+    {
+      "type": "import-component",
+      "repoPath": "src/components/Button.tsx"
+    },
+    {
+      "type": "detect-drift",
+      "scope": ["variables", "components"]
+    },
+    {
+      "type": "apply-resolution",
+      "decisions": [
+        { "id": "var/theme/color/primary", "action": "push" },
+        { "id": "cmp/button/primary", "action": "pull" }
+      ]
+    },
+    {
+      "type": "emit-handoff",
+      "selection": ["1:2", "1:3"]
+    },
+    {
+      "type": "emit-code-connect-pr",
+      "components": ["Button", "Input"],
+      "framework": "react"
+    }
+  ]
+}

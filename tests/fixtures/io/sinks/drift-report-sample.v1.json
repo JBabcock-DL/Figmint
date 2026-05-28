@@ -1,0 +1,41 @@
+{
+  "v": 1,
+  "kind": "drift-report",
+  "meta": {
+    "generatedAt": "2026-05-27T12:00:00.000Z",
+    "figmaFileKey": "FigmintDemo",
+    "repoUrl": "https://github.com/detroitlabs/figmint"
+  },
+  "summary": {
+    "push": 2,
+    "pull": 1,
+    "conflict": 0,
+    "synced": 410
+  },
+  "drifts": [
+    {
+      "id": "cmp/button/primary",
+      "kind": "component",
+      "direction": "push",
+      "figma": { "name": "Button/Primary", "updatedAt": "2026-05-26" },
+      "repo": { "path": "src/components/Button.tsx" },
+      "lastSynced": "2026-05-20T00:00:00.000Z"
+    },
+    {
+      "id": "var/theme/color/primary",
+      "kind": "variable",
+      "direction": "push",
+      "figma": { "value": "#0055FF" },
+      "repo": { "value": "#0044DD" },
+      "lastSynced": "2026-05-18T00:00:00.000Z"
+    },
+    {
+      "id": "var/theme/color/background",
+      "kind": "variable",
+      "direction": "pull",
+      "figma": { "value": "#FFFFFF" },
+      "repo": { "value": "#FAFAFA" },
+      "lastSynced": "2026-05-16T00:00:00.000Z"
+    }
+  ]
+}

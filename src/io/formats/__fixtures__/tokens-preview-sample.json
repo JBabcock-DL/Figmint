@@ -1,0 +1,62 @@
+{
+  "v": 1,
+  "kind": "tokens",
+  "collections": [
+    { "id": "primitives", "modes": ["Default"] },
+    { "id": "theme", "modes": ["Light", "Dark"] },
+    { "id": "typography", "modes": ["100"] },
+    { "id": "layout", "modes": ["Default"] },
+    { "id": "effects", "modes": ["Light", "Dark"] }
+  ],
+  "tokens": [
+    {
+      "collection": "primitives",
+      "name": "color/neutral/100",
+      "type": "COLOR",
+      "valuesByMode": {
+        "Default": { "r": 0.96, "g": 0.96, "b": 0.96, "a": 1 }
+      }
+    },
+    {
+      "collection": "theme",
+      "name": "color/background/default",
+      "type": "COLOR",
+      "valuesByMode": {
+        "Light": { "r": 0.96, "g": 0.96, "b": 0.96, "a": 1 },
+        "Dark": { "r": 0.1, "g": 0.1, "b": 0.1, "a": 1 }
+      }
+    },
+    {
+      "collection": "typography",
+      "name": "Display/LG/font-size",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "100": 16
+      }
+    },
+    {
+      "collection": "layout",
+      "name": "space/md",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Default": 16
+      }
+    },
+    {
+      "collection": "effects",
+      "name": "shadow/md/blur",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "Light": 8,
+        "Dark": 12
+      }
+    }
+  ],
+  "themes": [
+    {
+      "name": "Brand Dark",
+      "parentCollection": "theme",
+      "overrides": []
+    }
+  ]
+}

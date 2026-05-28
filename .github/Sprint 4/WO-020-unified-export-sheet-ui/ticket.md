@@ -90,34 +90,7 @@ Export sheet design lives in the Figmint design file (file_key TBD).
 
 ## Figma VQA Checklist
 
-**Figma source (filled before `/vqa` runs):**
-
-| Field           | Value                                                 |
-| --------------- | ----------------------------------------------------- |
-| `file_key`      | `<!-- filled during /plan or /vqa -->`                |
-| `node_id`       | `<!-- filled during /plan or /vqa -->`                |
-| Figma deep link | `<!-- filled -->`                                     |
-| Frame / scope   | `<!-- e.g. Figmint plugin window — Bootstrap tab -->` |
-| Captured at     | `<!-- ISO date -->`                                   |
-
-**Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_
-
-| #   | Category      | Property                    | Design (Figma) | Build (implemented) | Result |
-| --- | ------------- | --------------------------- | -------------- | ------------------- | ------ |
-| 1   | Layout        | Frame width × height        |                |                     |        |
-| 2   | Layout        | Auto-layout direction / gap |                |                     |        |
-| 3   | Layout        | Padding (T/R/B/L)           |                |                     |        |
-| 4   | Typography    | Font family / size / weight |                |                     |        |
-| 5   | Color         | Background fill (token)     |                |                     |        |
-| 6   | Color         | Foreground fill (token)     |                |                     |        |
-| 7   | Spacing       | Margin / gap tokens         |                |                     |        |
-| 8   | Effects       | Border radius / shadow      |                |                     |        |
-| 9   | Accessibility | Contrast ratio              |                |                     |        |
-| 10  | Accessibility | Focus ring + hit target     |                |                     |        |
-
-**Per-row deviations:**
-
-- _Filled by `/vqa` with FAIL rationale._
+**N/A — no Figma artifact (design frame TBD; build follows Bootstrap inline conventions until design lands).**
 
 ---
 

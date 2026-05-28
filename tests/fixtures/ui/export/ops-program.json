@@ -1,0 +1,9 @@
+{
+  "v": 1,
+  "kind": "ops-program",
+  "meta": {
+    "generatedAt": "2026-05-27T12:00:00.000Z",
+    "generatedBy": "cli"
+  },
+  "ops": [{ "type": "detect-drift", "scope": ["variables"] }]
+}

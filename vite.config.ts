@@ -12,13 +12,14 @@ const pkg = JSON.parse(readFileSync(resolve(rootDir, 'package.json'), 'utf8')) a
 };
 
 /** Loaded from `.env.local` / `.env` — see `.env.example`. */
-function loadGithubOAuthClientId(): string {
+function loadFigmintEnv(key: string): string {
   const mode = process.env.NODE_ENV === 'development' ? 'development' : 'production';
   const env = loadEnv(mode, rootDir, '');
-  return env.GITHUB_OAUTH_CLIENT_ID ?? '';
+  return env[key] ?? '';
 }
 
-const githubOAuthClientId = loadGithubOAuthClientId();
+const githubOAuthClientId = loadFigmintEnv('GITHUB_OAUTH_CLIENT_ID');
+const figmintOAuthRelayUrl = loadFigmintEnv('FIGMINT_OAUTH_RELAY_URL');
 
 const sharedResolve = {
   alias: [
@@ -30,6 +31,7 @@ const sharedResolve = {
 const sharedDefine = {
   'import.meta.env.PACKAGE_VERSION': JSON.stringify(pkg.version),
   'import.meta.env.GITHUB_OAUTH_CLIENT_ID': JSON.stringify(githubOAuthClientId),
+  'import.meta.env.FIGMINT_OAUTH_RELAY_URL': JSON.stringify(figmintOAuthRelayUrl),
 };
 
 /**

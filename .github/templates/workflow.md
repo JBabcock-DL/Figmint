@@ -76,8 +76,8 @@ The `/research`, `/plan`, `/build`, and `/vqa` skills refuse to run on an un-pro
 0. **Intake (optional)** — `/create-ticket ctx "..."` drops raw context into a CTX ticket without forcing structure. CTX tickets are triaged later via `/create-ticket promote {CTX-ID}` (single) or `/create-backlog` (batch), which converts each into a `bug` or `work-order` with the next sequential ID of that type.
 1. **Create ticket** — `/create-ticket` requires a configured **Ticket Backend** in `workflow.md`, creates the **remote** issue first (GitHub Issue + Project, or Jira), then writes the sprint folder, `ticket.md`, and stub `plan.md` (bug / work-order only), with board/status: **Context Backlog**
 2. **Research** _(optional, recommended for unfamiliar work)_ — `/research` investigates the problem domain and writes findings to `research/`; moves ticket to **In Research**
-3. **Plan** — `/plan` reads parent **`ticket.md`**, writes **`plan.md`** per **`.github/templates/plan-quality-bar.md`** (sub-agent-ready steps traceable to ticket requirements + AC; phased `## Build Agents`), then moves ticket to **In Planning**
-4. **Build** — `/build` reads the `## Build Agents` section, moves ticket to **In Build**, and spawns build agents in parallel phases; agents within a phase run simultaneously, phases run sequentially. Individual build skills (`/code-build`, `/doc-build`, `/script-build`, `/api-build`, `/figma-build`) can be used directly for single-domain tickets.
+3. **Plan** — `/plan` reads parent **`ticket.md`**, writes the **full verbatim** execution contract to **`$TICKET_FOLDER/plan.md`** (see **Planning & build defaults** below — not an IDE sidecar), per **`.github/templates/plan-quality-bar.md`**, then moves ticket to **In Planning**
+4. **Build** — `/build` reads **`plan.md` from the ticket folder only**, verifies it is not a stub, moves ticket to **In Build**, and runs **`## Build Agents`** phases sequentially. **Default git strategy for this repo: `main`** (uncommitted changes — see `memory.md`). Individual domain skills (`/code-build`, etc.) may be invoked directly for single-domain tickets.
 5. **Verify** — `/vqa` runs a Figma-first QA pass: it requires the **Figma VQA Checklist** in `ticket.md` to either have `file_key` + `node_id` filled or be explicitly marked `**N/A — no Figma artifact**`. The agent pulls the design from Figma via MCP, captures the implemented build, fills the assertion table 1:1, then runs Functional QA. Moves ticket to **In Review** → **Completed** when every assertion passes.
 
 > Skip research for well-understood, mechanical tickets where requirements are unambiguous.
@@ -209,4 +209,41 @@ Use when a work order involves:
 - All `ticket.md` files include frontmatter fields for the remote issue:
   - **GitHub backend**: `github_issue` (issue number) and `project_item_id` (PVTI\_…)
   - **Jira backend**: `jira_issue` (issue key, e.g. `PROJ-123`) and `jira_issue_id` (numeric id returned by the MCP)
-- `plan.md` is always a stub when first created — expand to **plan-quality-bar.md** standard (grounded in parent `ticket.md`, sub-agent-ready) before `/build`
+- `plan.md` is always a stub when first created — expand to **plan-quality-bar.md** standard (grounded in parent `ticket.md`, sub-agent-ready) before `/build`. **`/build` must refuse stubs** — if `plan.md` lacks numbered steps, `## Build Agents`, and AC traceability, stop and re-run `/plan`.
+
+---
+
+## Planning & build defaults (Figmint — mandatory)
+
+These defaults apply **without asking the user** unless they explicitly override in the same session.
+
+### `/plan` output location
+
+| Rule | Detail |
+| ---- | ------ |
+| **Canonical path** | `.github/Sprint {N}/{TICKET-ID}-*/plan.md` only |
+| **Forbidden** | IDE sidecars (`.plan.md`, plan-mode buffers, summaries in chat) as the only artifact |
+| **Verification** | After writing, re-read `plan.md`; report `wc -l plan.md`. If missing Approach/Steps/Build Agents/Dependencies/Open Questions/Notes → do not move to In Planning |
+| **Depth** | Sub-agent-ready: every step has file paths + **Done when** + signatures where non-obvious. Include **AC traceability table**. Multi-file WOs: typically **≥200 lines**; platform/integration WOs **≥350 lines** (see plan-quality-bar.md) |
+
+### `/build` prerequisites
+
+| Gate | Action if failed |
+| ---- | ---------------- |
+| `plan.md` empty, stub, or `_TBD_` steps | Stop — re-run `/plan` |
+| No `## Build Agents` section | Stop — planner must define phases |
+| Steps not checkable (`- [ ] **Step N**`) | Stop — expand plan |
+
+### Git strategy (default)
+
+| Setting | Value |
+| ------- | ----- |
+| **Default** | **`main`** — work on current branch; **do not commit or push** unless user asks |
+| **Override** | User says `branch-per-agent` → `{TICKET-ID}/{domain}` branches + PRs (requires worktrees for parallel agents) |
+| **Do not ask** | When `memory.md` lists git strategy as locked, use it verbatim |
+
+### Sprint dependency order (Sprint 4 I/O)
+
+Build tickets **sequentially** when they share interfaces: **WO-019 → WO-017 → WO-016 → WO-018 → WO-020**. Do not start a downstream ticket's `/build` until upstream deliverables exist (or plan explicitly allows stubs with a follow-up swap step).
+
+---

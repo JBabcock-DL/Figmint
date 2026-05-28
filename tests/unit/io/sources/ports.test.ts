@@ -88,7 +88,7 @@ describe('loadFromFile', () => {
     const result = await loadFromFile(makeFile('# Title', 'notes.md', 'text/markdown'));
     expect(result).toMatchObject({
       kind: 'unsupported-type',
-      hint: 'Markdown parsing lands in WO-019.',
+      hint: 'Markdown is export-only. Paste or load JSON.',
       location: { source: 'file', fileName: 'notes.md' },
     });
   });

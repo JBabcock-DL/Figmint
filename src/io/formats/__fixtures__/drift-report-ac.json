@@ -1,0 +1,73 @@
+{
+  "v": 1,
+  "kind": "drift-report",
+  "meta": {
+    "generatedAt": "2026-05-27T12:00:00.000Z",
+    "figmaFileKey": "FigmintDemo",
+    "repoUrl": "https://github.com/detroitlabs/figmint"
+  },
+  "summary": {
+    "push": 4,
+    "pull": 2,
+    "conflict": 1,
+    "synced": 410
+  },
+  "drifts": [
+    {
+      "id": "cmp/button/primary",
+      "kind": "component",
+      "direction": "push",
+      "figma": { "name": "Button/Primary", "updatedAt": "2026-05-26" },
+      "repo": { "path": "src/components/Button.tsx" },
+      "lastSynced": "2026-05-20T00:00:00.000Z"
+    },
+    {
+      "id": "cmp/input/default",
+      "kind": "component",
+      "direction": "push",
+      "figma": { "name": "Input/Default" },
+      "repo": { "path": "src/components/Input.tsx" },
+      "lastSynced": "2026-05-19T00:00:00.000Z"
+    },
+    {
+      "id": "var/theme/color/primary",
+      "kind": "variable",
+      "direction": "push",
+      "figma": { "value": "#0055FF" },
+      "repo": { "value": "#0044DD" },
+      "lastSynced": "2026-05-18T00:00:00.000Z"
+    },
+    {
+      "id": "var/layout/spacing/4",
+      "kind": "variable",
+      "direction": "push",
+      "figma": { "value": 16 },
+      "repo": { "value": 16 },
+      "lastSynced": "2026-05-17T00:00:00.000Z"
+    },
+    {
+      "id": "var/theme/color/background",
+      "kind": "variable",
+      "direction": "pull",
+      "figma": { "value": "#FFFFFF" },
+      "repo": { "value": "#FAFAFA" },
+      "lastSynced": "2026-05-16T00:00:00.000Z"
+    },
+    {
+      "id": "var/typography/body/size",
+      "kind": "variable",
+      "direction": "pull",
+      "figma": { "value": 14 },
+      "repo": { "value": 16 },
+      "lastSynced": "2026-05-15T00:00:00.000Z"
+    },
+    {
+      "id": "var/effects/shadow/md",
+      "kind": "variable",
+      "direction": "conflict",
+      "figma": { "blur": 8, "spread": 0 },
+      "repo": { "blur": 12, "spread": 2 },
+      "lastSynced": "2026-05-14T00:00:00.000Z"
+    }
+  ]
+}

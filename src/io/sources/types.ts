@@ -17,7 +17,7 @@ export interface LoadedDocument<T = unknown> {
   rawSnippet: string;
 }
 
-export type SourceMeta = PasteSourceMeta | FileSourceMeta | ClipboardSourceMeta;
+export type SourceMeta = PasteSourceMeta | FileSourceMeta | ClipboardSourceMeta | GitHubSourceMeta;
 
 export interface PasteSourceMeta {
   port: 'paste';
@@ -40,6 +40,15 @@ export interface ClipboardSourceMeta {
   receivedAt: string;
   charLength: number;
   mechanism: 'async-clipboard-api' | 'paste-event';
+}
+
+export interface GitHubSourceMeta {
+  port: 'github';
+  repoUrl: string;
+  path: string;
+  ref?: string;
+  sha?: string;
+  receivedAt: string;
 }
 
 export type ValidationErrorKind =

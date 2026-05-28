@@ -115,6 +115,24 @@ Prefer **completeness over brevity**. Expand until:
 
 Use line count only as a sanity check: thin outlines (~50 lines) for multi-file work orders are almost always insufficient. When in doubt, **add another step** rather than merge vague work.
 
+### Minimum line-count gates (Figmint default — do not move to In Planning below these)
+
+| Ticket shape | Minimum `plan.md` lines | Must include |
+| ------------ | ------------------------ | ------------ |
+| Multi-file code WO (3+ modules) | **≥200** | AC traceability table, typed message/API blocks, test file paths per step |
+| Platform / integration WO (OAuth, sinks, Figma API) | **≥350** | Wrong vs correct table, thread-split matrix, manual VQA steps |
+| UI + orchestration WO | **≥300** | Component props, reducer actions, style tokens |
+| Stub / placeholder | **0** — forbidden | `_TBD_`, “see research”, “implement feature” |
+
+**Reference depth:** `.github/Sprint 2/WO-006-*/plan.md` (~98 lines but ultra-dense per step). Sprint 4 plans should match or exceed that **information density** even when line count is higher.
+
+### `/plan` persistence (mandatory)
+
+1. Write the **full approved plan** to `{ticket-folder}/plan.md` with the Write tool — not only to an IDE plan sidecar.
+2. **Re-read** `{ticket-folder}/plan.md` and confirm all required sections exist byte-for-byte.
+3. Report `wc -l plan.md` in the handoff.
+4. **`/build` agents read only `{ticket-folder}/plan.md`** — if the user sees a plan in the IDE but the repo file is still a stub, `/build` must stop and `/plan` must re-run.
+
 Report `wc -l plan.md` in the `/plan` handoff.
 
 ---

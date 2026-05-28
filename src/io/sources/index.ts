@@ -7,6 +7,7 @@ export type {
   ClipboardSourceMeta,
   ContractKind,
   FileSourceMeta,
+  GitHubSourceMeta,
   LoadedDocument,
   PasteSourceMeta,
   SourceMeta,
@@ -14,4 +15,5 @@ export type {
   ValidationErrorKind,
   ValidationErrorLocation,
 } from './types';
+export { loadFromGitHub } from './github';
 export { PASTE_MAX, RAW_SNIPPET_MAX } from './types';

@@ -12,7 +12,7 @@ export async function loadFromFile(
       kind: 'unsupported-type',
       message: 'Markdown files are not supported yet.',
       location: { source: 'file', fileName: file.name },
-      hint: 'Markdown parsing lands in WO-019.',
+      hint: 'Markdown is export-only. Paste or load JSON.',
     };
   }
 
