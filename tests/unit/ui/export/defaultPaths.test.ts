@@ -45,7 +45,7 @@ describe('defaultExportBasename', () => {
     ['handoff-context', 'docs/figmint/handoff-2026-05-27'],
     ['ops-program', 'docs/figmint/ops-2026-05-27'],
     ['component-spec', 'docs/figmint/components/primary-button'],
-    ['registry', '.figmint-registry'],
+    ['registry', 'docs/figmint/registry-export'],
     ['tokens', 'docs/figmint/tokens-2026-05-27'],
   ] as const)(
     'returns default basename for %s',

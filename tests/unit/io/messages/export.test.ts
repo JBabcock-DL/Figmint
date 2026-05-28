@@ -58,8 +58,8 @@ describe('export message guards', () => {
           requestId: 'export-3',
           sinks: ['output-page'],
           doc: { kind: 'registry', payload: { v: 1, kind: 'registry' } },
-          formatOptions: { format: 'json', baseName: '.figmint-registry', label: 'figmint/registry' },
-          files: [{ path: '.figmint-registry.json', content: '{}', format: 'json' }],
+          formatOptions: { format: 'json', baseName: 'docs/figmint/registry-export', label: 'figmint/registry' },
+          files: [{ path: 'docs/figmint/registry-export.json', content: '{}', format: 'json' }],
         }),
       ).toBe(true);
     });

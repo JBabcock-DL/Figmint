@@ -12,7 +12,6 @@ import {
   mergeRegistryEntry,
   normalizeRegistryInput,
   resolveComponentKey,
-  resolveRegistryReadPath,
   upsertRegistryEntry,
 } from '@/core/components/registry';
 import {
@@ -51,11 +50,6 @@ function buildScaffoldResult(componentSet: ReturnType<typeof createMockComponent
 }
 
 describe('registry core', () => {
-  it('resolveRegistryReadPath defaults to .figmint-registry.json', () => {
-    expect(resolveRegistryReadPath()).toBe('.figmint-registry.json');
-    expect(resolveRegistryReadPath('.custom.json')).toBe('.custom.json');
-  });
-
   it('SPK-026-3 normalizeRegistryInput accepts legacy body without envelope', () => {
     const normalized = normalizeRegistryInput(readFixture('legacy-no-envelope.json'));
     expect(normalized.ok).toBe(true);

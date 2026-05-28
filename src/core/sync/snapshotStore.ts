@@ -1,0 +1,205 @@
+/// <reference types="@figma/plugin-typings" />
+
+import type { RegistryV1, SnapshotV1 } from '@detroitlabs/figmint-contracts';
+
+import { upsertRegistryEntry } from '@/core/components/registry';
+import type { UpsertRegistryEntryInput } from '@/core/components/registry.types';
+import { pluginLog } from '@/core/pluginLog';
+import { findOrCreateOutputPage } from '@/io/sinks/outputPage';
+
+import {
+  SNAPSHOT_FRAME_NAME,
+  SNAPSHOT_MAX_BYTES,
+  SNAPSHOT_PLUGIN_DATA_KEY,
+} from './snapshotConstants';
+
+function readFileKey(): string {
+  if (figma.fileKey !== undefined && figma.fileKey.length > 0) {
+    return figma.fileKey;
+  }
+  return '';
+}
+
+function createEmptySnapshot(fileKey?: string): SnapshotV1 {
+  const resolvedFileKey = fileKey !== undefined && fileKey.length > 0 ? fileKey : readFileKey();
+  return {
+    v: 1,
+    kind: 'snapshot',
+    fileKey: resolvedFileKey,
+    updatedAt: new Date().toISOString(),
+    keys: {},
+    registry: { components: {} },
+  };
+}
+
+export function findOrCreateSnapshotFrame(): FrameNode {
+  const page = findOrCreateOutputPage();
+  for (let i = 0; i < page.children.length; i++) {
+    const child = page.children[i];
+    if (child.type === 'FRAME' && child.name === SNAPSHOT_FRAME_NAME) {
+      return child;
+    }
+  }
+
+  const frame = figma.createFrame();
+  frame.name = SNAPSHOT_FRAME_NAME;
+  frame.resize(1, 1);
+  frame.visible = false;
+  frame.locked = true;
+  page.insertChild(0, frame);
+  return frame;
+}
+
+export function readSnapshotRaw(): string | null {
+  const frame = findOrCreateSnapshotFrame();
+  const raw = frame.getPluginData(SNAPSHOT_PLUGIN_DATA_KEY);
+  return raw.length > 0 ? raw : null;
+}
+
+export function parseSnapshot(raw: string | null): SnapshotV1 {
+  if (raw === null || raw.length === 0) {
+    return createEmptySnapshot();
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      pluginLog('[snapshot] parse failed — invalid envelope');
+      return createEmptySnapshot();
+    }
+    const record = parsed as Record<string, unknown>;
+    if (record.v !== 1 || record.kind !== 'snapshot') {
+      pluginLog('[snapshot] parse failed — wrong envelope');
+      return createEmptySnapshot();
+    }
+    const fileKey = typeof record.fileKey === 'string' ? record.fileKey : readFileKey();
+    const updatedAt =
+      typeof record.updatedAt === 'string' && record.updatedAt.length > 0
+        ? record.updatedAt
+        : new Date().toISOString();
+    const keys =
+      typeof record.keys === 'object' && record.keys !== null && !Array.isArray(record.keys)
+        ? (record.keys as SnapshotV1['keys'])
+        : {};
+    let components: SnapshotV1['registry']['components'] = {};
+    if (
+      typeof record.registry === 'object' &&
+      record.registry !== null &&
+      !Array.isArray(record.registry)
+    ) {
+      const registryRecord = record.registry as Record<string, unknown>;
+      if (
+        typeof registryRecord.components === 'object' &&
+        registryRecord.components !== null &&
+        !Array.isArray(registryRecord.components)
+      ) {
+        components = registryRecord.components as SnapshotV1['registry']['components'];
+      }
+    }
+    return {
+      v: 1,
+      kind: 'snapshot',
+      fileKey: fileKey,
+      updatedAt: updatedAt,
+      keys: keys,
+      registry: { components: components },
+    };
+  } catch {
+    pluginLog('[snapshot] parse failed — corrupt JSON');
+    return createEmptySnapshot();
+  }
+}
+
+export function getSnapshot(): SnapshotV1 {
+  return parseSnapshot(readSnapshotRaw());
+}
+
+export function persistSnapshot(snapshot: SnapshotV1): void {
+  const serialized = JSON.stringify(snapshot);
+  const byteLength = new TextEncoder().encode(serialized).length;
+  if (byteLength > SNAPSHOT_MAX_BYTES) {
+    throw new Error(
+      'Canvas snapshot exceeds ' +
+        String(SNAPSHOT_MAX_BYTES) +
+        ' bytes (' +
+        String(byteLength) +
+        '). Trim registry entries or drift keys before saving.',
+    );
+  }
+  const frame = findOrCreateSnapshotFrame();
+  frame.setPluginData(SNAPSHOT_PLUGIN_DATA_KEY, serialized);
+  pluginLog('[snapshot] persist', String(byteLength) + ' bytes');
+}
+
+export function getRegistryFromSnapshot(): RegistryV1 {
+  const snapshot = getSnapshot();
+  return {
+    v: 1,
+    kind: 'registry',
+    fileKey: snapshot.fileKey,
+    components: snapshot.registry.components,
+  };
+}
+
+export function upsertSnapshotRegistryEntry(input: UpsertRegistryEntryInput): RegistryV1 {
+  const snapshot = getSnapshot();
+  const baseRegistry = input.registry !== null ? input.registry : getRegistryFromSnapshot();
+  const merged = upsertRegistryEntry({
+    registry: baseRegistry,
+    spec: input.spec,
+    scaffold: input.scaffold,
+    targetPage: input.targetPage,
+    fileKey: input.fileKey,
+    now: input.now,
+  });
+  const fileKey = input.fileKey.length > 0 ? input.fileKey : snapshot.fileKey;
+  const nextSnapshot: SnapshotV1 = {
+    v: 1,
+    kind: 'snapshot',
+    fileKey: fileKey,
+    updatedAt: new Date().toISOString(),
+    keys: snapshot.keys,
+    registry: {
+      components: merged.components,
+    },
+  };
+  persistSnapshot(nextSnapshot);
+  const entry = merged.components[input.spec.name];
+  pluginLog(
+    '[snapshot] upsert registry',
+    input.spec.name,
+    entry !== undefined ? String(entry.version) : '0',
+  );
+  return merged;
+}
+
+export function updateSnapshotKeys(
+  keys: Array<{ key: string; value: unknown; source: 'push' | 'pull' }>,
+): void {
+  const snapshot = getSnapshot();
+  const nextKeys = Object.assign({}, snapshot.keys);
+  const timestamp = new Date().toISOString();
+  for (let i = 0; i < keys.length; i++) {
+    const item = keys[i];
+    nextKeys[item.key] = {
+      key: item.key,
+      value: item.value,
+      source: item.source,
+      timestamp: timestamp,
+    };
+  }
+  persistSnapshot({
+    v: 1,
+    kind: 'snapshot',
+    fileKey: snapshot.fileKey,
+    updatedAt: timestamp,
+    keys: nextKeys,
+    registry: snapshot.registry,
+  });
+}
+
+export function clearSnapshot(): void {
+  const frame = findOrCreateSnapshotFrame();
+  frame.setPluginData(SNAPSHOT_PLUGIN_DATA_KEY, '');
+  pluginLog('[snapshot] cleared');
+}

@@ -3,7 +3,6 @@ import { useCallback, useState } from 'react';
 import { buildDefaultHeadBranch } from '@/io/github/branchName';
 import { buildPrBody } from '@/io/github/prBody';
 import { loadFromGitHub } from '@/io/sources/github';
-import { DEFAULT_REGISTRY_PATH } from '@/ui/components/scaffold/constants';
 import type { UseGitHubConnectResult } from '@/ui/github/useGitHubConnect';
 
 const DEFAULT_TOKENS_PATH = 'design/tokens.json';
@@ -25,20 +24,16 @@ const inputStyle = {
 export interface SettingsProps {
   repoUrl: string;
   tokensPath: string;
-  registryPath: string;
   onRepoUrlChange: (value: string) => void;
   onTokensPathChange: (value: string) => void;
-  onRegistryPathChange: (value: string) => void;
   github: UseGitHubConnectResult;
 }
 
 export function Settings({
   repoUrl,
   tokensPath,
-  registryPath,
   onRepoUrlChange,
   onTokensPathChange,
-  onRegistryPathChange,
   github,
 }: SettingsProps) {
   const [readResult, setReadResult] = useState('');
@@ -163,21 +158,9 @@ export function Settings({
             style={inputStyle}
           />
         </label>
-        <label style={{ color: '#666', display: 'block', fontSize: '11px', marginTop: '8px' }}>
-          Figma sync file path
-          <input
-            type="text"
-            value={registryPath}
-            onChange={function (event) {
-              onRegistryPathChange(event.target.value);
-            }}
-            placeholder={DEFAULT_REGISTRY_PATH}
-            style={inputStyle}
-          />
-        </label>
         <p style={{ color: '#666', fontSize: '10px', lineHeight: 1.45, margin: '6px 0 0' }}>
-          Tracks components already scaffolded in Figma (<code>{DEFAULT_REGISTRY_PATH}</code>). Not
-          a catalog of every component in your repo — browse + batch scaffold ships in WO-056.
+          Component registry is stored in the Figma file (canvas snapshot). Repo sync paths ship in
+          WO-058 Phase 2 via <code>figmint.json</code>.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
           <button

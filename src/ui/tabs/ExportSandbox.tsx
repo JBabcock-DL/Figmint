@@ -1,5 +1,5 @@
 import { ExportSheet } from '@/ui/components/ExportSheet';
-import { prepareRegistryExport } from '@/ui/components/registryExport';
+import { prepareRegistryExport } from '@/ui/export/registryExportSandbox';
 import { sampleDriftReportDocument } from '@/ui/export/sampleDriftReport';
 import { sampleRegistryDocument } from '@/ui/export/sampleRegistry';
 

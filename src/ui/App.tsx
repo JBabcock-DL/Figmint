@@ -155,7 +155,6 @@ export function App() {
       <TabPanel id={TAB_PANEL_IDS.components} active={activeTab === 'components'}>
         <Components
           repoUrl={githubSession.repoUrl}
-          registryPath={githubSession.registryPath}
           github={github}
           onOpenSettings={function () {
             setActiveTab('settings');
@@ -171,10 +170,8 @@ export function App() {
         <Settings
           repoUrl={githubSession.repoUrl}
           tokensPath={githubSession.tokensPath}
-          registryPath={githubSession.registryPath}
           onRepoUrlChange={githubSession.setRepoUrl}
           onTokensPathChange={githubSession.setTokensPath}
-          onRegistryPathChange={githubSession.setRegistryPath}
           github={github}
         />
       </TabPanel>

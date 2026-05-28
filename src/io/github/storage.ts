@@ -11,7 +11,7 @@ export interface StoredGitHubToken {
 
 export interface StoredGitHubConfig {
   tokensPath: string;
-  /** Registry document path; Components tab defaults to `.figmint-registry.json` when unset. */
+  /** Legacy registry repo path — deprecated; canvas snapshot is SSOT (WO-058). */
   registryPath?: string;
   defaultBranch?: string;
   exportBasePath?: string;

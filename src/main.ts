@@ -5,6 +5,7 @@
 
 import { runBootstrap } from '@/core/bootstrap/runBootstrap';
 import { runScaffoldComponent } from '@/core/components/scaffold/runScaffold';
+import { getRegistryFromSnapshot } from '@/core/sync/snapshotStore';
 import { pushTokens } from '@/core/variables';
 import { runCanvasBench } from '@/core/canvas/bench';
 import { buildPrimitivesPage } from '@/core/canvas/colorTables';
@@ -24,6 +25,10 @@ import {
 } from '@/io/messages/canvas';
 import { isBootstrapRunMessage } from '@/io/messages/bootstrap';
 import { isScaffoldRunMessage } from '@/io/messages/scaffold';
+import {
+  isSnapshotReadMessage,
+  type SnapshotReadResultMessage,
+} from '@/io/messages/snapshot';
 import {
   isPushVariablesMessage,
   type PushErrorMessage,
@@ -208,15 +213,34 @@ async function handleGitHubSessionLoad(): Promise<void> {
     response.repoUrl = lastRepo;
     response.tokensPath =
       config !== null && config.tokensPath.length > 0 ? config.tokensPath : 'design/tokens.json';
-    response.registryPath =
-      config !== null && config.registryPath !== undefined && config.registryPath.length > 0
-        ? config.registryPath
-        : '.figmint-registry.json';
     response.connected = token !== null;
     await sendGitHubTokenStatus(lastRepo);
   }
 
   figma.ui.postMessage(response);
+}
+
+function handleSnapshotRead(requestId: string): void {
+  try {
+    const registry = getRegistryFromSnapshot();
+    const response: SnapshotReadResultMessage = {
+      type: 'snapshot/read/result',
+      requestId: requestId,
+      ok: true,
+      registry: registry,
+    };
+    figma.ui.postMessage(response);
+    pluginLog('[main] snapshot/read ok', String(Object.keys(registry.components).length) + ' entries');
+  } catch (error) {
+    const errResponse: SnapshotReadResultMessage = {
+      type: 'snapshot/read/result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+    pluginLog('[main] snapshot/read failed', errResponse.error !== undefined ? errResponse.error : '');
+  }
 }
 
 async function handleGitHubOAuthStart(requestId: string, scope: string): Promise<void> {
@@ -711,6 +735,11 @@ async function handleCanvasBench(
 }
 
 figma.ui.onmessage = (message: unknown) => {
+  if (isSnapshotReadMessage(message)) {
+    handleSnapshotRead(message.requestId);
+    return;
+  }
+
   if (isGitHubOAuthStartMessage(message)) {
     handleGitHubOAuthStart(message.requestId, message.scope).catch(function (error: unknown) {
       const errResponse: GitHubErrorMessage = {

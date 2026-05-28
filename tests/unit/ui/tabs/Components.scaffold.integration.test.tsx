@@ -8,12 +8,11 @@ import canonicalFixture from '../../../fixtures/component-spec-button-canonical.
 
 const componentsProps = {
   repoUrl: 'https://github.com/acme/widgets',
-  registryPath: '.figmint-registry.json',
   github: createMockGitHubConnect({ connected: true }),
 };
 
 describe('Components scaffold integration', () => {
-  it('shows registry export section after scaffold/result', async () => {
+  it('shows audit panel after scaffold/result without registry export sheet', async () => {
     const postMessage = vi.fn();
     Object.defineProperty(window, 'parent', {
       value: { postMessage: postMessage },
@@ -21,6 +20,29 @@ describe('Components scaffold integration', () => {
     });
 
     render(<Components {...componentsProps} />);
+
+    const snapshotRequestId = postMessage.mock.calls.find(function (call) {
+      return call[0].pluginMessage.type === 'snapshot/read';
+    });
+    expect(snapshotRequestId).toBeDefined();
+    const requestId = snapshotRequestId![0].pluginMessage.requestId as string;
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        data: {
+          pluginMessage: {
+            type: 'snapshot/read/result',
+            requestId: requestId,
+            ok: true,
+            registry: {
+              v: 1,
+              kind: 'registry',
+              fileKey: 'fk',
+              components: {},
+            },
+          },
+        },
+      }),
+    );
 
     window.dispatchEvent(
       new MessageEvent('message', {
@@ -46,7 +68,20 @@ describe('Components scaffold integration', () => {
                 },
               },
             },
-            audits: [],
+            audits: [
+              {
+                v: 1,
+                kind: 'audit-report',
+                scope: 'component',
+                meta: {
+                  generatedAt: '2026-05-28T00:00:00.000Z',
+                  operation: 'scaffold-component',
+                },
+                summary: { rulesPassed: 4, rulesFailed: 0, rulesWarned: 0 },
+                passed: true,
+                results: [],
+              },
+            ],
             scaffold: {
               componentSet: { id: 'cs:1' },
               variantCount: 12,
@@ -62,9 +97,9 @@ describe('Components scaffold integration', () => {
     );
 
     await waitFor(function () {
-      expect(screen.getByLabelText('Registry export')).toBeTruthy();
+      expect(screen.getByLabelText('Component audit')).toBeTruthy();
     });
-    expect(screen.getByText('Update registry')).toBeTruthy();
+    expect(screen.queryByLabelText('Registry export')).toBeNull();
   });
 
   it('posts scaffold/run with spec when CTA enabled', async () => {
@@ -77,7 +112,6 @@ describe('Components scaffold integration', () => {
     render(
       <Components
         repoUrl=""
-        registryPath=".figmint-registry.json"
         github={createMockGitHubConnect()}
       />,
     );
@@ -93,17 +127,12 @@ describe('Components scaffold integration', () => {
       }),
     );
 
-    // Simulate paste via direct document load through internal flow — load fixture through ingest
     const { classifyComponentsIngest } = await import('@/ui/components/scaffold/ingestDocument');
     const outcome = classifyComponentsIngest({
       kind: 'component-spec',
       payload: canonicalFixture,
-      sourceMeta: { port: 'paste', receivedAt: '', charLength: 0 },
-      rawSnippet: '',
+      sourceMeta: { port: 'paste', receivedAt: '2026-05-28T00:00:00.000Z', charLength: 100 },
     });
     expect(outcome.ok).toBe(true);
-
-    // User would paste via SourcePasteTextarea; verify postMessage shape separately
-    expect(postMessage).not.toHaveBeenCalled();
   });
 });

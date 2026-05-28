@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useState, type CSSProperties } from 'react';
 
-import type { ComponentSpecV1, RegistryV1 } from '@detroitlabs/figmint-contracts';
+import type { ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
 
 import {
   isScaffoldErrorMessage,
@@ -8,11 +8,9 @@ import {
   isScaffoldResultMessage,
 } from '@/io/messages/scaffold';
 import type { LoadedDocument } from '@/io/sources/types';
-import { defaultRegistryExportSinks, prepareRegistryExport } from '@/ui/components/registryExport';
 import { AuditPanel } from '@/ui/components/AuditPanel';
-import { ExportSheet } from '@/ui/components/ExportSheet';
 import { classifyComponentsIngest } from '@/ui/components/scaffold/ingestDocument';
-import { loadRegistryForComponentsTab } from '@/ui/components/scaffold/loadRegistryFromRepo';
+import { loadRegistryForComponentsTab } from '@/ui/components/scaffold/loadRegistryFromSnapshot';
 import { syncRegistryLoadedMessage } from '@/ui/components/scaffold/registryLoadMessages';
 import { resolveComponentSpecFromRepo } from '@/ui/components/scaffold/resolveComponentSpec';
 import {
@@ -54,18 +52,15 @@ function cloneSpec(spec: ComponentSpecV1): ComponentSpecV1 {
 
 export interface ComponentsTabProps {
   repoUrl: string;
-  registryPath: string;
   github: UseGitHubConnectResult;
   onOpenSettings?: () => void;
 }
 
 export function Components({
   repoUrl,
-  registryPath,
   github,
   onOpenSettings,
 }: ComponentsTabProps) {
-  const [registry, setRegistry] = useState<RegistryV1 | null>(null);
   const [registryKeys, setRegistryKeys] = useState<string[]>([]);
   const [selectedKey, setSelectedKey] = useState('');
   const [registryStatus, setRegistryStatus] = useState('');
@@ -76,8 +71,6 @@ export function Components({
     Awaited<ReturnType<typeof validateComponentSpecDraft>> | null
   >(null);
   const [showAudit, setShowAudit] = useState(false);
-  const [showRegistryExport, setShowRegistryExport] = useState(false);
-  const [resultRegistry, setResultRegistry] = useState<RegistryV1 | null>(null);
 
   const [progressState, dispatchProgress] = useReducer(
     reduceScaffoldProgress,
@@ -135,10 +128,8 @@ export function Components({
       setDraft(cloneSpec(outcome.spec));
       setSourceLabel('Loaded component-spec via ' + doc.sourceMeta.port);
       dispatchProgress({ type: 'scaffold/reset' });
-      setShowRegistryExport(false);
       return;
     }
-    setRegistry(outcome.registry);
     setRegistryKeys(Object.keys(outcome.registry.components).sort());
     setSourceLabel('Loaded registry via ' + doc.sourceMeta.port);
   }, []);
@@ -154,23 +145,28 @@ export function Components({
     [applyLoadedDocument],
   );
 
-  const handleLoadRegistry = useCallback(async function () {
-    if (!github.connected || repoUrl.length === 0) {
-      return;
-    }
-    setRegistryStatus('Loading sync registry…');
-    const loaded = await loadRegistryForComponentsTab(repoUrl, registryPath);
+  const refreshRegistryFromSnapshot = useCallback(async function () {
+    setRegistryStatus('Loading canvas snapshot…');
+    const loaded = await loadRegistryForComponentsTab();
     if (!loaded.ok) {
       setRegistryStatus(loaded.message);
       setRegistryKeys([]);
       return;
     }
-    setRegistry(loaded.registry);
-    const keys =
-      loaded.registry !== null ? Object.keys(loaded.registry.components).sort() : [];
-    setRegistryKeys(keys);
-    setRegistryStatus(loaded.message !== undefined ? loaded.message : syncRegistryLoadedMessage(keys.length));
-  }, [github.connected, registryPath, repoUrl]);
+    setRegistryKeys(
+      loaded.registry !== null ? Object.keys(loaded.registry.components).sort() : [],
+    );
+    setRegistryStatus(loaded.message !== undefined ? loaded.message : syncRegistryLoadedMessage(
+      loaded.registry !== null ? Object.keys(loaded.registry.components).length : 0,
+    ));
+  }, []);
+
+  useEffect(
+    function () {
+      void refreshRegistryFromSnapshot();
+    },
+    [refreshRegistryFromSnapshot],
+  );
 
   const handleSelectRegistryKey = useCallback(
     async function (key: string) {
@@ -188,7 +184,6 @@ export function Components({
       setSourceLabel('Resolved from ' + resolved.path);
       setRegistryStatus('Spec ready: ' + resolved.path);
       dispatchProgress({ type: 'scaffold/reset' });
-      setShowRegistryExport(false);
     },
     [github.connected, repoUrl],
   );
@@ -226,20 +221,18 @@ export function Components({
       }
       dispatchProgress({ type: 'scaffold/start' });
       setShowAudit(false);
-      setShowRegistryExport(false);
       parent.postMessage(
         {
           pluginMessage: {
             type: 'scaffold/run',
             spec: draft,
-            options: { registry: registry !== null ? registry : undefined },
           },
         },
         '*',
       );
       console.debug('[ui] scaffold/run', { name: draft.name, variantCount: variantCount });
     },
-    [canScaffold, draft, registry, variantCount],
+    [canScaffold, draft, variantCount],
   );
 
   useEffect(function () {
@@ -262,9 +255,7 @@ export function Components({
       }
       if (isScaffoldResultMessage(msg)) {
         dispatchProgress(msg);
-        setResultRegistry(msg.registry);
-        setRegistry(msg.registry);
-        setShowRegistryExport(true);
+        setRegistryKeys(Object.keys(msg.registry.components).sort());
         setShowAudit(true);
         console.debug('[ui] scaffold/result', String(msg.totalDurationMs) + 'ms');
         return;
@@ -281,13 +272,6 @@ export function Components({
   }, []);
 
   const { bannerDoc, dismissBanner, acceptBanner } = useClipboardSources(applyLoadedDocument);
-
-  const exportProps =
-    resultRegistry !== null
-      ? prepareRegistryExport(resultRegistry, {
-          defaultSinks: defaultRegistryExportSinks(github.connected),
-        })
-      : null;
 
   const completedSteps = countCompletedSteps(progressState.steps);
   const repoDisplay = formatRepoDisplay(repoUrl);
@@ -316,16 +300,16 @@ export function Components({
         ) : null}
       </section>
 
-      <section style={SECTION_BORDER} aria-label="Re-scaffold from sync registry">
-        <h2 style={SECTION_HEADING}>Re-scaffold from sync file</h2>
+      <section style={SECTION_BORDER} aria-label="Re-scaffold from linked components">
+        <h2 style={SECTION_HEADING}>Re-scaffold from linked components</h2>
         <p style={{ color: '#666', fontSize: 10, lineHeight: 1.45, margin: '0 0 8px' }}>
-          Loads <strong>{registryPath}</strong> — components already linked between Figma and GitHub.
-          Configure repo and sync path in Settings.
+          Reads the canvas snapshot — components already linked between Figma and GitHub. Connect
+          your repo in Settings to resolve specs from GitHub.
         </p>
         {!github.connected ? (
           <div style={{ opacity: 0.6, pointerEvents: 'none' }}>
             <p style={{ color: '#666', fontSize: 11, margin: '0 0 8px' }}>
-              Connect GitHub in Settings to load the sync file.
+              Connect GitHub in Settings to resolve component specs from your repo.
             </p>
             {onOpenSettings !== undefined ? (
               <button
@@ -348,26 +332,9 @@ export function Components({
             <p style={{ color: '#333', fontSize: 11, margin: '0 0 8px' }}>
               Connected: <strong>{repoDisplay}</strong>
             </p>
-            <button
-              type="button"
-              onClick={function () {
-                void handleLoadRegistry();
-              }}
-              style={{
-                border: '1px solid #ccc',
-                borderRadius: 4,
-                fontSize: 11,
-                fontWeight: 600,
-                marginBottom: 8,
-                padding: '4px 10px',
-              }}
-            >
-              Load sync registry
-            </button>
             {showSyncEmptyHint ? (
               <p style={{ color: '#666', fontSize: 10, lineHeight: 1.45, margin: '0 0 8px' }}>
-                After your first scaffold, export the sync file so linked components appear here for
-                re-scaffold.
+                After your first scaffold, linked components appear here for re-scaffold.
               </p>
             ) : null}
             {registryKeys.length > 0 ? (
@@ -497,26 +464,6 @@ export function Components({
       {showAudit && !progressState.running && progressState.audits.length > 0 ? (
         <section aria-label="Component audit">
           <AuditPanel audits={progressState.audits} />
-        </section>
-      ) : null}
-
-      {showRegistryExport && exportProps !== null ? (
-        <section aria-label="Registry export">
-          <p style={{ fontSize: 11, color: '#666', margin: '0 0 8px' }}>
-            Scaffold complete — export the updated registry to sync your repo. Nothing is
-            committed until you confirm.
-          </p>
-          <ExportSheet
-            document={exportProps.document}
-            title={exportProps.title}
-            defaultSinks={exportProps.defaultSinks}
-            onComplete={function () {
-              setShowRegistryExport(false);
-            }}
-            onCancel={function () {
-              setShowRegistryExport(false);
-            }}
-          />
         </section>
       ) : null}
     </div>

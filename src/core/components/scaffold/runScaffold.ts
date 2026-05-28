@@ -3,13 +3,16 @@
 import type { AuditReportV1, AuditRuleResult, ComponentSpecV1 } from '@detroitlabs/figmint-contracts';
 
 import { runAudit, runDocPipelinePreflightAudit } from '@/core/audit/runAudit';
-import { createEmptyRegistry, upsertRegistryEntry } from '@/core/components/registry';
 import { buildRegistryAuditRows } from '@/core/components/registryAuditRows';
 import { applyBindings } from '@/core/components/scaffold/applyBindings';
 import { applyProperties } from '@/core/components/scaffold/applyProperties';
 import { scaffold } from '@/core/components/scaffold';
 import { ensureComponentScaffoldTarget } from '@/core/components/scaffold/ensureComponentScaffoldTarget';
 import { buildDocPipeline } from '@/core/canvas/doc';
+import {
+  getRegistryFromSnapshot,
+  upsertSnapshotRegistryEntry,
+} from '@/core/sync/snapshotStore';
 import type { ApplyBindingsResult, ApplyPropertiesResult, ScaffoldResult } from '@/core/components/scaffold/types';
 import { pluginLog } from '@/core/pluginLog';
 import {
@@ -283,11 +286,11 @@ export async function runScaffoldComponent(
     let registry =
       options !== undefined && options.registry !== undefined
         ? options.registry
-        : createEmptyRegistry(fileKey);
+        : getRegistryFromSnapshot();
 
     if (options === undefined || options.skipRegistry !== true) {
       postProgress('update-registry', 'running');
-      registry = upsertRegistryEntry({
+      registry = upsertSnapshotRegistryEntry({
         registry: registry,
         spec: spec,
         scaffold: scaffoldResult,

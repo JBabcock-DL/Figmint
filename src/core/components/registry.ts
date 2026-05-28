@@ -2,7 +2,6 @@ import type { RegistryComponentEntry, RegistryV1 } from '@detroitlabs/figmint-co
 
 import { hashVariantMatrix } from './scaffold/variantMatrix';
 import {
-  DEFAULT_REGISTRY_PATH,
   REGISTRY_FILE_KEY_MISMATCH,
   RegistryMergeError,
   type BuildRegistryEntryInput,
@@ -32,13 +31,6 @@ export function assertRegistryFileKey(registry: RegistryV1, fileKey: string): vo
         ' — refuse to merge (cross-file pollution).',
     );
   }
-}
-
-export function resolveRegistryReadPath(path?: string): string {
-  if (path !== undefined && path.length > 0) {
-    return path;
-  }
-  return DEFAULT_REGISTRY_PATH;
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {

@@ -41,11 +41,11 @@ describe('buildExportFiles', () => {
     const files = buildExportFiles(
       registryDoc,
       { json: true, md: true },
-      '.figmint-registry',
+      'docs/figmint/registry-export',
     );
 
     expect(files).toHaveLength(1);
-    expect(files[0].path).toBe('.figmint-registry.json');
+    expect(files[0].path).toBe('docs/figmint/registry-export.json');
     expect(files[0].format).toBe('json');
     expect(files[0].content).toContain('"kind": "registry"');
   });

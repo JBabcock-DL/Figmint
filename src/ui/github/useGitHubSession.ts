@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { loadGitHubSession } from '@/io/github/githubUiBridge';
-import { DEFAULT_REGISTRY_PATH } from '@/ui/components/scaffold/constants';
 
 const DEFAULT_TOKENS_PATH = 'design/tokens.json';
 
@@ -10,8 +9,6 @@ export interface GitHubSessionState {
   setRepoUrl: (value: string) => void;
   tokensPath: string;
   setTokensPath: (value: string) => void;
-  registryPath: string;
-  setRegistryPath: (value: string) => void;
   sessionReady: boolean;
 }
 
@@ -19,7 +16,6 @@ export interface GitHubSessionState {
 export function useGitHubSession(): GitHubSessionState {
   const [repoUrl, setRepoUrl] = useState('');
   const [tokensPath, setTokensPath] = useState(DEFAULT_TOKENS_PATH);
-  const [registryPath, setRegistryPath] = useState(DEFAULT_REGISTRY_PATH);
   const [sessionReady, setSessionReady] = useState(false);
 
   useEffect(function () {
@@ -34,9 +30,6 @@ export function useGitHubSession(): GitHubSessionState {
         }
         if (session.tokensPath !== undefined && session.tokensPath.length > 0) {
           setTokensPath(session.tokensPath);
-        }
-        if (session.registryPath !== undefined && session.registryPath.length > 0) {
-          setRegistryPath(session.registryPath);
         }
         setSessionReady(true);
       })
@@ -56,8 +49,6 @@ export function useGitHubSession(): GitHubSessionState {
     setRepoUrl: setRepoUrl,
     tokensPath: tokensPath,
     setTokensPath: setTokensPath,
-    registryPath: registryPath,
-    setRegistryPath: setRegistryPath,
     sessionReady: sessionReady,
   };
 }

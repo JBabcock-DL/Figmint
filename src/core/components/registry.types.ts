@@ -7,8 +7,6 @@ import type {
 import type { ScaffoldResult } from '@/core/components/scaffold/types';
 
 export const REGISTRY_FILE_KEY_MISMATCH = 'REGISTRY_FILE_KEY_MISMATCH';
-export const DEFAULT_REGISTRY_PATH = '.figmint-registry.json';
-export const LEGACY_REGISTRY_PATH = '.designops-registry.json';
 
 export class RegistryMergeError extends Error {
   readonly code: string;

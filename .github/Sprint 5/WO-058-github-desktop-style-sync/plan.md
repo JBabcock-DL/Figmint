@@ -55,7 +55,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 
 ### Phase 1 — Snapshot + registry migration
 
-- [ ] **Step 1** — Add `packages/contracts/src/snapshot.v1.ts`:
+- [x] **Step 1** — Add `packages/contracts/src/snapshot.v1.ts`:
   ```typescript
   export interface SnapshotEntryV1 {
     key: string;
@@ -84,13 +84,13 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   Export from `packages/contracts/src/index.ts`.
   **Done when:** `npm run typecheck` passes; contract re-export visible.
 
-- [ ] **Step 2** — Add constants in `src/core/sync/snapshotConstants.ts`:
+- [x] **Step 2** — Add constants in `src/core/sync/snapshotConstants.ts`:
   - `SNAPSHOT_PLUGIN_DATA_KEY = 'figmint:snapshot:v1'`
   - `SNAPSHOT_FRAME_NAME = '_FigmintSnapshotStore'`
   - `SNAPSHOT_MAX_BYTES = 90_000` (guard below Figma 100KB limit)
   **Done when:** file exists; imported by store module.
 
-- [ ] **Step 3** — Implement `src/core/sync/snapshotStore.ts` (main-thread only):
+- [x] **Step 3** — Implement `src/core/sync/snapshotStore.ts` (main-thread only):
   - `findOrCreateSnapshotFrame(): FrameNode` — reuse `findOrCreateOutputPage()` from `src/io/sinks/outputPage.ts`; create 1×1 hidden locked frame as first child
   - `readSnapshotRaw(): string | null` — `frame.getPluginData(SNAPSHOT_PLUGIN_DATA_KEY)`
   - `parseSnapshot(raw: string | null): SnapshotV1` — corrupt/missing → empty envelope `{ v:1, kind:'snapshot', fileKey: figma.fileKey||'', updatedAt: ISO, keys:{}, registry:{components:{}} }`
@@ -103,7 +103,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   Use `pluginLog()` for events; no `console.debug`.
   **Done when:** `tests/unit/core/sync/snapshotStore.test.ts` covers parse empty, round-trip persist, registry upsert, size guard (mock frame pluginData).
 
-- [ ] **Step 4** — Add `src/io/messages/snapshot.ts`:
+- [x] **Step 4** — Add `src/io/messages/snapshot.ts`:
   ```typescript
   export type SnapshotReadMessage = { type: 'snapshot/read'; requestId: string };
   export type SnapshotReadResultMessage = {
@@ -118,53 +118,53 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   Add type guards mirroring `github.ts` pattern.
   **Done when:** guards exported; no main handler yet (Step 13).
 
-- [ ] **Step 5** — Delete repo registry **read** path:
+- [x] **Step 5** — Delete repo registry **read** path:
   - Replace `src/ui/components/scaffold/loadRegistryFromRepo.ts` with `loadRegistryFromSnapshot.ts` calling `postMessage({ type:'snapshot/read' })` and returning `RegistryV1 | null`
   - Remove `loadRegistryFromGitHub` usage from Components tab
   **Done when:** `grep -r loadRegistryFromGitHub src/ui/tabs/Components.tsx` returns zero (except Export sandbox if kept).
 
-- [ ] **Step 6** — Trim `src/core/components/registryAuditRows.ts`:
+- [x] **Step 6** — Trim `src/core/components/registryAuditRows.ts`:
   - Remove rows `comp/registry-envelope` and `comp/registry-filekey`
   - Keep: `comp/registry-entry-present`, `comp/registry-entry-nodeid`, `comp/registry-entry-key`, `comp/registry-entry-version`
   **Done when:** `tests/unit/audit/componentRules.test.ts` updated; no assertions expect deleted rule IDs.
 
-- [ ] **Step 7** — Rewrite `src/ui/components/registryExport.ts`:
+- [x] **Step 7** — Rewrite `src/ui/components/registryExport.ts`:
   - Rename to `src/ui/components/snapshotRegistry.ts` (update all imports)
   - Keep `upsert` logic via main message or direct call from main in scaffold handler
   - **Delete:** `loadRegistryFromGitHub`, `runRegistryExportFlow` GitHub merge, `prepareRegistryExport` for Components production path
   - Export sandbox (`ExportSandbox.tsx`) may keep sample registry document — not GitHub path
   **Done when:** Components tab does not import `prepareRegistryExport` for post-scaffold PR flow.
 
-- [ ] **Step 8** — Update `src/core/components/scaffold/runScaffold.ts` (lines 283–309):
+- [x] **Step 8** — Update `src/core/components/scaffold/runScaffold.ts` (lines 283–309):
   - Before upsert: `registry = getRegistryFromSnapshot()` via inlined call (main thread) instead of `options.registry` from GitHub
   - After upsert: `persistSnapshot` with updated registry
   - Remove dependency on `options.registry` from GitHub load (keep param for tests with explicit inject)
   **Done when:** scaffold integration test passes with mock snapshot frame.
 
-- [ ] **Step 9** — Remove `.figmint-registry.json` constants from production paths:
+- [x] **Step 9** — Remove `.figmint-registry.json` constants from production paths:
   - Delete `DEFAULT_REGISTRY_PATH` from `src/ui/components/scaffold/constants.ts`
   - Remove `DEFAULT_REGISTRY_PATH` usage from `registry.types.ts` — delete `resolveRegistryReadPath` or make throw "deprecated"
   - Remove `registry` case from `src/ui/export/defaultPaths.ts` OR restrict to Export sandbox-only with comment
   **Done when:** `rg '\.figmint-registry' src/ packages/contracts/src/ --glob '!**/sample*'` returns zero matches.
 
-- [ ] **Step 10** — Update `src/ui/tabs/Components.tsx`:
+- [x] **Step 10** — Update `src/ui/tabs/Components.tsx`:
   - Remove "Load sync registry" button (~line 365)
   - On mount: call `loadRegistryFromSnapshot()` → set `registry` state + `registryKeys`
   - Remove `showRegistryExport` / ExportSheet block for registry PR (~line 503)
   - Remove `registryPath` prop from `ComponentsTabProps`
   **Done when:** `tests/unit/ui/tabs/Components.scaffold.integration.test.tsx` updated; no "Load sync registry" string in file.
 
-- [ ] **Step 11** — Update `src/ui/App.tsx`:
+- [x] **Step 11** — Update `src/ui/App.tsx`:
   - Stop passing `registryPath` to Components and Settings
   - Remove `registryPath` / `setRegistryPath` from `useGitHubSession` usage where obsolete (Phase 2 completes removal)
   **Done when:** App.tsx compiles.
 
-- [ ] **Step 12** — Wire snapshot handlers in `src/main.ts`:
+- [x] **Step 12** — Wire snapshot handlers in `src/main.ts`:
   - `handleSnapshotRead(requestId)` → post `snapshot/read/result` with `getRegistryFromSnapshot()`
   - Register in message switch alongside github handlers
   **Done when:** UI `loadRegistryFromSnapshot` returns registry in unit test with mocked postMessage.
 
-- [ ] **Step 13** — Batch-update tests referencing registry path (~25 files):
+- [x] **Step 13** — Batch-update tests referencing registry path (~25 files):
   - `tests/unit/core/components/registry.test.ts` — remove `resolveRegistryReadPath` default test
   - `tests/unit/ui/scaffold/loadRegistryFromRepo.test.ts` → rename to snapshot loader tests
   - `tests/unit/ui/components/registryExport.test.tsx` → snapshot upsert tests
@@ -387,6 +387,8 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 ---
 
 ## Notes
+
+- **2026-05-28 Phase 1 build complete.** Snapshot SSOT on `_FigmintSnapshotStore` frame (`figmint:snapshot:v1` pluginData). Deleted `registryExport.ts`, `loadRegistryFromRepo.ts`, `constants.ts`. Export sandbox helpers moved to `src/ui/export/registryExportSandbox.ts`. `comp/registry-envelope` + `comp/registry-filekey` audit rows removed. Components tab auto-loads canvas snapshot on mount; post-scaffold registry PR export removed. Settings registry path field removed (Phase 2 adds RepoSyncCard). Tests: 581 passed | 1 skipped. Gate: zero `.figmint-registry` refs in `src/`.
 
 - **ES2017:** no `?.`, `??`, `replaceAll` in `src/main.ts` / `src/core/sync/**`
 - **Logging:** `pluginLog()` only on main thread

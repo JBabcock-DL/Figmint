@@ -78,6 +78,8 @@ export class MockFrame {
   strokeWeight = 0;
   dashPattern: number[] = [];
   clipsContent = false;
+  visible = true;
+  locked = false;
   fills: Paint[] = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 }, opacity: 1 }];
   strokes: Paint[] = [];
   strokeTopWeight = 0;

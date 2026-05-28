@@ -39,6 +39,19 @@ export class MockPage {
     (child as { parent?: MockPage | null }).parent = this;
     this.children.push(child);
   }
+
+  insertChild(index: number, child: SceneNode): void {
+    const previousParent = (child as { parent?: MockPage | null }).parent;
+    if (previousParent !== undefined && previousParent !== null) {
+      const prevIndex = previousParent.children.indexOf(child);
+      if (prevIndex >= 0) {
+        previousParent.children.splice(prevIndex, 1);
+      }
+    }
+    (child as { parent?: MockPage | null }).parent = this;
+    const clamped = index < 0 ? 0 : index;
+    this.children.splice(clamped, 0, child);
+  }
 }
 
 export function resetMockFigmaOutputPage(): void {

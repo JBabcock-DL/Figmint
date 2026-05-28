@@ -90,3 +90,9 @@ export type {
 } from './handoffContext.v1';
 
 export type { RegistryComponentEntry, RegistryV1 } from './registry.v1';
+
+export type {
+  SnapshotEntryV1,
+  SnapshotRegistryEntryV1,
+  SnapshotV1,
+} from './snapshot.v1';

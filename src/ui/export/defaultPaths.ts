@@ -31,7 +31,7 @@ export function defaultExportBasename(doc: ContractDocument, now: Date = new Dat
     case 'component-spec':
       return 'docs/figmint/components/' + kebabCase(doc.payload.name);
     case 'registry':
-      return '.figmint-registry';
+      return 'docs/figmint/registry-export';
     case 'tokens':
       return 'docs/figmint/tokens-' + date;
     default: {
