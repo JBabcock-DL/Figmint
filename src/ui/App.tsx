@@ -1,7 +1,5 @@
 import { Bootstrap } from '@/ui/tabs/Bootstrap';
 
-import { flags } from '@/config/flags';
-
 export function App() {
   return (
     <main
@@ -19,7 +17,7 @@ export function App() {
       <header>
         <h1 style={{ fontSize: '18px', margin: '0 0 4px' }}>Figmint</h1>
         <p style={{ color: '#666', fontSize: '11px', margin: 0 }}>
-          v{import.meta.env.PACKAGE_VERSION} · {flags.buildTarget} build
+          v{import.meta.env.PACKAGE_VERSION}
         </p>
       </header>
 

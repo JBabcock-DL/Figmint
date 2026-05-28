@@ -5,7 +5,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
-      '@/config/flags': resolve(__dirname, './src/config/flags.community.ts'),
+      '@/config/flags': resolve(__dirname, './src/config/flags.ts'),
     },
   },
   test: {

@@ -30,34 +30,40 @@ Export sheet design lives in the Figmint design file (file_key TBD).
 
 ### Functional
 
-1. `src/ui/components/ExportSheet.tsx` — props: `{ document: ContractDocument, defaultSinks?: Sink[] }`.
-2. Format checkboxes: JSON / Markdown / both.
-3. Sink checkboxes: download / clipboard / Output page / pluginData / GitHub PR (Org only).
-4. When GitHub PR selected: path input field with sensible default based on document kind.
-5. Submit invokes the chosen sinks in parallel; reports per-sink success/failure.
+1. `src/ui/components/ExportSheet.tsx` — props: `{ document: ContractDocument, defaultSinks?: SinkId[], title?: string, onComplete?, onCancel? }`. `ContractDocument` is a discriminated union over canonical `@detroitlabs/figmint-contracts` payloads (ops-program, component-spec, drift-report, handoff-context, registry, tokens).
+2. Format checkboxes: independent JSON / Markdown toggles; at least one required; default both checked. WO-019 `format()` produces bytes — ExportSheet never authors markdown directly. Registry kind disables Markdown (no WO-019 renderer).
+3. Sink checkboxes: download / clipboard / Output page / pluginData / GitHub PR. **`flags.githubOAuth`** hides GitHub PR in Community builds. `defaultSinks` pre-checks per flow; intersected with available sinks on mount.
+4. Path input shown when download and/or GitHub PR selected. Default basename from `ContractKind` via `src/ui/export/defaultPaths.ts` (e.g. `docs/figmint/drift-{date}` per PRD §10.4).
+5. Submit serializes selected formats, then invokes sinks **in parallel** (`Promise.allSettled` for UI sinks; `export/run` postMessage for main-thread sinks). Per-sink success/failure rendered in a status list (Bootstrap step-list visual language).
+6. `src/io/messages/export.ts` — typed `export/run`, `export/sink-result`, `export/complete` union; `main.ts` handler for output-page, plugin-data, github-pr sinks.
+7. Extract `exportSheetReducer.ts` for form + async status state (match Bootstrap tab pattern).
 
 ### Visual / UX
 
-_See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI ticket._
+- Inline styles matching `App.tsx` / `Bootstrap.tsx` (Inter, 11px body, 13px section headers, semantic colors).
+- `<fieldset>` + `<legend>` for format and sink groups; Export disabled while exporting or when no format/sink selected.
+- Cancel + Export actions per PRD §10.4 ASCII wireframe.
 
 ### Technical / architectural
 
 - **Lift reference (DesignOps-plugin):**
   - _None — new code designed in PRD._
-- **Dependencies:** WO-017, WO-018, WO-019
+- **Dependencies:** WO-017, WO-018, WO-019 (WO-021 flags for GitHub gating)
 
 ---
 
 ## Acceptance criteria _(definition of done)_
 
-- [ ] Component renders in Storybook (or equivalent) with all 5 contract document kinds.
-- [ ] All 5 sinks are reachable; selecting multiple sinks writes to all of them.
-- [ ] GitHub PR sink hidden in Community build via feature flag.
+- [ ] Vitest component tests (Storybook equivalent) render ExportSheet for all six `ContractDocument` variants with fixture payloads.
+- [ ] All five sinks reachable when `flags.githubOAuth === true`; GitHub PR checkbox absent in Community build tests.
+- [ ] Multi-sink export invokes every selected sink; partial failure surfaces per-sink errors without blocking successful sinks.
+- [ ] Path input defaults match research table per contract kind.
 
 ## Out of scope
 
 - Per-sink customization beyond path (e.g. PR labels, commit author override).
 - Cancel-in-flight (assume sinks are fast enough).
+- Storybook setup.
 
 ---
 
@@ -65,15 +71,16 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 ### Functional QA
 
-- Vitest unit + integration tests cover the acceptance criteria above.
+- Vitest: `exportSheetReducer`, `defaultPaths`, `export` message guards, `ExportSheet` component tests (add `@testing-library/react` if plan approves).
+- Mock `parent.postMessage` and sink modules for orchestration tests.
 
 ### Visual / design QA
 
-- See ticket-level scope; most subsystem tickets have visual QA in their UI counterpart.
+- **Figma VQA deferred** — no design frame assigned yet (`file_key` TBD). Build against Bootstrap UI conventions until design lands.
 
 ### Accessibility
 
-- See ticket-level scope; UI tickets carry the a11y burden.
+- Checkbox groups labeled; Export/Cancel keyboard reachable; per-sink status uses `role="status"`.
 
 ### Telemetry / observability
 
@@ -116,7 +123,7 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 ## 🔍 Ready for `/research`
 
-- Optional, time-boxed.
+- ✅ [Export sheet UI patterns](research/export-sheet-ui-patterns.md) — 2026-05-27
 
 ## 📋 Ready for `/plan`
 
@@ -133,3 +140,6 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
+- Research: [Export sheet UI patterns](research/export-sheet-ui-patterns.md)
+- UI conventions: `src/ui/App.tsx`, `src/ui/tabs/Bootstrap.tsx`
+- Upstream: WO-015 bootstrap tab orchestration research (postMessage + reducer patterns)

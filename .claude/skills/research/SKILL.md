@@ -40,7 +40,9 @@ Then execute these steps in order:
 4. Create the directory $0/research/ if it does not exist.
 5. Write your findings as a structured .md file to: $0/research/$1.md
    - Use a slug format for the filename (lowercase, hyphenated)
-   - Structure: Summary, Key Findings, Recommendations, Open Questions
+   - **Read and satisfy** `.github/templates/research-quality-bar.md` — Summary, Key Findings, **Validated evidence**, **Decision log**, **Pre-plan spikes**, **Risk register**, Recommendations, Open Questions
+   - Ground findings in repo grep, official API docs (with URLs + date), and upstream ticket research — not hand-wavy summaries
+   - For sprint batches, update `.github/Sprint {N}/research/sprint-*-research-index.md` cross-ticket matrix when present
 6. Update $0/ticket.md with two changes based on your findings:
    a. **Refine the Requirements** — replace or augment the existing Requirements checklist with concrete, research-informed requirements. Remove any placeholder or generic items that the research has made more specific.
    b. **Add research links to References** — append each research file written to the References section as a markdown link, e.g. `- [Topic](research/filename.md)`

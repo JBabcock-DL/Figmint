@@ -11,8 +11,9 @@
   },
   "packageManager": "npm@10.9.0",
   "scripts": {
-    "build:community": "node scripts/build-community.mjs",
-    "build:org": "node scripts/build-org.mjs",
+    "build": "node scripts/build.mjs",
+    "build:community": "npm run build",
+    "build:org": "npm run build",
     "dev": "node scripts/dev.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

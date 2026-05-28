@@ -15,7 +15,6 @@ function runVite(thread) {
     cwd: rootDir,
     env: {
       ...process.env,
-      BUILD_TARGET: 'org',
       VITE_BUILD_THREAD: thread,
     },
     shell: true,
@@ -37,11 +36,11 @@ function runFinalize() {
   }
 }
 
-// See build-community.mjs — UI build + finalize must precede main-thread build so
-// `__html__` is available for Vite `define` substitution.
+// Order is required: UI must be built and finalized first so the main-thread Vite config
+// can inject `__html__` via `define` from the finalized `dist/ui.html`.
 runVite('ui');
 runFinalize();
 runVite('main');
 
-copyFileSync(resolve(rootDir, 'manifest.org.json'), resolve(rootDir, 'dist/manifest.json'));
-console.log('✓ org build complete → dist/');
+copyFileSync(resolve(rootDir, 'manifest.json'), resolve(rootDir, 'dist/manifest.json'));
+console.log('✓ build complete → dist/');
