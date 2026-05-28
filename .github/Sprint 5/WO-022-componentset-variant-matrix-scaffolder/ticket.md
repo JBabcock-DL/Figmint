@@ -30,10 +30,14 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/components/scaffold/index.ts` — entry point: `scaffold(spec: ComponentSpecV1, target: PageNode): ScaffoldResult`.
-2. `src/core/components/scaffold/archetypes/` — per-archetype implementations: chip, composed, container, control, field, row-item, surface-stack, tiny. Ports from DesignOps-plugin `component-*.mcp.js` bundles.
-3. Variant matrix: cross-product of variant axes from spec; each cell is a Component child of the ComponentSet.
-4. Uses auto-layout helpers (WO-014).
+1. **`src/core/components/scaffold/index.ts`** — entry point: `scaffold(spec: ComponentSpecV1, target: PageNode, options?: ScaffoldOptions): Promise<ScaffoldResult>`. Single Plugin API orchestration replacing DesignOps five-call Step 6 (`cc-scaffold` → `cc-component-*` only — no doc-frame sections).
+2. **`src/core/components/scaffold/variantMatrix.ts`** — expand `spec.variantMatrix` to full cross-product; Figma variant names = sorted axis keys as comma-separated `key=value` pairs (booleans → `"true"` / `"false"`).
+3. **`src/core/components/scaffold/archetypes/`** — one module per `ComponentSpecLayoutArchetype`: `chip`, `container`, `control`, `field`, `rowItem`, `surfaceStack`, `tiny`, plus **`composed.ts`** when `spec.composes[]` is non-empty (not a layout enum). Port from `cc-arch-*.js` + chip inline `buildVariant` in `component-chip.mcp.js`; shared helpers in `archetypes/shared.ts`.
+4. **Variant pipeline** — archetype builder per combo → hidden staging frame → `figma.combineAsVariants` → ComponentSet named `{spec.name} — ComponentSet` with HORIZONTAL+WRAP grid layout (legacy §6.6B order: resize then sizing modes).
+5. **Layer naming contract** — inner nodes use DesignOps paths (`text/label`, `icon-slot/leading`, `state-layer/*`, `focus-ring`) for WO-023 selector grammar.
+6. **Idempotency** — re-run with same spec replaces existing ComponentSet (match `pluginData` scaffold id or name); no duplicate sets.
+7. **Hex fallback geometry only** — no variable binding in WO-022 (WO-023); optional `RegistryV1` read for composed child instances.
+8. Uses **WO-014** helpers (`resizeThenApplySizing`, `createHugFrame`, `assertValidAxisAlign`, `assertNoOnePxMaster`).
 
 ### Visual / UX
 
@@ -126,3 +130,4 @@ N/A — no Figma artifact (subsystem ticket)
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/conventions/02-archetype-routing.md` — archetype dispatch logic
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/EXECUTOR.md` — step-by-step build pipeline
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
+- Research: [Component scaffold engine](research/component-scaffold-engine.md)

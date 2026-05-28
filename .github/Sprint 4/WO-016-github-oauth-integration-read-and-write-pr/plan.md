@@ -343,7 +343,7 @@ export async function createPullRequestFlow(
   - `repoUrl.test.ts`, `storage.test.ts`, `contents.test.ts`, `relayClient.test.ts`, `createPullRequestFlow.test.ts`, `oauth.test.ts`
   - **Done when:** no raw tokens in snapshots (`grep gho_ tests/` only in redacted previews).
 
-- [ ] **Step 22** — Manual VQA matrix:
+- [x] **Step 22** — Manual VQA matrix:
 
 | Env | Steps | Record in |
 | --- | ----- | --------- |
