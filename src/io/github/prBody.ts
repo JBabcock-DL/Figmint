@@ -70,7 +70,7 @@ export function buildDriftReportPrTitle(
   sprintLabel?: string,
 ): string {
   let title =
-    'DesignOps drift: ' +
+    'FigHub updates: ' +
     String(summary.push) +
     ' push, ' +
     String(summary.pull) +
