@@ -11,6 +11,7 @@ import { loadDriftSampleDoc } from '../../../helpers/sinks/loadDriftSampleDoc';
 const REPO_URL = 'https://github.com/acme/widgets';
 const HEAD_BRANCH = 'fighub/drift-report-2026-05-27';
 const HEAD_BRANCH_ENCODED = 'fighub%2Fdrift-report-2026-05-27';
+const MATCHING_REFS_PATH = '/repos/acme/widgets/git/matching-refs/heads/' + HEAD_BRANCH;
 const JSON_PATH = 'docs/fighub/drift-report-2026-05-27.v1.json';
 const MD_PATH = 'docs/fighub/drift-report-2026-05-27.v1.md';
 
@@ -93,6 +94,9 @@ describe('executeGithubPRSink', () => {
         if (path === '/repos/acme/widgets/git/commits/base-sha') {
           return { ok: true, status: 200, body: { tree: { sha: 'tree-sha' } } };
         }
+        if (path === MATCHING_REFS_PATH) {
+          return { ok: true, status: 200, body: [] };
+        }
         if (path === '/repos/acme/widgets/git/refs') {
           return { ok: true, status: 201, body: { ref: 'refs/heads/' + HEAD_BRANCH } };
         }
@@ -171,6 +175,7 @@ describe('executeGithubPRSink', () => {
       'GET /repos/acme/widgets',
       'GET /repos/acme/widgets/git/ref/heads/main',
       'GET /repos/acme/widgets/git/commits/base-sha',
+      'GET ' + MATCHING_REFS_PATH,
       'POST /repos/acme/widgets/git/refs',
       'POST /repos/acme/widgets/git/blobs',
       'POST /repos/acme/widgets/git/blobs',
