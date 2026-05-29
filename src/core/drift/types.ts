@@ -4,7 +4,7 @@ import type {
   ComponentDriftEntry,
   ComponentSpecBinding,
   ComponentSpecProp,
-  ComponentSpecV1,
+  VariableDriftEntry,
 } from '@detroitlabs/fighub-contracts';
 
 export type DriftDirection = 'push' | 'pull' | 'conflict' | 'synced';
@@ -19,6 +19,8 @@ export interface VariableDriftDetectInput {
   repoTokens: Record<string, VariableComparable>;
   figmaTokens: Record<string, VariableComparable>;
   snapshotTokens: Record<string, VariableComparable>;
+  /** Per flattened variable key — used to ignore premature push snapshot rows. */
+  snapshotSources?: Record<string, 'push' | 'pull'>;
 }
 
 export interface VariableDriftDetectResult {

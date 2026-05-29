@@ -1,13 +1,12 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useReducer, type Dispatch } from 'react';
+import { useReducer } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { SyncChangesPanel } from '@/ui/components/SyncChangesPanel';
 import {
   createInitialResolutionState,
   reduceResolution,
-  type ResolutionReducerAction,
 } from '@/ui/drift/resolutionReducer';
 
 import resolutionAc from '../../../fixtures/drift/drift-report-resolution-ac.v1.json';
@@ -33,7 +32,7 @@ function ResolutionHarness(props: HarnessProps) {
   return (
     <SyncChangesPanel
       state={state}
-      dispatch={dispatch as Dispatch<ResolutionReducerAction>}
+      dispatch={dispatch}
       onAcceptPull={props.onAcceptPull}
     />
   );

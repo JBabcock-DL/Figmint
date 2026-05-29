@@ -14,7 +14,7 @@ function copyViaExecCommand(text: string): boolean {
   textarea.style.left = '-9999px';
   document.body.appendChild(textarea);
   textarea.select();
-  // eslint-disable-next-line @typescript-eslint/no-deprecated -- WO-017 locked fallback when writeText is blocked
+   
   const ok = document.execCommand('copy');
   document.body.removeChild(textarea);
   return ok;

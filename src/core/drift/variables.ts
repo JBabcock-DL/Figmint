@@ -7,6 +7,7 @@ import { DISPLAY_NAME } from '@/core/variables/collections';
 import { resolveTokens } from '@/core/variables/resolveTokens';
 
 import { classifyThreeWay, isSynced } from './classify';
+import { resolveSnapshotForClassify } from './snapshotReconcile';
 import type {
   VariableComparable,
   VariableDriftDetectInput,
@@ -69,7 +70,7 @@ function buildComparableFromResolved(
 }
 
 function variableKey(collectionName: string, variableName: string): string {
-  const normalizedName = variableName.charAt(0) === '/' ? variableName.slice(1) : variableName;
+  const normalizedName = variableName.startsWith('/') ? variableName.slice(1) : variableName;
   return collectionName + '/' + normalizedName;
 }
 
@@ -150,8 +151,21 @@ export function detectVariableDrift(input: VariableDriftDetectInput): VariableDr
     const repoValue = input.repoTokens[key] !== undefined ? input.repoTokens[key] : null;
     const snapshotValue =
       input.snapshotTokens[key] !== undefined ? input.snapshotTokens[key] : null;
+    const snapshotSource =
+      input.snapshotSources !== undefined ? input.snapshotSources[key] : undefined;
+    const baselineSnapshot = resolveSnapshotForClassify(
+      figmaValue,
+      repoValue,
+      snapshotValue,
+      snapshotSource,
+    );
 
-    const direction = classifyThreeWay(figmaValue, repoValue, snapshotValue, variableStatesEqual);
+    const direction = classifyThreeWay(
+      figmaValue,
+      repoValue,
+      baselineSnapshot,
+      variableStatesEqual,
+    );
     if (isSynced(direction)) {
       syncedCount += 1;
       continue;

@@ -25,9 +25,15 @@ describe('RepoSyncCard', () => {
           configWarning: null,
           pushPrUrl: null,
           error: null,
-          fetchRepo: async function () {},
-          pullDesignSystem: async function () {},
-          pushUpdates: async function () {},
+          fetchRepo: function () {
+            return Promise.resolve();
+          },
+          pullDesignSystem: function () {
+            return Promise.resolve();
+          },
+          pushUpdates: function () {
+            return Promise.resolve();
+          },
         }}
       />,
     );

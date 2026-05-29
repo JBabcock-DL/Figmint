@@ -29,7 +29,7 @@ export function specToComparable(spec: ComponentSpecV1): ComponentComparable {
 }
 
 export function buildRepoSpecMap(
-  specs: Array<{ name: string; spec: ComponentSpecV1 }>,
+  specs: { name: string; spec: ComponentSpecV1 }[],
 ): Record<string, ComponentComparable> {
   const result: Record<string, ComponentComparable> = {};
   for (let i = 0; i < specs.length; i++) {
@@ -90,7 +90,7 @@ export function detectComponentDrift(input: ComponentDriftDetectInput): Componen
   }
 
   const equalFn =
-    input.options !== undefined && input.options.quickDetect === true
+    input.options?.quickDetect === true
       ? componentHashEqual
       : componentComparableEqual;
 

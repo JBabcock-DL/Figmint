@@ -12,7 +12,7 @@ let nextComponentSetId = 1;
 let nextInstanceId = 1;
 let loadFontAsyncCalls: FontName[] = [];
 let createInstanceCalls = 0;
-let setPropertiesCalls: Array<Record<string, string | number | boolean>> = [];
+let setPropertiesCalls: Record<string, string | number | boolean>[] = [];
 
 export type MockInstance = MockFrame & {
   setProperties(props: Record<string, string | number | boolean>): void;
@@ -62,7 +62,7 @@ export function createMockComponentSet(overrides?: {
   variantNames?: string[];
 }): MockComponentSet {
   const frame = createMockFrame(undefined, false);
-  frame.id = overrides !== undefined && overrides.id !== undefined ? overrides.id : 'component-set-' + String(nextComponentSetId++);
+  frame.id = overrides?.id !== undefined ? overrides.id : 'component-set-' + String(nextComponentSetId++);
   Object.defineProperty(frame, 'type', { value: 'COMPONENT_SET' });
   const pluginData: Record<string, string> = {};
   const set = frame as unknown as MockComponentSet;
@@ -83,13 +83,13 @@ export function createMockComponentSet(overrides?: {
   };
 
   const names =
-    overrides !== undefined && overrides.variantNames !== undefined
+    overrides?.variantNames !== undefined
       ? overrides.variantNames
       : ['variant=default'];
   for (let i = 0; i < names.length; i++) {
     const variant = createMockComponent({ name: names[i] });
     attachCreateInstanceToComponent(variant);
-    set.appendChild(variant as unknown as SceneNode);
+    set.appendChild(variant);
   }
 
   return set;
@@ -104,7 +104,7 @@ export function getCreateInstanceCallCount(): number {
   return createInstanceCalls;
 }
 
-export function getSetPropertiesCalls(): Array<Record<string, string | number | boolean>> {
+export function getSetPropertiesCalls(): Record<string, string | number | boolean>[] {
   return setPropertiesCalls.slice();
 }
 
@@ -147,7 +147,7 @@ export function installMockUsageFrameHarness(): void {
 }
 
 export function asComponentSetNode(mock: MockComponentSet): ComponentSetNode {
-  return mock as unknown as ComponentSetNode;
+  return mock;
 }
 
 export function asPageNode(mock: MockPage): PageNode {

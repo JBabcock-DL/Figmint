@@ -138,7 +138,7 @@ describe('buildMatrix', () => {
     const matrixGroup = await buildMatrix(
       asFrameNode(docRoot),
       spec,
-      componentSet as unknown as ComponentSetNode,
+      componentSet,
       variantByKey,
     );
     const matrixGroupMock = matrixGroup as unknown as MockFrame;
@@ -186,7 +186,7 @@ describe('buildMatrix', () => {
     const matrixGroup = await buildMatrix(
       asFrameNode(docRoot),
       spec,
-      componentSet as unknown as ComponentSetNode,
+      componentSet,
       variantByKey,
     );
     const matrixGroupMock = matrixGroup as unknown as MockFrame;
@@ -212,7 +212,7 @@ describe('buildMatrix', () => {
     const matrixGroup = await buildMatrix(
       asFrameNode(docRoot),
       spec,
-      componentSet as unknown as ComponentSetNode,
+      componentSet,
       variantByKey,
     );
     const matrixGroupMock = matrixGroup as unknown as MockFrame;

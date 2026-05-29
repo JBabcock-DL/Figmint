@@ -193,7 +193,7 @@ export function upsertSnapshotRegistryEntry(input: UpsertRegistryEntryInput): Re
 }
 
 export function updateSnapshotKeys(
-  keys: Array<{ key: string; value: unknown; source: 'push' | 'pull' }>,
+  keys: { key: string; value: unknown; source: 'push' | 'pull' }[],
 ): void {
   const snapshot = getSnapshot();
   const nextKeys = Object.assign({}, snapshot.keys);
@@ -221,4 +221,24 @@ export function clearSnapshot(): void {
   const frame = findOrCreateSnapshotFrame();
   frame.setPluginData(SNAPSHOT_PLUGIN_DATA_KEY, '');
   pluginLog('[snapshot] cleared');
+}
+
+/** Drops variable drift keys only; keeps component registry entries. */
+export function clearVariableSnapshotKeys(): void {
+  const snapshot = getSnapshot();
+  const nextKeys: Record<string, SnapshotV1['keys'][string]> = {};
+  for (const entryKey of Object.keys(snapshot.keys)) {
+    if (!entryKey.startsWith('var/')) {
+      nextKeys[entryKey] = snapshot.keys[entryKey];
+    }
+  }
+  persistSnapshot({
+    v: 1,
+    kind: 'snapshot',
+    fileKey: snapshot.fileKey,
+    updatedAt: new Date().toISOString(),
+    keys: nextKeys,
+    registry: snapshot.registry,
+  });
+  pluginLog('[snapshot] cleared variable keys');
 }

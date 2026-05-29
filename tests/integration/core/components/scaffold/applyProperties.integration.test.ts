@@ -49,13 +49,13 @@ describe('applyProperties integration', () => {
     expect(loadingUnbound).toBe(true);
 
     const variant = factory.variants[0] as unknown as MockVariantWithRefs;
-    const labelNode = findChildByName(variant, 'text/label') as MockVariantWithRefs | null;
+    const labelNode = findChildByName(variant, 'text/label');
     expect(labelNode).not.toBeNull();
     if (labelNode !== null) {
       expect(labelNode.componentPropertyReferences).toEqual({ characters: 'Label#mock:0' });
     }
 
-    const leading = findChildByName(variant, 'icon-slot/leading') as MockVariantWithRefs | null;
+    const leading = findChildByName(variant, 'icon-slot/leading');
     expect(leading).not.toBeNull();
     if (leading !== null) {
       expect(leading.componentPropertyReferences).toEqual({ visible: 'Leading icon#mock:0' });
@@ -97,11 +97,11 @@ describe('applyProperties integration', () => {
   });
 });
 
-type MockVariantWithRefs = {
+interface MockVariantWithRefs {
   name: string;
   children: unknown[];
   componentPropertyReferences?: Record<string, string>;
-};
+}
 
 function findChildByName(node: MockVariantWithRefs, targetName: string): MockVariantWithRefs | null {
   if (node.name === targetName) {

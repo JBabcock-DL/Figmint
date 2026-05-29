@@ -15,7 +15,7 @@ function baseInput(bindingsResult: ComponentAuditInput['bindingsResult']): Compo
   const { componentSet } = buildMockVariantTree(1);
   return {
     spec: chipSpec as ComponentAuditInput['spec'],
-    componentSet: componentSet as unknown as ComponentSetNode,
+    componentSet: componentSet,
     bindingsResult: bindingsResult,
   };
 }

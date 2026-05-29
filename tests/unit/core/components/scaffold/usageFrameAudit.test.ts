@@ -130,7 +130,7 @@ describe('buildUsageFrameAuditRows', () => {
     });
     const row = rows.find((entry) => entry.ruleId === 'comp/doc-section-width');
     expect(row !== undefined && row.pass).toBe(false);
-    expect(row !== undefined && row.diagnostic.indexOf('component-set-group') >= 0).toBe(true);
+    expect(row !== undefined && row.diagnostic.includes('component-set-group')).toBe(true);
   });
 
   it('passes comp/doc-section-width when both sections have non-collapsed geometry', () => {

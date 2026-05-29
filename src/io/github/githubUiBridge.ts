@@ -67,7 +67,7 @@ export function registerGitHubMessageListener(): void {
 
     if (isGitHubOAuthPollResultMessage(message)) {
       const entry = pending.get(message.requestId);
-      if (entry !== undefined && entry.resolvePoll !== undefined) {
+      if (entry?.resolvePoll !== undefined) {
         entry.resolvePoll(message.result);
         pending.delete(message.requestId);
       }
@@ -76,7 +76,7 @@ export function registerGitHubMessageListener(): void {
 
     if (isGitHubContentsResultMessage(message)) {
       const entry = pending.get(message.requestId);
-      if (entry !== undefined && entry.resolveContents !== undefined) {
+      if (entry?.resolveContents !== undefined) {
         entry.resolveContents({ text: message.text, sha: message.sha });
         pending.delete(message.requestId);
       }
@@ -85,7 +85,7 @@ export function registerGitHubMessageListener(): void {
 
     if (isGitHubContentsErrorMessage(message)) {
       const entry = pending.get(message.requestId);
-      if (entry !== undefined && entry.rejectContents !== undefined) {
+      if (entry?.rejectContents !== undefined) {
         entry.rejectContents(new Error(message.message));
         pending.delete(message.requestId);
       }

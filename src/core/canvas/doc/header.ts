@@ -14,10 +14,10 @@ import {
 
 import { appendDocAutoHeightText, reassertDocHugFrame, resolveDocPipelineChrome } from './docChrome';
 
-type DocHeaderSpecFields = {
+interface DocHeaderSpecFields {
   displayTitle?: string;
   summary?: string;
-};
+}
 
 /**
  * Section 1 — doc page header (title + summary). Lifted from `cc-doc-page-header.js` §6.4.

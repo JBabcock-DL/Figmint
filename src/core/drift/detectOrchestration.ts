@@ -16,7 +16,7 @@ export function collectFigmaComponentComparablesFromSnapshot(
     }
     const node = figma.getNodeById(entry.nodeId);
     if (node !== null && node.type === 'COMPONENT_SET') {
-      result[specName] = figmaComponentSetToComparable(node as ComponentSetNode, specName);
+      result[specName] = figmaComponentSetToComparable(node, specName);
     }
   }
   return result;

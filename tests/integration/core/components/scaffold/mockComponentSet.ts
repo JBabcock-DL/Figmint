@@ -29,12 +29,12 @@ export interface MockComponentSetFactoryOptions {
 export interface MockComponentSetFactoryResult {
   componentSet: MockComponentSet;
   variants: MockComponent[];
-  addPropertyCalls: Array<{
+  addPropertyCalls: {
     variantIndex: number;
     name: string;
     type: string;
     defaultValue: string | boolean;
-  }>;
+  }[];
 }
 
 function attachAddComponentProperty(
@@ -120,11 +120,11 @@ function seedVariantDefinitions(
 export function createMockComponentSetWithVariants(
   options?: MockComponentSetFactoryOptions,
 ): MockComponentSetFactoryResult {
-  const variantCount = options !== undefined && options.variantCount !== undefined ? options.variantCount : 2;
+  const variantCount = options?.variantCount !== undefined ? options.variantCount : 2;
   const includeLabel =
-    options !== undefined && options.includeLabel !== undefined ? options.includeLabel : true;
+    options?.includeLabel !== undefined ? options.includeLabel : true;
   const includeIconSlots =
-    options !== undefined && options.includeIconSlots !== undefined ? options.includeIconSlots : true;
+    options?.includeIconSlots !== undefined ? options.includeIconSlots : true;
 
   const componentSet = createMockComponentSet();
   Object.defineProperty(componentSet, 'remote', { value: false, writable: true });
@@ -136,11 +136,11 @@ export function createMockComponentSetWithVariants(
     const variant = createMockComponent({ name: 'variant=' + String(i) });
     buildChipVariantTree(variant, { includeLabel: includeLabel, includeIconSlots: includeIconSlots });
     attachAddComponentProperty(variant, i, addPropertyCalls);
-    componentSet.appendChild(variant as unknown as SceneNode);
+    componentSet.appendChild(variant);
     variants.push(variant);
   }
 
-  if (options !== undefined && options.variantMatrix !== undefined) {
+  if (options?.variantMatrix !== undefined) {
     seedVariantDefinitions(componentSet, options.variantMatrix);
   }
 
@@ -152,5 +152,5 @@ export function createMockComponentSetWithVariants(
 }
 
 export function asComponentSetNode(mock: MockComponentSet): ComponentSetNode {
-  return mock as unknown as ComponentSetNode;
+  return mock;
 }

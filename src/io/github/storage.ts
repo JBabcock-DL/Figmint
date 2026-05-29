@@ -59,7 +59,7 @@ function normalizeSyncState(raw: unknown): StoredRepoSyncState | null {
   const record = raw as Record<string, unknown>;
 
   if (isLegacyConfig(record)) {
-    return migrateLegacyConfig(record as LegacyStoredGitHubConfig);
+    return migrateLegacyConfig(record);
   }
 
   const state = emptySyncState();

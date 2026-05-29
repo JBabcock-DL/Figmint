@@ -12,7 +12,7 @@ function scanBindings(node: SceneNode, prefix: string, out: ComponentComparable[
   const record = node as unknown as Record<string, unknown>;
   const boundVariables = record.boundVariables;
   if (typeof boundVariables === 'object' && boundVariables !== null) {
-    const fields = Object.keys(boundVariables as Record<string, unknown>);
+    const fields = Object.keys(boundVariables);
     for (let i = 0; i < fields.length; i++) {
       const field = fields[i];
       const binding = (boundVariables as Record<string, { id: string }>)[field];

@@ -29,7 +29,7 @@ export interface GithubPRSinkOptions {
 }
 
 export interface GithubPRSinkContext {
-  files: Array<{ path: string; content: string }>;
+  files: { path: string; content: string }[];
   contractKind: string;
   repoUrl: string;
   options: GithubPRSinkOptions;

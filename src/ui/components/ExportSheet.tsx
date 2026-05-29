@@ -170,7 +170,13 @@ export function ExportSheet({
       ) : null}
 
       <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
-        <button type="button" disabled={!canExport(state)} onClick={handleExport}>
+        <button
+          type="button"
+          disabled={!canExport(state)}
+          onClick={function () {
+            void handleExport();
+          }}
+        >
           Export
         </button>
         <button

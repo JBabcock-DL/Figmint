@@ -70,7 +70,7 @@ export function normalizeExportBasePath(exportBasePath: string): string {
   if (exportBasePath.length === 0) {
     return 'docs/fighub/';
   }
-  if (exportBasePath.charAt(exportBasePath.length - 1) === '/') {
+  if (exportBasePath.endsWith('/')) {
     return exportBasePath;
   }
   return exportBasePath + '/';

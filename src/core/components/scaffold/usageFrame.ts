@@ -1,7 +1,6 @@
 import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { buildDocPipeline } from '@/core/canvas/doc';
-import { pluginLog } from '@/core/pluginLog';
 
 import {
   docComponentRootName,
@@ -9,13 +8,7 @@ import {
   docUsageSectionName,
   specNameToDocKey,
 } from './componentPageRouting';
-import {
-  ensureComponentScaffoldTarget,
-  ensureDocOnPage,
-} from './ensureComponentScaffoldTarget';
-import type { ComponentScaffoldTarget } from './ensureComponentScaffoldTarget';
 import type { UsageFrameContext, UsageFrameResult, VariantCombo } from './types';
-import { buildUsageFrameAuditRows } from './usageFrameAudit';
 import { formatVariantName } from './variantMatrix';
 
 /** @deprecated DesignOps doc pipeline uses `doc/component/{key}/usage`. */
@@ -26,28 +19,6 @@ export function forwardScaffoldWrapperName(specName: string): string {
 /** @deprecated DesignOps doc pipeline uses `doc/component/{key}/usage`. */
 export function usageExamplesFrameName(specName: string): string {
   return docUsageSectionName(specNameToDocKey(specName));
-}
-
-function resolveScaffoldTarget(
-  specName: string,
-  ctx: UsageFrameContext,
-): ComponentScaffoldTarget {
-  if (ctx.scaffoldTarget !== undefined) {
-    return ctx.scaffoldTarget;
-  }
-  if (ctx.docRoot !== undefined && ctx.targetPage !== undefined) {
-    return {
-      page: ctx.targetPage,
-      pageName: ctx.targetPage.name,
-      content: ctx.docRoot.parent as FrameNode,
-      docRoot: ctx.docRoot,
-      docKey: specNameToDocKey(specName),
-    };
-  }
-  if (ctx.targetPage !== undefined) {
-    return ensureDocOnPage(ctx.targetPage, specName);
-  }
-  return ensureComponentScaffoldTarget(specName);
 }
 
 function findChildFrame(parent: FrameNode, name: string): FrameNode | null {
@@ -182,27 +153,6 @@ export function resolveVariantComponent(
   }
 
   throw new Error('usageFrame: variant not found for combo: ' + variantKey);
-}
-
-function hasDoDontCards(usageSection: FrameNode): boolean {
-  if (usageSection.layoutMode !== 'HORIZONTAL') {
-    return false;
-  }
-  let doCard = false;
-  let dontCard = false;
-  for (let i = 0; i < usageSection.children.length; i++) {
-    const child = usageSection.children[i];
-    if (child.type !== 'FRAME') {
-      continue;
-    }
-    if (child.name === 'usage/do') {
-      doCard = true;
-    }
-    if (child.name === 'usage/dont') {
-      dontCard = true;
-    }
-  }
-  return doCard && dontCard;
 }
 
 /**

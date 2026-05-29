@@ -114,13 +114,14 @@ export function Settings({
   }, []);
 
   const loadTokensForDrift = useCallback(
-    async function () {
+    async function (): Promise<TokensV1 | null> {
       if (!github.connected || repoUrl.length === 0) {
         setRepoTokens(null);
-        return;
+        return null;
       }
       const result = await loadFromGitHub(repoUrl, tokensPath);
-      applyLoadedTokens(result);
+      const applied = applyLoadedTokens(result);
+      return applied.ok ? applied.tokens : null;
     },
     [github.connected, repoUrl, tokensPath, applyLoadedTokens],
   );

@@ -242,7 +242,7 @@ export function Components({
       if (typeof data !== 'object' || data === null || !('pluginMessage' in data)) {
         return undefined;
       }
-      return (data as { pluginMessage: unknown }).pluginMessage;
+      return (data).pluginMessage;
     }
 
     function onMessage(event: MessageEvent) {
@@ -364,7 +364,7 @@ export function Components({
               <p
                 role="status"
                 style={{
-                  color: registryStatus.indexOf('JSON Schema') >= 0 ? '#b00020' : '#666',
+                  color: registryStatus.includes('JSON Schema') ? '#b00020' : '#666',
                   fontSize: 10,
                   lineHeight: 1.45,
                   margin: '8px 0 0',

@@ -11,7 +11,7 @@ import type {
 export interface ExportGithubPRPayload {
   repoUrl: string;
   githubPROptions: GithubPRSinkOptions;
-  files: Array<{ path: string; content: string }>;
+  files: { path: string; content: string }[];
   contractKind: string;
 }
 
@@ -23,7 +23,7 @@ export interface ExportRunMessage {
   sinks: ExportMainSinkId[];
   doc: SerializableDocument;
   formatOptions: FormatOptions;
-  files: Array<{ path: string; content: string; format: 'json' | 'md' }>;
+  files: { path: string; content: string; format: 'json' | 'md' }[];
   githubPR?: ExportGithubPRPayload;
 }
 

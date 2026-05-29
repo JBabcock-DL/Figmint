@@ -114,7 +114,7 @@ function recordSinkResult(
 
 function buildGithubPRPayload(
   doc: ContractDocument,
-  files: Array<{ path: string; content: string; format: 'json' | 'md' }>,
+  files: { path: string; content: string; format: 'json' | 'md' }[],
   github: RunExportGithubOptions,
 ): ExportGithubPRPayload | null {
   try {
@@ -123,7 +123,7 @@ function buildGithubPRPayload(
     const contractKind = doc.kind;
     const headBranch = buildDefaultHeadBranch(contractKind, new Date());
     const commitMessage = 'fighub: export ' + contractKind;
-    const prFiles: Array<{ path: string; content: string }> = [];
+    const prFiles: { path: string; content: string }[] = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       prFiles.push({ path: file.path, content: file.content });
@@ -144,7 +144,7 @@ function buildGithubPRPayload(
         prTitle: commitMessage,
       },
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -160,7 +160,7 @@ async function runUiSinks(
     return;
   }
 
-  const tasks: Array<Promise<void>> = [];
+  const tasks: Promise<void>[] = [];
   for (let i = 0; i < sinks.length; i++) {
     const sink = sinks[i];
     tasks.push(
@@ -209,7 +209,7 @@ async function runMainSinks(
   loaded: LoadedDocument,
   state: ExportSheetState,
   formatOptions: FormatOptions,
-  files: Array<{ path: string; content: string; format: 'json' | 'md' }>,
+  files: { path: string; content: string; format: 'json' | 'md' }[],
   ctx: SinkResultRecord,
   options: RunExportOptions | undefined,
 ): Promise<void> {
@@ -221,7 +221,7 @@ async function runMainSinks(
   let githubPR: ExportGithubPRPayload | undefined;
   let githubPrFailed = false;
   if (state.sinks['github-pr'] === true) {
-    if (options !== undefined && options.github !== undefined) {
+    if (options?.github !== undefined) {
       const payload = buildGithubPRPayload(doc, files, options.github);
       if (payload === null) {
         githubPrFailed = true;
@@ -261,7 +261,7 @@ async function runMainSinks(
   }
 
   const postMessage =
-    options !== undefined && options.postMessage !== undefined
+    options?.postMessage !== undefined
       ? options.postMessage
       : function (message: unknown) {
           parent.postMessage(message, '*');
@@ -303,7 +303,7 @@ export async function runExport(
   const formatOptions = buildFormatOptions(state);
   const files = buildExportFiles(doc, state.formats, state.path);
   const runSinkFn =
-    options !== undefined && options.runSinkFn !== undefined ? options.runSinkFn : runSink;
+    options?.runSinkFn !== undefined ? options.runSinkFn : runSink;
 
   const uiSinks = selectedUiSinks(state);
   await Promise.all([
@@ -313,7 +313,7 @@ export async function runExport(
 
   dispatch({ type: 'complete' });
 
-  if (options !== undefined && options.onComplete !== undefined) {
+  if (options?.onComplete !== undefined) {
     options.onComplete(resultCtx.results);
   }
 }

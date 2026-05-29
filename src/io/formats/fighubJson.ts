@@ -65,23 +65,22 @@ export function resolveFigHubConfig(
   defaultBranch: string,
 ): ResolvedFigHubConfig {
   const branchFromFile =
-    parsed !== null &&
-    parsed.designSystemBranch !== undefined &&
+    parsed?.designSystemBranch !== undefined &&
     parsed.designSystemBranch.length > 0
       ? parsed.designSystemBranch
       : defaultBranch;
 
   return {
     tokensPath:
-      parsed !== null && parsed.tokensPath !== undefined && parsed.tokensPath.length > 0
+      parsed?.tokensPath !== undefined && parsed.tokensPath.length > 0
         ? parsed.tokensPath
         : FIGHUB_JSON_DEFAULTS.tokensPath,
     specsPath:
-      parsed !== null && parsed.specsPath !== undefined && parsed.specsPath.length > 0
+      parsed?.specsPath !== undefined && parsed.specsPath.length > 0
         ? parsed.specsPath
         : FIGHUB_JSON_DEFAULTS.specsPath,
     exportBasePath:
-      parsed !== null && parsed.exportBasePath !== undefined && parsed.exportBasePath.length > 0
+      parsed?.exportBasePath !== undefined && parsed.exportBasePath.length > 0
         ? parsed.exportBasePath
         : FIGHUB_JSON_DEFAULTS.exportBasePath,
     designSystemBranch: branchFromFile,

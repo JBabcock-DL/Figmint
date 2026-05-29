@@ -67,7 +67,7 @@ export type ScaffoldUiMessage =
   | ScaffoldResultMessage
   | ScaffoldErrorMessage;
 
-export const SCAFFOLD_STEPS: Array<{ id: ScaffoldStepId; label: string }> = [
+export const SCAFFOLD_STEPS: { id: ScaffoldStepId; label: string }[] = [
   { id: 'doc-preflight', label: 'Pre-flight doc-pipeline check' },
   { id: 'scaffold-geometry', label: 'Building variant matrix' },
   { id: 'apply-bindings', label: 'Applying variable bindings' },

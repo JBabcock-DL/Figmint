@@ -31,8 +31,8 @@ describe('componentDiff', () => {
     const repo = comparable({ variant: ['default'], loading: [false] });
     const figma = comparable({ variant: ['default'], loading: [false, true] });
     const diff = buildComponentDiff(figma, repo);
-    expect(diff !== null && diff.variantMatrix !== undefined).toBe(true);
-    if (diff !== null && diff.variantMatrix !== undefined) {
+    expect(diff?.variantMatrix !== undefined).toBe(true);
+    if (diff?.variantMatrix !== undefined) {
       expect(diff.variantMatrix.added[0]).toContain('loading=true');
     }
   });
@@ -41,8 +41,8 @@ describe('componentDiff', () => {
     const left = comparable({ variant: ['default'] }, [], [{ selector: 'text/label', variable: 'var/a' }]);
     const right = comparable({ variant: ['default'] }, [], [{ selector: 'text/label', variable: 'var/b' }]);
     const diff = buildComponentDiff(left, right);
-    expect(diff !== null && diff.bindings !== undefined).toBe(true);
-    if (diff !== null && diff.bindings !== undefined) {
+    expect(diff?.bindings !== undefined).toBe(true);
+    if (diff?.bindings !== undefined) {
       expect(diff.bindings.added.length + diff.bindings.removed.length).toBeGreaterThan(0);
     }
   });

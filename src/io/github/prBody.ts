@@ -53,7 +53,7 @@ export function buildDriftResolutionPrBody(input: BuildDriftResolutionPrBodyInpu
     '\n\n## Changes in this push (' +
     String(input.pushedCount) +
     ')\n\n' +
-    'Figma values below are what will land in the repo after merge.\n\n' +
+    'Resolved values and per-platform dev syntax (Web / Android / iOS) below are what will land in the repo after merge.\n\n' +
     input.changeTableMarkdown
   );
 }

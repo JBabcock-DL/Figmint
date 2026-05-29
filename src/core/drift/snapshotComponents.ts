@@ -1,7 +1,4 @@
-import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
-
 import { getSnapshot } from '@/core/sync/snapshotStore';
-import { hashVariantMatrix } from '@/core/components/scaffold/variantMatrix';
 
 import type { ComponentComparable } from './types';
 

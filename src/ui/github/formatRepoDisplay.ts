@@ -4,7 +4,7 @@ export function formatRepoDisplay(repoUrl: string): string {
   if (trimmed.length === 0) {
     return 'Not configured';
   }
-  const match = trimmed.match(/github\.com[/:]([^/]+)\/([^/.]+)/i);
+  const match = /github\.com[/:]([^/]+)\/([^/.]+)/i.exec(trimmed);
   if (match !== null) {
     return match[1] + '/' + match[2];
   }

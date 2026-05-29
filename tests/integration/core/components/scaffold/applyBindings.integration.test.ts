@@ -57,7 +57,7 @@ describe('applyBindings integration', () => {
     const { componentSet } = buildMockVariantTree(2);
     const variableMap = buildVariableMap();
 
-    const result = await applyBindings(spec, componentSet as unknown as ComponentSetNode, {
+    const result = await applyBindings(spec, componentSet, {
       variableMap: variableMap,
     });
 
@@ -84,7 +84,7 @@ describe('applyBindings integration', () => {
 
     const audit = await runAudit('component', {
       spec: spec,
-      componentSet: componentSet as unknown as ComponentSetNode,
+      componentSet: componentSet,
       bindingsResult: failedResult,
     });
 

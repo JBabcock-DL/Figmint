@@ -147,7 +147,7 @@ describe('executeGithubPRSink', () => {
 
     const treeBody = treeBodies[0] as {
       base_tree: string;
-      tree: Array<{ path: string; mode: string; type: string; sha: string }>;
+      tree: { path: string; mode: string; type: string; sha: string }[];
     };
     expect(treeBody.base_tree).toBe('tree-sha');
     expect(treeBody.tree).toHaveLength(2);

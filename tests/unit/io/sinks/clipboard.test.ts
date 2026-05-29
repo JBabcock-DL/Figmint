@@ -64,7 +64,7 @@ describe('clipboardSink', () => {
 
     expect(result.ok).toBe(true);
     expect(result.artifacts![0].format).toBe('md');
-    const copied = writeSpy.mock.calls[0][0] as string;
+    const copied = writeSpy.mock.calls[0][0];
     expect(copied).toContain('## ↑ Push');
   });
 
@@ -75,7 +75,7 @@ describe('clipboardSink', () => {
 
     expect(result.ok).toBe(true);
     expect(result.artifacts![0].format).toBe('json');
-    const copied = writeSpy.mock.calls[0][0] as string;
+    const copied = writeSpy.mock.calls[0][0];
     expect(copied).toContain('"kind": "drift-report"');
   });
 });

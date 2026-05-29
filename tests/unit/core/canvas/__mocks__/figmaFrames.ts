@@ -263,7 +263,7 @@ export class MockFrame {
     const matches: SceneNode[] = [];
     const visit = function visit(node: SceneNode): void {
       let typeOk = true;
-      if (options !== undefined && options.type !== undefined) {
+      if (options?.type !== undefined) {
         typeOk = node.type === options.type;
       }
       let callbackOk = true;

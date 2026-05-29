@@ -6,7 +6,7 @@ import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
 describe('publishTypographyStyles', () => {
   beforeEach(() => {
-    const styles: Array<{
+    const styles: {
       id: string;
       name: string;
       fontName: FontName;
@@ -14,7 +14,7 @@ describe('publishTypographyStyles', () => {
       lineHeight: LineHeight;
       textDecoration: TextDecoration;
       setBoundVariable: ReturnType<typeof vi.fn>;
-    }> = [];
+    }[] = [];
     let nextId = 1;
 
     const typographyModeId = 'mode-100';
@@ -116,11 +116,11 @@ describe('publishTypographyStyles', () => {
     const figmaMock = globalRecord.figma as {
       getLocalTextStylesAsync: ReturnType<typeof vi.fn>;
     };
-    const allStyles = (await figmaMock.getLocalTextStylesAsync()) as Array<{
+    const allStyles = (await figmaMock.getLocalTextStylesAsync()) as {
       name: string;
       setBoundVariable: ReturnType<typeof vi.fn>;
       fontSize: number;
-    }>;
+    }[];
     const displayStyle = allStyles.find(function (style) {
       return style.name === 'Display/LG';
     });

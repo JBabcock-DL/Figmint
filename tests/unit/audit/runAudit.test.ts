@@ -72,7 +72,7 @@ describe('runAudit variables scope', () => {
 
     const audit = await runAudit('component', {
       spec: chipSpec.default as import('@detroitlabs/fighub-contracts').ComponentSpecV1,
-      componentSet: componentSet as unknown as ComponentSetNode,
+      componentSet: componentSet,
       bindingsResult: { applied: 11, failed: [], passed: true },
     });
 

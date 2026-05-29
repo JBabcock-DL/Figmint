@@ -2,7 +2,6 @@ import type { ComponentSpecV1, DriftReportV1, TokensV1 } from '@detroitlabs/figh
 import type { RepoTokensWireFormat } from '@/io/sources/adapters/serializeTokensWire';
 
 import type { ResolutionChoice } from '@/io/messages/drift';
-import { buildResolutionsForDriftIds } from '@/ui/drift/resolutionSelectors';
 
 export async function requestBulkPush(input: {
   repoUrl: string;
@@ -12,7 +11,7 @@ export async function requestBulkPush(input: {
   repoTokens: TokensV1;
   tokensPath: string;
   specsPath?: string;
-  repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs?: { name: string; spec: ComponentSpecV1 }[];
   tokensWireFormat?: RepoTokensWireFormat;
 }): Promise<
   { ok: true; prUrl: string; warning?: string } | { ok: false; error: string }
@@ -74,7 +73,7 @@ export async function requestBulkPull(input: {
   report: DriftReportV1;
   driftIds: string[];
   resolutions: Record<string, ResolutionChoice>;
-  repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs?: { name: string; spec: ComponentSpecV1 }[];
 }): Promise<{ ok: true; appliedCount: number } | { ok: false; error: string; appliedCount?: number }> {
   return new Promise(function (resolve) {
     const requestId = 'resolution-pull-' + String(Date.now());
@@ -128,7 +127,7 @@ export async function requestSinglePull(input: {
   report: DriftReportV1;
   driftId: string;
   resolutions: Record<string, ResolutionChoice>;
-  repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs?: { name: string; spec: ComponentSpecV1 }[];
 }): Promise<{ ok: true; appliedCount: number } | { ok: false; error: string }> {
   return requestBulkPull({
     report: input.report,

@@ -68,8 +68,8 @@ describe('detectComponentDrift fixtures', () => {
     expect(result.drifts[0].direction).toBe(fixture.expected.direction);
     const payload = result.drifts[0].figma as { diff?: { variantMatrix?: { added: string[] } } };
     if (fixture.expected.variantAdded !== undefined) {
-      expect(payload.diff !== undefined && payload.diff.variantMatrix !== undefined).toBe(true);
-      if (payload.diff !== undefined && payload.diff.variantMatrix !== undefined) {
+      expect(payload.diff?.variantMatrix !== undefined).toBe(true);
+      if (payload.diff?.variantMatrix !== undefined) {
         expect(payload.diff.variantMatrix.added).toEqual(fixture.expected.variantAdded);
       }
     }

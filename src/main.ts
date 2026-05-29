@@ -20,11 +20,10 @@ import { collectFigmaComponentComparablesFromSnapshot } from '@/core/drift/detec
 import {
   buildPushCommitFiles,
   resolutionsForBulkPush,
-  snapshotKeysForPushDrifts,
 } from '@/core/drift/applyPushResolutions';
 import { applyPullResolutions } from '@/core/drift/applyPullResolutions';
 import type { ComponentComparable } from '@/core/drift/types';
-import { getRegistryFromSnapshot, updateSnapshotKeys } from '@/core/sync/snapshotStore';
+import { getRegistryFromSnapshot } from '@/core/sync/snapshotStore';
 import { pushTokens } from '@/core/variables';
 import { runCanvasBench } from '@/core/canvas/bench';
 import { buildPrimitivesPage } from '@/core/canvas/colorTables';
@@ -187,7 +186,7 @@ function isGitHubPrTestOpenMessage(message: unknown): message is {
 }
 
 async function sendGitHubTokenStatus(repoUrl: string): Promise<void> {
-  let normalized = repoUrl;
+  let normalized: string;
   try {
     normalized = normalizeRepoUrl(repoUrl);
   } catch (error) {
@@ -546,7 +545,7 @@ async function handleDriftBuildReport(
   requestId: string,
   repoUrl: string,
   repoTokens: import('@detroitlabs/fighub-contracts').TokensV1,
-  repoSpecs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }>,
+  repoSpecs: { name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }[],
   quickDetect?: boolean,
 ): Promise<void> {
   try {
@@ -578,7 +577,7 @@ async function handleDriftBuildReport(
 
 function handleDriftDetectComponents(
   requestId: string,
-  repoSpecs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }>,
+  repoSpecs: { name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }[],
   quickDetect?: boolean,
 ): void {
   try {
@@ -636,7 +635,7 @@ async function handleDriftDetectQuick(
   requestId: string,
   repoUrl: string,
   repoTokens: import('@detroitlabs/fighub-contracts').TokensV1,
-  repoSpecs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }>,
+  repoSpecs: { name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }[],
 ): Promise<void> {
   try {
     const report = await runDetectDrift({
@@ -668,7 +667,7 @@ async function handleOpsDetectDrift(
   requestId: string,
   repoUrl: string,
   repoTokens: import('@detroitlabs/fighub-contracts').TokensV1,
-  repoSpecs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }>,
+  repoSpecs: { name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }[],
   scope?: ('variables' | 'components')[],
 ): Promise<void> {
   try {
@@ -680,8 +679,8 @@ async function handleOpsDetectDrift(
     });
     let filteredReport = report;
     if (scope !== undefined && scope.length > 0) {
-      const includeVariables = scope.indexOf('variables') >= 0;
-      const includeComponents = scope.indexOf('components') >= 0;
+      const includeVariables = scope.includes('variables');
+      const includeComponents = scope.includes('components');
       const drifts = report.drifts.filter(function (entry) {
         if (entry.kind === 'variable') {
           return includeVariables;
@@ -713,7 +712,7 @@ const DEFAULT_TOKENS_PATH = 'design/tokens.json';
 const DEFAULT_SPECS_PATH = 'components/';
 
 function buildFullSpecMap(
-  specs: Array<{ name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }> | undefined,
+  specs: { name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }[] | undefined,
 ): Record<string, import('@detroitlabs/fighub-contracts').ComponentSpecV1> {
   const result: Record<string, import('@detroitlabs/fighub-contracts').ComponentSpecV1> = {};
   if (specs === undefined) {
@@ -832,38 +831,11 @@ async function handleResolutionBulkPush(message: ResolutionBulkPushMessage): Pro
       }),
     });
 
-    let snapshotWarning: string | undefined;
-    try {
-      const snapshotKeys = snapshotKeysForPushDrifts(
-        message.report,
-        bulkResolutions,
-        message.driftIds,
-      );
-      if (snapshotKeys.length > 0) {
-        updateSnapshotKeys(
-          snapshotKeys.map(function (entry) {
-            return {
-              key: entry.key,
-              value: entry.value,
-              source: 'push' as const,
-            };
-          }),
-        );
-      }
-    } catch (snapshotError) {
-      snapshotWarning = extractErrorMessage(snapshotError);
-      pluginLog('[main] resolution/bulk-push snapshot update failed', snapshotWarning);
-    }
-
     const successResponse: ResolutionBulkResultMessage = {
       type: 'resolution/bulk-result',
       requestId: requestId,
       ok: true,
       prUrl: prResult.prUrl,
-      warning:
-        snapshotWarning !== undefined && snapshotWarning.length > 0
-          ? 'PR opened, but canvas snapshot was not updated: ' + snapshotWarning
-          : undefined,
     };
     figma.ui.postMessage(successResponse);
     pluginLog('[main] resolution/bulk-push ok', prResult.prUrl);
