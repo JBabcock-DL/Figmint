@@ -44,9 +44,7 @@ describe('tokens preview cap', () => {
     const doc = loadFixture('tokens-truncated');
     const markdown = format(doc, 'md');
     expect(markdown).toContain('_… and 10 more tokens_');
-    const dataRows = markdown
-      .split('\n')
-      .filter((line) => line.startsWith('| layout | space/'));
+    const dataRows = markdown.split('\n').filter((line) => line.startsWith('| layout | space/'));
     expect(dataRows.length).toBe(50);
   });
 });

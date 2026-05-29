@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { githubApiViaRelay, probeRelayHealth, requestDeviceCodeViaRelay } from '@/io/github/relayClient';
+import {
+  githubApiViaRelay,
+  probeRelayHealth,
+  requestDeviceCodeViaRelay,
+} from '@/io/github/relayClient';
 
 describe('relayClient', () => {
   afterEach(function () {
@@ -37,7 +41,12 @@ describe('relayClient', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const result = await githubApiViaRelay('GET', '/repos/acme/widgets', 'gho_testtoken', undefined);
+    const result = await githubApiViaRelay(
+      'GET',
+      '/repos/acme/widgets',
+      'gho_testtoken',
+      undefined,
+    );
     expect(result.ok).toBe(true);
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining('/github/api/proxy'),
@@ -50,10 +59,7 @@ describe('relayClient', () => {
   });
 
   it('probeRelayHealth returns false when relay is down', async function () {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockRejectedValue(new Error('connection refused')),
-    );
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('connection refused')));
     expect(await probeRelayHealth()).toBe(false);
   });
 });

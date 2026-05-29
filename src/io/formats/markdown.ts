@@ -21,8 +21,6 @@ export function serializeMarkdown(doc: FormattableDocument): string {
     case 'audit-report':
       return renderAuditReportMarkdown(doc);
     default:
-      throw new Error(
-        'Unsupported document kind: ' + String((doc as { kind?: string }).kind),
-      );
+      throw new Error('Unsupported document kind: ' + String((doc as { kind?: string }).kind));
   }
 }

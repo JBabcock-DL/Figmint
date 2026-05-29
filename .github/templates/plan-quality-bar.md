@@ -117,12 +117,12 @@ Use line count only as a sanity check: thin outlines (~50 lines) for multi-file 
 
 ### Minimum line-count gates (FigHub default — do not move to In Planning below these)
 
-| Ticket shape | Minimum `plan.md` lines | Must include |
-| ------------ | ------------------------ | ------------ |
-| Multi-file code WO (3+ modules) | **≥200** | AC traceability table, typed message/API blocks, test file paths per step |
-| Platform / integration WO (OAuth, sinks, Figma API) | **≥350** | Wrong vs correct table, thread-split matrix, manual VQA steps |
-| UI + orchestration WO | **≥300** | Component props, reducer actions, style tokens |
-| Stub / placeholder | **0** — forbidden | `_TBD_`, “see research”, “implement feature” |
+| Ticket shape                                        | Minimum `plan.md` lines | Must include                                                              |
+| --------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------- |
+| Multi-file code WO (3+ modules)                     | **≥200**                | AC traceability table, typed message/API blocks, test file paths per step |
+| Platform / integration WO (OAuth, sinks, Figma API) | **≥350**                | Wrong vs correct table, thread-split matrix, manual VQA steps             |
+| UI + orchestration WO                               | **≥300**                | Component props, reducer actions, style tokens                            |
+| Stub / placeholder                                  | **0** — forbidden       | `_TBD_`, “see research”, “implement feature”                              |
 
 **Reference depth:** `.github/Sprint 2/WO-006-*/plan.md` (~98 lines but ultra-dense per step). Sprint 4 plans should match or exceed that **information density** even when line count is higher.
 

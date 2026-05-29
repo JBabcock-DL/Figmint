@@ -146,7 +146,7 @@ Per `memory.md` "do not repeat" canvas-bundle rule + D13:
 - **OQ-3** (BLOCKS BUILD COORDINATION — still open, owner orchestrator agent in Phase 3 Step 23) — Does WO-027's Components tab preview render path consume sections as 2 hardcoded frames or iterate `docRoot.children`? Resolution: Phase 3 Step 23 reads WO-027 plan.md + adjusts.
 - **OQ-4** (RESOLVED by D10 / audit-spec D1) — No `auditReport.v1.ts` v2 bump needed.
 - **OQ-5** (RESOLVED by D2) — Keep FigHub `_Doc/*` underscore prefix; do not rename to legacy `Doc/*`.
-- **OQ-6** (RESOLVED by D3 / F7) — Bootstrap does NOT need new Label/* text styles. The 27 slot styles are already published; Label/* are typography variables, not text styles.
+- **OQ-6** (RESOLVED by D3 / F7) — Bootstrap does NOT need new Label/_ text styles. The 27 slot styles are already published; Label/_ are typography variables, not text styles.
 
 ## Notes
 
@@ -175,21 +175,21 @@ These mirror the lock-state in `research/doc-pipeline-lift-map.md` D1-D13 and `r
 
 ### Acceptance criteria traceability
 
-| AC | Step(s) | Verifier |
-| -- | ------- | -------- |
-| AC1 — 5 sections present in order | Steps 14-18, 20 | Integration test in Step 21 + MCP metadata in Step 27 |
-| AC2 — Section 1 header w/ title + caption | Step 14 | `header.test.ts` |
-| AC3 — Section 2 properties table w/ §6.6 cols | Step 15 | `propertiesTable.test.ts` + designer VQA |
-| AC4 — Section 3 set group w/ title + caption + dashed + WRAP | Step 16 | `setGroup.test.ts` |
-| AC5 — Section 4 96 instances w/ opacities 0.92/0.85/0.5 | Step 17 | `matrix.test.ts` SPK-S5-DOC-1.F |
-| AC6 — Section 5 is Do/Don't (not gallery) + delete old loop | Steps 18-19 | `usage.test.ts` + lines 348-443 deleted |
-| AC7 — Bootstrap prereqs verified (no new bootstrap code) | Step 6 + Step 9 audit gate | grep + SPK-AUDIT-3 |
-| AC8 — Pre-flight gate hard-fails on misses, diagnostic verbatim | Steps 9-12 | SPK-AUDIT-1/2/3/4 |
-| AC9 — No `doc/component/*` frame ships at width=1 | Steps 14-18 reuse BUG-S5-001 geometry helpers | SPK-S5-DOC-1.E |
-| AC10 — Routes to `↳ Buttons` → `_PageContent` → `doc/component/button` | Step 20 orchestrator + existing `ensureComponentScaffoldTarget` | Integration test |
-| AC11 — All 4 CI legs green (typecheck, lint, format, dual build) | All steps + Step 21 final verification | `npm run build && npm test` |
-| AC12 — Designer comparison vs target: 0 FAIL on /vqa | Step 28 | `vqa-report.md` Ship verdict |
-| AC13 — BUG-S5-004 closed, WO-027 unblocked, SPK-S5-DOC-1 promoted | Steps 24-25 + Step 29 | Bug register update + WO-027 status transition |
+| AC                                                                     | Step(s)                                                         | Verifier                                              |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------- |
+| AC1 — 5 sections present in order                                      | Steps 14-18, 20                                                 | Integration test in Step 21 + MCP metadata in Step 27 |
+| AC2 — Section 1 header w/ title + caption                              | Step 14                                                         | `header.test.ts`                                      |
+| AC3 — Section 2 properties table w/ §6.6 cols                          | Step 15                                                         | `propertiesTable.test.ts` + designer VQA              |
+| AC4 — Section 3 set group w/ title + caption + dashed + WRAP           | Step 16                                                         | `setGroup.test.ts`                                    |
+| AC5 — Section 4 96 instances w/ opacities 0.92/0.85/0.5                | Step 17                                                         | `matrix.test.ts` SPK-S5-DOC-1.F                       |
+| AC6 — Section 5 is Do/Don't (not gallery) + delete old loop            | Steps 18-19                                                     | `usage.test.ts` + lines 348-443 deleted               |
+| AC7 — Bootstrap prereqs verified (no new bootstrap code)               | Step 6 + Step 9 audit gate                                      | grep + SPK-AUDIT-3                                    |
+| AC8 — Pre-flight gate hard-fails on misses, diagnostic verbatim        | Steps 9-12                                                      | SPK-AUDIT-1/2/3/4                                     |
+| AC9 — No `doc/component/*` frame ships at width=1                      | Steps 14-18 reuse BUG-S5-001 geometry helpers                   | SPK-S5-DOC-1.E                                        |
+| AC10 — Routes to `↳ Buttons` → `_PageContent` → `doc/component/button` | Step 20 orchestrator + existing `ensureComponentScaffoldTarget` | Integration test                                      |
+| AC11 — All 4 CI legs green (typecheck, lint, format, dual build)       | All steps + Step 21 final verification                          | `npm run build && npm test`                           |
+| AC12 — Designer comparison vs target: 0 FAIL on /vqa                   | Step 28                                                         | `vqa-report.md` Ship verdict                          |
+| AC13 — BUG-S5-004 closed, WO-027 unblocked, SPK-S5-DOC-1 promoted      | Steps 24-25 + Step 29                                           | Bug register update + WO-027 status transition        |
 
 ### Do-not-repeat references (memory.md)
 

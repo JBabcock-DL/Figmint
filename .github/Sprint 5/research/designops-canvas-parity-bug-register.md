@@ -8,11 +8,11 @@
 
 ## Figma evidence (ground truth)
 
-| Label | File | `file_key` | `node_id` | What it shows |
-| ----- | ---- | ----------- | --------- | ------------- |
-| **Broken output (FigHub)** | [Untitled — user sandbox](https://www.figma.com/design/Dw8NkEiG91NhjYqRPNTOOu/Untitled?node-id=5-193) | `Dw8NkEiG91NhjYqRPNTOOu` | `5:193` | `_PageContent` → `doc/component/button` with **1px-wide** `component-set-group`, **1px-wide** `usage`, **1px-wide** usage cells; instances offset negatively inside cells |
-| **Target (DesignOps)** | [v60 Foundations — Button doc](https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/v60-updates-%E2%80%94-Foundations?node-id=433-335) | `uCpQaRsW4oiXW3DsC6cLZm` | `433:335` | Full doc frame: header, properties table, component-set-group (1640), variant×state matrix, Do/Don't usage |
-| **Plugin sandbox** | [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox) | `cVdPraIafWFBRZnzMPhtrW` | — | WO-027 VQA target; bootstrap-complete variables |
+| Label                      | File                                                                                                                                  | `file_key`               | `node_id` | What it shows                                                                                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Broken output (FigHub)** | [Untitled — user sandbox](https://www.figma.com/design/Dw8NkEiG91NhjYqRPNTOOu/Untitled?node-id=5-193)                                 | `Dw8NkEiG91NhjYqRPNTOOu` | `5:193`   | `_PageContent` → `doc/component/button` with **1px-wide** `component-set-group`, **1px-wide** `usage`, **1px-wide** usage cells; instances offset negatively inside cells |
+| **Target (DesignOps)**     | [v60 Foundations — Button doc](https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/v60-updates-%E2%80%94-Foundations?node-id=433-335) | `uCpQaRsW4oiXW3DsC6cLZm` | `433:335` | Full doc frame: header, properties table, component-set-group (1640), variant×state matrix, Do/Don't usage                                                                |
+| **Plugin sandbox**         | [Plugin Sandbox](https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox)                                                  | `cVdPraIafWFBRZnzMPhtrW` | —         | WO-027 VQA target; bootstrap-complete variables                                                                                                                           |
 
 ### MCP metadata snapshot — `Dw8NkEiG91NhjYqRPNTOOu` node `5:193` (2026-05-28)
 
@@ -32,13 +32,13 @@ _PageContent                           1800 × 902
 
 ## Canonical DesignOps contract (what we must match)
 
-| Source | Requirement |
-| ------ | ----------- |
-| `DesignOps-plugin/skills/create-component/conventions/04-doc-pipeline-contract.md` | Five sections on `↳ Buttons`: header → properties → component-set-group → matrix → usage (Do/Don't) |
-| Same file §2 | `doc/component/{name}` **1640px** wide, VERTICAL, `primaryAxisSizingMode: AUTO`, `counterAxisSizingMode: FIXED` |
-| Same file §3.2 | ComponentSet in group: WRAP grid, padding 32, **no manual x/y** after reparent |
-| `03-auto-layout-invariants.md` §10.1 | **`resize()` resets sizing to FIXED** — must use resize-then-AUTO order; reassert Hug after `appendChild` |
-| `create-design-system/conventions/00-gotchas.md` §0.1 | Empty VERTICAL + `resize(1,1)` without content ⇒ **~10px / 1px rails** |
+| Source                                                                             | Requirement                                                                                                     |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `DesignOps-plugin/skills/create-component/conventions/04-doc-pipeline-contract.md` | Five sections on `↳ Buttons`: header → properties → component-set-group → matrix → usage (Do/Don't)             |
+| Same file §2                                                                       | `doc/component/{name}` **1640px** wide, VERTICAL, `primaryAxisSizingMode: AUTO`, `counterAxisSizingMode: FIXED` |
+| Same file §3.2                                                                     | ComponentSet in group: WRAP grid, padding 32, **no manual x/y** after reparent                                  |
+| `03-auto-layout-invariants.md` §10.1                                               | **`resize()` resets sizing to FIXED** — must use resize-then-AUTO order; reassert Hug after `appendChild`       |
+| `create-design-system/conventions/00-gotchas.md` §0.1                              | Empty VERTICAL + `resize(1,1)` without content ⇒ **~10px / 1px rails**                                          |
 
 **Lift map:** `Docs/lift-sources.md` — port **`cc-doc-*.js`**, **`scaffold.mcp.js`**, **`matrix.mcp.js`**, **`usage.mcp.js`** patterns; do not invent parallel frame names.
 
@@ -46,12 +46,12 @@ _PageContent                           1800 × 902
 
 ## Resolved in code (WO-057 #60 — 2026-05-28)
 
-| ID | Resolution |
-| -- | ---------- |
+| ID             | Resolution                                                                                                                         |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | **BUG-S5-001** | `createDocSectionFrame` + `reassertDocSectionStretch` + full doc pipeline emitters — sections target 1640px STRETCH, not 1px rails |
-| **BUG-S5-002** | `assertNoCollapsedAxis` + `comp/doc-section-width` audit row in `usageFrameAudit.ts` |
-| **BUG-S5-003** | `usageFrame.ts` refactored; Do/Don't via `buildUsageNotes`; geometry helpers shared with `src/core/canvas/doc/*` |
-| **BUG-S5-004** | Full 5-section doc pipeline: `src/core/canvas/doc/{header,propertiesTable,setGroup,matrix,usage,index}.ts` + preflight gate |
+| **BUG-S5-002** | `assertNoCollapsedAxis` + `comp/doc-section-width` audit row in `usageFrameAudit.ts`                                               |
+| **BUG-S5-003** | `usageFrame.ts` refactored; Do/Don't via `buildUsageNotes`; geometry helpers shared with `src/core/canvas/doc/*`                   |
+| **BUG-S5-004** | Full 5-section doc pipeline: `src/core/canvas/doc/{header,propertiesTable,setGroup,matrix,usage,index}.ts` + preflight gate        |
 
 **Still open for `/vqa`:** designer sandbox sign-off on Plugin Sandbox (`cVdPraIafWFBRZnzMPhtrW`) before marking bugs **Closed**.
 
@@ -59,24 +59,22 @@ _PageContent                           1800 × 902
 
 ## Bug index
 
-| ID | Severity | Summary | Primary owner | Blocks VQA |
-| -- | -------- | ------- | ------------- | ---------- |
-| **BUG-S5-001** | P0 | Doc wrapper frames stuck at **width=1** after `resize(1,1)` + failed Hug reassert | WO-025, WO-027 | **Closed** — designer sign-off 2026-05-28 |
-| **BUG-S5-002** | P0 | `assertNoOnePxMaster` only checks **height≤2**, misses **width=1** hug failures | WO-022, WO-010 | **Closed** — designer sign-off 2026-05-28 |
-| **BUG-S5-003** | P0 | `usageFrame.ts` uses raw `resize(1,1)` instead of `createHugFrame` / `resizeThenApplySizing` | WO-025 | **Closed** — designer sign-off 2026-05-28 |
-| **BUG-S5-004** | **P0 (promoted 2026-05-28)** | Missing DesignOps **doc pipeline** (header, properties, matrix, Do/Don't) — only set + instance gallery | **WO-057** (#60) | **Closed** — designer sign-off 2026-05-28 |
-| **BUG-S5-005** | P1 | `chip.ts` binding stubs `state-layer/hover`, `focus-ring` at **1×1** without Hug/content | WO-023 | Partial |
-| **BUG-S5-006** | P1 | Page routing improved (`↳ Buttons`) but **no `_Header`** / page chrome from `/new-project` | WO-027 | Partial |
-| **BUG-S5-007** | P2 | ComponentSet finalize uses `resizeThenApplySizing` with width 320 default — may not match 1640 wrap grid | WO-022 | Partial |
-| **BUG-S5-008** | P2 | Staging holder `holder.resize(1,1)` on page (hidden) — OK if invisible; verify no leak to doc tree | WO-022 | No |
+| ID             | Severity                     | Summary                                                                                                  | Primary owner    | Blocks VQA                                |
+| -------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------- | ----------------------------------------- |
+| **BUG-S5-001** | P0                           | Doc wrapper frames stuck at **width=1** after `resize(1,1)` + failed Hug reassert                        | WO-025, WO-027   | **Closed** — designer sign-off 2026-05-28 |
+| **BUG-S5-002** | P0                           | `assertNoOnePxMaster` only checks **height≤2**, misses **width=1** hug failures                          | WO-022, WO-010   | **Closed** — designer sign-off 2026-05-28 |
+| **BUG-S5-003** | P0                           | `usageFrame.ts` uses raw `resize(1,1)` instead of `createHugFrame` / `resizeThenApplySizing`             | WO-025           | **Closed** — designer sign-off 2026-05-28 |
+| **BUG-S5-004** | **P0 (promoted 2026-05-28)** | Missing DesignOps **doc pipeline** (header, properties, matrix, Do/Don't) — only set + instance gallery  | **WO-057** (#60) | **Closed** — designer sign-off 2026-05-28 |
+| **BUG-S5-005** | P1                           | `chip.ts` binding stubs `state-layer/hover`, `focus-ring` at **1×1** without Hug/content                 | WO-023           | Partial                                   |
+| **BUG-S5-006** | P1                           | Page routing improved (`↳ Buttons`) but **no `_Header`** / page chrome from `/new-project`               | WO-027           | Partial                                   |
+| **BUG-S5-007** | P2                           | ComponentSet finalize uses `resizeThenApplySizing` with width 320 default — may not match 1640 wrap grid | WO-022           | Partial                                   |
+| **BUG-S5-008** | P2                           | Staging holder `holder.resize(1,1)` on page (hidden) — OK if invisible; verify no leak to doc tree       | WO-022           | No                                        |
 
 ---
 
 ## BUG-S5-001 — 1px **width** on doc section frames (P0) — RESOLVED IN CODE 2026-05-28
 
 **Fix:** `src/core/components/scaffold/usageFrame.ts` — split `createHugAutoFrame` into `createDocSectionFrame` (layoutAlign='STRETCH', stretches to docRoot's 1640 width) for sections and `createHugAutoFrame` (both axes AUTO) for cells. Added `reassertDocSectionStretch` and `reassertHugBoth` to re-apply sizing after every appendChild. **Verification still pending** — designer must confirm on Plugin Sandbox (cVdPraIafWFBRZnzMPhtrW) before BUG marks Closed.
-
-
 
 **Symptom:** `doc/component/button/component-set-group` and `doc/component/button/usage` export as **1px wide** in Figma; children clip/offset.
 
@@ -88,10 +86,10 @@ _PageContent                           1800 × 902
 
 **Code sites:**
 
-| File | Lines (approx) | Pattern |
-| ---- | -------------- | ------- |
-| `src/core/components/scaffold/usageFrame.ts` | `createHugAutoFrame`, `ensureComponentSetGroup` | `resize(1,1)` + `reassertHug` |
-| `src/core/components/scaffold/ensureComponentScaffoldTarget.ts` | `ensureDocComponentRoot` | `resizeThenApplySizing(1640,1)` — doc root OK; children inherit broken width |
+| File                                                            | Lines (approx)                                  | Pattern                                                                      |
+| --------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------- |
+| `src/core/components/scaffold/usageFrame.ts`                    | `createHugAutoFrame`, `ensureComponentSetGroup` | `resize(1,1)` + `reassertHug`                                                |
+| `src/core/components/scaffold/ensureComponentScaffoldTarget.ts` | `ensureDocComponentRoot`                        | `resizeThenApplySizing(1640,1)` — doc root OK; children inherit broken width |
 
 **Fix direction (research spike SPK-S5-GEO-1):**
 
@@ -111,11 +109,11 @@ _PageContent                           1800 × 902
 
 **Code sites:**
 
-| File | Rule ID |
-| ---- | ------- |
-| `src/core/canvas/helpers/autoLayout.ts` | `assertNoOnePxMaster` |
-| `src/core/components/scaffold/auditRows.ts` | `comp/scaffold-one-px-master` |
-| `src/core/components/scaffold/usageFrameAudit.ts` | `comp/usage-one-px-cell` |
+| File                                              | Rule ID                       |
+| ------------------------------------------------- | ----------------------------- |
+| `src/core/canvas/helpers/autoLayout.ts`           | `assertNoOnePxMaster`         |
+| `src/core/components/scaffold/auditRows.ts`       | `comp/scaffold-one-px-master` |
+| `src/core/components/scaffold/usageFrameAudit.ts` | `comp/usage-one-px-cell`      |
 
 **Fix direction (SPK-S5-AUD-1):**
 
@@ -213,14 +211,14 @@ flowchart TD
 
 ## Ticket cross-reference
 
-| Ticket | GitHub | Bugs logged in ticket.md |
-| ------ | ------ | ------------------------ |
-| WO-022 | #25 | BUG-S5-002, BUG-S5-007, BUG-S5-008 |
-| WO-023 | #26 | BUG-S5-005 |
-| WO-024 | #27 | (property audit — verify after geometry fix) |
-| WO-025 | #28 | BUG-S5-001, BUG-S5-003 |
-| WO-026 | #29 | — (registry unaffected) |
-| WO-027 | #30 | BUG-S5-001..004, BUG-S5-006 — **integration owner** |
+| Ticket | GitHub | Bugs logged in ticket.md                            |
+| ------ | ------ | --------------------------------------------------- |
+| WO-022 | #25    | BUG-S5-002, BUG-S5-007, BUG-S5-008                  |
+| WO-023 | #26    | BUG-S5-005                                          |
+| WO-024 | #27    | (property audit — verify after geometry fix)        |
+| WO-025 | #28    | BUG-S5-001, BUG-S5-003                              |
+| WO-026 | #29    | — (registry unaffected)                             |
+| WO-027 | #30    | BUG-S5-001..004, BUG-S5-006 — **integration owner** |
 
 ---
 

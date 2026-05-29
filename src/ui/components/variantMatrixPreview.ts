@@ -1,8 +1,6 @@
 import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
-export function countVariantCrossProduct(
-  matrix: ComponentSpecV1['variantMatrix'],
-): number {
+export function countVariantCrossProduct(matrix: ComponentSpecV1['variantMatrix']): number {
   const keys = Object.keys(matrix);
   if (keys.length === 0) {
     return 1;

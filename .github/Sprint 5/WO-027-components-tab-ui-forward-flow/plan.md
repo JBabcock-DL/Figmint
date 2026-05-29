@@ -16,23 +16,23 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 ## AC traceability
 
-| Ticket AC / requirement | Plan step(s) |
-| ----------------------- | ------------ |
-| FR-1 `Components.tsx` + App tab `'components'` | Steps 14–15 |
-| FR-2 Registry pick UC-2 | Steps 16–18 |
-| FR-3 Paste/load spec UC-3 | Steps 19–20 |
-| FR-4 Spec preview + edit + validate | Steps 21–23 |
-| FR-5 Scaffold orchestration `scaffold/run` | Steps 3–8, 24 |
-| FR-6 Progress + audit | Steps 9–11, 25 |
-| FR-7 ExportSheet registry | Steps 26–27 |
-| FR-8 Pass `registry` into scaffold | Steps 3, 18, 24 |
-| AC Button <5s registry pick | Step 32 (SPK-027-1 VQA) |
-| AC paste canonical spec | Steps 2, 20, 28 |
-| AC G2 p50 <5s | Steps 8, 32 |
-| AC ExportSheet confirm (no auto-PR) | Steps 26–27 |
-| Vitest guards + reducer | Steps 12–13, 28–29 |
-| A11y tab/progress/export keyboard | Steps 15, 11, 27 |
-| `console.debug` progress / `pluginLog` main | Steps 8, 24 |
+| Ticket AC / requirement                        | Plan step(s)            |
+| ---------------------------------------------- | ----------------------- |
+| FR-1 `Components.tsx` + App tab `'components'` | Steps 14–15             |
+| FR-2 Registry pick UC-2                        | Steps 16–18             |
+| FR-3 Paste/load spec UC-3                      | Steps 19–20             |
+| FR-4 Spec preview + edit + validate            | Steps 21–23             |
+| FR-5 Scaffold orchestration `scaffold/run`     | Steps 3–8, 24           |
+| FR-6 Progress + audit                          | Steps 9–11, 25          |
+| FR-7 ExportSheet registry                      | Steps 26–27             |
+| FR-8 Pass `registry` into scaffold             | Steps 3, 18, 24         |
+| AC Button <5s registry pick                    | Step 32 (SPK-027-1 VQA) |
+| AC paste canonical spec                        | Steps 2, 20, 28         |
+| AC G2 p50 <5s                                  | Steps 8, 32             |
+| AC ExportSheet confirm (no auto-PR)            | Steps 26–27             |
+| Vitest guards + reducer                        | Steps 12–13, 28–29      |
+| A11y tab/progress/export keyboard              | Steps 15, 11, 27        |
+| `console.debug` progress / `pluginLog` main    | Steps 8, 24             |
 
 ---
 
@@ -42,13 +42,13 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 - [x] **Step 0** — Before `/build`, verify upstream plans export the signatures below. If any plan is stub, stop and run `/plan` on that ticket first.
 
-  | Ticket | Module | Required export |
-  | ------ | ------ | ----------------- |
-  | WO-022 | `src/core/components/scaffold/index.ts` | `scaffold(spec, targetPage, options?) → ScaffoldResult` |
-  | WO-023 | `src/core/components/scaffold/applyBindings.ts` | `applyBindings(spec, componentSet, options?) → ApplyBindingsResult` |
-  | WO-024 | `src/core/components/scaffold/applyProperties.ts` | `applyProperties(spec, componentSet) → ApplyPropertiesResult` |
-  | WO-025 | `src/core/components/scaffold/usageFrame.ts` | `buildUsageFrame(componentSet, spec, ctx: UsageFrameContext) → UsageFrameResult` |
-  | WO-026 | `src/core/components/registry.ts` | `upsertRegistryEntry`, `mergeRegistryEntry`, `buildRegistryEntry`, `buildRegistryAuditRows`; UI: `loadRegistryFromGitHub` in `registryExport.ts` |
+  | Ticket | Module                                            | Required export                                                                                                                                  |
+  | ------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+  | WO-022 | `src/core/components/scaffold/index.ts`           | `scaffold(spec, targetPage, options?) → ScaffoldResult`                                                                                          |
+  | WO-023 | `src/core/components/scaffold/applyBindings.ts`   | `applyBindings(spec, componentSet, options?) → ApplyBindingsResult`                                                                              |
+  | WO-024 | `src/core/components/scaffold/applyProperties.ts` | `applyProperties(spec, componentSet) → ApplyPropertiesResult`                                                                                    |
+  | WO-025 | `src/core/components/scaffold/usageFrame.ts`      | `buildUsageFrame(componentSet, spec, ctx: UsageFrameContext) → UsageFrameResult`                                                                 |
+  | WO-026 | `src/core/components/registry.ts`                 | `upsertRegistryEntry`, `mergeRegistryEntry`, `buildRegistryEntry`, `buildRegistryAuditRows`; UI: `loadRegistryFromGitHub` in `registryExport.ts` |
 
   **Done when:** grep or import confirms each symbol exists at build time; otherwise build agent exits with checklist of missing deps.
 
@@ -57,11 +57,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 - [x] **Step 1** — Create `src/io/messages/scaffold.ts` with types and guards (ES2017-safe — no optional chaining in guards used from `src/main.ts`):
 
   ```ts
-  import type {
-    AuditReportV1,
-    ComponentSpecV1,
-    RegistryV1,
-  } from '@detroitlabs/fighub-contracts';
+  import type { AuditReportV1, ComponentSpecV1, RegistryV1 } from '@detroitlabs/fighub-contracts';
   import type { ApplyBindingsResult } from '@/core/components/scaffold/applyBindings';
   import type { ApplyPropertiesResult } from '@/core/components/scaffold/applyProperties';
   import type { ScaffoldResult } from '@/core/components/scaffold';
@@ -139,7 +135,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   **Done when:** `tests/unit/io/messages/scaffold.test.ts` passes; guards reject malformed payloads; `SCAFFOLD_STEPS.length === 7`.
 
 - [x] **Step 2** — Add canonical VQA fixture `tests/fixtures/component-spec-button-canonical.json`:
-
   - Valid `component-spec` v1 with locked WO-023 selector grammar (`root.fill`, not `.button`).
   - Variable refs without illegal collection prefixes (no `Theme/color/...` drift).
   - Variant matrix producing **12 variants** (3×2×2 or equivalent — document axes in fixture comment).
@@ -159,7 +154,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   ```
 
   Internal helpers:
-
   - `postProgress(step, status, extras?)` → `figma.ui.postMessage` as `ScaffoldProgressMessage`.
   - `ensureComponentsPage(): PageNode` — find or create page named **`Components`** via `figma.root.findOne(n => n.type === 'PAGE' && n.name === 'Components')`; if missing, `figma.createPage()` + rename. Mirror idempotent pattern from `ensureStyleGuideScaffold.ts`.
   - `collectComponentAudits(...)` — merge audit rows from bindings/properties/usage into `AuditReportV1[]` with `meta.scope === 'component'`.
@@ -168,8 +162,8 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 - [x] **Step 4** — Implement pipeline step **`scaffold-geometry`** inside `runScaffoldComponent`:
 
-  | Call | Input |
-  | ---- | ----- |
+  | Call                                                          | Input                                                             |
+  | ------------------------------------------------------------- | ----------------------------------------------------------------- |
   | `scaffold(spec, targetPage, { registry: options?.registry })` | WO-022 `ScaffoldOptions.registry` when `options.registry` present |
 
   On success: post `scaffold/progress` `done` with `detail` = variant count from `ScaffoldResult`.
@@ -179,7 +173,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   **Done when:** mock WO-022 in unit test receives `registry` when passed in options.
 
 - [x] **Step 5** — Implement step **`apply-bindings`**:
-
   - Resolve `ComponentSetNode` from `ScaffoldResult.componentSetId` (or direct reference returned by WO-022).
   - Call `applyBindings(spec, componentSet)`.
   - If result includes audit payload, attach to progress message `audit` field.
@@ -188,7 +181,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   **Done when:** progress emits `apply-bindings` running → done; bindings audit appears in UI reducer test (Step 13).
 
 - [x] **Step 6** — Implement step **`apply-properties`**:
-
   - Call `applyProperties(spec, componentSet)`.
   - Continue on partial failures per WO-024 semantics; attach audit when present.
   - Abort only if WO-024 returns unrecoverable error (throw).
@@ -196,7 +188,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   **Done when:** step transitions recorded in orchestrator integration test (Step 30).
 
 - [x] **Step 7** — Implement step **`build-usage-frame`**:
-
   - Skip with `status: 'skipped'` when `options?.skipUsageFrame === true` (dev flag only).
   - Else call `buildUsageFrame(componentSet, spec, { targetPage })` where `targetPage` is the Components page from `ensureComponentsPage()`.
   - Post done with `detail` = instance count from `UsageFrameResult`.
@@ -205,12 +196,12 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 - [x] **Step 8** — Implement steps **`update-registry`**, **`audit-component`**, **`complete`**, terminal **`scaffold/result`**:
 
-  | Step | Action |
-  | ---- | ------ |
+  | Step              | Action                                                                                                                                                                                                                                                               |
+  | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
   | `update-registry` | Use `options.registry ?? createEmptyRegistry(figma.fileKey)` (registry pre-loaded by UI in Steps 17–18 — **no** `loadRegistryFromGitHub` on main thread); `buildRegistryEntry` from scaffold result; `upsertRegistryEntry({ registry, spec, scaffold, targetPage })` |
-  | `audit-component` | Merge audits from bindings/properties/usage **plus** `buildRegistryAuditRows(registry, spec.name, entry)` from WO-026; failed rules bubble to result |
-  | `complete` | Post progress done |
-  | Terminal | `figma.ui.postMessage({ type: 'scaffold/result', ok: true, totalDurationMs, componentSetId, componentSetName, registry, audits, scaffold, bindings, properties })` |
+  | `audit-component` | Merge audits from bindings/properties/usage **plus** `buildRegistryAuditRows(registry, spec.name, entry)` from WO-026; failed rules bubble to result                                                                                                                 |
+  | `complete`        | Post progress done                                                                                                                                                                                                                                                   |
+  | Terminal          | `figma.ui.postMessage({ type: 'scaffold/result', ok: true, totalDurationMs, componentSetId, componentSetName, registry, audits, scaffold, bindings, properties })`                                                                                                   |
 
   Record `totalDurationMs = Date.now() - startedAt` at start of `runScaffoldComponent`.
   On any uncaught error: `scaffold/error` + `pluginLog('[main] scaffold/run unhandled', ...)`.
@@ -267,20 +258,19 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
   Reducer behavior (mirror `bootstrapProgressReducer.ts`):
 
-  | Action | State change |
-  | ------ | ------------ |
-  | `scaffold/reset` | `createInitialScaffoldProgressState()` |
-  | `scaffold/start` | `running: true`, all steps pending except none running |
-  | `scaffold/progress` | upsert step row; merge `audit` by `meta.scope` |
-  | `scaffold/result` | `running: false`, store result, mark `complete` done |
-  | `scaffold/error` | `running: false`, set `error`, optionally `failedStep` |
+  | Action              | State change                                           |
+  | ------------------- | ------------------------------------------------------ |
+  | `scaffold/reset`    | `createInitialScaffoldProgressState()`                 |
+  | `scaffold/start`    | `running: true`, all steps pending except none running |
+  | `scaffold/progress` | upsert step row; merge `audit` by `meta.scope`         |
+  | `scaffold/result`   | `running: false`, store result, mark `complete` done   |
+  | `scaffold/error`    | `running: false`, set `error`, optionally `failedStep` |
 
   Export `countCompletedSteps(state): number` for progress bar numerator.
 
   **Done when:** `tests/unit/ui/scaffold/scaffoldProgressReducer.test.ts` covers start → progress ×3 → result → reset.
 
 - [x] **Step 11** — Create `src/ui/components/scaffold/ScaffoldStepList.tsx`:
-
   - Props: `{ steps: ScaffoldStepState[]; failedStep?: ScaffoldStepId | null }`.
   - Render ordered list matching `SCAFFOLD_STEPS`; failed step row gets `#fde8e8` background (match Bootstrap error styling).
   - Wrap progress region in container with `role="progressbar"`, `aria-valuemin={0}`, `aria-valuemax={steps.length}`, `aria-valuenow={countCompletedSteps}`.
@@ -293,13 +283,9 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 - [x] **Step 12** — Create `src/ui/components/variantMatrixPreview.ts`:
 
   ```ts
-  export function countVariantCrossProduct(
-    matrix: ComponentSpecV1['variantMatrix'],
-  ): number;
+  export function countVariantCrossProduct(matrix: ComponentSpecV1['variantMatrix']): number;
 
-  export function detectCssSelectorWarnings(
-    bindings: ComponentSpecV1['bindings'],
-  ): string[];
+  export function detectCssSelectorWarnings(bindings: ComponentSpecV1['bindings']): string[];
   ```
 
   - Cross-product = ∏ axis option lengths (empty axis → factor 1).
@@ -310,9 +296,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 - [x] **Step 13** — Create `src/ui/components/scaffold/validateSpecDraft.ts`:
 
   ```ts
-  export type SpecValidationResult =
-    | { ok: true }
-    | { ok: false; errors: string[] };
+  export type SpecValidationResult = { ok: true } | { ok: false; errors: string[] };
 
   export async function validateComponentSpecDraft(
     draft: ComponentSpecV1,
@@ -334,8 +318,8 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
   Nav button order: **Bootstrap** → **Components** → **Export** → **Settings** (PRD §7.3).
 
-  | Button | `aria-current` | Active bg |
-  | ------ | -------------- | --------- |
+  | Button   | `aria-current`       | Active bg |
+  | -------- | -------------------- | --------- |
   | Each tab | `'page'` when active | `#f0f0f0` |
 
   Conditional render:
@@ -349,7 +333,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   **Done when:** Vitest or manual: four tabs visible; Components renders placeholder then full tab.
 
 - [x] **Step 15** — Accessibility pass on `App.tsx` nav:
-
   - `nav` retains `aria-label="FigHub tabs"`.
   - Tab buttons keyboard-focusable; `aria-current` toggles per active tab.
   - **Done when:** ticket AC row 9 satisfied in VQA checklist.
@@ -379,10 +362,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   export async function loadRegistryForComponentsTab(
     repoUrl: string,
     registryPath: string,
-  ): Promise<
-    | { ok: true; registry: RegistryV1 }
-    | { ok: false; message: string }
-  >;
+  ): Promise<{ ok: true; registry: RegistryV1 } | { ok: false; message: string }>;
   ```
 
   - Calls `loadFromGitHub(repoUrl, registryPath)` from `@/io/sources/github`.
@@ -410,12 +390,12 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
   Resolution order (research §3 table):
 
-  | Priority | Path |
-  | -------- | ---- |
-  | 1 | `design/components/{key}.component-spec.v1.json` |
-  | 2 | `design/component-specs/{key}.v1.json` |
-  | 3 | Dev-only: `import.meta.env.DEV && loadBenchFixture('component-spec-button-canonical')` — **never** in production build |
-  | 4 | Error: `"No component-spec on disk for {key}"` |
+  | Priority | Path                                                                                                                   |
+  | -------- | ---------------------------------------------------------------------------------------------------------------------- |
+  | 1        | `design/components/{key}.component-spec.v1.json`                                                                       |
+  | 2        | `design/component-specs/{key}.v1.json`                                                                                 |
+  | 3        | Dev-only: `import.meta.env.DEV && loadBenchFixture('component-spec-button-canonical')` — **never** in production build |
+  | 4        | Error: `"No component-spec on disk for {key}"`                                                                         |
 
   `{key}` = registry map key (slug). Display sorted keys in UI.
 
@@ -426,7 +406,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 ### Components tab — paste path (UC-3)
 
 - [x] **Step 19** — In `Components.tsx`, wire WO-006 source ports (same imports as Bootstrap):
-
   - `SourcePasteTextarea`, `SourceFilePicker`, `SourceDropZone`, `ClipboardBanner` + `useClipboardSources`.
   - Section heading **"Paste or load spec"** — 13px semibold.
 
@@ -487,10 +466,7 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 - [x] **Step 22** — Scaffold CTA enablement in `Components.tsx`:
 
   ```ts
-  const canScaffold =
-    draft !== null &&
-    validation?.ok === true &&
-    !progressState.running;
+  const canScaffold = draft !== null && validation?.ok === true && !progressState.running;
   ```
 
   Button label **"Scaffold component"**; disabled styling `opacity: 0.5`, `cursor: 'not-allowed'`.
@@ -548,7 +524,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   **Done when:** progress steps advance in integration test.
 
 - [x] **Step 25** — Audit + error surfacing:
-
   - Render `<AuditPanel audits={progressState.audits} defaultExpandedFailed />` when `showAudit && audits.length > 0`.
   - `AuditPanel` failed rules expanded first (pass prop if exists; else sort audits with failures first).
   - Global error banner below CTA when `progressState.error` set: red border, include `failedStep` label from `getScaffoldStepLabel`.
@@ -563,26 +538,27 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   Match Export tab sandbox pattern (`App.tsx` L100–131) — **inline** below progress, not modal.
 
   ```tsx
-  {showRegistryExport && resultRegistry && (
-    <section aria-label="Registry export">
-      <p style={{ fontSize: 11, color: '#666' }}>
-        Scaffold complete — export the updated registry to sync your repo. Nothing is committed until you confirm.
-      </p>
-      <ExportSheet
-        document={{ kind: 'registry', payload: resultRegistry }}
-        title="Update registry"
-        defaultSinks={
-          github.connected ? ['download', 'github-pr'] : ['download']
-        }
-        onComplete={function () {
-          setShowRegistryExport(false);
-        }}
-        onCancel={function () {
-          setShowRegistryExport(false);
-        }}
-      />
-    </section>
-  )}
+  {
+    showRegistryExport && resultRegistry && (
+      <section aria-label="Registry export">
+        <p style={{ fontSize: 11, color: '#666' }}>
+          Scaffold complete — export the updated registry to sync your repo. Nothing is committed
+          until you confirm.
+        </p>
+        <ExportSheet
+          document={{ kind: 'registry', payload: resultRegistry }}
+          title="Update registry"
+          defaultSinks={github.connected ? ['download', 'github-pr'] : ['download']}
+          onComplete={function () {
+            setShowRegistryExport(false);
+          }}
+          onCancel={function () {
+            setShowRegistryExport(false);
+          }}
+        />
+      </section>
+    );
+  }
   ```
 
   Pre-fill path: pass initial path via ExportSheet state — use `defaultExportBasename` → `.fighub-registry` + user-editable `.json` extension in path field (WO-020 `exportSheetReducer`).
@@ -596,7 +572,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 - [x] **Step 27** — GitHub disconnected registry section UX:
 
   When `!github.connected`:
-
   - Registry pick panel `opacity: 0.6`, `pointerEvents: 'none'`.
   - Hint: `"Connect GitHub in Settings to pick components from your repo."` with button **"Open Settings"** calling `onNavigateSettings?.()` prop OR document that user switches tab manually (prefer callback prop drilled from App: `onOpenSettings={() => setActiveTab('settings')}`).
 
@@ -610,15 +585,15 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 - [x] **Step 28** — Implement `src/ui/tabs/Components.tsx` layout sections:
 
-  | Section | Content |
-  | ------- | ------- |
-  | **Registry** (UC-2) | Load registry button, sorted key `<select>`, spec resolve status |
-  | **Paste or load** (UC-3) | Source ports |
-  | **Preview** | `SpecPreviewPanel` |
-  | **Actions** | Scaffold CTA |
-  | **Progress** | `ScaffoldStepList` + optional `ProgressBar` |
-  | **Audit** | `AuditPanel` |
-  | **Export** | `ExportSheet` block |
+  | Section                  | Content                                                          |
+  | ------------------------ | ---------------------------------------------------------------- |
+  | **Registry** (UC-2)      | Load registry button, sorted key `<select>`, spec resolve status |
+  | **Paste or load** (UC-3) | Source ports                                                     |
+  | **Preview**              | `SpecPreviewPanel`                                               |
+  | **Actions**              | Scaffold CTA                                                     |
+  | **Progress**             | `ScaffoldStepList` + optional `ProgressBar`                      |
+  | **Audit**                | `AuditPanel`                                                     |
+  | **Export**               | `ExportSheet` block                                              |
 
   Use `useGitHubConnect` with `repoUrl` + `tokensPath` from Settings clientStorage read pattern (mirror Settings.tsx — read config on mount).
 
@@ -646,7 +621,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   **Done when:** guards cover all four message types; `SCAFFOLD_STEPS.length === 7`; test file green in CI.
 
 - [x] **Step 30** — Integration test `tests/unit/ui/tabs/Components.scaffold.integration.test.tsx`:
-
   - Mock `window.addEventListener` + simulate `scaffold/progress` × N + `scaffold/result`.
   - Assert ExportSheet region appears (`getByLabelText('Registry export')` or title "Update registry").
   - Use `@testing-library/react` (already in repo from WO-020).
@@ -654,7 +628,6 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
   **Done when:** test passes in CI.
 
 - [x] **Step 31** — Ingest + preview unit tests:
-
   - `tests/unit/ui/scaffold/variantMatrixPreview.test.ts`
   - `tests/unit/ui/scaffold/ingestKindFilter.test.ts` — token rejection copy
   - `tests/unit/ui/scaffold/resolveComponentSpec.test.ts` — path order
@@ -663,13 +636,13 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 - [ ] **Step 32** — Manual VQA + SPK-027-1 (**deferred to `/vqa`** — procedure documented below; SPK-027-1 G2 timing not run in this build):
 
-  | Step | Action |
-  | ---- | ------ |
-  | 1 | Plugin Sandbox `file_key=cVdPraIafWFBRZnzMPhtrW` |
-  | 2 | Bootstrap tab → load `bootstrap-complete` bench fixture → Bootstrap run |
-  | 3 | Components tab → registry pick Button OR paste `component-spec-button-canonical.json` |
-  | 4 | Scaffold → record `totalDurationMs` from result (target p50 < 5000 ms over 3 runs) |
-  | 5 | ExportSheet → download `.fighub-registry.json` → validate schema |
+  | Step | Action                                                                                |
+  | ---- | ------------------------------------------------------------------------------------- |
+  | 1    | Plugin Sandbox `file_key=cVdPraIafWFBRZnzMPhtrW`                                      |
+  | 2    | Bootstrap tab → load `bootstrap-complete` bench fixture → Bootstrap run               |
+  | 3    | Components tab → registry pick Button OR paste `component-spec-button-canonical.json` |
+  | 4    | Scaffold → record `totalDurationMs` from result (target p50 < 5000 ms over 3 runs)    |
+  | 5    | ExportSheet → download `.fighub-registry.json` → validate schema                      |
 
   Update ticket VQA table rows 1–11 during `/vqa`.
   Design mock `node_id`: **N/A — panel-only VQA** until FigHub design file linked.
@@ -724,25 +697,25 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 ## Dependencies & Tools
 
-| Dependency | Role in WO-027 |
-| ---------- | -------------- |
-| WO-006 | `loadFromPaste`, `loadFromFile`, `detectContract`, source UI widgets |
-| WO-016 | GitHub OAuth + `loadFromGitHub` contents relay |
-| WO-020 | `ExportSheet`, `runExport`, `defaultExportBasename`, sink guards |
-| WO-022 | `scaffold()` step 1 |
-| WO-023 | `applyBindings()` step 2 |
-| WO-024 | `applyProperties()` step 3 |
-| WO-025 | `buildUsageFrame()` step 4 |
-| WO-026 | `mergeRegistryEntry`, `buildRegistryEntry`, `buildRegistryAuditRows`; UI: `prepareRegistryExport`, `loadRegistryFromGitHub` |
-| WO-010 | `AuditPanel`, `AuditReportV1` display |
-| WO-015 | Bootstrap orchestration pattern (reference only) |
+| Dependency | Role in WO-027                                                                                                              |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------- |
+| WO-006     | `loadFromPaste`, `loadFromFile`, `detectContract`, source UI widgets                                                        |
+| WO-016     | GitHub OAuth + `loadFromGitHub` contents relay                                                                              |
+| WO-020     | `ExportSheet`, `runExport`, `defaultExportBasename`, sink guards                                                            |
+| WO-022     | `scaffold()` step 1                                                                                                         |
+| WO-023     | `applyBindings()` step 2                                                                                                    |
+| WO-024     | `applyProperties()` step 3                                                                                                  |
+| WO-025     | `buildUsageFrame()` step 4                                                                                                  |
+| WO-026     | `mergeRegistryEntry`, `buildRegistryEntry`, `buildRegistryAuditRows`; UI: `prepareRegistryExport`, `loadRegistryFromGitHub` |
+| WO-010     | `AuditPanel`, `AuditReportV1` display                                                                                       |
+| WO-015     | Bootstrap orchestration pattern (reference only)                                                                            |
 
-| Tool | Usage |
-| ---- | ----- |
-| Vitest + Testing Library | UI/reducer/integration tests |
+| Tool                            | Usage                                              |
+| ------------------------------- | -------------------------------------------------- |
+| Vitest + Testing Library        | UI/reducer/integration tests                       |
 | `@detroitlabs/fighub-contracts` | `ComponentSpecV1`, `RegistryV1`, schema validation |
-| Figma Plugin Sandbox | SPK-027-1 manual VQA |
-| `pluginLog()` / `console.debug` | Telemetry per ticket |
+| Figma Plugin Sandbox            | SPK-027-1 manual VQA                               |
+| `pluginLog()` / `console.debug` | Telemetry per ticket                               |
 
 **No MCP required for build.** Figma VQA at `/vqa` may use Figma MCP read-only for screenshot compare.
 
@@ -750,13 +723,13 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 ## Open Questions
 
-| ID | Question | Resolution |
-| -- | -------- | ---------- |
-| OQ-1 | Design mock `node_id` for Components tab | **Deferred** — panel-only VQA on Plugin Sandbox until design file linked; fill `ticket.md` VQA table during `/vqa` |
-| OQ-2 | Structured editors vs JSON textareas | **RESOLVED:** JSON textareas v1 (research D4) |
-| OQ-3 | Settings `registryPath` input field | **RESOLVED:** optional — default `.fighub-registry.json` in Components tab; Settings field follow-on if needed |
-| OQ-4 | ExportSheet inline vs modal | **RESOLVED:** inline below progress (matches Export tab sandbox + research D6) |
-| OQ-5 | Repo spec path convention | **RESOLVED:** ordered list in Step 18; document in `Docs/` only if ticket explicitly requires — otherwise constants in code |
+| ID   | Question                                 | Resolution                                                                                                                  |
+| ---- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| OQ-1 | Design mock `node_id` for Components tab | **Deferred** — panel-only VQA on Plugin Sandbox until design file linked; fill `ticket.md` VQA table during `/vqa`          |
+| OQ-2 | Structured editors vs JSON textareas     | **RESOLVED:** JSON textareas v1 (research D4)                                                                               |
+| OQ-3 | Settings `registryPath` input field      | **RESOLVED:** optional — default `.fighub-registry.json` in Components tab; Settings field follow-on if needed              |
+| OQ-4 | ExportSheet inline vs modal              | **RESOLVED:** inline below progress (matches Export tab sandbox + research D6)                                              |
+| OQ-5 | Repo spec path convention                | **RESOLVED:** ordered list in Step 18; document in `Docs/` only if ticket explicitly requires — otherwise constants in code |
 
 ---
 
@@ -772,26 +745,26 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 - **Logging:** `console.debug('[ui] scaffold/...')` in iframe; `pluginLog('[main] scaffold/...')` on main thread — never `console.log` in plugin sandbox production paths.
 - **Wrong vs correct:**
 
-  | Wrong | Correct |
-  | ----- | ------- |
-  | Scaffold from UI via Figma MCP | `scaffold/run` postMessage → main thread |
-  | Auto-open GitHub PR after scaffold | ExportSheet confirmation gate |
-  | Use `component-spec-button.json` IO fixture for VQA | `tests/fixtures/component-spec-button-canonical.json` |
-  | Silent ignore token paste on Components tab | Actionable error directing to Bootstrap |
-  | Duplicate paste IO logic | Reuse `@/ui/sources/*` widgets |
-  | `loadRegistryFromGitHub` on main thread | UI loads registry (Steps 17–18); passes `options.registry` on `scaffold/run` |
-  | `runRegistryExportFlow` after every scaffold | `prepareRegistryExport(result.registry)` — merge already on main |
+  | Wrong                                               | Correct                                                                      |
+  | --------------------------------------------------- | ---------------------------------------------------------------------------- |
+  | Scaffold from UI via Figma MCP                      | `scaffold/run` postMessage → main thread                                     |
+  | Auto-open GitHub PR after scaffold                  | ExportSheet confirmation gate                                                |
+  | Use `component-spec-button.json` IO fixture for VQA | `tests/fixtures/component-spec-button-canonical.json`                        |
+  | Silent ignore token paste on Components tab         | Actionable error directing to Bootstrap                                      |
+  | Duplicate paste IO logic                            | Reuse `@/ui/sources/*` widgets                                               |
+  | `loadRegistryFromGitHub` on main thread             | UI loads registry (Steps 17–18); passes `options.registry` on `scaffold/run` |
+  | `runRegistryExportFlow` after every scaffold        | `prepareRegistryExport(result.registry)` — merge already on main             |
 
 - **Extract vs greenfield (reuse map):**
 
-  | Pattern | Reuse from | WO-027 usage |
-  | ------- | ---------- | ------------ |
-  | Tab shell + inline styles | `App.tsx` Bootstrap/Export tabs | Steps 14–15, 28 |
-  | Progress reducer + step list | `bootstrapProgressReducer.ts`, Bootstrap step UI | Steps 10–11 |
-  | Paste/file ingest | WO-006 `@/ui/sources/*` | Steps 19–20 |
-  | GitHub contents read | WO-016 `loadFromGitHub` | Steps 17–18 via `loadRegistryFromGitHub` |
-  | ExportSheet block | WO-020 Export tab sandbox (`App.tsx` L100–131) | Steps 26–27 |
-  | Main-thread orchestrator | WO-015 `runBootstrap` pattern | Steps 3–9 `runScaffoldComponent` |
+  | Pattern                      | Reuse from                                       | WO-027 usage                             |
+  | ---------------------------- | ------------------------------------------------ | ---------------------------------------- |
+  | Tab shell + inline styles    | `App.tsx` Bootstrap/Export tabs                  | Steps 14–15, 28                          |
+  | Progress reducer + step list | `bootstrapProgressReducer.ts`, Bootstrap step UI | Steps 10–11                              |
+  | Paste/file ingest            | WO-006 `@/ui/sources/*`                          | Steps 19–20                              |
+  | GitHub contents read         | WO-016 `loadFromGitHub`                          | Steps 17–18 via `loadRegistryFromGitHub` |
+  | ExportSheet block            | WO-020 Export tab sandbox (`App.tsx` L100–131)   | Steps 26–27                              |
+  | Main-thread orchestrator     | WO-015 `runBootstrap` pattern                    | Steps 3–9 `runScaffoldComponent`         |
 
 - **Module tree (new files):**
 
@@ -822,13 +795,13 @@ Deliver the **Phase 2 GA integration surface** for forward component scaffolding
 
 Manual sandbox VQA confirmed **panel PASS**, **canvas FAIL**. See [scaffold-canvas-failure-remediation.md](research/scaffold-canvas-failure-remediation.md).
 
-| Symptom | Root cause (locked) | Fix owner |
-| ------- | ------------------- | --------- |
-| Registry message for `registry.v1.schema.json` | Path points at JSON Schema, not RegistryV1 instance | WO-027 UX validation |
-| Property audit 4/6 fail, 48 add failures | `applyProperties` runs **post-`combineAsVariants`**; all `addComponentProperty` throws | **WO-024** — move pre-combine (legacy timing) |
-| Button 1×1 px masters | Chip archetype missing `layoutSizing*`; mocks don't reset sizing at combine | **WO-022** — post-combine hug normalization |
-| Usage/doc "wrong page" | FR-SCAF-5 gallery on Components page by design; v60 Foundations doc out of scope | WO-025 copy + future doc ticket |
-| Push stats 0/0/0 beside component audit | `AuditPanel` always shows variable summary | WO-027 hide for component scope |
+| Symptom                                        | Root cause (locked)                                                                    | Fix owner                                     |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Registry message for `registry.v1.schema.json` | Path points at JSON Schema, not RegistryV1 instance                                    | WO-027 UX validation                          |
+| Property audit 4/6 fail, 48 add failures       | `applyProperties` runs **post-`combineAsVariants`**; all `addComponentProperty` throws | **WO-024** — move pre-combine (legacy timing) |
+| Button 1×1 px masters                          | Chip archetype missing `layoutSizing*`; mocks don't reset sizing at combine            | **WO-022** — post-combine hug normalization   |
+| Usage/doc "wrong page"                         | FR-SCAF-5 gallery on Components page by design; v60 Foundations doc out of scope       | WO-025 copy + future doc ticket               |
+| Push stats 0/0/0 beside component audit        | `AuditPanel` always shows variable summary                                             | WO-027 hide for component scope               |
 
 **Blockers before re-VQA:** SPK-027-2 (property API timing), SPK-027-3 (variant geometry). WO-027 Step 32 remains blocked.
 

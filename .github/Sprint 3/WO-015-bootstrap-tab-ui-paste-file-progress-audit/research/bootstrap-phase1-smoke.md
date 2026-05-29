@@ -6,11 +6,11 @@
 
 ## Automated coverage (Vitest)
 
-| Area | Test file | Verified |
-| ---- | --------- | -------- |
-| Message contract | `tests/unit/io/messages/bootstrap.test.ts` | 12-step manifest |
-| Progress reducer | `tests/unit/ui/bootstrapProgressReducer.test.ts` | Step transitions |
-| Audit panel utils | `tests/unit/ui/auditPanelUtils.test.ts` | Failed-first sort |
+| Area              | Test file                                        | Verified          |
+| ----------------- | ------------------------------------------------ | ----------------- |
+| Message contract  | `tests/unit/io/messages/bootstrap.test.ts`       | 12-step manifest  |
+| Progress reducer  | `tests/unit/ui/bootstrapProgressReducer.test.ts` | Step transitions  |
+| Audit panel utils | `tests/unit/ui/auditPanelUtils.test.ts`          | Failed-first sort |
 
 ## Manual session (2026-05-27)
 
@@ -22,9 +22,9 @@
 
 ## Outcome
 
-- Variables push + inline variables audit ✓  
-- Full canvas pipeline ✓  
-- Canvas audit ✓  
-- G1 < 30 s ✓  
+- Variables push + inline variables audit ✓
+- Full canvas pipeline ✓
+- Canvas audit ✓
+- G1 < 30 s ✓
 
 See `research/bootstrap-bench-result.md` for bench record.

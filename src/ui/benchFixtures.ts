@@ -39,7 +39,9 @@ export function loadBenchFixture(id: BenchFixtureId): LoadedDocument {
   const entry = BENCH_FIXTURES[id];
   const receivedAt = new Date().toISOString();
   const kind =
-    id === 'component-spec-button-canonical' ? ('component-spec' as const) : ('tokens-dtcg' as const);
+    id === 'component-spec-button-canonical'
+      ? ('component-spec' as const)
+      : ('tokens-dtcg' as const);
   return {
     kind: kind,
     payload: entry.payload,

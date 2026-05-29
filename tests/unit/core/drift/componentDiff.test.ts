@@ -21,7 +21,9 @@ function comparable(
 describe('componentDiff', () => {
   it('detects props added', () => {
     const left = comparable({ variant: ['default'] }, []);
-    const right = comparable({ variant: ['default'] }, [{ name: 'disabled', type: 'boolean', default: false }]);
+    const right = comparable({ variant: ['default'] }, [
+      { name: 'disabled', type: 'boolean', default: false },
+    ]);
     expect(componentComparableEqual(left, right)).toBe(false);
     const diff = buildComponentDiff(left, right);
     expect(diff !== null && diff.props !== undefined && diff.props.added.length).toBe(1);
@@ -38,8 +40,16 @@ describe('componentDiff', () => {
   });
 
   it('detects binding changes', () => {
-    const left = comparable({ variant: ['default'] }, [], [{ selector: 'text/label', variable: 'var/a' }]);
-    const right = comparable({ variant: ['default'] }, [], [{ selector: 'text/label', variable: 'var/b' }]);
+    const left = comparable(
+      { variant: ['default'] },
+      [],
+      [{ selector: 'text/label', variable: 'var/a' }],
+    );
+    const right = comparable(
+      { variant: ['default'] },
+      [],
+      [{ selector: 'text/label', variable: 'var/b' }],
+    );
     const diff = buildComponentDiff(left, right);
     expect(diff?.bindings !== undefined).toBe(true);
     if (diff?.bindings !== undefined) {

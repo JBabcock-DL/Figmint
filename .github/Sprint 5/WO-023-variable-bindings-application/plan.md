@@ -32,44 +32,44 @@ Implement a **post-scaffold binding pass** that reads `ComponentSpecV1.bindings[
 
 **Lift map (legacy → FigHub):**
 
-| DesignOps source | FigHub module | Notes |
-| ---------------- | -------------- | ----- |
-| `conventions/07-token-paths.md` §7.1 | `normalizeVariablePath()` + `resolvePath()` | Slash paths; optional `{Collection}/` strip |
-| `component-chip.mcp.js` §5 `bindColor` | `bindPaintToVar` / `bindStrokeToVar` | Paint bind, not `setBoundVariable` on fill |
-| `component-composed.mcp.js` §5 `bindNum` | `bindPaddingToVar`, `bindGapToVar`, `bindRadiusToVar` | Fallback scalar first, then bind |
-| `06-audit-checklist.md` §Text & bindings | `comp/binding-verified` rule | Automated chrome-bound check |
-| N/A (greenfield orchestrator) | `applyBindings.ts` | Post-scaffold pass |
+| DesignOps source                         | FigHub module                                         | Notes                                       |
+| ---------------------------------------- | ----------------------------------------------------- | ------------------------------------------- |
+| `conventions/07-token-paths.md` §7.1     | `normalizeVariablePath()` + `resolvePath()`           | Slash paths; optional `{Collection}/` strip |
+| `component-chip.mcp.js` §5 `bindColor`   | `bindPaintToVar` / `bindStrokeToVar`                  | Paint bind, not `setBoundVariable` on fill  |
+| `component-composed.mcp.js` §5 `bindNum` | `bindPaddingToVar`, `bindGapToVar`, `bindRadiusToVar` | Fallback scalar first, then bind            |
+| `06-audit-checklist.md` §Text & bindings | `comp/binding-verified` rule                          | Automated chrome-bound check                |
+| N/A (greenfield orchestrator)            | `applyBindings.ts`                                    | Post-scaffold pass                          |
 
 **Wrong vs correct (common mistakes):**
 
-| Wrong | Correct |
-| ----- | ------- |
-| `setBoundVariable('fills', …)` for color | `figma.variables.setBoundVariableForPaint` via `bindPaintToVar` |
-| Hex fallback when variable missing | Record `missing-variable` in `ApplyBindingsResult.failed`; audit FAIL |
-| Bind only default variant | Iterate all `componentSet.children` where `type === 'COMPONENT'` |
-| `Theme/color/primary/default` lookup key | Normalize to `color/primary/default` before `resolvePath` |
-| Separate `property` field on binding | Parse kind from selector suffix after final `.` |
+| Wrong                                    | Correct                                                               |
+| ---------------------------------------- | --------------------------------------------------------------------- |
+| `setBoundVariable('fills', …)` for color | `figma.variables.setBoundVariableForPaint` via `bindPaintToVar`       |
+| Hex fallback when variable missing       | Record `missing-variable` in `ApplyBindingsResult.failed`; audit FAIL |
+| Bind only default variant                | Iterate all `componentSet.children` where `type === 'COMPONENT'`      |
+| `Theme/color/primary/default` lookup key | Normalize to `color/primary/default` before `resolvePath`             |
+| Separate `property` field on binding     | Parse kind from selector suffix after final `.`                       |
 
 ---
 
 ## Acceptance criteria traceability
 
-| Ticket AC | Plan steps |
-| --------- | ---------- |
-| 10 bindings applied to every variant; `failed.length === 0` | Steps 12–14, 24–26, 30 |
-| Missing variable → audit FAIL with selector + variable name (`comp/binding-variable-resolved`) | Steps 18–21, 27–28 |
-| Missing node path → audit FAIL with selector (`comp/binding-node-resolved`) | Steps 6–7, 18–21, 27–28 |
-| Integration test against canonical chip-archetype shadcn spec fixture | Steps 23–26, 30 |
+| Ticket AC                                                                                      | Plan steps              |
+| ---------------------------------------------------------------------------------------------- | ----------------------- |
+| 10 bindings applied to every variant; `failed.length === 0`                                    | Steps 12–14, 24–26, 30  |
+| Missing variable → audit FAIL with selector + variable name (`comp/binding-variable-resolved`) | Steps 18–21, 27–28      |
+| Missing node path → audit FAIL with selector (`comp/binding-node-resolved`)                    | Steps 6–7, 18–21, 27–28 |
+| Integration test against canonical chip-archetype shadcn spec fixture                          | Steps 23–26, 30         |
 
-| Ticket requirement | Plan steps |
-| ------------------ | ---------- |
-| Req §1 `applyBindings.ts` on every variant | Steps 12–14 |
-| Req §2 selector grammar `{nodePath}.{kind}` | Steps 5–8 |
-| Req §3 variable paths + prefix strip; no hex fallback | Steps 8, 13 |
-| Req §4 binding mechanics per kind | Steps 9–11, 13 |
-| Req §5 `selector.ts` parse + resolve | Steps 5–8 |
-| Req §6 audit `comp/binding-*` + `ApplyBindingsResult` input | Steps 17–22 |
-| Req §7 pipeline order after scaffold, before properties | Notes + Step 29 (orchestrator stub) |
+| Ticket requirement                                          | Plan steps                          |
+| ----------------------------------------------------------- | ----------------------------------- |
+| Req §1 `applyBindings.ts` on every variant                  | Steps 12–14                         |
+| Req §2 selector grammar `{nodePath}.{kind}`                 | Steps 5–8                           |
+| Req §3 variable paths + prefix strip; no hex fallback       | Steps 8, 13                         |
+| Req §4 binding mechanics per kind                           | Steps 9–11, 13                      |
+| Req §5 `selector.ts` parse + resolve                        | Steps 5–8                           |
+| Req §6 audit `comp/binding-*` + `ApplyBindingsResult` input | Steps 17–22                         |
+| Req §7 pipeline order after scaffold, before properties     | Notes + Step 29 (orchestrator stub) |
 
 ---
 
@@ -82,13 +82,7 @@ import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 import type { VariablePathMap } from '@/core/canvas/lib/variables';
 
 /** Parsed binding kind — suffix of selector after final '.' */
-export type BindingKind =
-  | 'fill'
-  | 'stroke'
-  | 'radius'
-  | 'padding'
-  | 'gap'
-  | 'text-style';
+export type BindingKind = 'fill' | 'stroke' | 'radius' | 'padding' | 'gap' | 'text-style';
 
 export type BindingFailureReason =
   | 'missing-variable'
@@ -136,19 +130,16 @@ export function normalizeVariablePath(raw: string): string;
 **Internal dispatch (not exported):**
 
 ```ts
-function applyBindingToNode(
-  node: SceneNode,
-  kind: BindingKind,
-  variable: Variable,
-): void;
+function applyBindingToNode(node: SceneNode, kind: BindingKind, variable: Variable): void;
 ```
 
 **Call sequence (orchestrator body):**
 
 ```ts
-const map = options && options.variableMap !== undefined
-  ? options.variableMap
-  : await ensureLocalVariableMap();
+const map =
+  options && options.variableMap !== undefined
+    ? options.variableMap
+    : await ensureLocalVariableMap();
 const result: ApplyBindingsResult = { applied: 0, failed: [], passed: true };
 for (let v = 0; v < componentSet.children.length; v++) {
   const variant = componentSet.children[v];
@@ -188,7 +179,7 @@ export interface ComponentAuditInput {
 }
 ```
 
-  - **Done when:** `npm run typecheck` passes; file exists with no `?.` / `??` (ES2017 main-thread rule).
+- **Done when:** `npm run typecheck` passes; file exists with no `?.` / `??` (ES2017 main-thread rule).
 
 - [x] **Step 2** — Patch `packages/contracts/src/auditReport.v1.ts`:
   - Extend `AuditReportMeta.operation` union: `'push-variables' | 'apply-bindings'`.
@@ -288,17 +279,17 @@ export interface ComponentAuditInput {
   - Pure functions `(input: ComponentAuditInput) => AuditRuleResult[]`.
   - Implement four rules (all `severity: 'error'`):
 
-| ruleId | Pass condition | Diagnostic template |
-| ------ | -------------- | ------------------- |
-| `comp/bindings-all-applied` | `bindingsResult.failed.length === 0` | `{n} binding(s) failed` |
-| `comp/binding-variable-resolved` | No failed entry with `reason === 'missing-variable'` | `Missing variable: {variable} (selector {selector})` per failure |
-| `comp/binding-node-resolved` | No failed entry with `reason === 'missing-node'` | `Missing node: {nodePath} (selector {selector})` — parse nodePath from selector via `parseBindingSelector` |
-| `comp/binding-verified` | Post-apply spot-check on `componentSet` variants | `{selector}: expected bind on {nodeName}, found none` |
+| ruleId                           | Pass condition                                       | Diagnostic template                                                                                        |
+| -------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `comp/bindings-all-applied`      | `bindingsResult.failed.length === 0`                 | `{n} binding(s) failed`                                                                                    |
+| `comp/binding-variable-resolved` | No failed entry with `reason === 'missing-variable'` | `Missing variable: {variable} (selector {selector})` per failure                                           |
+| `comp/binding-node-resolved`     | No failed entry with `reason === 'missing-node'`     | `Missing node: {nodePath} (selector {selector})` — parse nodePath from selector via `parseBindingSelector` |
+| `comp/binding-verified`          | Post-apply spot-check on `componentSet` variants     | `{selector}: expected bind on {nodeName}, found none`                                                      |
 
-  - **`comp/binding-verified` spot-check logic:**
-    - For each binding in `spec.bindings` (only when `bindingsResult.failed.length === 0` for that selector — else skip verify and let aggregate rule fail):
-    - On first variant component, resolve target node; for `fill`/`stroke` check `boundVariables` on paint or node; for numeric kinds check `node.boundVariables[field]`; for `text-style` check `textStyleId` non-empty and not `figma.mixed`.
-  - **Done when:** unit tests in `tests/unit/core/audit/rules/componentBindings.test.ts` cover pass + each FAIL shape.
+- **`comp/binding-verified` spot-check logic:**
+  - For each binding in `spec.bindings` (only when `bindingsResult.failed.length === 0` for that selector — else skip verify and let aggregate rule fail):
+  - On first variant component, resolve target node; for `fill`/`stroke` check `boundVariables` on paint or node; for numeric kinds check `node.boundVariables[field]`; for `text-style` check `textStyleId` non-empty and not `figma.mixed`.
+- **Done when:** unit tests in `tests/unit/core/audit/rules/componentBindings.test.ts` cover pass + each FAIL shape.
 
 - [x] **Step 17** — Create `src/core/audit/rules/componentBindingsIndex.ts` (or add to `rules/index.ts`):
   - Export ordered `COMPONENT_BINDING_RULES` array (4 entries).
@@ -383,7 +374,7 @@ export interface ComponentAuditInput {
 // await applyProperties(spec, componentSet); // WO-024
 ```
 
-  - **Done when:** comment documents locked order; no premature `applyProperties` import.
+- **Done when:** comment documents locked order; no premature `applyProperties` import.
 
 - [x] **Step 30** — Run quality gates:
   - `npm run typecheck`
@@ -430,14 +421,14 @@ export interface ComponentAuditInput {
 
 ## Dependencies & Tools
 
-| Dependency | Role |
-| ---------- | ---- |
-| **WO-022** | Produces `ComponentSetNode` + named layer tree consumed by selectors |
-| **WO-008** | Variables pushed to file; `ensureLocalVariableMap()` / `resolvePath()` |
+| Dependency | Role                                                                         |
+| ---------- | ---------------------------------------------------------------------------- |
+| **WO-022** | Produces `ComponentSetNode` + named layer tree consumed by selectors         |
+| **WO-008** | Variables pushed to file; `ensureLocalVariableMap()` / `resolvePath()`       |
 | **WO-014** | `bindPaintToVar`, `bindStrokeToVar` in `src/core/canvas/helpers/bindings.ts` |
-| **WO-010** | `runAudit` orchestrator + `AuditReportV1` contract |
-| **WO-024** | Downstream — runs **after** this ticket's `applyBindings()` |
-| **WO-003** | `@detroitlabs/fighub-contracts` — `ComponentSpecV1`, audit types |
+| **WO-010** | `runAudit` orchestrator + `AuditReportV1` contract                           |
+| **WO-024** | Downstream — runs **after** this ticket's `applyBindings()`                  |
+| **WO-003** | `@detroitlabs/fighub-contracts` — `ComponentSpecV1`, audit types             |
 
 **Lift references (read-only during build):**
 
@@ -474,11 +465,11 @@ All files bundled to main-thread `code.js` must avoid `?.`, `??`, `replaceAll`. 
 
 ### Selector kinds vs variable types
 
-| Kind | Variable type check | API |
-| ---- | ------------------- | --- |
-| `fill`, `stroke` | COLOR | `setBoundVariableForPaint` via helpers |
-| `padding`, `gap`, `radius` | FLOAT | `setBoundVariable` |
-| `text-style` | N/A (TextStyle name in `variable` field) | `textStyleId` assignment |
+| Kind                       | Variable type check                      | API                                    |
+| -------------------------- | ---------------------------------------- | -------------------------------------- |
+| `fill`, `stroke`           | COLOR                                    | `setBoundVariableForPaint` via helpers |
+| `padding`, `gap`, `radius` | FLOAT                                    | `setBoundVariable`                     |
+| `text-style`               | N/A (TextStyle name in `variable` field) | `textStyleId` assignment               |
 
 ### WO-022 layer naming contract (cross-ticket)
 

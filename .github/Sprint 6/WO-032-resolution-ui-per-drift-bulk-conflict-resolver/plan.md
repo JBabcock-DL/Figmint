@@ -18,21 +18,21 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
 
 ## AC traceability
 
-| AC / Req | Plan step(s) |
-| -------- | ------------ |
-| Req 1 DriftList.tsx | Steps 4–6 |
-| Req 2 ConflictResolver.tsx | Steps 7–9 |
-| Req 3 resolutionReducer | Steps 2–3 |
-| Req 4 Settings host (not Sync tab) | Steps 10–11 |
-| Req 5 bulk Push → PR | Steps 12–14 |
-| Req 6 bulk Pull → apply | Steps 15–17 |
-| Req 7 bulk disabled on unresolved conflicts | Step 3, 6 |
-| Req 8 snapshot updateSnapshotKeys | Steps 14, 17 |
-| Req 9 drift messages | Steps 1, 12–17 |
-| AC 10-drift E2E | Step 20 |
-| AC bulk Push single PR | Step 19 |
-| AC bulk Pull applies Figma | Step 19 |
-| AC conflict blocks bulk | Step 18 |
+| AC / Req                                    | Plan step(s)   |
+| ------------------------------------------- | -------------- |
+| Req 1 DriftList.tsx                         | Steps 4–6      |
+| Req 2 ConflictResolver.tsx                  | Steps 7–9      |
+| Req 3 resolutionReducer                     | Steps 2–3      |
+| Req 4 Settings host (not Sync tab)          | Steps 10–11    |
+| Req 5 bulk Push → PR                        | Steps 12–14    |
+| Req 6 bulk Pull → apply                     | Steps 15–17    |
+| Req 7 bulk disabled on unresolved conflicts | Step 3, 6      |
+| Req 8 snapshot updateSnapshotKeys           | Steps 14, 17   |
+| Req 9 drift messages                        | Steps 1, 12–17 |
+| AC 10-drift E2E                             | Step 20        |
+| AC bulk Push single PR                      | Step 19        |
+| AC bulk Pull applies Figma                  | Step 19        |
+| AC conflict blocks bulk                     | Step 18        |
 
 ---
 
@@ -41,6 +41,7 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
 ### Phase A — Message contracts + reducer
 
 - [x] **Step 1** — Expand `src/io/messages/drift.ts` with resolution types:
+
   ```typescript
   export type ResolutionAction =
     | { type: 'push' }
@@ -91,10 +92,12 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
     error?: string;
   }
   ```
+
   - Type guards for each message type.
-  **Done when:** `tests/unit/io/messages/drift.resolution.test.ts`.
+    **Done when:** `tests/unit/io/messages/drift.resolution.test.ts`.
 
 - [x] **Step 2** — Create `src/ui/drift/resolutionReducer.ts`:
+
   ```typescript
   export type DriftFilter = 'all' | 'push' | 'pull' | 'conflict';
 
@@ -116,25 +119,32 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
     | { type: 'detect/start' }
     | { type: 'detect/error'; message: string };
 
-  export function reduceResolution(state: ResolutionState, action: ResolutionAction): ResolutionState
-  export function createInitialResolutionState(): ResolutionState
+  export function reduceResolution(
+    state: ResolutionState,
+    action: ResolutionAction,
+  ): ResolutionState;
+  export function createInitialResolutionState(): ResolutionState;
   ```
+
   **Done when:** pure reducer tests — no React imports.
 
 - [x] **Step 3** — Add selectors in `src/ui/drift/resolutionSelectors.ts`:
+
   ```typescript
-  export function filteredDrifts(state: ResolutionState): DriftEntry[]
-  export function canBulkPush(state: ResolutionState): boolean
-  export function canBulkPull(state: ResolutionState): boolean
-  export function unresolvedConflictSelected(state: ResolutionState): boolean
+  export function filteredDrifts(state: ResolutionState): DriftEntry[];
+  export function canBulkPush(state: ResolutionState): boolean;
+  export function canBulkPull(state: ResolutionState): boolean;
+  export function unresolvedConflictSelected(state: ResolutionState): boolean;
   ```
+
   - **Bulk rules (FR-RES-3):** bulk push enabled when ≥1 selected push row AND no selected conflict row lacks resolution `{ type: 'custom' | 'push' | 'pull' | 'skip' }` with non-skip for conflicts.
   - Implement truth table from research Appendix B as unit tests.
-  **Done when:** `tests/unit/ui/drift/resolutionSelectors.test.ts` — SPK-032-4.
+    **Done when:** `tests/unit/ui/drift/resolutionSelectors.test.ts` — SPK-032-4.
 
 ### Phase B — DriftList UI
 
 - [x] **Step 4** — Create `src/ui/components/DriftList.tsx`:
+
   ```typescript
   export interface DriftListProps {
     drifts: DriftEntry[];
@@ -147,26 +157,30 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
     onOpenConflict: (driftId: string) => void;
   }
   ```
+
   - Filter chips: All | Push ↑ | Pull ↓ | Conflict ⚠ — `role="tablist"`, buttons min 44×44px touch target.
   - Row: id, kind badge, direction icon, per-row Push/Pull/Skip buttons (disabled when direction mismatch).
   - Conflict rows: "Resolve…" opens ConflictResolver.
-  **Done when:** `tests/unit/ui/components/DriftList.test.tsx` RTL render + chip filter.
+    **Done when:** `tests/unit/ui/components/DriftList.test.tsx` RTL render + chip filter.
 
 - [x] **Step 5** — Create `src/ui/components/DriftSummaryBadge.tsx`:
+
   ```typescript
-  export function DriftSummaryBadge(props: { summary: DriftReportSummary | null })
+  export function DriftSummaryBadge(props: { summary: DriftReportSummary | null });
   ```
+
   - Display `4↑ 2↓ 1⚠` compact counts; `role="status"`.
-  **Done when:** snapshot test or RTL assert text.
+    **Done when:** snapshot test or RTL assert text.
 
 - [x] **Step 6** — Wire list + badge into panel shell `src/ui/components/DriftPanel.tsx`:
   - Props: `report`, `state`, `dispatch` from reducer.
   - Bulk action bar: Push selected → PR | Pull selected → apply — disabled via selectors.
-  **Done when:** Storybook-style test with mock 10-drift report (4 push, 3 pull, 3 conflict).
+    **Done when:** Storybook-style test with mock 10-drift report (4 push, 3 pull, 3 conflict).
 
 ### Phase C — ConflictResolver
 
 - [x] **Step 7** — Create `src/ui/components/ConflictResolver.tsx`:
+
   ```typescript
   export interface ConflictResolverProps {
     drift: DriftEntry;
@@ -177,14 +191,15 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
     onClose: () => void;
   }
   ```
+
   - Three columns: Last synced | Figma | Repo — render JSON truncated (reuse truncate pattern from drift MD renderer logic or simple `JSON.stringify` preview max 200 chars).
   - Actions: Keep Figma (→ push resolution), Keep Repo (→ pull), Skip, optional Custom JSON textarea fallback (OQ-032-1).
-  **Done when:** RTL test button callbacks.
+    **Done when:** RTL test button callbacks.
 
 - [x] **Step 8** — Accessibility:
   - Conflict action group: `role="radiogroup"` with `aria-label="Resolution choice"`.
   - Focus trap within expanded resolver panel.
-  **Done when:** axe or manual checklist noted in VQA.
+    **Done when:** axe or manual checklist noted in VQA.
 
 - [x] **Step 9** — Integrate resolver as inline expand below conflict row OR modal overlay (default: inline expand to avoid new portal complexity).
 
@@ -193,65 +208,65 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
 - [x] **Step 10** — Add `src/ui/components/RepoSyncCard.tsx` stub (minimal — expanded in WO-058 Phase 2):
   - Shows repo display name, Connect status, placeholder Fetch/Pull/Push buttons (disabled until WO-058 Phase 2).
   - Embeds `<DriftPanel />` below fold with "Detect drift" button calling `requestDriftReport`.
-  **Done when:** Settings renders card without breaking existing OAuth section.
+    **Done when:** Settings renders card without breaking existing OAuth section.
 
 - [x] **Step 11** — Update `src/ui/tabs/Settings.tsx`:
   - Replace tokens-only layout section with `RepoSyncCard` when `github.connected`.
   - Keep existing OAuth + smoke test sections below.
   - Optional: Settings nav badge count from `DriftSummaryBadge` summary (WO-033 tail).
-  **Done when:** App.tsx compiles; no Sync tab added.
+    **Done when:** App.tsx compiles; no Sync tab added.
 
 - [ ] **Step 12** — Add `src/ui/drift/useDriftDetect.ts` hook:
   - On mount (when repo connected): fire `drift/detect-quick` with cached tokens/specs from session OR skip until Fetch (WO-058 Phase 2).
   - Returns `{ summary, report, refresh }`.
-  **Done when:** unit test mock postMessage.
+    **Done when:** unit test mock postMessage.
 
 ### Phase E — Bulk Push (main thread)
 
 - [x] **Step 13** — Implement `src/core/drift/applyPushResolutions.ts` (main):
+
   ```typescript
   export function buildPushCommitFiles(
     report: DriftReportV1,
     resolutions: Record<string, ResolutionAction>,
     driftIds: string[],
-  ): Array<{ path: string; content: string; format: 'json' }>
+  ): Array<{ path: string; content: string; format: 'json' }>;
   ```
+
   - Variable push rows: emit patched tokens JSON slice or full tokens file from repo canonical values.
   - Component push rows: emit updated `ComponentSpecV1` JSON under specs path convention `components/{kebab}.json`.
-  **Done when:** unit test 2 variable + 1 component files staged.
+    **Done when:** unit test 2 variable + 1 component files staged.
 
 - [x] **Step 14** — Implement `handleResolutionBulkPush` in `src/main.ts`:
   - Build files via Step 13.
   - Call `createPullRequestFlow` (WO-018) with title from `buildDriftReportPrTitle`.
   - On PR open success: `updateSnapshotKeys` for each pushed drift with `{ source: 'push', value: repo side }`.
   - Post `resolution/bulk-result` with `prUrl`.
-  **Done when:** integration test mocks PR flow.
+    **Done when:** integration test mocks PR flow.
 
 ### Phase F — Bulk Pull (main thread)
 
 - [x] **Step 15** — Implement `src/core/drift/applyPullResolutions.ts`:
-  ```typescript
-  export async function applyVariablePullDrifts(
-    drifts: VariableDriftEntry[],
-  ): Promise<number>
 
-  export async function applyComponentPullDrifts(
-    drifts: ComponentDriftEntry[],
-  ): Promise<number>
+  ```typescript
+  export async function applyVariablePullDrifts(drifts: VariableDriftEntry[]): Promise<number>;
+
+  export async function applyComponentPullDrifts(drifts: ComponentDriftEntry[]): Promise<number>;
   ```
+
   - Variables: map repo comparable → token push input → call `pushTokens` / internal push engine with repo values (inverse of push direction).
   - Components: if matrix hash differs → queue full `runScaffoldComponent` with repo spec; else call `applyProperties` + `applyBindings` surgical path (D-032-4).
-  **Done when:** unit tests with mocked scaffold/push.
+    **Done when:** unit tests with mocked scaffold/push.
 
 - [x] **Step 16** — Implement `handleResolutionBulkPull` in `src/main.ts`:
   - Partition selected drifts by kind; sequential component applies.
   - On success: batch `updateSnapshotKeys` with `{ source: 'pull', value: applied canonical }`.
   - Partial failure: return error with `appliedCount` (risk: document Figma undo in error message).
-  **Done when:** handler test with mocks.
+    **Done when:** handler test with mocks.
 
 - [x] **Step 17** — Wire UI bulk buttons in `DriftPanel.tsx`:
   - postMessage bulk push/pull; await result; refresh detect on success.
-  **Done when:** integration test UI posts correct message shape.
+    **Done when:** integration test UI posts correct message shape.
 
 ### Phase G — AC fixtures + VQA
 
@@ -259,7 +274,7 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
 
 - [x] **Step 19** — Integration `tests/integration/ui/drift/resolutionFlow.integration.test.tsx`:
   - Render DriftPanel with 10-drift fixture; resolve all conflicts; assert bulk buttons enable; mock bulk push/pull handlers.
-  **Done when:** ticket AC table satisfied in automated test except OAuth PR.
+    **Done when:** ticket AC table satisfied in automated test except OAuth PR.
 
 - [x] **Step 20** — Manual designer VQA script (execute during `/vqa`):
   1. Connect GitHub; open Settings drift panel.
@@ -304,14 +319,14 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
 
 ## Dependencies & Tools
 
-| Dependency | Role |
-| ---------- | ---- |
-| WO-031 | DriftReportV1 input |
-| WO-008 `pushTokens` | Variable pull apply |
-| WO-018 `createPullRequestFlow` | Bulk push PR |
-| WO-058 `updateSnapshotKeys` | Post-resolution snapshot |
-| WO-058 Phase 2 | Full Fetch/Pull/Push card (stub OK for Phase 1) |
-| WO-030 hash gate | Component pull scaffold vs surgical |
+| Dependency                     | Role                                            |
+| ------------------------------ | ----------------------------------------------- |
+| WO-031                         | DriftReportV1 input                             |
+| WO-008 `pushTokens`            | Variable pull apply                             |
+| WO-018 `createPullRequestFlow` | Bulk push PR                                    |
+| WO-058 `updateSnapshotKeys`    | Post-resolution snapshot                        |
+| WO-058 Phase 2                 | Full Fetch/Pull/Push card (stub OK for Phase 1) |
+| WO-030 hash gate               | Component pull scaffold vs surgical             |
 
 **Tools:** Vitest + RTL; Figma desktop for manual VQA; `gh` optional for PR verify.
 
@@ -319,11 +334,11 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
 
 ## Open Questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
-| OQ-032-1 | Custom value editor UX | **Default:** Keep Figma / Keep Repo primary; JSON textarea fallback for custom |
-| OQ-032-2 | Push snapshot timing | **RESOLVED:** update on PR open success |
-| OQ-S6-4 | Surgical vs re-scaffold on pull | **RESOLVED:** hash change → re-scaffold; props/bindings only → surgical (Step 15) |
+| ID       | Question                        | Status                                                                            |
+| -------- | ------------------------------- | --------------------------------------------------------------------------------- |
+| OQ-032-1 | Custom value editor UX          | **Default:** Keep Figma / Keep Repo primary; JSON textarea fallback for custom    |
+| OQ-032-2 | Push snapshot timing            | **RESOLVED:** update on PR open success                                           |
+| OQ-S6-4  | Surgical vs re-scaffold on pull | **RESOLVED:** hash change → re-scaffold; props/bindings only → surgical (Step 15) |
 
 ---
 
@@ -331,10 +346,10 @@ Build the **drift resolution UX** as an expandable panel on the Settings repo ca
 
 ### Thread split
 
-| Layer | Location | Syntax |
-| ----- | -------- | ------ |
-| Reducer, DriftList, ConflictResolver | UI iframe | Modern TS |
-| applyPush/Pull, snapshot updates | main.ts | ES2017, `pluginLog()` |
+| Layer                                | Location  | Syntax                |
+| ------------------------------------ | --------- | --------------------- |
+| Reducer, DriftList, ConflictResolver | UI iframe | Modern TS             |
+| applyPush/Pull, snapshot updates     | main.ts   | ES2017, `pluginLog()` |
 
 ### Style tokens
 
@@ -342,12 +357,12 @@ Match existing Settings/App inline styles: 11px body, 13px headings, `#ccc` bord
 
 ### Wrong vs correct
 
-| Wrong | Correct |
-| ----- | ------- |
-| New Sync tab in App.tsx | DriftPanel inside Settings |
-| Persist resolutions to clientStorage | Session-only Map (ticket out of scope) |
-| Snapshot update before PR opens on push | updateSnapshotKeys after PR open success |
-| Always full re-scaffold on component pull | Hash gate from WO-030 |
+| Wrong                                     | Correct                                  |
+| ----------------------------------------- | ---------------------------------------- |
+| New Sync tab in App.tsx                   | DriftPanel inside Settings               |
+| Persist resolutions to clientStorage      | Session-only Map (ticket out of scope)   |
+| Snapshot update before PR opens on push   | updateSnapshotKeys after PR open success |
+| Always full re-scaffold on component pull | Hash gate from WO-030                    |
 
 ### Module tree
 

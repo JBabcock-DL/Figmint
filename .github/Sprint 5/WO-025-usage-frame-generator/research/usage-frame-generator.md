@@ -25,12 +25,12 @@ WO-025 implements **FR-SCAF-5**: after the forward scaffold pipeline produces a 
 
 ### 1. Naming collision — legacy "usage" ≠ FigHub FR-SCAF-5
 
-| Term | Legacy DesignOps | FigHub WO-025 |
-| ---- | ---------------- | -------------- |
-| `cc-usage` bundle step | Fifth MCP call; fills `doc/component/{name}/usage` Do/Don't cards | **Not ported** in v1 |
-| `_usage-runner.fragment.js` | Doc-only runner tail: find `docRoot` → `buildUsageNotes()` | **Misleading lift pointer** — no instance gallery |
-| `buildUsageNotes()` | HORIZONTAL row, two 805px cards, `CONFIG.usageDo` / `usageDont` | Out of scope (ticket Out of scope: designer-customizable examples) |
-| FR-SCAF-5 / ticket AC | (no single legacy equivalent) | **Instance gallery** beside ComponentSet, 4–6 curated combos |
+| Term                        | Legacy DesignOps                                                  | FigHub WO-025                                                      |
+| --------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `cc-usage` bundle step      | Fifth MCP call; fills `doc/component/{name}/usage` Do/Don't cards | **Not ported** in v1                                               |
+| `_usage-runner.fragment.js` | Doc-only runner tail: find `docRoot` → `buildUsageNotes()`        | **Misleading lift pointer** — no instance gallery                  |
+| `buildUsageNotes()`         | HORIZONTAL row, two 805px cards, `CONFIG.usageDo` / `usageDont`   | Out of scope (ticket Out of scope: designer-customizable examples) |
+| FR-SCAF-5 / ticket AC       | (no single legacy equivalent)                                     | **Instance gallery** beside ComponentSet, 4–6 curated combos       |
 
 **Evidence:** `usage.mcp.js` L550–581 — only Do/Don't `card()` builders; zero `createInstance` calls. `component-chip.mcp.js` L882–883 — scaffold placeholder caption "Do / Don't usage (slice 5)".
 
@@ -86,10 +86,10 @@ function comboToSetProperties(
 
 **Constants:**
 
-| Constant | Value | Rationale |
-| -------- | ----- | --------- |
-| `MAX_USAGE_INSTANCES` | `6` | Upper bound from AC "4–6"; use 6 so small matrices show all |
-| `MIN_USAGE_INSTANCES` | `1` | Degenerate 1×1 matrix |
+| Constant               | Value                                      | Rationale                                                                                       |
+| ---------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `MAX_USAGE_INSTANCES`  | `6`                                        | Upper bound from AC "4–6"; use 6 so small matrices show all                                     |
+| `MIN_USAGE_INSTANCES`  | `1`                                        | Degenerate 1×1 matrix                                                                           |
 | Default value per axis | **First element** of `variantMatrix[axis]` | Matches shadcn/CVA default ordering in registry fixtures; same as "baseline" row in matrix docs |
 
 **Algorithm (`curateVariantCombos`) — normative pseudocode:**
@@ -111,14 +111,14 @@ INPUT: variantMatrix, maxCount (default 6)
 
 **Worked example — ticket AC matrix** `{ variant: [a,b,c], size: [sm, md], disabled: [false, true] }` (3×2×2 = 12), `maxCount = 6`:
 
-| Step | Combo (alphabetical axis order: `disabled`, `size`, `variant`) | New coverage |
-| ---- | -------------------------------------------------------------- | ------------ |
-| baseline | `false, sm, a` | all first values |
-| greedy 1 | `false, sm, b` | new `variant=b` |
-| greedy 2 | `false, md, a` | new `size=md` |
-| greedy 3 | `true, sm, a` | new `disabled=true` |
-| greedy 4 | `false, sm, c` | new `variant=c` |
-| greedy 5 | `false, lg, a` if size had lg — *for 2 sizes, next might be `true, md, b`* | fills cross-axis |
+| Step     | Combo (alphabetical axis order: `disabled`, `size`, `variant`)             | New coverage        |
+| -------- | -------------------------------------------------------------------------- | ------------------- |
+| baseline | `false, sm, a`                                                             | all first values    |
+| greedy 1 | `false, sm, b`                                                             | new `variant=b`     |
+| greedy 2 | `false, md, a`                                                             | new `size=md`       |
+| greedy 3 | `true, sm, a`                                                              | new `disabled=true` |
+| greedy 4 | `false, sm, c`                                                             | new `variant=c`     |
+| greedy 5 | `false, lg, a` if size had lg — _for 2 sizes, next might be `true, md, b`_ | fills cross-axis    |
 
 Exact output is **deterministic** — unit tests must snapshot the 12→6 pick list for the Button fixture used in AC.
 
@@ -131,12 +131,12 @@ Exact output is **deterministic** — unit tests must snapshot the 12→6 pick l
 
 **Rejected alternatives:**
 
-| Alternative | Why rejected |
-| ----------- | ------------ |
-| Hand-coded Button-only 6-tuple | Breaks FR-SCAF-5 for other components |
-| Random sample | Violates determinism / audit |
-| Only "default" combo | Fails AC "representative" |
-| Full cross-product always | Fails AC "not all 12"; layout overflow |
+| Alternative                    | Why rejected                           |
+| ------------------------------ | -------------------------------------- |
+| Hand-coded Button-only 6-tuple | Breaks FR-SCAF-5 for other components  |
+| Random sample                  | Violates determinism / audit           |
+| Only "default" combo           | Fails AC "representative"              |
+| Full cross-product always      | Fails AC "not all 12"; layout overflow |
 
 ### 5. Frame layout — beside ComponentSet using WO-014 helpers
 
@@ -175,12 +175,12 @@ Exact output is **deterministic** — unit tests must snapshot the 12→6 pick l
 
 **WO-025 locked inline checks** (returned in `UsageFrameResult.auditRows`):
 
-| Rule ID | Pass |
-| ------- | ---- |
-| `comp/usage-instance-count` | `instances.length === min(crossProduct, MAX_USAGE_INSTANCES)` |
-| `comp/usage-label-present` | Every cell has non-empty label TEXT child |
-| `comp/usage-setproperties` | No `setProperties` throw logged during build (catch → FAIL row) |
-| `comp/usage-one-px-cell` | `assertNoOnePxMaster(cell) === null` for each cell |
+| Rule ID                     | Pass                                                            |
+| --------------------------- | --------------------------------------------------------------- |
+| `comp/usage-instance-count` | `instances.length === min(crossProduct, MAX_USAGE_INSTANCES)`   |
+| `comp/usage-label-present`  | Every cell has non-empty label TEXT child                       |
+| `comp/usage-setproperties`  | No `setProperties` throw logged during build (catch → FAIL row) |
+| `comp/usage-one-px-cell`    | `assertNoOnePxMaster(cell) === null` for each cell              |
 
 Ticket AC "Frame passes audit" — satisfied by aggregate `auditRows` all PASS; wiring `runAudit('component')` optional Phase 2 (same split as WO-022).
 
@@ -192,12 +192,12 @@ Ticket AC "Frame passes audit" — satisfied by aggregate `auditRows` all PASS; 
 
 ### 9. Testing strategy
 
-| Layer | File | Assert |
-| ----- | ---- | ------ |
-| Unit | `tests/unit/core/components/scaffold/curateVariantCombos.test.ts` | 12→6 Button-like matrix; 3×2×2; single-axis; full≤6 |
-| Unit | `tests/unit/core/components/scaffold/usageFrame.test.ts` | Label format; `comboToSetProperties` booleans |
-| Integration | mock `figma` harness | `createInstance` + `setProperties` called per curated combo |
-| Sandbox | SPK-025-1 | Real ComponentSet after WO-022 chip scaffold |
+| Layer       | File                                                              | Assert                                                      |
+| ----------- | ----------------------------------------------------------------- | ----------------------------------------------------------- |
+| Unit        | `tests/unit/core/components/scaffold/curateVariantCombos.test.ts` | 12→6 Button-like matrix; 3×2×2; single-axis; full≤6         |
+| Unit        | `tests/unit/core/components/scaffold/usageFrame.test.ts`          | Label format; `comboToSetProperties` booleans               |
+| Integration | mock `figma` harness                                              | `createInstance` + `setProperties` called per curated combo |
+| Sandbox     | SPK-025-1                                                         | Real ComponentSet after WO-022 chip scaffold                |
 
 ---
 
@@ -205,15 +205,15 @@ Ticket AC "Frame passes audit" — satisfied by aggregate `auditRows` all PASS; 
 
 ### Repo inventory
 
-| Path | Role | Status |
-| ---- | ---- | ------ |
-| `src/core/canvas/helpers/autoLayout.ts` | WO-014 helpers (FR-SCAF-7) | ✅ Exists |
-| `src/core/canvas/helpers/matrixSpecimen.ts` | `createHorizontalUsageRow`, matrix cells | ✅ Exists |
-| `tests/unit/core/canvas/autoLayout.test.ts` | Helper regression tests | ✅ Exists |
-| `packages/contracts/src/componentSpec.v1.ts` | `variantMatrix` input | ✅ Exists |
-| `src/core/components/scaffold/**` | Scaffold engine | ❌ Greenfield WO-022 |
-| `src/core/components/scaffold/usageFrame.ts` | This ticket | ❌ Greenfield |
-| `src/core/audit/runAudit.ts` | No `component` scope yet | ✅ Exists — partial |
+| Path                                         | Role                                     | Status               |
+| -------------------------------------------- | ---------------------------------------- | -------------------- |
+| `src/core/canvas/helpers/autoLayout.ts`      | WO-014 helpers (FR-SCAF-7)               | ✅ Exists            |
+| `src/core/canvas/helpers/matrixSpecimen.ts`  | `createHorizontalUsageRow`, matrix cells | ✅ Exists            |
+| `tests/unit/core/canvas/autoLayout.test.ts`  | Helper regression tests                  | ✅ Exists            |
+| `packages/contracts/src/componentSpec.v1.ts` | `variantMatrix` input                    | ✅ Exists            |
+| `src/core/components/scaffold/**`            | Scaffold engine                          | ❌ Greenfield WO-022 |
+| `src/core/components/scaffold/usageFrame.ts` | This ticket                              | ❌ Greenfield        |
+| `src/core/audit/runAudit.ts`                 | No `component` scope yet                 | ✅ Exists — partial  |
 
 ### DesignOps bundle headers (grep — preamble only)
 
@@ -228,52 +228,52 @@ All `component-*.mcp.js` bundles share the same header shape (example `component
 
 ### Official API / platform facts
 
-| API | WO-025 usage | Doc (retrieved 2026-05-28) |
-| --- | ------------ | -------------------------- |
-| `ComponentSetNode.createInstance()` | Default instance, then override props | [ComponentSetNode](https://developers.figma.com/docs/plugins/api/componentsetnode/) |
-| `InstanceNode.setProperties()` | Apply curated VARIANT combo | [InstanceNode.setProperties](https://developers.figma.com/docs/plugins/api/instancenode/#setproperties) |
-| `figma.loadFontAsync()` | Before label `characters` | Required before text mutation |
-| `node.setPluginData()` | Optional `fighub:usageFrame:v1:…` idempotency | 100 kB/key limit |
+| API                                 | WO-025 usage                                  | Doc (retrieved 2026-05-28)                                                                              |
+| ----------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `ComponentSetNode.createInstance()` | Default instance, then override props         | [ComponentSetNode](https://developers.figma.com/docs/plugins/api/componentsetnode/)                     |
+| `InstanceNode.setProperties()`      | Apply curated VARIANT combo                   | [InstanceNode.setProperties](https://developers.figma.com/docs/plugins/api/instancenode/#setproperties) |
+| `figma.loadFontAsync()`             | Before label `characters`                     | Required before text mutation                                                                           |
+| `node.setPluginData()`              | Optional `fighub:usageFrame:v1:…` idempotency | 100 kB/key limit                                                                                        |
 
 **ES2017:** no `?.`, `??`, `replaceAll` in `usageFrame.ts` (main thread).
 
 ### Cross-ticket matrix
 
-| Ticket | Interface | WO-025 consumes / produces |
-| ------ | --------- | -------------------------- |
-| WO-014 | `autoLayout.ts`, `matrixSpecimen.ts` | **Consumes** helpers |
-| WO-022 | `ScaffoldResult` (`componentSet`, `variantByKey`) | **Consumes** set + optional per-variant fallback |
-| WO-023 | Bound paints on variant masters | **Consumes** visual result (no API) |
-| WO-024 | `ApplyPropertiesResult` suffixed keys | **Consumes** optionally; v1 gallery VARIANT-only |
-| WO-026 | Registry write | **Produces** usage frame node id? (optional metadata — defer) |
-| WO-027 | Forward-flow UI | **Consumes** `buildUsageFrame` in ops program |
+| Ticket | Interface                                         | WO-025 consumes / produces                                    |
+| ------ | ------------------------------------------------- | ------------------------------------------------------------- |
+| WO-014 | `autoLayout.ts`, `matrixSpecimen.ts`              | **Consumes** helpers                                          |
+| WO-022 | `ScaffoldResult` (`componentSet`, `variantByKey`) | **Consumes** set + optional per-variant fallback              |
+| WO-023 | Bound paints on variant masters                   | **Consumes** visual result (no API)                           |
+| WO-024 | `ApplyPropertiesResult` suffixed keys             | **Consumes** optionally; v1 gallery VARIANT-only              |
+| WO-026 | Registry write                                    | **Produces** usage frame node id? (optional metadata — defer) |
+| WO-027 | Forward-flow UI                                   | **Consumes** `buildUsageFrame` in ops program                 |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D1 | Instance gallery, not Do/Don't cards | FR-SCAF-5 + ticket AC | Port `buildUsageNotes` verbatim |
-| D2 | `curateVariantCombos` greedy coverage, max 6 | Deterministic + AC "4–6" | Show all 12; random subset |
-| D3 | `componentSet.createInstance()` + `setProperties` | Single path for all axes | Only `variantByKey` masters |
-| D4 | Reparent into `{name}/forward-scaffold` HORIZONTAL | "Next to" ComponentSet | Absolute x/y positioning |
-| D5 | Frame name `{name}/usage-examples` | Avoid doc `doc/component/.../usage` clash | Reuse doc path |
-| D6 | VARIANT-only props on instances in v1 | WO-024 keys optional | Demo all boolean props |
-| D7 | No `applyStateOverride` / hover columns | Matrix state out of scope | Simulate hover in gallery |
-| D8 | Import helpers from `helpers/autoLayout.ts` | Actual WO-014 path | `src/core/canvas/autoLayout.ts` |
-| D9 | Inline `comp/usage-*` audit rows | `runAudit('component')` not ready | Block on WO-010 scope extension |
-| D10 | Alphabetical axis sort shared with WO-022 | Label/setProperties consistency | Insertion-order keys |
+| ID  | Decision                                           | Rationale                                 | Alternatives rejected           |
+| --- | -------------------------------------------------- | ----------------------------------------- | ------------------------------- |
+| D1  | Instance gallery, not Do/Don't cards               | FR-SCAF-5 + ticket AC                     | Port `buildUsageNotes` verbatim |
+| D2  | `curateVariantCombos` greedy coverage, max 6       | Deterministic + AC "4–6"                  | Show all 12; random subset      |
+| D3  | `componentSet.createInstance()` + `setProperties`  | Single path for all axes                  | Only `variantByKey` masters     |
+| D4  | Reparent into `{name}/forward-scaffold` HORIZONTAL | "Next to" ComponentSet                    | Absolute x/y positioning        |
+| D5  | Frame name `{name}/usage-examples`                 | Avoid doc `doc/component/.../usage` clash | Reuse doc path                  |
+| D6  | VARIANT-only props on instances in v1              | WO-024 keys optional                      | Demo all boolean props          |
+| D7  | No `applyStateOverride` / hover columns            | Matrix state out of scope                 | Simulate hover in gallery       |
+| D8  | Import helpers from `helpers/autoLayout.ts`        | Actual WO-014 path                        | `src/core/canvas/autoLayout.ts` |
+| D9  | Inline `comp/usage-*` audit rows                   | `runAudit('component')` not ready         | Block on WO-010 scope extension |
+| D10 | Alphabetical axis sort shared with WO-022          | Label/setProperties consistency           | Insertion-order keys            |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
+| Spike ID  | Procedure                                                               | Pass criteria                                         | Status                               |
+| --------- | ----------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------ |
 | SPK-025-1 | Sandbox: after WO-022+024 scaffold Button 3×2×2, call `buildUsageFrame` | 6 instances visible; labels match tuple; no 1px cells | ☐ pending — `/plan` or build Phase 0 |
-| SPK-025-2 | `setProperties` on boolean axis `disabled` | Instance visually disabled vs default | ☐ pending |
-| SPK-025-3 | Idempotent rescaffold | Second run replaces usage cells, same combo set | ☐ pending |
+| SPK-025-2 | `setProperties` on boolean axis `disabled`                              | Instance visually disabled vs default                 | ☐ pending                            |
+| SPK-025-3 | Idempotent rescaffold                                                   | Second run replaces usage cells, same combo set       | ☐ pending                            |
 
 **Research-complete gate:** SPK-025-1 required before `/build` VQA; SPK-025-2/3 may run in VQA if unit tests cover curation.
 
@@ -281,14 +281,14 @@ All `component-*.mcp.js` bundles share the same header shape (example `component
 
 ## Risk register
 
-| Risk | Severity | Likelihood | Mitigation |
-| ---- | -------- | ---------- | ---------- |
-| Lift reference points agents at Do/Don't bundle | Medium | High | Corrected in this doc + ticket References |
-| `setProperties` key mismatch vs Figma defs | High | Medium | Use axis keys from `componentPropertyDefinitions`; unit test + SPK-025-1 |
-| Wrapper reparent breaks designer selection | Low | Medium | Document in plan; preserve ComponentSet node id |
-| 6 wide instances overflow narrow page | Low | Low | `layoutWrap` on row or reduce max to 4 when width > threshold |
-| Composed archetype instances huge | Medium | Low | Same curation; cell hugs height |
-| Missing `loadFontAsync` before labels | Medium | Medium | Reuse scaffold context font preload |
+| Risk                                            | Severity | Likelihood | Mitigation                                                               |
+| ----------------------------------------------- | -------- | ---------- | ------------------------------------------------------------------------ |
+| Lift reference points agents at Do/Don't bundle | Medium   | High       | Corrected in this doc + ticket References                                |
+| `setProperties` key mismatch vs Figma defs      | High     | Medium     | Use axis keys from `componentPropertyDefinitions`; unit test + SPK-025-1 |
+| Wrapper reparent breaks designer selection      | Low      | Medium     | Document in plan; preserve ComponentSet node id                          |
+| 6 wide instances overflow narrow page           | Low      | Low        | `layoutWrap` on row or reduce max to 4 when width > threshold            |
+| Composed archetype instances huge               | Medium   | Low        | Same curation; cell hugs height                                          |
+| Missing `loadFontAsync` before labels           | Medium   | Medium     | Reuse scaffold context font preload                                      |
 
 ---
 
@@ -305,11 +305,11 @@ All `component-*.mcp.js` bundles share the same header shape (example `component
 
 ## Open questions
 
-| # | Question | Owner | Status |
-| - | -------- | ----- | ------ |
-| OQ-1 | Export usage frame `nodeId` in registry (WO-026)? | WO-026 plan | **OPEN** — defer v1 |
-| OQ-2 | Reduce `MAX_USAGE_INSTANCES` to 4 for `icon` size axis components? | `/plan` | **OPEN** — default 6 unless overflow in SPK-025-1 |
-| OQ-3 | Include `usageDo` bullets under gallery as subtitle? | Product | **RESOLVED** — out of scope per ticket |
+| #    | Question                                                           | Owner       | Status                                            |
+| ---- | ------------------------------------------------------------------ | ----------- | ------------------------------------------------- |
+| OQ-1 | Export usage frame `nodeId` in registry (WO-026)?                  | WO-026 plan | **OPEN** — defer v1                               |
+| OQ-2 | Reduce `MAX_USAGE_INSTANCES` to 4 for `icon` size axis components? | `/plan`     | **OPEN** — default 6 unless overflow in SPK-025-1 |
+| OQ-3 | Include `usageDo` bullets under gallery as subtitle?               | Product     | **RESOLVED** — out of scope per ticket            |
 
 ---
 

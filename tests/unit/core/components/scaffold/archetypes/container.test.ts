@@ -39,7 +39,9 @@ describe('buildContainerVariant', () => {
     const component = result.component as unknown as MockFrame;
 
     expect(findNodeByName(component as unknown as SceneNode, 'AccordionTrigger')).not.toBeNull();
-    expect(findNodeByName(component as unknown as SceneNode, 'AccordionTrigger/title')).not.toBeNull();
+    expect(
+      findNodeByName(component as unknown as SceneNode, 'AccordionTrigger/title'),
+    ).not.toBeNull();
     expect(findNodeByName(component as unknown as SceneNode, 'icon-slot/chevron')).not.toBeNull();
     expect(findNodeByName(component as unknown as SceneNode, 'AccordionContent')).toBeNull();
 
@@ -54,7 +56,9 @@ describe('buildContainerVariant', () => {
     const component = result.component as unknown as MockFrame;
 
     expect(findNodeByName(component as unknown as SceneNode, 'AccordionContent')).not.toBeNull();
-    expect(findNodeByName(component as unknown as SceneNode, 'AccordionContent/body')).not.toBeNull();
+    expect(
+      findNodeByName(component as unknown as SceneNode, 'AccordionContent/body'),
+    ).not.toBeNull();
   });
 
   it('builds tabs container when spec.container.kind is tabs', async () => {
@@ -67,8 +71,12 @@ describe('buildContainerVariant', () => {
     const component = result.component as unknown as MockFrame;
 
     expect(findNodeByName(component as unknown as SceneNode, 'TabsList')).not.toBeNull();
-    expect(findNodeByName(component as unknown as SceneNode, 'TabsTrigger/overview')).not.toBeNull();
-    expect(findNodeByName(component as unknown as SceneNode, 'TabsTrigger/settings')).not.toBeNull();
+    expect(
+      findNodeByName(component as unknown as SceneNode, 'TabsTrigger/overview'),
+    ).not.toBeNull();
+    expect(
+      findNodeByName(component as unknown as SceneNode, 'TabsTrigger/settings'),
+    ).not.toBeNull();
     expect(findNodeByName(component as unknown as SceneNode, 'TabsContent')).not.toBeNull();
   });
 });

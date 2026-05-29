@@ -38,7 +38,10 @@ export function findComponentSetGroup(docRoot: FrameNode, docKey: string): Frame
 /**
  * BUG-S5-001 / BUG-S5-003 — Doc-pipeline section frames stretch to the parent doc width (1640).
  */
-export function createDocSectionFrame(name: string, layoutMode: 'HORIZONTAL' | 'VERTICAL'): FrameNode {
+export function createDocSectionFrame(
+  name: string,
+  layoutMode: 'HORIZONTAL' | 'VERTICAL',
+): FrameNode {
   const frame = figma.createFrame();
   frame.name = name;
   frame.layoutMode = layoutMode;

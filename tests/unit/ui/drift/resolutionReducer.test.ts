@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  createInitialResolutionState,
-  reduceResolution,
-} from '@/ui/drift/resolutionReducer';
+import { createInitialResolutionState, reduceResolution } from '@/ui/drift/resolutionReducer';
 
 import driftPayload from '../../../fixtures/ui/export/drift-report.json';
 import type { DriftReportV1 } from '@detroitlabs/fighub-contracts';

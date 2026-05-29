@@ -2,10 +2,7 @@ import type { DriftReportV1 } from '@detroitlabs/fighub-contracts';
 import { describe, expect, it } from 'vitest';
 
 import driftFixture from '@/io/formats/__fixtures__/drift-report-ac.json';
-import {
-  createInitialExportSheetState,
-  reduceExportSheet,
-} from '@/ui/export/exportSheetReducer';
+import { createInitialExportSheetState, reduceExportSheet } from '@/ui/export/exportSheetReducer';
 import { availableSinks } from '@/ui/export/availableSinks';
 import type { ContractDocument } from '@/ui/export/types';
 
@@ -98,10 +95,14 @@ describe('exportSheetReducer', () => {
       type: 'start-export',
       requestId: 'export-test-2',
     });
-    const reset = reduceExportSheet(exporting, { type: 'reset' }, {
-      document: driftDoc,
-      defaultSinks: ['download'],
-    });
+    const reset = reduceExportSheet(
+      exporting,
+      { type: 'reset' },
+      {
+        document: driftDoc,
+        defaultSinks: ['download'],
+      },
+    );
     expect(reset.exporting).toBe(false);
     expect(reset.results).toBeNull();
     expect(reset.sinks.download).toBe(true);

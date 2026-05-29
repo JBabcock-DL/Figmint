@@ -7,9 +7,7 @@ import { resolvePath } from './variables';
 const PREVIEW_TOKEN_PATHS = ['color/neutral/100', 'color/primary/200'] as const;
 
 /** Documentation chrome + primitive preview paths for `buildTable`. */
-export function resolveTableChromeVariables(
-  map: VariablePathMap,
-): Record<string, Variable | null> {
+export function resolveTableChromeVariables(map: VariablePathMap): Record<string, Variable | null> {
   const result: Record<string, Variable | null> = {};
   for (let i = 0; i < DOC_CHROME_PATHS.length; i++) {
     const path = DOC_CHROME_PATHS[i];

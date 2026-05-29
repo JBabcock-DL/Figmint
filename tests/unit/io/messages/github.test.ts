@@ -112,6 +112,8 @@ describe('github message guards', () => {
 
   it('rejects malformed main-to-UI github responses', () => {
     expect(isGitHubOAuthPollMessage({ type: 'github/oauth/poll', requestId: 'r1' })).toBe(false);
-    expect(isGitHubTokenStatusMessage({ type: 'github/token/status', connected: true })).toBe(false);
+    expect(isGitHubTokenStatusMessage({ type: 'github/token/status', connected: true })).toBe(
+      false,
+    );
   });
 });

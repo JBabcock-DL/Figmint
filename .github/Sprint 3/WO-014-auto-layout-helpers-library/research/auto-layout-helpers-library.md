@@ -87,7 +87,7 @@ These belong in `matrixSpecimen.ts` but share core logic with `autoLayout.ts`.
 
 ### 8. `_lib.js` helpers to extract (direct lift map)
 
-| Legacy helper                                               | FigHub target                                                            | Notes                                                                |
+| Legacy helper                                               | FigHub target                                                             | Notes                                                                |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `makeText`                                                  | `helpers/textCell.ts`                                                     | §0.2 pipeline + optional style/fill bind                             |
 | `makeHeaderCell`                                            | `helpers/tableCells.ts`                                                   | §0.5                                                                 |
@@ -104,11 +104,11 @@ These belong in `matrixSpecimen.ts` but share core logic with `autoLayout.ts`.
 When conventions and `_lib.js` disagree, **follow convention prose** for FigHub (legacy `_lib.js` has known drift):
 
 | Property                | `_lib.js` | Conventions (`08`, `10`, `14-audit`) | FigHub decision |
-| ----------------------- | --------- | ------------------------------------ | ---------------- |
-| Header band height      | 48px      | 56px                                 | **56px**         |
-| Body row `minHeight`    | 56        | 64                                   | **64**           |
-| Row vertical padding    | 24        | 16                                   | **16**           |
-| Cell horizontal padding | 16        | 20                                   | **20**           |
+| ----------------------- | --------- | ------------------------------------ | --------------- |
+| Header band height      | 48px      | 56px                                 | **56px**        |
+| Body row `minHeight`    | 56        | 64                                   | **64**          |
+| Row vertical padding    | 24        | 16                                   | **16**          |
+| Cell horizontal padding | 16        | 20                                   | **20**          |
 
 Document these locked numbers in helper constants (`TABLE_HEADER_HEIGHT = 56`, etc.).
 

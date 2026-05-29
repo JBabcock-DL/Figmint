@@ -47,14 +47,17 @@ function tokensFromGitHubLoad(
     const detail = adapted.kind === 'format-error' ? adapted.message : 'Token adapter failed';
     return { ok: false, message: detail };
   }
-  const wireFormat: RepoTokensWireFormat =
-    result.kind === 'tokens-dtcg' ? 'dtcg' : 'canonical';
+  const wireFormat: RepoTokensWireFormat = result.kind === 'tokens-dtcg' ? 'dtcg' : 'canonical';
   return {
     ok: true,
     tokens: adapted,
     wireFormat: wireFormat,
     message:
-      'Loaded tokens via github (' + result.kind + ', ' + String(adapted.tokens.length) + ' tokens)',
+      'Loaded tokens via github (' +
+      result.kind +
+      ', ' +
+      String(adapted.tokens.length) +
+      ' tokens)',
   };
 }
 
@@ -80,8 +83,7 @@ export function Settings({
   sessionConfigWarning,
 }: SettingsProps) {
   const [repoTokens, setRepoTokens] = useState<TokensV1 | null>(null);
-  const [repoTokensWireFormat, setRepoTokensWireFormat] =
-    useState<RepoTokensWireFormat>('dtcg');
+  const [repoTokensWireFormat, setRepoTokensWireFormat] = useState<RepoTokensWireFormat>('dtcg');
   const [loadStatus, setLoadStatus] = useState('');
 
   const sync = useRepoSync({
@@ -99,7 +101,9 @@ export function Settings({
       ? sync.resolvedConfig.tokensPath
       : DEFAULT_TOKENS_PATH;
 
-  const applyLoadedTokens = useCallback(function (result: Awaited<ReturnType<typeof loadFromGitHub>>) {
+  const applyLoadedTokens = useCallback(function (
+    result: Awaited<ReturnType<typeof loadFromGitHub>>,
+  ) {
     const applied = tokensFromGitHubLoad(result);
     if (applied.ok) {
       setRepoTokens(applied.tokens);
@@ -141,7 +145,10 @@ export function Settings({
   );
 
   return (
-    <section aria-label="GitHub settings" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <section
+      aria-label="GitHub settings"
+      style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+    >
       {github.relayOk === false ? (
         <div
           role="alert"
@@ -154,7 +161,8 @@ export function Settings({
             padding: '8px 10px',
           }}
         >
-          OAuth relay not reachable. Run <code>npm run spike:oauth-relay</code> and rebuild if needed.
+          OAuth relay not reachable. Run <code>npm run spike:oauth-relay</code> and rebuild if
+          needed.
         </div>
       ) : null}
 
@@ -183,7 +191,13 @@ export function Settings({
             onClick={function () {
               void github.connect();
             }}
-            style={{ fontSize: '11px', fontWeight: 600, minHeight: 44, minWidth: 44, padding: '8px 12px' }}
+            style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              minHeight: 44,
+              minWidth: 44,
+              padding: '8px 12px',
+            }}
           >
             {github.oauthPhase === 'polling' ? 'Authorizing…' : 'Connect GitHub'}
           </button>

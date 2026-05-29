@@ -16,37 +16,37 @@ WO-025 implements **FR-SCAF-5**: after the forward scaffold pipeline produces a 
 
 ## AC traceability
 
-| Ticket acceptance criterion | Plan step(s) |
-| --------------------------- | ------------ |
-| Button `variant × size × disabled` (12 combos) → **6 curated** instances with tuple labels | Steps 2, 3, 6, 7, 13, 15 |
-| `curateVariantCombos` unit tests snapshot AC matrix + Button 3×3 fixture | Steps 2, 9, 10 |
-| Frame passes inline audit (`comp/usage-instance-count`, `comp/usage-label-present`, `comp/usage-setproperties`, `comp/usage-one-px-cell`) | Steps 5, 8, 11, 13 |
+| Ticket acceptance criterion                                                                                                               | Plan step(s)             |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| Button `variant × size × disabled` (12 combos) → **6 curated** instances with tuple labels                                                | Steps 2, 3, 6, 7, 13, 15 |
+| `curateVariantCombos` unit tests snapshot AC matrix + Button 3×3 fixture                                                                  | Steps 2, 9, 10           |
+| Frame passes inline audit (`comp/usage-instance-count`, `comp/usage-label-present`, `comp/usage-setproperties`, `comp/usage-one-px-cell`) | Steps 5, 8, 11, 13       |
 
-| Ticket requirement | Plan step(s) |
-| ------------------ | ------------ |
-| `usageFrame.ts` exports `buildUsageFrame` → `UsageFrameResult` | Steps 4, 6, 7 |
-| `curateVariantCombos` greedy coverage, default max 6, alphabetical axes | Steps 2, 3 |
-| Instance pipeline: `createInstance` → `setProperties` → labeled cell | Steps 6, 7 |
-| Layout: `forward-scaffold` HORIZONTAL + `usage-examples` column | Steps 6, 7 |
-| WO-014 helpers from `helpers/autoLayout.ts` + `matrixSpecimen.ts` | Steps 6, 7 |
-| Pipeline after `applyProperties()` | Step 12 |
-| Idempotent rescaffold (rebuild usage subtree, preserve ComponentSet id) | Step 7 |
-| Vitest + integration mock harness | Steps 9–11, 13 |
-| SPK-025-1 sandbox VQA | Step 15 |
+| Ticket requirement                                                      | Plan step(s)   |
+| ----------------------------------------------------------------------- | -------------- |
+| `usageFrame.ts` exports `buildUsageFrame` → `UsageFrameResult`          | Steps 4, 6, 7  |
+| `curateVariantCombos` greedy coverage, default max 6, alphabetical axes | Steps 2, 3     |
+| Instance pipeline: `createInstance` → `setProperties` → labeled cell    | Steps 6, 7     |
+| Layout: `forward-scaffold` HORIZONTAL + `usage-examples` column         | Steps 6, 7     |
+| WO-014 helpers from `helpers/autoLayout.ts` + `matrixSpecimen.ts`       | Steps 6, 7     |
+| Pipeline after `applyProperties()`                                      | Step 12        |
+| Idempotent rescaffold (rebuild usage subtree, preserve ComponentSet id) | Step 7         |
+| Vitest + integration mock harness                                       | Steps 9–11, 13 |
+| SPK-025-1 sandbox VQA                                                   | Step 15        |
 
 ---
 
 ## Wrong vs correct (lift drift guard)
 
-| Wrong | Correct |
-| ----- | ------- |
-| Port `usage.mcp.js` / `buildUsageNotes` Do/Don't cards | Instance gallery via `componentSet.createInstance()` + `setProperties` |
-| Lift `_usage-runner.fragment.js` (17 lines, doc append only) | Lift `matrix.mcp.js` L676–691 instance cell pattern |
-| Import `src/core/canvas/autoLayout.ts` (does not exist) | Import `src/core/canvas/helpers/autoLayout.ts` |
-| Show full 12-instance cross-product for Button AC matrix | `curateVariantCombos` caps at 6 with coverage-first greedy pick |
-| Frame name `doc/component/{name}/usage` | `{spec.name}/usage-examples` under `forward-scaffold` |
-| `variantByKey[combo].createInstance()` as primary path | `componentSet.createInstance()` then `setProperties`; `variantByKey` fallback on throw only |
-| Random or hand-coded Button-only tuples | Deterministic greedy + golden snapshot tests |
+| Wrong                                                        | Correct                                                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Port `usage.mcp.js` / `buildUsageNotes` Do/Don't cards       | Instance gallery via `componentSet.createInstance()` + `setProperties`                      |
+| Lift `_usage-runner.fragment.js` (17 lines, doc append only) | Lift `matrix.mcp.js` L676–691 instance cell pattern                                         |
+| Import `src/core/canvas/autoLayout.ts` (does not exist)      | Import `src/core/canvas/helpers/autoLayout.ts`                                              |
+| Show full 12-instance cross-product for Button AC matrix     | `curateVariantCombos` caps at 6 with coverage-first greedy pick                             |
+| Frame name `doc/component/{name}/usage`                      | `{spec.name}/usage-examples` under `forward-scaffold`                                       |
+| `variantByKey[combo].createInstance()` as primary path       | `componentSet.createInstance()` then `setProperties`; `variantByKey` fallback on throw only |
+| Random or hand-coded Button-only tuples                      | Deterministic greedy + golden snapshot tests                                                |
 
 ---
 
@@ -82,12 +82,12 @@ tests/fixtures/                    # symlink or re-export path ticket cites
 
 ## Lift map (DesignOps → FigHub)
 
-| Legacy source | FigHub target | Action |
-| ------------- | -------------- | ------ |
-| `matrix.mcp.js` L676–691 | `usageFrame.ts` `createUsageInstanceCell` | Port centered instance in cell frame |
-| `04-doc-pipeline-contract.md` §3 step 4 | `comboToSetProperties` | VARIANT `setProperties` map |
-| `03-auto-layout-invariants.md` §0.1, §10.2 | `createHugFrame`, `reassertHug`, `createHorizontalUsageRow` | WO-014 helpers — geometry only |
-| `06-audit-checklist.md` FR-SCAF-7 one-px guard | `assertNoOnePxMaster` per cell | Inline `comp/usage-one-px-cell` |
+| Legacy source                                  | FigHub target                                               | Action                               |
+| ---------------------------------------------- | ----------------------------------------------------------- | ------------------------------------ |
+| `matrix.mcp.js` L676–691                       | `usageFrame.ts` `createUsageInstanceCell`                   | Port centered instance in cell frame |
+| `04-doc-pipeline-contract.md` §3 step 4        | `comboToSetProperties`                                      | VARIANT `setProperties` map          |
+| `03-auto-layout-invariants.md` §0.1, §10.2     | `createHugFrame`, `reassertHug`, `createHorizontalUsageRow` | WO-014 helpers — geometry only       |
+| `06-audit-checklist.md` FR-SCAF-7 one-px guard | `assertNoOnePxMaster` per cell                              | Inline `comp/usage-one-px-cell`      |
 
 **Drift guard:** never open `usage.mcp.js` or multiple `*.mcp.js` bundles in one agent session (`Docs/lift-sources.md` §3).
 
@@ -95,16 +95,16 @@ tests/fixtures/                    # symlink or re-export path ticket cites
 
 ## Constants (locked)
 
-| Constant | Value | Source |
-| -------- | ----- | ------ |
-| `MAX_USAGE_INSTANCES` | `6` | Ticket AC "4–6"; research D2 |
-| `FORWARD_SCAFFOLD_SPACING` | `48` | Ticket req §4 itemSpacing |
-| `USAGE_ROW_WIDTH` | `440` | Research §5 — `createHorizontalUsageRow(440)` |
-| `USAGE_CELL_PAD` | `16` | Research node tree |
-| `USAGE_CELL_GAP` | `8` | Vertical cell itemSpacing |
-| `USAGE_TITLE` | `"Usage examples"` | Plain caption above row |
-| `PLUGIN_DATA_USAGE_FRAME` | `fighub:usageFrame:v1:{scaffoldId}` | Idempotency marker on usage-examples frame |
-| Label font | `{ family: 'Inter', style: 'Regular' }`, `fontSize: 13` | Doc/Caption equivalent |
+| Constant                   | Value                                                   | Source                                        |
+| -------------------------- | ------------------------------------------------------- | --------------------------------------------- |
+| `MAX_USAGE_INSTANCES`      | `6`                                                     | Ticket AC "4–6"; research D2                  |
+| `FORWARD_SCAFFOLD_SPACING` | `48`                                                    | Ticket req §4 itemSpacing                     |
+| `USAGE_ROW_WIDTH`          | `440`                                                   | Research §5 — `createHorizontalUsageRow(440)` |
+| `USAGE_CELL_PAD`           | `16`                                                    | Research node tree                            |
+| `USAGE_CELL_GAP`           | `8`                                                     | Vertical cell itemSpacing                     |
+| `USAGE_TITLE`              | `"Usage examples"`                                      | Plain caption above row                       |
+| `PLUGIN_DATA_USAGE_FRAME`  | `fighub:usageFrame:v1:{scaffoldId}`                     | Idempotency marker on usage-examples frame    |
+| Label font                 | `{ family: 'Inter', style: 'Regular' }`, `fontSize: 13` | Doc/Caption equivalent                        |
 
 ---
 
@@ -137,20 +137,20 @@ tests/fixtures/                    # symlink or re-export path ticket cites
 export interface UsageFrameContext {
   targetPage: PageNode;
   fontsLoaded?: boolean;
-  maxInstances?: number;           // default MAX_USAGE_INSTANCES (6)
+  maxInstances?: number; // default MAX_USAGE_INSTANCES (6)
   variantByKey?: Record<string, ComponentNode>; // ScaffoldResult fallback
   applyPropertiesResult?: ApplyPropertiesResult; // optional v1 — unused except logging
 }
 
 export interface UsageFrameResult {
   ok: boolean;
-  frame: FrameNode;                // usage-examples column frame
-  wrapper: FrameNode;              // forward-scaffold wrapper
+  frame: FrameNode; // usage-examples column frame
+  wrapper: FrameNode; // forward-scaffold wrapper
   instances: InstanceNode[];
-  combos: VariantCombo[];          // curated picks applied
+  combos: VariantCombo[]; // curated picks applied
   instanceCount: number;
-  auditRows: AuditRuleResult[];    // comp/usage-* inline rules
-  setPropertiesErrors: string[];   // captured throws for comp/usage-setproperties
+  auditRows: AuditRuleResult[]; // comp/usage-* inline rules
+  setPropertiesErrors: string[]; // captured throws for comp/usage-setproperties
 }
 
 export type VariantCombo = Record<string, string | boolean>;
@@ -171,10 +171,7 @@ export function comboToSetProperties(
   axes: string[],
 ): Record<string, string | boolean>;
 
-export function formatVariantTupleLabel(
-  combo: VariantCombo,
-  axes: string[],
-): string;
+export function formatVariantTupleLabel(combo: VariantCombo, axes: string[]): string;
 
 export function comboLexCompare(a: VariantCombo, b: VariantCombo, axes: string[]): number;
 ```
@@ -204,12 +201,12 @@ export function buildUsageFrameAuditRows(input: {
 
 **Inline audit rules:**
 
-| ruleId | Severity | Pass condition |
-| ------ | -------- | -------------- |
-| `comp/usage-instance-count` | error | `instances.length === min(crossProductCount, maxInstances)` |
-| `comp/usage-label-present` | error | Each cell has TEXT child named `label` with non-empty `characters` |
-| `comp/usage-setproperties` | error | `setPropertiesErrors.length === 0` |
-| `comp/usage-one-px-cell` | error | `assertNoOnePxMaster(cell) === null` for every cell frame |
+| ruleId                      | Severity | Pass condition                                                     |
+| --------------------------- | -------- | ------------------------------------------------------------------ |
+| `comp/usage-instance-count` | error    | `instances.length === min(crossProductCount, maxInstances)`        |
+| `comp/usage-label-present`  | error    | Each cell has TEXT child named `label` with non-empty `characters` |
+| `comp/usage-setproperties`  | error    | `setPropertiesErrors.length === 0`                                 |
+| `comp/usage-one-px-cell`    | error    | `assertNoOnePxMaster(cell) === null` for every cell frame          |
 
 ---
 
@@ -321,13 +318,15 @@ const usageResult = await buildUsageFrame(scaffoldResult.componentSet, spec, {
 pluginLog('[scaffold] buildUsageFrame', {
   ok: usageResult.ok,
   instanceCount: usageResult.instanceCount,
-  auditPass: usageResult.auditRows.every(function (r) { return r.status === 'pass'; }),
+  auditPass: usageResult.auditRows.every(function (r) {
+    return r.status === 'pass';
+  }),
 });
 ```
 
-  - `buildUsageFrame` **must** appear immediately after `applyProperties`; never before.
-  - Export `buildUsageFrame`, `curateVariantCombos`, types from barrel.
-  - **Done when:** grep in `index.ts` shows order `applyProperties` then `buildUsageFrame`; no inversion.
+- `buildUsageFrame` **must** appear immediately after `applyProperties`; never before.
+- Export `buildUsageFrame`, `curateVariantCombos`, types from barrel.
+- **Done when:** grep in `index.ts` shows order `applyProperties` then `buildUsageFrame`; no inversion.
 
 - [x] **Step 13** — Integration test `tests/integration/core/components/scaffold/usageFrame.integration.test.ts`:
   - Mock Button-like 3×2×2 matrix → assert `createInstance` called **6** times (not 12).
@@ -383,15 +382,15 @@ pluginLog('[scaffold] buildUsageFrame', {
 
 ## Dependencies & Tools
 
-| Dependency | Role | Blocker? |
-| ---------- | ---- | -------- |
-| WO-022 `scaffold()`, `variantMatrix.ts`, `ScaffoldResult.variantByKey` | ComponentSet + variant naming + combo expansion | Phase 4 pipeline; SPK-025-1 |
-| WO-023 `applyBindings()` | Visual binds before usage frame | Phase 4 ordering |
-| WO-024 `applyProperties()` | Runs immediately before usage frame | Phase 4 ordering |
-| WO-014 `helpers/autoLayout.ts`, `matrixSpecimen.ts` | Hug frames, horizontal row, one-px audit | Phase 2 |
-| WO-003 `@detroitlabs/fighub-contracts` | `ComponentSpecV1.variantMatrix` | Phase 1 |
-| WO-027 forward-flow UI | Consumes `buildUsageFrame` in `scaffold/run` | Downstream — stub export sufficient |
-| WO-026 registry | Optional usage frame nodeId metadata | **Deferred** (OQ-1) |
+| Dependency                                                             | Role                                            | Blocker?                            |
+| ---------------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------- |
+| WO-022 `scaffold()`, `variantMatrix.ts`, `ScaffoldResult.variantByKey` | ComponentSet + variant naming + combo expansion | Phase 4 pipeline; SPK-025-1         |
+| WO-023 `applyBindings()`                                               | Visual binds before usage frame                 | Phase 4 ordering                    |
+| WO-024 `applyProperties()`                                             | Runs immediately before usage frame             | Phase 4 ordering                    |
+| WO-014 `helpers/autoLayout.ts`, `matrixSpecimen.ts`                    | Hug frames, horizontal row, one-px audit        | Phase 2                             |
+| WO-003 `@detroitlabs/fighub-contracts`                                 | `ComponentSpecV1.variantMatrix`                 | Phase 1                             |
+| WO-027 forward-flow UI                                                 | Consumes `buildUsageFrame` in `scaffold/run`    | Downstream — stub export sufficient |
+| WO-026 registry                                                        | Optional usage frame nodeId metadata            | **Deferred** (OQ-1)                 |
 
 **Tools:** Vitest (unit + integration), TypeScript strict, `pluginLog()` for main-thread logging (never `console.debug` in `code.js`).
 
@@ -409,12 +408,12 @@ pluginLog('[scaffold] buildUsageFrame', {
 
 ## Open Questions
 
-| # | Question | Status |
-| - | -------- | ------ |
-| OQ-1 | Export usage frame `nodeId` in registry (WO-026)? | **OPEN — defer v1**; `UsageFrameResult.frame.id` sufficient for WO-027 |
+| #    | Question                                                     | Status                                                                                                                                         |
+| ---- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| OQ-1 | Export usage frame `nodeId` in registry (WO-026)?            | **OPEN — defer v1**; `UsageFrameResult.frame.id` sufficient for WO-027                                                                         |
 | OQ-2 | Reduce `MAX_USAGE_INSTANCES` to 4 for icon-heavy components? | **RESOLVED — lock 6** for v1 (`MAX_USAGE_INSTANCES = 6`); ticket AC "6 (or fewer)" satisfied by curation algorithm, not a separate product cap |
-| OQ-3 | Include `usageDo` bullets under gallery? | **RESOLVED — out of scope** per ticket |
-| OQ-4 | Merge `curateVariantCombos.ts` into `usageFrame.ts`? | **RESOLVED — separate file** unless combined LOC < 120 at build time |
+| OQ-3 | Include `usageDo` bullets under gallery?                     | **RESOLVED — out of scope** per ticket                                                                                                         |
+| OQ-4 | Merge `curateVariantCombos.ts` into `usageFrame.ts`?         | **RESOLVED — separate file** unless combined LOC < 120 at build time                                                                           |
 
 ---
 

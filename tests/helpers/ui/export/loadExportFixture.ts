@@ -13,10 +13,7 @@ import type {
 
 import type { ContractDocument } from '@/ui/export/types';
 
-const fixturesDir = join(
-  dirname(fileURLToPath(import.meta.url)),
-  '../../../fixtures/ui/export',
-);
+const fixturesDir = join(dirname(fileURLToPath(import.meta.url)), '../../../fixtures/ui/export');
 
 function readFixture<T>(name: string): T {
   return JSON.parse(readFileSync(join(fixturesDir, name), 'utf8')) as T;

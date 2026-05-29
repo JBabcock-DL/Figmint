@@ -13,7 +13,7 @@ export interface BuildDriftReportInput {
 }
 
 export function buildDriftReport(input: BuildDriftReportInput): DriftReportV1 {
-  const drifts = input.variableDrifts.concat(input.componentDrifts).sort(function (left, right) {
+  const drifts = [...input.variableDrifts, ...input.componentDrifts].sort(function (left, right) {
     return left.id.localeCompare(right.id);
   });
 

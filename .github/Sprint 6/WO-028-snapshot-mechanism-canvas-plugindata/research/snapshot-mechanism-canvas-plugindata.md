@@ -73,15 +73,15 @@ export interface SnapshotV1 {
 
 ### 4. Per-key semantics
 
-| Event | Snapshot behavior |
-| ----- | ----------------- |
-| Successful variable push (WO-008) | `updateSnapshotKey('var/{collection}/{name}', canonicalValue, 'push')` |
-| Successful pull apply (WO-032) | Same with `source: 'pull'` |
-| Manual Figma edit | Snapshot **unchanged** → next detect classifies as push |
-| Manual repo edit (outside plugin) | Snapshot unchanged → pull on next Fetch |
-| Skip resolution (FR-RES-5) | No update — drift resurfaces |
-| `clearSnapshot()` | Wipe keys + registry; used after rebase/migrate |
-| Missing snapshot node / corrupt JSON | Treat as empty; PRD risk: repo = last-synced baseline |
+| Event                                | Snapshot behavior                                                      |
+| ------------------------------------ | ---------------------------------------------------------------------- |
+| Successful variable push (WO-008)    | `updateSnapshotKey('var/{collection}/{name}', canonicalValue, 'push')` |
+| Successful pull apply (WO-032)       | Same with `source: 'pull'`                                             |
+| Manual Figma edit                    | Snapshot **unchanged** → next detect classifies as push                |
+| Manual repo edit (outside plugin)    | Snapshot unchanged → pull on next Fetch                                |
+| Skip resolution (FR-RES-5)           | No update — drift resurfaces                                           |
+| `clearSnapshot()`                    | Wipe keys + registry; used after rebase/migrate                        |
+| Missing snapshot node / corrupt JSON | Treat as empty; PRD risk: repo = last-synced baseline                  |
 
 ### 5. Hidden node pattern
 
@@ -116,65 +116,65 @@ Mirror pattern from `src/io/messages/export.ts` and `src/io/sinks/outputPageClie
 
 ### Repo inventory
 
-| Exists | Path | Role |
-| ------ | ---- | ---- |
-| ✅ | `src/io/sinks/outputPage.ts:39-89` | Output page find/create |
-| ✅ | `src/io/sinks/pluginData.ts:6-80` | pluginData write + 100KB guard |
-| ✅ | `src/core/components/registry.ts:15-235` | Registry normalize/upsert — migrate to snapshot.registry |
-| ✅ | `packages/contracts/src/registry.v1.ts` | Entry shape to embed in snapshot |
-| ❌ | `src/core/drift/snapshot.ts` | Greenfield |
-| ❌ | `packages/contracts/src/snapshot.v1.ts` | Greenfield |
+| Exists | Path                                     | Role                                                     |
+| ------ | ---------------------------------------- | -------------------------------------------------------- |
+| ✅     | `src/io/sinks/outputPage.ts:39-89`       | Output page find/create                                  |
+| ✅     | `src/io/sinks/pluginData.ts:6-80`        | pluginData write + 100KB guard                           |
+| ✅     | `src/core/components/registry.ts:15-235` | Registry normalize/upsert — migrate to snapshot.registry |
+| ✅     | `packages/contracts/src/registry.v1.ts`  | Entry shape to embed in snapshot                         |
+| ❌     | `src/core/drift/snapshot.ts`             | Greenfield                                               |
+| ❌     | `packages/contracts/src/snapshot.v1.ts`  | Greenfield                                               |
 
 ### Official API facts
 
-| Fact | Source |
-| ---- | ------ |
-| `node.setPluginData(key, value)` string-only, 100k char limit | Figma Plugin API docs, 2026-05-28 |
-| `getPluginData` / `setPluginData` on FrameNode | Same |
-| pluginData copied on duplicate | Figma community docs (file fork behavior) |
+| Fact                                                          | Source                                    |
+| ------------------------------------------------------------- | ----------------------------------------- |
+| `node.setPluginData(key, value)` string-only, 100k char limit | Figma Plugin API docs, 2026-05-28         |
+| `getPluginData` / `setPluginData` on FrameNode                | Same                                      |
+| pluginData copied on duplicate                                | Figma community docs (file fork behavior) |
 
 ### Cross-ticket matrix
 
-| Ticket | Interface | Relationship |
-| ------ | --------- | ------------ |
-| WO-058 | Implements snapshot + deletes repo registry | **Owner** of build |
-| WO-029 | Reads snapshot keys for variable compare | Consumer |
-| WO-030 | Reads snapshot.registry + component keys | Consumer |
-| WO-031 | Includes snapshot meta in drift report `lastSynced` fields | Consumer |
-| WO-032 | Calls `updateSnapshotKey` after resolution | Consumer |
+| Ticket | Interface                                                  | Relationship       |
+| ------ | ---------------------------------------------------------- | ------------------ |
+| WO-058 | Implements snapshot + deletes repo registry                | **Owner** of build |
+| WO-029 | Reads snapshot keys for variable compare                   | Consumer           |
+| WO-030 | Reads snapshot.registry + component keys                   | Consumer           |
+| WO-031 | Includes snapshot meta in drift report `lastSynced` fields | Consumer           |
+| WO-032 | Calls `updateSnapshotKey` after resolution                 | Consumer           |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D-028-1 | Single blob `fighub:snapshot:v1` | Simplest; fits 100KB for target scale | Sharded keys per collection (defer unless SPK-028-1 fails) |
-| D-028-2 | Hidden frame on Output page | Reuses page infra; invisible to designers | clientStorage (not fork-portable); repo JSON (WO-058 deletes) |
-| D-028-3 | Embed registry in snapshot | WO-058 architectural lock | Separate registry pluginData key |
-| D-028-4 | Implement in WO-058 not WO-028 | Ticket absorbed; avoids duplicate work | Re-open WO-028 |
-| D-028-5 | `fileKey` mismatch → warn + update | Untitled files have empty fileKey (memory.md) | Hard fail (spurious audit failures) |
+| ID      | Decision                           | Rationale                                     | Alternatives rejected                                         |
+| ------- | ---------------------------------- | --------------------------------------------- | ------------------------------------------------------------- |
+| D-028-1 | Single blob `fighub:snapshot:v1`   | Simplest; fits 100KB for target scale         | Sharded keys per collection (defer unless SPK-028-1 fails)    |
+| D-028-2 | Hidden frame on Output page        | Reuses page infra; invisible to designers     | clientStorage (not fork-portable); repo JSON (WO-058 deletes) |
+| D-028-3 | Embed registry in snapshot         | WO-058 architectural lock                     | Separate registry pluginData key                              |
+| D-028-4 | Implement in WO-058 not WO-028     | Ticket absorbed; avoids duplicate work        | Re-open WO-028                                                |
+| D-028-5 | `fileKey` mismatch → warn + update | Untitled files have empty fileKey (memory.md) | Hard fail (spurious audit failures)                           |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-028-1 | Serialize spike-400 tokens + 20 registry entries; measure UTF-8 bytes | < 90,000 bytes | ☐ pending (unit test in WO-058 plan) |
-| SPK-028-2 | Plugin Sandbox: create hidden frame, write/read 10KB JSON, reopen plugin | Round-trip identical | ☐ pending (WO-058 VQA) |
-| SPK-028-3 | Duplicate sandbox file; verify snapshot pluginData present | Data survives fork | ☐ deferred to VQA |
+| Spike ID  | Procedure                                                                | Pass criteria        | Status                               |
+| --------- | ------------------------------------------------------------------------ | -------------------- | ------------------------------------ |
+| SPK-028-1 | Serialize spike-400 tokens + 20 registry entries; measure UTF-8 bytes    | < 90,000 bytes       | ☐ pending (unit test in WO-058 plan) |
+| SPK-028-2 | Plugin Sandbox: create hidden frame, write/read 10KB JSON, reopen plugin | Round-trip identical | ☐ pending (WO-058 VQA)               |
+| SPK-028-3 | Duplicate sandbox file; verify snapshot pluginData present               | Data survives fork   | ☐ deferred to VQA                    |
 
 ---
 
 ## Risk register
 
-| Risk | Severity | Likelihood | Mitigation |
-| ---- | -------- | ---------- | ---------- |
-| Snapshot exceeds 100KB | High | Low at 400 vars | Size guard + prune synced keys; shard if needed |
-| Corrupt JSON in pluginData | Medium | Low | Parse try/catch → treat as empty + audit warning row |
-| Empty fileKey on Untitled | Medium | High | Don't key audit off fileKey; lazy update on save |
-| Concurrent update from push + detect | Low | Medium | Main-thread serial execution (Figma single-thread) |
+| Risk                                 | Severity | Likelihood      | Mitigation                                           |
+| ------------------------------------ | -------- | --------------- | ---------------------------------------------------- |
+| Snapshot exceeds 100KB               | High     | Low at 400 vars | Size guard + prune synced keys; shard if needed      |
+| Corrupt JSON in pluginData           | Medium   | Low             | Parse try/catch → treat as empty + audit warning row |
+| Empty fileKey on Untitled            | Medium   | High            | Don't key audit off fileKey; lazy update on save     |
+| Concurrent update from push + detect | Low      | Medium          | Main-thread serial execution (Figma single-thread)   |
 
 ---
 
@@ -190,9 +190,9 @@ Mirror pattern from `src/io/messages/export.ts` and `src/io/sinks/outputPageClie
 
 ## Open questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
-| OQ-028-1 | Sharded snapshot if SPK-028-1 fails | **RESOLVED:** defer; single blob default |
+| ID       | Question                                                 | Status                                                                                                                    |
+| -------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| OQ-028-1 | Sharded snapshot if SPK-028-1 fails                      | **RESOLVED:** defer; single blob default                                                                                  |
 | OQ-028-2 | Whether to store full token values or hashes in snapshot | **RESOLVED:** store canonical comparable values (same shape as drift `lastSynced`) — enables conflict UI 3-column compare |
 
 ---
@@ -235,12 +235,11 @@ On scaffold upsert, write to `snapshot.registry.components[name]` instead of sta
 
 ## Appendix B — Test matrix
 
-| Case | Setup | Expected |
-| ---- | ----- | -------- |
-| Fresh file | No snapshot node | `getSnapshot()` → empty envelope |
-| After push | 10 vars pushed | 10 keys with source push |
-| Manual edit | Change 1 var in Figma | Snapshot unchanged |
-| clearSnapshot | After migrate | keys = {}, registry = {} |
-| Corrupt JSON | Invalid pluginData | Treat as empty + log warn |
-| Size guard | >90KB payload | Refuse write with actionable error |
-
+| Case          | Setup                 | Expected                           |
+| ------------- | --------------------- | ---------------------------------- |
+| Fresh file    | No snapshot node      | `getSnapshot()` → empty envelope   |
+| After push    | 10 vars pushed        | 10 keys with source push           |
+| Manual edit   | Change 1 var in Figma | Snapshot unchanged                 |
+| clearSnapshot | After migrate         | keys = {}, registry = {}           |
+| Corrupt JSON  | Invalid pluginData    | Treat as empty + log warn          |
+| Size guard    | >90KB payload         | Refuse write with actionable error |

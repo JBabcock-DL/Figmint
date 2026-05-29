@@ -56,19 +56,15 @@ export async function loadFromGitHub(
     };
   }
 
-  return parseTextToDocument(
-    contents.text,
-    { source: 'paste' },
-    function (_kind, _charLength) {
-      const meta: GitHubSourceMeta = {
-        port: 'github',
-        repoUrl: repoUrl,
-        path: normalizedPath,
-        ref: ref,
-        sha: contents.sha,
-        receivedAt: new Date().toISOString(),
-      };
-      return meta;
-    },
-  );
+  return parseTextToDocument(contents.text, { source: 'paste' }, function (_kind, _charLength) {
+    const meta: GitHubSourceMeta = {
+      port: 'github',
+      repoUrl: repoUrl,
+      path: normalizedPath,
+      ref: ref,
+      sha: contents.sha,
+      receivedAt: new Date().toISOString(),
+    };
+    return meta;
+  });
 }

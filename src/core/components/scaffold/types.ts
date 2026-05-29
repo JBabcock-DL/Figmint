@@ -1,13 +1,7 @@
 import type { AuditRuleResult, ComponentSpecV1, RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 /** Parsed binding kind — suffix of selector after final '.' */
-export type BindingKind =
-  | 'fill'
-  | 'stroke'
-  | 'radius'
-  | 'padding'
-  | 'gap'
-  | 'text-style';
+export type BindingKind = 'fill' | 'stroke' | 'radius' | 'padding' | 'gap' | 'text-style';
 
 export type BindingFailureReason =
   | 'missing-variable'

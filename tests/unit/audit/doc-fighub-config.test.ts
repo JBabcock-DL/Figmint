@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildFigHubConfigRow, runDocPipelinePreflightRules } from '@/core/audit/rules/doc-required-tokens';
+import {
+  buildFigHubConfigRow,
+  runDocPipelinePreflightRules,
+} from '@/core/audit/rules/doc-required-tokens';
 
 describe('doc-pipeline/fighub-config', () => {
   it('passes when no parse error', function () {

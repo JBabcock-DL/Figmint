@@ -30,7 +30,9 @@ export function isSnapshotReadMessage(message: unknown): message is SnapshotRead
   return message.type === 'snapshot/read' && typeof message.requestId === 'string';
 }
 
-export function isSnapshotReadResultMessage(message: unknown): message is SnapshotReadResultMessage {
+export function isSnapshotReadResultMessage(
+  message: unknown,
+): message is SnapshotReadResultMessage {
   if (!isRecord(message)) {
     return false;
   }

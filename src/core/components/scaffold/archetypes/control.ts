@@ -48,7 +48,10 @@ function isCheckedVariant(variantName: string): boolean {
   return /checked=true|pressed=true|on/.test(variantName);
 }
 
-async function buildSwitchVariant(ctx: ScaffoldBuildContext, checked: boolean): Promise<ComponentNode> {
+async function buildSwitchVariant(
+  ctx: ScaffoldBuildContext,
+  checked: boolean,
+): Promise<ComponentNode> {
   const control = ctx.spec.control as Record<string, unknown> | undefined;
   const h = readControlNumber(control, 'height', 20);
   const w = readControlNumber(control, 'width', 36);

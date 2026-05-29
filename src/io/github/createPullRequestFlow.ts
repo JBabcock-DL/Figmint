@@ -76,22 +76,19 @@ function throwMappedHttpError(
   response: GitHubRelayApiResponse,
   context: { branch?: string } = {},
 ): never {
-  throw new GitHubFlowError(mapGitHubHttpError(response.status, response.body, context), response.status);
+  throw new GitHubFlowError(
+    mapGitHubHttpError(response.status, response.body, context),
+    response.status,
+  );
 }
 
-function assertOk(
-  response: GitHubRelayApiResponse,
-  context: { branch?: string } = {},
-): void {
+function assertOk(response: GitHubRelayApiResponse, context: { branch?: string } = {}): void {
   if (!response.ok) {
     throwMappedHttpError(response, context);
   }
 }
 
-async function githubGetWithRetry(
-  path: string,
-  token: string,
-): Promise<GitHubRelayApiResponse> {
+async function githubGetWithRetry(path: string, token: string): Promise<GitHubRelayApiResponse> {
   let response = await githubApiViaRelay('GET', path, token);
   if (!response.ok && response.status >= 500) {
     response = await githubApiViaRelay('GET', path, token);

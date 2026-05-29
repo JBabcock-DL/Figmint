@@ -148,7 +148,9 @@ rl.question(
   async (answer) => {
     rl.close();
     if (!answer.trim()) {
-      console.log('Done. Run Figma spike (SPK-016-1/2) next — see research/spike-github-oauth-results.md');
+      console.log(
+        'Done. Run Figma spike (SPK-016-1/2) next — see research/spike-github-oauth-results.md',
+      );
       process.exit(0);
     }
     const probe = await probeContentsApi(token, answer.trim());

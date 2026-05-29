@@ -31,7 +31,7 @@ doc/component/{name}                        VERTICAL · AUTO height · FIXED wid
 const header = figma.createFrame();
 header.name = `doc/component/${CONFIG.component}/header`;
 header.layoutMode = 'VERTICAL';
-header.resize(DOC_FRAME_WIDTH, 1);                   // = resize(1640, 1)
+header.resize(DOC_FRAME_WIDTH, 1); // = resize(1640, 1)
 header.primaryAxisSizingMode = 'AUTO';
 header.counterAxisSizingMode = 'FIXED';
 header.layoutAlign = 'STRETCH';
@@ -50,16 +50,16 @@ header.appendChild(summary);
 
 **FigHub emit (`src/core/canvas/doc/header.ts`):**
 
-| Property | Value | Source |
-| -------- | ----- | ------ |
-| Frame name | `doc/component/${docKey}/header` | `cc-doc-page-header.js` line 33 |
-| `layoutMode` | `VERTICAL` | line 34 |
-| Width | 1640 (DOC_FRAME_WIDTH); fixed | line 35-37 |
-| Height | AUTO (hugs content) | line 36 |
-| `layoutAlign` | `STRETCH` (so it expands to docRoot width) | line 38 |
-| `itemSpacing` | 12 | line 39 |
-| `fills` | `[]` (no fill) | line 40 |
-| **Children** | title (`_Doc/Section`, 32px, color/background/content #0a0a0a) + summary (`_Doc/Caption`, 14px, color/background/content-muted #6b7280) | lines 43-49 |
+| Property      | Value                                                                                                                                   | Source                          |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| Frame name    | `doc/component/${docKey}/header`                                                                                                        | `cc-doc-page-header.js` line 33 |
+| `layoutMode`  | `VERTICAL`                                                                                                                              | line 34                         |
+| Width         | 1640 (DOC_FRAME_WIDTH); fixed                                                                                                           | line 35-37                      |
+| Height        | AUTO (hugs content)                                                                                                                     | line 36                         |
+| `layoutAlign` | `STRETCH` (so it expands to docRoot width)                                                                                              | line 38                         |
+| `itemSpacing` | 12                                                                                                                                      | line 39                         |
+| `fills`       | `[]` (no fill)                                                                                                                          | line 40                         |
+| **Children**  | title (`_Doc/Section`, 32px, color/background/content #0a0a0a) + summary (`_Doc/Caption`, 14px, color/background/content-muted #6b7280) | lines 43-49                     |
 
 **Title source:** `CONFIG.title` — for shadcn Button = `"Button"`.
 
@@ -71,13 +71,13 @@ header.appendChild(summary);
 
 **Spec (verbatim from `04-doc-pipeline-contract.md` §4):**
 
-| Col | Header | Width | Cell pattern |
-| --- | ------ | ----- | ------------ |
-| 1 | `PROPERTY` | 240 | `_Doc/TokenName` — e.g. `variant`, `size`, `disabled`, `asChild` |
-| 2 | `TYPE` | 380 | `_Doc/Code` — TypeScript-style union or `boolean` |
-| 3 | `DEFAULT` | 160 | `_Doc/Code` — default value in quotes, or `—` if none |
-| 4 | `REQUIRED` | 120 | `_Doc/Caption` — `yes` / `no` |
-| 5 | `DESCRIPTION` | 740 | `_Doc/Caption` — one sentence |
+| Col | Header        | Width | Cell pattern                                                     |
+| --- | ------------- | ----- | ---------------------------------------------------------------- |
+| 1   | `PROPERTY`    | 240   | `_Doc/TokenName` — e.g. `variant`, `size`, `disabled`, `asChild` |
+| 2   | `TYPE`        | 380   | `_Doc/Code` — TypeScript-style union or `boolean`                |
+| 3   | `DEFAULT`     | 160   | `_Doc/Code` — default value in quotes, or `—` if none            |
+| 4   | `REQUIRED`    | 120   | `_Doc/Caption` — `yes` / `no`                                    |
+| 5   | `DESCRIPTION` | 740   | `_Doc/Caption` — one sentence                                    |
 
 **Sum: 240 + 380 + 160 + 120 + 740 = 1640.**
 
@@ -94,11 +94,12 @@ row.name = `row/placeholder-${addIdx}`;
 row.layoutMode = 'HORIZONTAL';
 row.primaryAxisSizingMode = 'FIXED';
 row.counterAxisSizingMode = 'AUTO';
-row.resize(1640, 64);                  // minHeight 64 per §4
+row.resize(1640, 64); // minHeight 64 per §4
 row.counterAxisAlignItems = 'CENTER';
 row.paddingTop = 16;
 row.paddingBottom = 16;
-if (addIdx < want - 1) {                                   // bottom stroke on non-last rows
+if (addIdx < want - 1) {
+  // bottom stroke on non-last rows
   row.strokeWeight = 1;
   row.strokeBottomWeight = 1;
   row.strokeTopWeight = row.strokeLeftWeight = row.strokeRightWeight = 0;
@@ -154,19 +155,19 @@ doc/component/{name}/component-set-group       VERTICAL auto-layout, width 1640
 
 **ComponentSet auto-layout (the WRAP grid):**
 
-| Property | Value | Reason |
-| -------- | ----- | ------ |
-| `layoutMode` | `HORIZONTAL` | variants left-to-right |
-| `layoutWrap` | `WRAP` | wraps on width exhaustion |
-| `resize(1640, 1)` → then `primaryAxisSizingMode = FIXED`, `counterAxisSizingMode = AUTO` | — | fixed width triggers wrap; height grows |
-| `paddingTop/Bottom/Left/Right` | 32 | breathing room |
-| `itemSpacing` | 24 | gap between variants in row |
-| `counterAxisSpacing` | 24 | gap between wrapped rows |
-| `fills` | bound `color/background/variant` (fallback `#fafafa`) | subtle bg |
-| `strokes` | bound `color/border/subtle` (fallback `#e5e7eb`) | frame outline |
-| `strokeWeight` | 1 | — |
-| `dashPattern` | `[6, 4]` | dashed = editable source |
-| `cornerRadius` | 16 | match doc containers |
+| Property                                                                                 | Value                                                 | Reason                                  |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
+| `layoutMode`                                                                             | `HORIZONTAL`                                          | variants left-to-right                  |
+| `layoutWrap`                                                                             | `WRAP`                                                | wraps on width exhaustion               |
+| `resize(1640, 1)` → then `primaryAxisSizingMode = FIXED`, `counterAxisSizingMode = AUTO` | —                                                     | fixed width triggers wrap; height grows |
+| `paddingTop/Bottom/Left/Right`                                                           | 32                                                    | breathing room                          |
+| `itemSpacing`                                                                            | 24                                                    | gap between variants in row             |
+| `counterAxisSpacing`                                                                     | 24                                                    | gap between wrapped rows                |
+| `fills`                                                                                  | bound `color/background/variant` (fallback `#fafafa`) | subtle bg                               |
+| `strokes`                                                                                | bound `color/border/subtle` (fallback `#e5e7eb`)      | frame outline                           |
+| `strokeWeight`                                                                           | 1                                                     | —                                       |
+| `dashPattern`                                                                            | `[6, 4]`                                              | dashed = editable source                |
+| `cornerRadius`                                                                           | 16                                                    | match doc containers                    |
 
 **Critical:** Per §3.2 "Do not set `x`/`y` on the ComponentSet after reparenting — the parent's auto-layout owns position."
 
@@ -208,12 +209,12 @@ doc/component/{name}/matrix                          VERTICAL · AUTO · STRETCH
 
 | States visible | State cell width |
 | -------------: | ---------------: |
-| 6 | ~236 |
-| 5 | 284 |
-| 4 | 355 |
-| 3 | ~473 |
-| 2 | 710 |
-| 1 | 1420 |
+|              6 |             ~236 |
+|              5 |              284 |
+|              4 |              355 |
+|              3 |             ~473 |
+|              2 |              710 |
+|              1 |             1420 |
 
 For shadcn Button (4 states: default/hover/pressed/disabled), cell width = (1640 − 60 − 160) / 4 = (1420)/4 = **355**.
 
@@ -231,7 +232,7 @@ For shadcn Button (4 states: default/hover/pressed/disabled), cell width = (1640
 **Per-cell instance creation** (verbatim from `cc-doc-matrix-only.js` lines 137-143):
 
 ```js
-const componentNode = variantByKey[key];  // key = "size=sm, variant=default" or hasSizeAxis ? `${variant}|${size}` : variant
+const componentNode = variantByKey[key]; // key = "size=sm, variant=default" or hasSizeAxis ? `${variant}|${size}` : variant
 if (componentNode) {
   const instance = componentNode.createInstance();
   if (typeof CONFIG.applyStateOverride === 'function') {
@@ -266,31 +267,49 @@ doc/component/{name}/usage                           HORIZONTAL · primary AUTO 
 ```js
 function buildUsageNotes() {
   const row = makeFrame(`doc/component/${CONFIG.component}/usage`, {
-    layoutMode: 'HORIZONTAL', primary: 'AUTO', counter: 'AUTO', width: 1640,
-    itemSpacing: 30, align: 'STRETCH',
+    layoutMode: 'HORIZONTAL',
+    primary: 'AUTO',
+    counter: 'AUTO',
+    width: 1640,
+    itemSpacing: 30,
+    align: 'STRETCH',
   });
-  row.layoutSizingHorizontal = 'FIXED';   // critical — usage parent is HORIZONTAL so counter axis = vertical
-  row.layoutSizingVertical = 'HUG';        // critical — §6 last paragraph
+  row.layoutSizingHorizontal = 'FIXED'; // critical — usage parent is HORIZONTAL so counter axis = vertical
+  row.layoutSizingVertical = 'HUG'; // critical — §6 last paragraph
   function card(titleText, glyph, bullets) {
     const c = makeFrame(`usage/${titleText.toLowerCase().replace(/[^a-z]/g, '')}`, {
-      layoutMode: 'VERTICAL', primary: 'AUTO', counter: 'FIXED', width: 805,
-      padL: 28, padR: 28, padT: 28, padB: 28, itemSpacing: 16,
-      fillVar: 'color/background/variant', fillHex: '#f4f4f5', radius: 16,
+      layoutMode: 'VERTICAL',
+      primary: 'AUTO',
+      counter: 'FIXED',
+      width: 805,
+      padL: 28,
+      padR: 28,
+      padT: 28,
+      padB: 28,
+      itemSpacing: 16,
+      fillVar: 'color/background/variant',
+      fillHex: '#f4f4f5',
+      radius: 16,
     });
     c.appendChild(makeText(`${glyph}  ${titleText}`, 'tokenName', 18, 'color/background/content'));
     const list = makeFrame('bullets', {
-      layoutMode: 'VERTICAL', primary: 'AUTO', counter: 'FIXED', width: 805 - 56,
-      itemSpacing: 12, align: 'STRETCH',
+      layoutMode: 'VERTICAL',
+      primary: 'AUTO',
+      counter: 'FIXED',
+      width: 805 - 56,
+      itemSpacing: 12,
+      align: 'STRETCH',
     });
     c.appendChild(list);
     for (const b of bullets) {
       const bt = makeText(`·  ${b}`, 'caption', 13, 'color/background/content');
-      bt.resize(805 - 56, 1); bt.textAutoResize = 'HEIGHT';
+      bt.resize(805 - 56, 1);
+      bt.textAutoResize = 'HEIGHT';
       list.appendChild(bt);
     }
     return c;
   }
-  row.appendChild(card('Do',    '✓', CONFIG.usageDo));
+  row.appendChild(card('Do', '✓', CONFIG.usageDo));
   row.appendChild(card("Don't", '✕', CONFIG.usageDont));
   return row;
 }
@@ -311,10 +330,10 @@ function buildUsageNotes() {
 
 **Spec (from `04-doc-pipeline-contract.md` §13):**
 
-| Variant axis | Values |
-| ------------ | ------ |
-| `variant` | `default` · `destructive` · `outline` · `secondary` · `ghost` · `link` (6 values) |
-| `size` | `sm` · `default` · `lg` · `icon` (4 values) |
+| Variant axis | Values                                                                            |
+| ------------ | --------------------------------------------------------------------------------- |
+| `variant`    | `default` · `destructive` · `outline` · `secondary` · `ghost` · `link` (6 values) |
+| `size`       | `sm` · `default` · `lg` · `icon` (4 values)                                       |
 
 **Total variants:** 6 × 4 = **24 ComponentNode masters** in the ComponentSet.
 
@@ -373,78 +392,78 @@ Validate: docRoot.children.length === 5,
 
 ### Verbatim contract sections (with file:line citations)
 
-| Section | File | Lines | Status |
-| ------- | ---- | ----- | ------ |
-| §1 — Matrix is mandatory; 5-section frame | `04-doc-pipeline-contract.md` | 7-22 | ✅ extracted |
-| §2 — Page layout (1800/1640 widths) | `04-doc-pipeline-contract.md` | 26-39 | ✅ extracted (consumed by `_PageContent` + `docRoot` create) |
-| §3 — ComponentSet lives in doc frame | `04-doc-pipeline-contract.md` | 76-87 | ✅ extracted |
-| §3.2 — Component Set section layout | `04-doc-pipeline-contract.md` | 90-116 | ✅ extracted (F3) |
-| §4 — Properties table | `04-doc-pipeline-contract.md` | 144-168 | ✅ extracted (F2) |
-| §5 — Variant × State matrix | `04-doc-pipeline-contract.md` | 172-232 | ✅ extracted (F4) |
-| §6 — Usage notes | `04-doc-pipeline-contract.md` | 236-254 | ✅ extracted (F5) |
-| §11 — Token bindings for chrome | `04-doc-pipeline-contract.md` | 318-335 | ✅ extracted |
-| §12 — Build order | `04-doc-pipeline-contract.md` | 339-355 | ✅ extracted |
-| §13.1.a — Opacity authoritative | `04-doc-pipeline-contract.md` | 379-401 | ✅ extracted (F6) |
+| Section                                   | File                          | Lines   | Status                                                       |
+| ----------------------------------------- | ----------------------------- | ------- | ------------------------------------------------------------ |
+| §1 — Matrix is mandatory; 5-section frame | `04-doc-pipeline-contract.md` | 7-22    | ✅ extracted                                                 |
+| §2 — Page layout (1800/1640 widths)       | `04-doc-pipeline-contract.md` | 26-39   | ✅ extracted (consumed by `_PageContent` + `docRoot` create) |
+| §3 — ComponentSet lives in doc frame      | `04-doc-pipeline-contract.md` | 76-87   | ✅ extracted                                                 |
+| §3.2 — Component Set section layout       | `04-doc-pipeline-contract.md` | 90-116  | ✅ extracted (F3)                                            |
+| §4 — Properties table                     | `04-doc-pipeline-contract.md` | 144-168 | ✅ extracted (F2)                                            |
+| §5 — Variant × State matrix               | `04-doc-pipeline-contract.md` | 172-232 | ✅ extracted (F4)                                            |
+| §6 — Usage notes                          | `04-doc-pipeline-contract.md` | 236-254 | ✅ extracted (F5)                                            |
+| §11 — Token bindings for chrome           | `04-doc-pipeline-contract.md` | 318-335 | ✅ extracted                                                 |
+| §12 — Build order                         | `04-doc-pipeline-contract.md` | 339-355 | ✅ extracted                                                 |
+| §13.1.a — Opacity authoritative           | `04-doc-pipeline-contract.md` | 379-401 | ✅ extracted (F6)                                            |
 
 ### Matrix dimensions for shadcn Button
 
-| Axis | Count | Cells |
-| ---- | ----- | ----- |
-| Variants (rows) | 6 (default, destructive, outline, secondary, ghost, link) | — |
-| Sizes (row blocks) | 4 (sm, default, lg, icon) | — |
-| States (columns) | 4 (default, hover, pressed, disabled) | — |
-| **Total cells** | 6 × 4 × 4 = **96 instances** | — |
-| **Component masters (in ComponentSet)** | 6 × 4 = **24** | — |
+| Axis                                    | Count                                                     | Cells |
+| --------------------------------------- | --------------------------------------------------------- | ----- |
+| Variants (rows)                         | 6 (default, destructive, outline, secondary, ghost, link) | —     |
+| Sizes (row blocks)                      | 4 (sm, default, lg, icon)                                 | —     |
+| States (columns)                        | 4 (default, hover, pressed, disabled)                     | —     |
+| **Total cells**                         | 6 × 4 × 4 = **96 instances**                              | —     |
+| **Component masters (in ComponentSet)** | 6 × 4 = **24**                                            | —     |
 
 **Cell width:** (1640 − 60 size-label − 160 variant-label) / 4 states = **355px** each.
 
 ### Token chrome bindings (§11)
 
-| Element | Variable | Theme |
-| ------- | -------- | ----- |
-| Outer dashed stroke | `color/border/subtle` | Light |
-| Header rows bottom stroke | `color/border/subtle` | Light |
+| Element                              | Variable                         | Theme |
+| ------------------------------------ | -------------------------------- | ----- |
+| Outer dashed stroke                  | `color/border/subtle`            | Light |
+| Header rows bottom stroke            | `color/border/subtle`            | Light |
 | Header group text (DEFAULT/DISABLED) | `color/background/content-muted` | Light |
-| State header text | `color/background/content-muted` | Light |
-| Size label text | `color/background/content` | Light |
-| Variant row label text | `color/background/content-muted` | Light |
-| Size-label column right stroke | `color/border/subtle` | Light |
-| Variant row bottom stroke | `color/border/subtle` | Light |
-| Usage card fill | `color/background/variant` | Light |
-| Usage card text | `color/background/content` | Light |
-| ComponentSet group fill (§3.2) | `color/background/variant` | Light |
-| ComponentSet group stroke (§3.2) | `color/border/subtle` | Light |
+| State header text                    | `color/background/content-muted` | Light |
+| Size label text                      | `color/background/content`       | Light |
+| Variant row label text               | `color/background/content-muted` | Light |
+| Size-label column right stroke       | `color/border/subtle`            | Light |
+| Variant row bottom stroke            | `color/border/subtle`            | Light |
+| Usage card fill                      | `color/background/variant`       | Light |
+| Usage card text                      | `color/background/content`       | Light |
+| ComponentSet group fill (§3.2)       | `color/background/variant`       | Light |
+| ComponentSet group stroke (§3.2)     | `color/border/subtle`            | Light |
 
 **4 distinct color tokens** total: `color/border/subtle`, `color/background/variant`, `color/background/content`, `color/background/content-muted`. These are the 4 the audit gate must check for — see [`audit-gate-spec.md`](./audit-gate-spec.md).
 
 ### Cross-ticket matrix
 
-| Ticket | Interface | This ticket consumes |
-| ------ | --------- | -------------------- |
-| WO-022 | `componentSet` + `variantByKey` shape (sorted `key=value` joined by `, `) | matrix cell lookup |
-| WO-023 | `applyBindings` runs before pipeline — variants ship with bound paints | matrix cells inherit |
-| WO-024 | `applyProperties` adds `Label` / `Leading icon` / `Trailing icon` element props to ComponentSet | set-group renders props |
-| WO-025 | `buildUsageFrame` (replaced) | §5 replaces §5; existing audit rule names retired |
-| WO-026 | `registry` upserts by `spec.name` | unchanged |
-| WO-027 | UI orchestrator + preview render | preview now must handle 5 sections (currently 2) |
+| Ticket | Interface                                                                                       | This ticket consumes                              |
+| ------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| WO-022 | `componentSet` + `variantByKey` shape (sorted `key=value` joined by `, `)                       | matrix cell lookup                                |
+| WO-023 | `applyBindings` runs before pipeline — variants ship with bound paints                          | matrix cells inherit                              |
+| WO-024 | `applyProperties` adds `Label` / `Leading icon` / `Trailing icon` element props to ComponentSet | set-group renders props                           |
+| WO-025 | `buildUsageFrame` (replaced)                                                                    | §5 replaces §5; existing audit rule names retired |
+| WO-026 | `registry` upserts by `spec.name`                                                               | unchanged                                         |
+| WO-027 | UI orchestrator + preview render                                                                | preview now must handle 5 sections (currently 2)  |
 
 ## Decision log
 
-| # | Decision | Rationale |
-| --- | -------- | --------- |
-| D1 | Section frame name for Section 4 = `doc/component/${docKey}/matrix-group` (matches `cc-doc-matrix-only.js` line 13) | Keep parity with legacy; the inner `matrix` (line 21) is a child of `matrix-group` |
-| D2 | Use `0.92 / 0.85 / 0.5` (per §13.1.a verbatim) for hover/pressed/disabled opacity — NOT `0.9 / 0.8 / 0.5` (ticket draft) | §13.1.a is the contract; ticket text must be amended in Step 6 |
-| D3 | Section 3 title text = "Component" (not "Variants" as ticket draft suggests) | Per §3.2 verbatim |
-| D4 | Section 3 caption text = "Live ComponentSet — edit here, matrix updates." | Per §3.2 verbatim |
-| D5 | Section 1 emits title + summary; no horizontal divider | `cc-doc-page-header.js` does not emit one; defer divider to designer VQA request |
-| D6 | Section 2 wrapper frame is `doc/table-group/${docKey}/properties`; inner table is `doc/table/${docKey}/properties` | Match style-guide convention per §4 last paragraph |
-| D7 | Section 4 cells use FIXED-width column (355 for Button) + AUTO-height Hug | Per §5.4 verbatim — instance not resized |
-| D8 | Section 5 row is HORIZONTAL with `counterAxisSizingMode = AUTO` after resize | Per §6 last paragraph + `03-auto-layout-invariants.md` §10.2 (avoids 1px-tall collapse — BUG-S5-001) |
-| D9 | docRoot children must equal exactly 5 in order — enforce in `doc-pipeline/section-count` audit row | Per §12 step 8 verbatim |
-| D10 | Per-cell opacity override is wired via a function parameter `applyStateOverride` injected at orchestrator scope, not inlined in spec JSON | shadcn states aren't a Figma variant property; opacity is the deterministic path per §13.1.a |
-| D11 | Replace `_Doc/Section` 32px in header (per `cc-doc-page-header.js` line 43 "section, 32") with the published `_Doc/Section` style id — DO NOT inline fontSize | Per §11 last paragraph "Never set raw `fontName` / `fontSize` on matrix chrome" |
-| D12 | When ticket Requirement text + section contract disagree (e.g. opacity values, title strings), **§04-doc-pipeline-contract.md wins** | Per `Docs/lift-sources.md` §0 drift rule |
-| D13 | Drop the `sizes ?? []` fallback from `cc-doc-matrix-only.js` line 4 — shadcn Button always has 4 sizes | Simplifies code path; no-size-axis case is out of scope for this WO (Button verbatim only) |
+| #   | Decision                                                                                                                                                      | Rationale                                                                                            |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| D1  | Section frame name for Section 4 = `doc/component/${docKey}/matrix-group` (matches `cc-doc-matrix-only.js` line 13)                                           | Keep parity with legacy; the inner `matrix` (line 21) is a child of `matrix-group`                   |
+| D2  | Use `0.92 / 0.85 / 0.5` (per §13.1.a verbatim) for hover/pressed/disabled opacity — NOT `0.9 / 0.8 / 0.5` (ticket draft)                                      | §13.1.a is the contract; ticket text must be amended in Step 6                                       |
+| D3  | Section 3 title text = "Component" (not "Variants" as ticket draft suggests)                                                                                  | Per §3.2 verbatim                                                                                    |
+| D4  | Section 3 caption text = "Live ComponentSet — edit here, matrix updates."                                                                                     | Per §3.2 verbatim                                                                                    |
+| D5  | Section 1 emits title + summary; no horizontal divider                                                                                                        | `cc-doc-page-header.js` does not emit one; defer divider to designer VQA request                     |
+| D6  | Section 2 wrapper frame is `doc/table-group/${docKey}/properties`; inner table is `doc/table/${docKey}/properties`                                            | Match style-guide convention per §4 last paragraph                                                   |
+| D7  | Section 4 cells use FIXED-width column (355 for Button) + AUTO-height Hug                                                                                     | Per §5.4 verbatim — instance not resized                                                             |
+| D8  | Section 5 row is HORIZONTAL with `counterAxisSizingMode = AUTO` after resize                                                                                  | Per §6 last paragraph + `03-auto-layout-invariants.md` §10.2 (avoids 1px-tall collapse — BUG-S5-001) |
+| D9  | docRoot children must equal exactly 5 in order — enforce in `doc-pipeline/section-count` audit row                                                            | Per §12 step 8 verbatim                                                                              |
+| D10 | Per-cell opacity override is wired via a function parameter `applyStateOverride` injected at orchestrator scope, not inlined in spec JSON                     | shadcn states aren't a Figma variant property; opacity is the deterministic path per §13.1.a         |
+| D11 | Replace `_Doc/Section` 32px in header (per `cc-doc-page-header.js` line 43 "section, 32") with the published `_Doc/Section` style id — DO NOT inline fontSize | Per §11 last paragraph "Never set raw `fontName` / `fontSize` on matrix chrome"                      |
+| D12 | When ticket Requirement text + section contract disagree (e.g. opacity values, title strings), **§04-doc-pipeline-contract.md wins**                          | Per `Docs/lift-sources.md` §0 drift rule                                                             |
+| D13 | Drop the `sizes ?? []` fallback from `cc-doc-matrix-only.js` line 4 — shadcn Button always has 4 sizes                                                        | Simplifies code path; no-size-axis case is out of scope for this WO (Button verbatim only)           |
 
 ## Pre-plan spikes
 
@@ -452,14 +471,14 @@ Not required for this trace — every section emitter spec is documented verbati
 
 ## Risk register
 
-| Risk | Severity | Likelihood | Mitigation |
-| ---- | -------- | ---------- | ---------- |
-| R1 — Existing `_Doc/Section` 32px size (header) may not match the published style fontSize (likely 28px or 24px) | Medium | High | Apply `textStyleId` from `_Doc/Section` and let the published style win; ignore the 32px hint in legacy code (it's pre-style-id). |
-| R2 — `cc-doc-matrix-only.js` `cellW` formula uses integer floor — at 4 states cellW=355 exactly; at 6 states cellW=236 with 4px remainder lost | Low | Low | Document the rounding; visually negligible. |
-| R3 — `applyStateOverride` opacity 0.92/0.85 may render the "default" column at full opacity 1.0 — must default unconditionally | Low | Low | Emitter sets `instance.opacity = 1` before checking state, then overrides for hover/pressed/disabled. |
-| R4 — Section 5 horizontal sizing rule (§6 last paragraph) is the same trap that produced BUG-S5-001 — must verify after each appendChild | Medium | Medium | Reuse `reassertDocSectionStretch` from existing `usageFrame.ts`; new emitter calls it after every appendChild. |
-| R5 — Section 2 (properties) for shadcn Button has 6 rows × 5 cols = 30 text nodes; pre-loading text styles must happen before any `t.characters = ...` | Low | Low | Orchestrator awaits `figma.getLocalTextStylesAsync()` once at top before any emitter runs. |
-| R6 — Section 4 matrix renders 96 instances — `createInstance` cost may stack on Pro/Org tier | Low | Low | WO-005 spike measured `createInstance` ≈ 0.5ms; 96 × 0.5 ≈ 50ms. Well under any budget. |
+| Risk                                                                                                                                                   | Severity | Likelihood | Mitigation                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| R1 — Existing `_Doc/Section` 32px size (header) may not match the published style fontSize (likely 28px or 24px)                                       | Medium   | High       | Apply `textStyleId` from `_Doc/Section` and let the published style win; ignore the 32px hint in legacy code (it's pre-style-id). |
+| R2 — `cc-doc-matrix-only.js` `cellW` formula uses integer floor — at 4 states cellW=355 exactly; at 6 states cellW=236 with 4px remainder lost         | Low      | Low        | Document the rounding; visually negligible.                                                                                       |
+| R3 — `applyStateOverride` opacity 0.92/0.85 may render the "default" column at full opacity 1.0 — must default unconditionally                         | Low      | Low        | Emitter sets `instance.opacity = 1` before checking state, then overrides for hover/pressed/disabled.                             |
+| R4 — Section 5 horizontal sizing rule (§6 last paragraph) is the same trap that produced BUG-S5-001 — must verify after each appendChild               | Medium   | Medium     | Reuse `reassertDocSectionStretch` from existing `usageFrame.ts`; new emitter calls it after every appendChild.                    |
+| R5 — Section 2 (properties) for shadcn Button has 6 rows × 5 cols = 30 text nodes; pre-loading text styles must happen before any `t.characters = ...` | Low      | Low        | Orchestrator awaits `figma.getLocalTextStylesAsync()` once at top before any emitter runs.                                        |
+| R6 — Section 4 matrix renders 96 instances — `createInstance` cost may stack on Pro/Org tier                                                           | Low      | Low        | WO-005 spike measured `createInstance` ≈ 0.5ms; 96 × 0.5 ≈ 50ms. Well under any budget.                                           |
 
 ## Recommendations
 

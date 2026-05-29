@@ -8,10 +8,10 @@
 
 ## Summary
 
-| Area | Pass | Fail | Pending |
-| ---- | ---- | ---- | ------- |
-| Figma assertions | — | — | N/A (subsystem) |
-| Functional QA (automated) | 4 | 0 | 1 optional manual |
+| Area                      | Pass | Fail | Pending           |
+| ------------------------- | ---- | ---- | ----------------- |
+| Figma assertions          | —    | —    | N/A (subsystem)   |
+| Functional QA (automated) | 4    | 0    | 1 optional manual |
 
 ---
 
@@ -23,12 +23,12 @@
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
-| E2E JSON + MD with correct counts | **PASS** | `driftReportEmission.integration.test.ts` |
-| JSON validates against schema | **PASS** | `report.schema.test.ts` |
-| Markdown Push/Pull/Conflicts sections | **PASS** | `drift-report-ac.json` fixture |
-| `drift/build-report` + Export tab demo | **PASS** | `ExportSandbox.tsx` |
+| Acceptance criterion                   | Result   | Note                                      |
+| -------------------------------------- | -------- | ----------------------------------------- |
+| E2E JSON + MD with correct counts      | **PASS** | `driftReportEmission.integration.test.ts` |
+| JSON validates against schema          | **PASS** | `report.schema.test.ts`                   |
+| Markdown Push/Pull/Conflicts sections  | **PASS** | `drift-report-ac.json` fixture            |
+| `drift/build-report` + Export tab demo | **PASS** | `ExportSandbox.tsx`                       |
 
 ### Automated test run (2026-05-28)
 
@@ -39,8 +39,8 @@ npm test -- tests/unit/core/drift/report.schema.test.ts tests/integration/core/d
 
 ### Optional manual (designer)
 
-| Step | Result | Note |
-| ---- | ------ | ---- |
+| Step                               | Result      | Note                                                            |
+| ---------------------------------- | ----------- | --------------------------------------------------------------- |
 | GitHub MD comment preview readable | **PENDING** | Designer: Export tab → copy MD → paste in issue comment preview |
 
 ---

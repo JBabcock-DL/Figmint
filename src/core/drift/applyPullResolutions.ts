@@ -4,6 +4,7 @@ import type {
   ComponentDriftEntry,
   ComponentSpecV1,
   DriftReportV1,
+  Token,
   TokensV1,
   VariableDriftEntry,
 } from '@detroitlabs/fighub-contracts';
@@ -12,10 +13,7 @@ import { runScaffoldComponent } from '@/core/components/scaffold/runScaffold';
 import { pushTokens } from '@/core/variables';
 import { updateSnapshotKeys } from '@/core/sync/snapshotStore';
 
-import {
-  effectiveResolutionDirection,
-  variableComparableToToken,
-} from './applyPushResolutions';
+import { effectiveResolutionDirection, variableComparableToToken } from './applyPushResolutions';
 import { parseVariableDriftId } from './variableKeys';
 import type { ComponentComparable, VariableComparable } from './types';
 import type { ResolutionChoice } from '@/io/messages/drift';
@@ -171,12 +169,12 @@ export function snapshotKeysForPullDrifts(
         break;
       }
       if (drift.kind === 'variable') {
-        const comparable = extractVariableComparable((drift).repo);
+        const comparable = extractVariableComparable(drift.repo);
         if (comparable !== null) {
           keys.push({ key: drift.id, value: comparable });
         }
       } else {
-        const comparable = extractComponentComparable((drift).repo);
+        const comparable = extractComponentComparable(drift.repo);
         if (comparable !== null) {
           keys.push({ key: drift.id, value: comparable });
         }

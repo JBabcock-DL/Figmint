@@ -192,42 +192,51 @@ export function useRepoSync(options: UseRepoSyncOptions): UseRepoSyncResult {
     );
   }, []);
 
-  const fetchRepo = useCallback(async function () {
-    if (!options.connected || !isValidRepoUrl(options.repoUrl)) {
-      setError('Connect GitHub and enter a valid repo URL first.');
-      return;
-    }
-    const requestId = nextSyncRequestId('repo-fetch');
-    pendingRef.current.set(requestId, 'fetch');
-    setFetching(true);
-    setError(null);
-    postSync('github/repo/fetch', requestId, normalizeRepoUrl(options.repoUrl));
-  }, [options.connected, options.repoUrl, postSync]);
+  const fetchRepo = useCallback(
+    async function () {
+      if (!options.connected || !isValidRepoUrl(options.repoUrl)) {
+        setError('Connect GitHub and enter a valid repo URL first.');
+        return;
+      }
+      const requestId = nextSyncRequestId('repo-fetch');
+      pendingRef.current.set(requestId, 'fetch');
+      setFetching(true);
+      setError(null);
+      postSync('github/repo/fetch', requestId, normalizeRepoUrl(options.repoUrl));
+    },
+    [options.connected, options.repoUrl, postSync],
+  );
 
-  const pullDesignSystem = useCallback(async function () {
-    if (!options.connected || !isValidRepoUrl(options.repoUrl)) {
-      setError('Connect GitHub first.');
-      return;
-    }
-    const requestId = nextSyncRequestId('repo-pull');
-    pendingRef.current.set(requestId, 'pull');
-    setPulling(true);
-    setError(null);
-    postSync('github/repo/pull', requestId, normalizeRepoUrl(options.repoUrl));
-  }, [options.connected, options.repoUrl, postSync]);
+  const pullDesignSystem = useCallback(
+    async function () {
+      if (!options.connected || !isValidRepoUrl(options.repoUrl)) {
+        setError('Connect GitHub first.');
+        return;
+      }
+      const requestId = nextSyncRequestId('repo-pull');
+      pendingRef.current.set(requestId, 'pull');
+      setPulling(true);
+      setError(null);
+      postSync('github/repo/pull', requestId, normalizeRepoUrl(options.repoUrl));
+    },
+    [options.connected, options.repoUrl, postSync],
+  );
 
-  const pushUpdates = useCallback(async function () {
-    if (!options.connected || !isValidRepoUrl(options.repoUrl)) {
-      setError('Connect GitHub first.');
-      return;
-    }
-    const requestId = nextSyncRequestId('repo-push');
-    pendingRef.current.set(requestId, 'push');
-    setPushing(true);
-    setPushPrUrl(null);
-    setError(null);
-    postSync('github/repo/push', requestId, normalizeRepoUrl(options.repoUrl));
-  }, [options.connected, options.repoUrl, postSync]);
+  const pushUpdates = useCallback(
+    async function () {
+      if (!options.connected || !isValidRepoUrl(options.repoUrl)) {
+        setError('Connect GitHub first.');
+        return;
+      }
+      const requestId = nextSyncRequestId('repo-push');
+      pendingRef.current.set(requestId, 'push');
+      setPushing(true);
+      setPushPrUrl(null);
+      setError(null);
+      postSync('github/repo/push', requestId, normalizeRepoUrl(options.repoUrl));
+    },
+    [options.connected, options.repoUrl, postSync],
+  );
 
   return {
     fetching: fetching,

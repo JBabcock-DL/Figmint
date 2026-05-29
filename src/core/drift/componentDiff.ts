@@ -80,7 +80,10 @@ export function componentHashEqual(a: ComponentComparable, b: ComponentComparabl
   return a.variantMatrixHash === b.variantMatrixHash;
 }
 
-export function buildComponentDiff(a: ComponentComparable, b: ComponentComparable): ComponentDiff | null {
+export function buildComponentDiff(
+  a: ComponentComparable,
+  b: ComponentComparable,
+): ComponentDiff | null {
   if (componentComparableEqual(a, b)) {
     return null;
   }

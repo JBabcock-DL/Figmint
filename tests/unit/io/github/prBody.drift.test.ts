@@ -4,9 +4,9 @@ import { buildDriftReportPrTitle, buildDriftResolutionPrBody } from '@/io/github
 
 describe('buildDriftReportPrTitle', () => {
   it('formats drift summary title', () => {
-    expect(
-      buildDriftReportPrTitle({ push: 4, pull: 2, conflict: 1, synced: 410 }),
-    ).toBe('DesignOps drift: 4 push, 2 pull, 1 conflicts');
+    expect(buildDriftReportPrTitle({ push: 4, pull: 2, conflict: 1, synced: 410 })).toBe(
+      'FigHub updates: 4 push, 2 pull, 1 conflicts',
+    );
   });
 
   it('includes change table in drift resolution PR body', () => {

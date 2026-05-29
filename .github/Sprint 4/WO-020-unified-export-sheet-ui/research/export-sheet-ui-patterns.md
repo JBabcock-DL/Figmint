@@ -32,15 +32,15 @@ Seven decisions unblock `/plan`:
 
 Existing plugin UI (`src/ui/App.tsx`, `src/ui/tabs/Bootstrap.tsx`, `src/ui/components/*`) establishes conventions ExportSheet must match:
 
-| Pattern | Convention | ExportSheet use |
-| -------- | ----------- | ---------------- |
-| Layout | `<main>` column flex, `gap: 12px`, `padding: 16px`, `100vh` | Sheet is a bordered `<section>` inside parent tab/modal, same spacing tokens |
-| Typography | Inter stack; `h2` sections `13px`; body `11px`; primary button `12px` / `fontWeight: 600` | Section labels “Format”, “Destinations”; monospace path input |
-| Color | Success `#0a6b0a`, error `#b00020`, info `#0a3d6b`, muted `#666`, borders `#ddd` | Per-sink status chips reuse BootstrapStepList icon colors |
-| State | `useReducer` for multi-field form + async status (see `bootstrapProgressReducer`) | `exportSheetReducer` for formats, sinks, path, `exporting`, `results` |
-| A11y | `aria-label` on sections; `role="status"` / `role="alert"`; `role="progressbar"` on bars | Checkbox groups with `<fieldset>` + `<legend>`; disable Export while `exporting` |
-| Clipboard | Textarea + `document.execCommand('copy')` fallback (`AuditPanel`) | Clipboard sink uses same pattern when `navigator.clipboard.writeText` blocked |
-| Main comms | `parent.postMessage({ pluginMessage: … }, '*')` + typed guards in `src/io/messages/*` | New `src/io/messages/export.ts` union |
+| Pattern    | Convention                                                                                | ExportSheet use                                                                  |
+| ---------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Layout     | `<main>` column flex, `gap: 12px`, `padding: 16px`, `100vh`                               | Sheet is a bordered `<section>` inside parent tab/modal, same spacing tokens     |
+| Typography | Inter stack; `h2` sections `13px`; body `11px`; primary button `12px` / `fontWeight: 600` | Section labels “Format”, “Destinations”; monospace path input                    |
+| Color      | Success `#0a6b0a`, error `#b00020`, info `#0a3d6b`, muted `#666`, borders `#ddd`          | Per-sink status chips reuse BootstrapStepList icon colors                        |
+| State      | `useReducer` for multi-field form + async status (see `bootstrapProgressReducer`)         | `exportSheetReducer` for formats, sinks, path, `exporting`, `results`            |
+| A11y       | `aria-label` on sections; `role="status"` / `role="alert"`; `role="progressbar"` on bars  | Checkbox groups with `<fieldset>` + `<legend>`; disable Export while `exporting` |
+| Clipboard  | Textarea + `document.execCommand('copy')` fallback (`AuditPanel`)                         | Clipboard sink uses same pattern when `navigator.clipboard.writeText` blocked    |
+| Main comms | `parent.postMessage({ pluginMessage: … }, '*')` + typed guards in `src/io/messages/*`     | New `src/io/messages/export.ts` union                                            |
 
 **Do not introduce** Tailwind, CSS modules, or Storybook — out of scope for Sprint 4 scaffold.
 
@@ -66,12 +66,7 @@ export type ContractDocument =
   | { kind: 'registry'; payload: RegistryV1 }
   | { kind: 'tokens'; payload: TokensV1 }; // canonical internal model post-adapt
 
-export type SinkId =
-  | 'download'
-  | 'clipboard'
-  | 'output-page'
-  | 'plugin-data'
-  | 'github-pr';
+export type SinkId = 'download' | 'clipboard' | 'output-page' | 'plugin-data' | 'github-pr';
 
 export type ExportFormat = 'json' | 'md';
 
@@ -123,12 +118,12 @@ WO-020 imports sink **implementations** from `src/io/sinks/*` (WO-017/018) but o
 
 PRD §10.4 shows both format toggles active. Implementation:
 
-| UI state | `formats` sent to serializer |
-| -------- | ----------------------------- |
-| JSON ☑, MD ☐ | `['json']` |
-| JSON ☐, MD ☑ | `['md']` |
-| JSON ☑, MD ☑ | `['json', 'md']` (both) |
-| neither | Export button **disabled** |
+| UI state     | `formats` sent to serializer |
+| ------------ | ---------------------------- |
+| JSON ☑, MD ☐ | `['json']`                   |
+| JSON ☐, MD ☑ | `['md']`                     |
+| JSON ☑, MD ☑ | `['json', 'md']` (both)      |
+| neither      | Export button **disabled**   |
 
 - WO-019 `format(document.payload, fmt)` returns string content.
 - Download sink: one browser download per selected format (two files when both checked).
@@ -138,13 +133,13 @@ PRD §10.4 shows both format toggles active. Implementation:
 
 ### 4. Sink checkboxes + `flags.githubOAuth`
 
-| Sink | Checkbox label | `runtime` | Community build |
-| ---- | -------------- | --------- | ----------------- |
-| `download` | Download file(s) | `ui` | ✅ |
-| `clipboard` | Copy markdown to clipboard | `ui` | ✅ |
-| `output-page` | Write to FigHub Output page | `main` | ✅ |
-| `plugin-data` | Write to frame pluginData | `main` | ✅ |
-| `github-pr` | Open GitHub PR | `main` | **Hidden** when `!flags.githubOAuth` |
+| Sink          | Checkbox label              | `runtime` | Community build                      |
+| ------------- | --------------------------- | --------- | ------------------------------------ |
+| `download`    | Download file(s)            | `ui`      | ✅                                   |
+| `clipboard`   | Copy markdown to clipboard  | `ui`      | ✅                                   |
+| `output-page` | Write to FigHub Output page | `main`    | ✅                                   |
+| `plugin-data` | Write to frame pluginData   | `main`    | ✅                                   |
+| `github-pr`   | Open GitHub PR              | `main`    | **Hidden** when `!flags.githubOAuth` |
 
 ```ts
 import { flags } from '@/config/flags';
@@ -166,19 +161,23 @@ const ALL_SINKS: SinkId[] = [
 
 PRD §10.4 example: `docs/fighub/drift-{date}.md`. Extend consistently:
 
-| `ContractDocument['kind']` | Default basename (no extension) | Notes |
-| -------------------------- | --------------------------------- | ----- |
-| `drift-report` | `docs/fighub/drift-{date}` | PRD literal |
-| `handoff-context` | `docs/fighub/handoff-{date}` | FR-HAND-5 default sink is clipboard, not path |
-| `ops-program` | `docs/fighub/ops-{date}` | Machine-first; default both formats |
-| `component-spec` | `docs/fighub/components/{slug}` | `{slug}` = kebab(`payload.name`) |
-| `registry` | `.fighub-registry` | Single JSON file; MD checkbox disabled/hidden (registry has no MD renderer in WO-019 scope) |
-| `tokens` | `docs/fighub/tokens-{date}` | Canonical export after adapt |
+| `ContractDocument['kind']` | Default basename (no extension) | Notes                                                                                       |
+| -------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------- |
+| `drift-report`             | `docs/fighub/drift-{date}`      | PRD literal                                                                                 |
+| `handoff-context`          | `docs/fighub/handoff-{date}`    | FR-HAND-5 default sink is clipboard, not path                                               |
+| `ops-program`              | `docs/fighub/ops-{date}`        | Machine-first; default both formats                                                         |
+| `component-spec`           | `docs/fighub/components/{slug}` | `{slug}` = kebab(`payload.name`)                                                            |
+| `registry`                 | `.fighub-registry`              | Single JSON file; MD checkbox disabled/hidden (registry has no MD renderer in WO-019 scope) |
+| `tokens`                   | `docs/fighub/tokens-{date}`     | Canonical export after adapt                                                                |
 
 Implementation: `src/ui/export/defaultPaths.ts` pure helper:
 
 ```ts
-export function defaultExportBasename(kind: ContractDocument['kind'], payload: unknown, now = new Date()): string {
+export function defaultExportBasename(
+  kind: ContractDocument['kind'],
+  payload: unknown,
+  now = new Date(),
+): string {
   const date = now.toISOString().slice(0, 10);
   // switch kind → return path without extension
 }
@@ -256,19 +255,24 @@ export interface ExportCompleteMessage {
 Mirror `Bootstrap.tsx` listener pattern:
 
 ```ts
-useEffect(function () {
-  const onPluginMessage = function (event: MessageEvent) {
-    const msg = readPluginMessage(event.data);
-    if (isExportSinkResultMessage(msg) && msg.requestId === activeRequestId) {
-      dispatchExport({ type: 'export/sink-result', ...msg });
-    }
-    if (isExportCompleteMessage(msg) && msg.requestId === activeRequestId) {
-      dispatchExport({ type: 'export/complete', ...msg });
-    }
-  };
-  window.addEventListener('message', onPluginMessage);
-  return function () { window.removeEventListener('message', onPluginMessage); };
-}, [activeRequestId]);
+useEffect(
+  function () {
+    const onPluginMessage = function (event: MessageEvent) {
+      const msg = readPluginMessage(event.data);
+      if (isExportSinkResultMessage(msg) && msg.requestId === activeRequestId) {
+        dispatchExport({ type: 'export/sink-result', ...msg });
+      }
+      if (isExportCompleteMessage(msg) && msg.requestId === activeRequestId) {
+        dispatchExport({ type: 'export/complete', ...msg });
+      }
+    };
+    window.addEventListener('message', onPluginMessage);
+    return function () {
+      window.removeEventListener('message', onPluginMessage);
+    };
+  },
+  [activeRequestId],
+);
 ```
 
 Submit handler:
@@ -284,13 +288,13 @@ parent.postMessage(
 
 ### 8. Vitest testing strategy (no Storybook)
 
-| Layer | Path | Coverage |
-| ----- | ---- | -------- |
-| Pure helpers | `tests/unit/ui/defaultPaths.test.ts` | Basename per kind, date slug, component slug |
-| Reducer | `tests/unit/ui/exportSheetReducer.test.ts` | Format/sink toggles, validation, result aggregation |
-| Component | `tests/unit/ui/ExportSheet.test.tsx` | Render all contract kinds; github-pr absent when `flags.githubOAuth === false`; multi-sink submit mocks |
-| Messages | `tests/unit/io/messages/export.test.ts` | Type guards for export union |
-| Integration | `tests/unit/ui/exportSheet.orchestration.test.ts` | Mock `parent.postMessage` + sink modules; assert parallel calls |
+| Layer        | Path                                              | Coverage                                                                                                |
+| ------------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Pure helpers | `tests/unit/ui/defaultPaths.test.ts`              | Basename per kind, date slug, component slug                                                            |
+| Reducer      | `tests/unit/ui/exportSheetReducer.test.ts`        | Format/sink toggles, validation, result aggregation                                                     |
+| Component    | `tests/unit/ui/ExportSheet.test.tsx`              | Render all contract kinds; github-pr absent when `flags.githubOAuth === false`; multi-sink submit mocks |
+| Messages     | `tests/unit/io/messages/export.test.ts`           | Type guards for export union                                                                            |
+| Integration  | `tests/unit/ui/exportSheet.orchestration.test.ts` | Mock `parent.postMessage` + sink modules; assert parallel calls                                         |
 
 **Storybook equivalent AC:** parametrized Vitest `describe.each` over six `ContractDocument` fixtures from `packages/contracts` samples (or committed `tests/fixtures/contracts/*`).
 
@@ -300,12 +304,12 @@ parent.postMessage(
 
 ### 9. Dependency gate
 
-| Ticket | Delivers | WO-020 needs |
-| ------ | -------- | ------------- |
-| WO-019 | `format(doc, fmt)` | Serialize before any sink |
-| WO-017 | download, clipboard, outputPage, pluginData sinks + `Sink` interface | UI + main sink impl |
-| WO-018 | githubPR sink | Org PR path |
-| WO-021 | `flags.githubOAuth` | Hide GitHub checkbox (can stub flag before WO-021 lands) |
+| Ticket | Delivers                                                             | WO-020 needs                                             |
+| ------ | -------------------------------------------------------------------- | -------------------------------------------------------- |
+| WO-019 | `format(doc, fmt)`                                                   | Serialize before any sink                                |
+| WO-017 | download, clipboard, outputPage, pluginData sinks + `Sink` interface | UI + main sink impl                                      |
+| WO-018 | githubPR sink                                                        | Org PR path                                              |
+| WO-021 | `flags.githubOAuth`                                                  | Hide GitHub checkbox (can stub flag before WO-021 lands) |
 
 **/build order:** WO-019 + WO-017 interfaces first (or stub sinks), then ExportSheet, then wire real sinks. WO-018 can land after sheet shell if GitHub row is flag-gated.
 
@@ -336,15 +340,15 @@ parent.postMessage(
 
 ### Repo inventory (grep-verified 2026-05-27)
 
-| Path | Status | Role |
-| ---- | ------ | ---- |
-| `src/ui/App.tsx` | ✅ | Tab shell; no ExportSheet yet |
-| `src/ui/tabs/Bootstrap.tsx` | ✅ | Reducer + postMessage + component patterns |
-| `src/ui/components/BootstrapStepList.tsx` | ✅ | Status list styling to reuse |
-| `src/ui/components/AuditPanel.tsx` | ✅ | execCommand copy fallback |
-| `src/ui/components/ExportSheet.tsx` | ❌ greenfield | WO-020 deliverable |
-| `src/io/messages/export.ts` | ❌ greenfield | Orchestration messages |
-| Storybook | ❌ not in repo | Vitest + RTL per ticket AC |
+| Path                                      | Status         | Role                                       |
+| ----------------------------------------- | -------------- | ------------------------------------------ |
+| `src/ui/App.tsx`                          | ✅             | Tab shell; no ExportSheet yet              |
+| `src/ui/tabs/Bootstrap.tsx`               | ✅             | Reducer + postMessage + component patterns |
+| `src/ui/components/BootstrapStepList.tsx` | ✅             | Status list styling to reuse               |
+| `src/ui/components/AuditPanel.tsx`        | ✅             | execCommand copy fallback                  |
+| `src/ui/components/ExportSheet.tsx`       | ❌ greenfield  | WO-020 deliverable                         |
+| `src/io/messages/export.ts`               | ❌ greenfield  | Orchestration messages                     |
+| Storybook                                 | ❌ not in repo | Vitest + RTL per ticket AC                 |
 
 ### Message orchestration (aligned with bootstrap)
 
@@ -357,13 +361,13 @@ Pattern from `src/main.ts` L191 `figma.ui.onmessage` + `src/io/messages/bootstra
 
 ### SinkId alignment (cross-ticket)
 
-| WO-017 `SinkId` | WO-020 `SinkId` | Notes |
-| --------------- | --------------- | ----- |
-| `download` | `download` | UI runtime |
-| `clipboard` | `clipboard` | UI runtime |
-| `output-page` | `output-page` | main via postMessage |
-| `plugin-data` | `plugin-data` | main via postMessage |
-| — | `github-pr` | WO-018; gated `flags.githubOAuth` / `githubPRSink` |
+| WO-017 `SinkId` | WO-020 `SinkId` | Notes                                              |
+| --------------- | --------------- | -------------------------------------------------- |
+| `download`      | `download`      | UI runtime                                         |
+| `clipboard`     | `clipboard`     | UI runtime                                         |
+| `output-page`   | `output-page`   | main via postMessage                               |
+| `plugin-data`   | `plugin-data`   | main via postMessage                               |
+| —               | `github-pr`     | WO-018; gated `flags.githubOAuth` / `githubPRSink` |
 
 **Plan must unify hyphen vs camel** — recommend kebab-case ids everywhere (`github-pr`).
 
@@ -371,33 +375,33 @@ Pattern from `src/main.ts` L191 `figma.ui.onmessage` + `src/io/messages/bootstra
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D-020-1 | Vitest component tests, not Storybook | No Storybook in repo | Add Storybook dep |
-| D-020-2 | `exportSheetReducer` extracted | Matches bootstrap pattern | Monolithic component state |
-| D-020-3 | Parallel sink invocation | Ticket AC / UX latency | Sequential sinks |
-| D-020-4 | MD default for clipboard when `both` | PRD §10.4 chat paste | Always JSON |
-| D-020-5 | Disable MD checkbox for `registry` | WO-019 five renderers | Generic MD for registry |
+| ID      | Decision                              | Rationale                 | Alternatives rejected      |
+| ------- | ------------------------------------- | ------------------------- | -------------------------- |
+| D-020-1 | Vitest component tests, not Storybook | No Storybook in repo      | Add Storybook dep          |
+| D-020-2 | `exportSheetReducer` extracted        | Matches bootstrap pattern | Monolithic component state |
+| D-020-3 | Parallel sink invocation              | Ticket AC / UX latency    | Sequential sinks           |
+| D-020-4 | MD default for clipboard when `both`  | PRD §10.4 chat paste      | Always JSON                |
+| D-020-5 | Disable MD checkbox for `registry`    | WO-019 five renderers     | Generic MD for registry    |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-020-1 | Vitest: ExportSheet renders five sink checkboxes (org flags mock) | github-pr hidden when `githubOAuth: false` | ☐ at build |
-| SPK-020-2 | Stub sinks → parallel export drift fixture | All selected sinks return ok in results map | ☐ at build |
-| SPK-020-3 | Manual: Export overlay a11y | fieldset/legend, disabled while exporting | ☐ VQA |
+| Spike ID  | Procedure                                                         | Pass criteria                               | Status     |
+| --------- | ----------------------------------------------------------------- | ------------------------------------------- | ---------- |
+| SPK-020-1 | Vitest: ExportSheet renders five sink checkboxes (org flags mock) | github-pr hidden when `githubOAuth: false`  | ☐ at build |
+| SPK-020-2 | Stub sinks → parallel export drift fixture                        | All selected sinks return ok in results map | ☐ at build |
+| SPK-020-3 | Manual: Export overlay a11y                                       | fieldset/legend, disabled while exporting   | ☐ VQA      |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Likelihood | Mitigation |
-| ---- | --- | ---------- | ---------- |
-| WO-017/018 interfaces not ready | High | Med | Stub sinks; dependency gate §9 |
-| SinkId / message type drift | Med | Med | Sprint index contract table |
-| Path basename vs WO-019 extension | Med | Med | Lock in WO-019 plan first |
+| Risk                              | Sev  | Likelihood | Mitigation                     |
+| --------------------------------- | ---- | ---------- | ------------------------------ |
+| WO-017/018 interfaces not ready   | High | Med        | Stub sinks; dependency gate §9 |
+| SinkId / message type drift       | Med  | Med        | Sprint index contract table    |
+| Path basename vs WO-019 extension | Med  | Med        | Lock in WO-019 plan first      |
 
 ---
 

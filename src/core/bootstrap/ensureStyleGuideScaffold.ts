@@ -145,7 +145,11 @@ async function ensurePlatformMappingTable(content: FrameNode): Promise<boolean> 
       const cell = createBodyCell(column.width, 'VERTICAL');
       cell.name = rowPrefix + '/cell/' + cellSuffix;
       const cellText =
-        column.id === 'TOKEN' ? rowDef.tokenPath : rowDef.defaultHex !== '' ? rowDef.defaultHex : '—';
+        column.id === 'TOKEN'
+          ? rowDef.tokenPath
+          : rowDef.defaultHex !== ''
+            ? rowDef.defaultHex
+            : '—';
       const text = await makeTableText(cellText, column.width, null, contentVar);
       cell.appendChild(text);
       reassertBodyCell(cell);

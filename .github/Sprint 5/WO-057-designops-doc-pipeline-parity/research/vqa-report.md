@@ -8,10 +8,10 @@
 
 ## Summary
 
-| Area | Pass | Fail | N/A |
-| ---- | ---- | ---- | --- |
-| Figma assertions (28 rows) | 19 | 0 | 9 |
-| Functional QA (acceptance criteria) | 13 | 0 | 0 |
+| Area                                | Pass | Fail | N/A |
+| ----------------------------------- | ---- | ---- | --- |
+| Figma assertions (28 rows)          | 19   | 0    | 9   |
+| Functional QA (acceptance criteria) | 13   | 0    | 0   |
 
 **Gating:** Designer confirmed integrated forward-scaffold canvas matches Foundations contract after Documentation collection token binds, transparent structural fills, and matrix-group `doc/table/surface`.
 
@@ -19,22 +19,22 @@
 
 ## Figma source
 
-| Field | Value |
-| ----- | ----- |
-| `file_key` (reference) | `uCpQaRsW4oiXW3DsC6cLZm` |
-| `node_id` (reference) | `433:335` |
-| Build verification | `Dw8NkEiG91NhjYqRPNTOOu` → `doc/component/button` (`9:4004`) |
-| Captured at | 2026-05-28 |
+| Field                  | Value                                                        |
+| ---------------------- | ------------------------------------------------------------ |
+| `file_key` (reference) | `uCpQaRsW4oiXW3DsC6cLZm`                                     |
+| `node_id` (reference)  | `433:335`                                                    |
+| Build verification     | `Dw8NkEiG91NhjYqRPNTOOu` → `doc/component/button` (`9:4004`) |
+| Captured at            | 2026-05-28                                                   |
 
 ---
 
 ## Figma assertion results
 
-| Result | Count | Rows |
-| ------ | ----- | ---- |
-| PASS | 19 | 1–16, 18, 21–22 |
-| FAIL | 0 | — |
-| N/A | 9 | 17, 19–20, 23–28 |
+| Result | Count | Rows             |
+| ------ | ----- | ---------------- |
+| PASS   | 19    | 1–16, 18, 21–22  |
+| FAIL   | 0     | —                |
+| N/A    | 9     | 17, 19–20, 23–28 |
 
 ---
 

@@ -9,7 +9,11 @@ import {
 } from '@/io/sinks/pluginData';
 
 import { loadDriftSampleDoc } from '../../../helpers/sinks/loadDriftSampleDoc';
-import { MockPage, installMockFigmaOutputPage, setMockCurrentPage } from './__mocks__/figmaOutputPage';
+import {
+  MockPage,
+  installMockFigmaOutputPage,
+  setMockCurrentPage,
+} from './__mocks__/figmaOutputPage';
 
 describe('pluginData', () => {
   beforeEach(() => {
@@ -72,9 +76,7 @@ describe('pluginData', () => {
 
   it('rejects payloads exceeding PLUGIN_DATA_MAX_BYTES', async () => {
     const setPluginData = vi.fn();
-    figma.currentPage.selection = [
-      { setPluginData: setPluginData } as unknown as SceneNode,
-    ];
+    figma.currentPage.selection = [{ setPluginData: setPluginData } as unknown as SceneNode];
     const doc = loadDriftSampleDoc();
     const prepared = prepareSinkContent(doc, { format: 'json' });
     prepared.json = 'x'.repeat(PLUGIN_DATA_MAX_BYTES + 1);

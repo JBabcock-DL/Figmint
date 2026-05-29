@@ -1,6 +1,10 @@
 /// <reference types="@figma/plugin-typings" />
 
-import type { AuditReportV1, AuditRuleResult, ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
+import type {
+  AuditReportV1,
+  AuditRuleResult,
+  ComponentSpecV1,
+} from '@detroitlabs/fighub-contracts';
 
 import { runAudit, runDocPipelinePreflightAudit } from '@/core/audit/runAudit';
 import { getLastRepoUrl, getSyncState } from '@/io/github/storage';
@@ -10,11 +14,12 @@ import { applyProperties } from '@/core/components/scaffold/applyProperties';
 import { scaffold } from '@/core/components/scaffold';
 import { ensureComponentScaffoldTarget } from '@/core/components/scaffold/ensureComponentScaffoldTarget';
 import { buildDocPipeline } from '@/core/canvas/doc';
-import {
-  getRegistryFromSnapshot,
-  upsertSnapshotRegistryEntry,
-} from '@/core/sync/snapshotStore';
-import type { ApplyBindingsResult, ApplyPropertiesResult, ScaffoldResult } from '@/core/components/scaffold/types';
+import { getRegistryFromSnapshot, upsertSnapshotRegistryEntry } from '@/core/sync/snapshotStore';
+import type {
+  ApplyBindingsResult,
+  ApplyPropertiesResult,
+  ScaffoldResult,
+} from '@/core/components/scaffold/types';
 import { pluginLog } from '@/core/pluginLog';
 import {
   getScaffoldStepLabel,
@@ -79,9 +84,7 @@ function buildAuditReportFromRows(
     operation: operation,
   };
   const meta =
-    fileKey.length > 0
-      ? Object.assign({}, metaBase, { figmaFileKey: fileKey })
-      : metaBase;
+    fileKey.length > 0 ? Object.assign({}, metaBase, { figmaFileKey: fileKey }) : metaBase;
 
   return {
     v: 1,

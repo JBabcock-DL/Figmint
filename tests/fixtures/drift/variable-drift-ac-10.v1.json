@@ -3,9 +3,21 @@
   "kind": "variable-drift-ac",
   "input": {
     "figmaTokens": {
-      "Primitives/a": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 1 }, "codeSyntax": {} },
-      "Primitives/b": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 1 }, "codeSyntax": {} },
-      "Primitives/c": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 1 }, "codeSyntax": {} },
+      "Primitives/a": {
+        "resolvedType": "FLOAT",
+        "valuesByMode": { "Default": 1 },
+        "codeSyntax": {}
+      },
+      "Primitives/b": {
+        "resolvedType": "FLOAT",
+        "valuesByMode": { "Default": 1 },
+        "codeSyntax": {}
+      },
+      "Primitives/c": {
+        "resolvedType": "FLOAT",
+        "valuesByMode": { "Default": 1 },
+        "codeSyntax": {}
+      },
       "Theme/d": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
       "Theme/e": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
       "Layout/f": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 2 }, "codeSyntax": {} },
@@ -15,9 +27,21 @@
       "Layout/j": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 5 }, "codeSyntax": {} }
     },
     "repoTokens": {
-      "Primitives/a": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
-      "Primitives/b": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
-      "Primitives/c": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
+      "Primitives/a": {
+        "resolvedType": "FLOAT",
+        "valuesByMode": { "Default": 0 },
+        "codeSyntax": {}
+      },
+      "Primitives/b": {
+        "resolvedType": "FLOAT",
+        "valuesByMode": { "Default": 0 },
+        "codeSyntax": {}
+      },
+      "Primitives/c": {
+        "resolvedType": "FLOAT",
+        "valuesByMode": { "Default": 0 },
+        "codeSyntax": {}
+      },
       "Theme/d": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 1 }, "codeSyntax": {} },
       "Theme/e": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 1 }, "codeSyntax": {} },
       "Layout/f": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 3 }, "codeSyntax": {} },
@@ -27,9 +51,21 @@
       "Layout/j": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 5 }, "codeSyntax": {} }
     },
     "snapshotTokens": {
-      "Primitives/a": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
-      "Primitives/b": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
-      "Primitives/c": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
+      "Primitives/a": {
+        "resolvedType": "FLOAT",
+        "valuesByMode": { "Default": 0 },
+        "codeSyntax": {}
+      },
+      "Primitives/b": {
+        "resolvedType": "FLOAT",
+        "valuesByMode": { "Default": 0 },
+        "codeSyntax": {}
+      },
+      "Primitives/c": {
+        "resolvedType": "FLOAT",
+        "valuesByMode": { "Default": 0 },
+        "codeSyntax": {}
+      },
       "Theme/d": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
       "Theme/e": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 0 }, "codeSyntax": {} },
       "Layout/f": { "resolvedType": "FLOAT", "valuesByMode": { "Default": 1 }, "codeSyntax": {} },

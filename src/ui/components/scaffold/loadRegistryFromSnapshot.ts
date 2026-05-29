@@ -32,16 +32,13 @@ export async function loadRegistryForComponentsTab(): Promise<
         });
         return;
       }
-      const registry =
-        typed.registry !== undefined ? (typed.registry as RegistryV1) : null;
+      const registry = typed.registry !== undefined ? (typed.registry as RegistryV1) : null;
       const keys = registry !== null ? Object.keys(registry.components) : [];
       resolve({
         ok: true,
         registry: registry,
         message:
-          keys.length === 0
-            ? emptyCanvasRegistryMessage()
-            : syncRegistryLoadedMessage(keys.length),
+          keys.length === 0 ? emptyCanvasRegistryMessage() : syncRegistryLoadedMessage(keys.length),
       });
     }
 

@@ -16,7 +16,7 @@ These are points where the breakdown plan / Sprint 1 ticket bodies say one thing
 | What the ticket says                                                                                                 | Reality                                                                                                                                                                                                                                                              | Correct lift source                                                                                                                                                                                                                                                                                                                                               |
 | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | WO-005 "the variable push IS already written, just MCP-wrapped" in `step-15a-primitives.mcp.js`                      | `step-15a-primitives.mcp.js` is a **canvas-table builder** for the Primitives style-guide page. It calls `ensureLocalVariableMapOnCtx` to **read** variables that already exist, then binds paints via `setBoundVariableForPaint`. **It does NOT create variables.** | `skills/create-design-system/phases/04-step11-push.md` — Plugin API + REST instruction prose with the exact `createVariableCollection` / `addMode` / `setValueForMode` / REST-`UPDATE`-codeSyntax sequence. Plus `skills/create-design-system/data/theme-aliases.json` (theme variable data) and `phases/02-steps5-9.md` (per-collection variable lists).         |
-| Legacy flow applies `codeSyntax` via two separate API layers (Plugin API for structure + REST PUT for `codeSyntax`). | That split is a **legacy MCP transport artifact** — the REST hop was necessary because Plugin API `codeSyntax` calls inflated `use_figma` payloads past the 50 kB cap.                                                                                               | **FigHub should use `figma.variables.setVariableCodeSyntax` in the Plugin API for both creation and codeSyntax** — no REST hop. The two-layer split disappears with the sandbox. (PRD §6.1 FR-BOOT-5, §11.3 networkAccess GitHub-only.)                                                                                                                          |
+| Legacy flow applies `codeSyntax` via two separate API layers (Plugin API for structure + REST PUT for `codeSyntax`). | That split is a **legacy MCP transport artifact** — the REST hop was necessary because Plugin API `codeSyntax` calls inflated `use_figma` payloads past the 50 kB cap.                                                                                               | **FigHub should use `figma.variables.setVariableCodeSyntax` in the Plugin API for both creation and codeSyntax** — no REST hop. The two-layer split disappears with the sandbox. (PRD §6.1 FR-BOOT-5, §11.3 networkAccess GitHub-only.)                                                                                                                           |
 | "Lift the canvas bundles wholesale into TS modules."                                                                 | Each `.mcp.js` bundle is 44–57 KB / ~1k–1.5k lines, with inlined `_lib.js` + page template + runner glue. Lifting wholesale into one TS module is unmaintainable.                                                                                                    | Split per file: `_lib.js` becomes a shared `src/core/canvas/lib/` module; per-page templates (`primitives.js`, `theme.js`, etc.) become individual builders under `src/core/canvas/`; `_step*-runner.fragment.js` files are deleted (they are MCP glue). The `canvas-templates/<page>.js` SOURCE files (not the bundled `.mcp.js`) are the readable form to port. |
 | "Just delete `*.min.mcp.js` files."                                                                                  | Correct, but also delete the **readable `.mcp.js`** files after their interior templates are ported — they are bundle wire format, not modular source. The canonical readable source is `canvas-templates/<page>.js`.                                                | Hard-delete list (Sprint 11): both `*.min.mcp.js` AND `*.mcp.js` bundles in `canvas-templates/bundles/`, all `*-runner.fragment.js`, `canvas-bundle-runner/` skill, payload scripts.                                                                                                                                                                              |
 
@@ -28,11 +28,11 @@ If the breakdown plan or a ticket disagrees with this section, this section wins
 
 | File (legacy repo)         | Purpose                                                                                                                                                                                                                                                                           | Disposition                                                                                                                              |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `README.md`                | Designer-facing product README: eight slash commands, token architecture (5 collections), workflow, handoff template, plugin tree layout, maintainer commands (`sync-cache`, `bundle-component`, `build:props`). Documents MCP-inline policy + Org-tier REST requirement.         | **Reference only.** Sunset PR (Sprint 11) rewrites this as a "FigHub companion" doc.                                                    |
-| `CLAUDE.md`                | Claude Code bootstrap: always load `memory.md` + `AGENTS.md`; lazy-load skills; `/create-component` Step 6 = five sequential `canvas-bundle-runner` Tasks.                                                                                                                        | **Reference only.** Sunset rewrites to point at FigHub.                                                                                 |
+| `README.md`                | Designer-facing product README: eight slash commands, token architecture (5 collections), workflow, handoff template, plugin tree layout, maintainer commands (`sync-cache`, `bundle-component`, `build:props`). Documents MCP-inline policy + Org-tier REST requirement.         | **Reference only.** Sunset PR (Sprint 11) rewrites this as a "FigHub companion" doc.                                                     |
+| `CLAUDE.md`                | Claude Code bootstrap: always load `memory.md` + `AGENTS.md`; lazy-load skills; `/create-component` Step 6 = five sequential `canvas-bundle-runner` Tasks.                                                                                                                        | **Reference only.** Sunset rewrites to point at FigHub.                                                                                  |
 | `AGENTS.md`                | Cross-host agent policy: **MCP anti-spiral**, 50 kB `use_figma.code` cap, ephemeral disk staging, `Task` → `canvas-bundle-runner` vs parent `Read` → `call_mcp`, session split (style-guide tables before components), table-fidelity gotchas (§0.5–0.7), marketplace cache sync. | **Most of this sunsets.** Keep §0.5–0.7 gotchas as inline TS comments in the canvas builders; delete the MCP anti-spiral body wholesale. |
-| `memory.md`                | Token-dense workflow index: authority stack, end-to-end flow, session choreography, skills-at-a-glance, lazy-load map, maintainer npm commands.                                                                                                                                   | **Reference.** Sunset replaces this with a thin FigHub companion summary.                                                               |
-| `docs/PRD-figma-plugin.md` | Earlier draft PRD for the replacement native plugin (then called `DesignOps-figma-plugin`). Same mission/contracts/phasing/sunset as FigHub.                                                                                                                                     | **Superseded by** `FigHub/Docs/PRD.md`. Treat the new repo's PRD as source of truth.                                                    |
+| `memory.md`                | Token-dense workflow index: authority stack, end-to-end flow, session choreography, skills-at-a-glance, lazy-load map, maintainer npm commands.                                                                                                                                   | **Reference.** Sunset replaces this with a thin FigHub companion summary.                                                                |
+| `docs/PRD-figma-plugin.md` | Earlier draft PRD for the replacement native plugin (then called `DesignOps-figma-plugin`). Same mission/contracts/phasing/sunset as FigHub.                                                                                                                                      | **Superseded by** `FigHub/Docs/PRD.md`. Treat the new repo's PRD as source of truth.                                                     |
 
 ### MCP anti-spiral concepts that disappear in FigHub
 
@@ -52,7 +52,7 @@ These exist solely because legacy agents call Figma via the MCP `use_figma` tool
 
 Disposition cross-referenced to `Docs/PRD.md` §17.1. Read each `SKILL.md` linked path for the full source-of-truth behavior of the legacy skill before porting / replacing.
 
-| #   | Skill                    | `SKILL.md` (legacy)                                | One-line purpose                                                                                                     | FigHub §17 disposition                                                                        |
+| #   | Skill                    | `SKILL.md` (legacy)                                | One-line purpose                                                                                                     | FigHub §17 disposition                                                                         |
 | --- | ------------------------ | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | 1   | **create-design-system** | `skills/create-design-system/SKILL.md`             | Collect brand tokens; push 5 variable collections; optional `tokens.css`; redraw style guide (15a–c, 17) + thumbnail | **Replaced** → Bootstrap tab (Sprint 3 + 4)                                                    |
 | 2   | **new-project**          | `skills/new-project/SKILL.md`                      | Scaffold Foundations file in Drafts via MCP                                                                          | **Replaced** → plugin scaffold flow (Sprint 4)                                                 |
@@ -60,9 +60,9 @@ Disposition cross-referenced to `Docs/PRD.md` §17.1. Read each `SKILL.md` linke
 | 4   | **create-component**     | `skills/create-component/SKILL.md` + `EXECUTOR.md` | shadcn install + five-call Figma doc draw                                                                            | **Forward path replaced** by plugin (Sprint 5). shadcn CLI side stays as agent / external CLI. |
 | 5   | **code-connect**         | `skills/code-connect/SKILL.md`                     | Map Figma components to code; publish after review                                                                   | **Replaced** → plugin PR stubs + CI publish (Sprint 8+)                                        |
 | 6   | **dev-handoff**          | `skills/dev-handoff/SKILL.md`                      | Design context → GitHub/Jira ticket                                                                                  | **Thin Claude skill** consuming `handoff-context.v1.md` (Sprint 7)                             |
-| 7   | **accessibility-check**  | `skills/accessibility-check/SKILL.md`              | WCAG 2.1 AA + iOS/Android scale clones                                                                               | **Deprecated** → Figma Agent (legacy repo; no FigHub WO)                                      |
-| 8   | **new-language**         | `skills/new-language/SKILL.md`                     | Duplicate frame → locale page; inline translation                                                                    | **Deprecated** → Figma Agent (legacy repo; no FigHub WO)                                      |
-| 9   | **canvas-bundle-runner** | `skills/canvas-bundle-runner/SKILL.md`             | Run one committed bundle or assembled cc-\* file                                                                     | **Do not port** — MCP transport only (legacy repo; no FigHub WO)                              |
+| 7   | **accessibility-check**  | `skills/accessibility-check/SKILL.md`              | WCAG 2.1 AA + iOS/Android scale clones                                                                               | **Deprecated** → Figma Agent (legacy repo; no FigHub WO)                                       |
+| 8   | **new-language**         | `skills/new-language/SKILL.md`                     | Duplicate frame → locale page; inline translation                                                                    | **Deprecated** → Figma Agent (legacy repo; no FigHub WO)                                       |
+| 9   | **canvas-bundle-runner** | `skills/canvas-bundle-runner/SKILL.md`             | Run one committed bundle or assembled cc-\* file                                                                     | **Do not port** — MCP transport only (legacy repo; no FigHub WO)                               |
 
 ---
 
@@ -72,7 +72,7 @@ Disposition cross-referenced to `Docs/PRD.md` §17.1. Read each `SKILL.md` linke
 
 ### Variables vs Canvas — where logic lives
 
-| Concern                                                                                    | Lives in                                                                                                                                      | FigHub target                                                                           |
+| Concern                                                                                    | Lives in                                                                                                                                      | FigHub target                                                                            |
 | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | **Variable creation** (5 collections, modes, aliases, codeSyntax)                          | `skills/create-design-system/phases/04-step11-push.md` + per-collection variable lists in `phases/02-steps5-9.md` + `data/theme-aliases.json` | `src/core/variables/` (Sprint 2: WO-007 adapters, WO-008 push engine, WO-009 codeSyntax) |
 | **Style-guide canvas tables** (color, theme, layout, effects, text styles, token overview) | `canvas-templates/<page>.js` + bundled `canvas-templates/bundles/step-15*.mcp.js` + `step-17-token-overview.mcp.js`                           | `src/core/canvas/*.ts` (Sprint 3: WO-011..013)                                           |
@@ -80,7 +80,7 @@ Disposition cross-referenced to `Docs/PRD.md` §17.1. Read each `SKILL.md` linke
 
 ### Style-guide bundles
 
-| Source (legacy)                 | Lines | Bytes  | Min bytes | FigHub target (Sprint 3)                                                                                                  |
+| Source (legacy)                 | Lines | Bytes  | Min bytes | FigHub target (Sprint 3)                                                                                                   |
 | ------------------------------- | ----- | ------ | --------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `step-15a-primitives.mcp.js`    | 1,314 | 57,033 | 40,860    | `src/core/canvas/colorTables.ts` (WO-011) — Primitives page (color ramps, space, radius, elevation, typeface, font-weight) |
 | `step-15b-theme.mcp.js`         | 1,163 | 49,916 | 35,351    | `src/core/canvas/themeTables.ts` (WO-011) — Theme page (7 semantic group tables; Light/Dark dual-preview swatches)         |
@@ -93,7 +93,7 @@ Disposition cross-referenced to `Docs/PRD.md` §17.1. Read each `SKILL.md` linke
 
 ### Component archetype bundles (Sprint 5)
 
-| Archetype       | Source (legacy)                  | Lines | Bytes  | FigHub target                                    |
+| Archetype       | Source (legacy)                  | Lines | Bytes  | FigHub target                                     |
 | --------------- | -------------------------------- | ----- | ------ | ------------------------------------------------- |
 | `chip`          | `component-chip.mcp.js`          | 1,064 | 45,046 | `src/core/components/scaffold/archetypes/chip.ts` |
 | `control`       | `component-control.mcp.js`       | 1,477 | 61,549 | `archetypes/control.ts`                           |
@@ -116,7 +116,7 @@ Each markdown convention shard becomes a TypeScript helper in FigHub (per breakd
 
 ### `skills/create-design-system/conventions/`
 
-| Shard                                      | Rule                                                                                                                              | FigHub target                                   |
+| Shard                                      | Rule                                                                                                                              | FigHub target                                    |
 | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | `00-gotchas.md`                            | Hug-before-resize; header≠body cells; bound swatch paints; theme hex sibling; TOC exceptions; §0.10 resize-then-sizing-mode order | `src/core/canvas/helpers/autoLayout.ts` (WO-014) |
 | `01-collections.md`                        | Exactly five collections (Primitives, Theme, Typography, Layout, Effects) + mode strategy                                         | `src/core/variables/collections.ts` (WO-008)     |
@@ -132,7 +132,7 @@ Each markdown convention shard becomes a TypeScript helper in FigHub (per breakd
 
 ### `skills/create-component/conventions/`
 
-| Shard                          | Rule                                                                | FigHub target                                                |
+| Shard                          | Rule                                                                | FigHub target                                                 |
 | ------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------- |
 | `00-overview.md`               | Router; Mode A (CVA extraction) vs Mode B (synthetic); glossary     | reference only                                                |
 | `01-config-schema.md`          | `CONFIG` / `ctx` shape used by scaffold                             | informs `packages/contracts/src/componentSpec.v1.ts` (WO-003) |
@@ -149,7 +149,7 @@ Each markdown convention shard becomes a TypeScript helper in FigHub (per breakd
 
 | File (legacy)                                                          | Top-level shape                                                                                                                                                                                            | Lift target                                                                                                       |
 | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `skills/create-component/registry.schema.json` (~33 lines JSON Schema) | Required: `fileKey`, `components` (map of name → `{ nodeId, key, pageName, publishedAt, version, optional cvaHash, composedChildVersions }`)                                                               | `packages/contracts/src/registry.v1.ts` (also defines on-disk `.fighub-registry.json` shape)                     |
+| `skills/create-component/registry.schema.json` (~33 lines JSON Schema) | Required: `fileKey`, `components` (map of name → `{ nodeId, key, pageName, publishedAt, version, optional cvaHash, composedChildVersions }`)                                                               | `packages/contracts/src/registry.v1.ts` (also defines on-disk `.fighub-registry.json` shape)                      |
 | `skills/create-component/shadcn-props.schema.json` (~148 lines)        | Component entry map; `$defs` for `composeEntry` / `componentEntry` with `pageName`, `labelKey`, `summary`, `category`, `layout` enum, archetype specs, `properties[]`, `usageDo`/`usageDont`, `composes[]` | `packages/contracts/src/componentSpec.v1.ts`                                                                      |
 | `skills/create-component/shadcn-props.json` (~79 KB, 59 components)    | Monolith keyed by kebab component name; mirrors split dir `shadcn-props/*.json` + `_index.json`                                                                                                            | Phase 2 (Sprint 5+) scaffold input — reuse as fixture data; regenerate via legacy `npm run build:props` if needed |
 
@@ -161,43 +161,43 @@ Per-component splits at `skills/create-component/shadcn-props/*.json` (300 B –
 
 ### `c:\Users\jbabc\Documents\GitHub\DesignOps-plugin\scripts\`
 
-| Script                                                                 | Tag                               | Why                                                        |
-| ---------------------------------------------------------------------- | --------------------------------- | ---------------------------------------------------------- |
-| `assemble-component-use-figma-code.mjs`                                | **DELETE**                        | PRD §17.2 — MCP assembly                                   |
-| `check-payload.mjs`                                                    | **DELETE**                        | PRD §17.2                                                  |
-| `check-use-figma-mcp-args.mjs`                                         | **DELETE**                        | PRD §17.2                                                  |
-| `probe-parent-transport.mjs`                                           | **DELETE**                        | PRD §17.2                                                  |
-| `sync-cache.sh`                                                        | **DELETE**                        | PRD §17.2                                                  |
-| `verify-cache.sh`                                                      | **DELETE**                        | Cache mirror only                                          |
-| `measure-sigma.mjs`                                                    | **DELETE**                        | Breakdown §E                                               |
-| `create-component-step6-all.mjs`                                       | **DELETE**                        | MCP Step 6 orchestration                                   |
-| `qa-assembled-size.mjs`                                                | **DELETE**                        | MCP size QA                                                |
-| `bundle-component-mcp.mjs`                                             | **KEEP-REFERENCE** then discard   | Understand bundle layout                                   |
-| `skills/create-design-system/scripts/bundle-canvas-mcp.mjs`            | **KEEP-REFERENCE**                | Same, style-guide side                                     |
-| `assemble-sync-changelog-figma.mjs`                                    | **KEEP-REFERENCE**                | Changelog assembly pattern → optional plugin op (Sprint 6) |
-| `build-shadcn-props.mjs`                                               | **PORT** (or replace)             | Data pipeline for shadcn manifest                          |
-| `split-shadcn-props.mjs`                                               | **KEEP-REFERENCE**                | One-time migration                                         |
-| `build-create-component-docs.mjs`                                      | **KEEP-REFERENCE**                | Agent-side docs generation                                 |
-| `build-config-block.mjs`                                               | **KEEP-REFERENCE**                | CONFIG projection                                          |
-| `config-projection.mjs` + `config-projection-map.json`                 | **PORT** patterns                 | Mode A → CONFIG mapping                                    |
-| `validate-tokens.mjs`                                                  | **PORT**                          | Token validation (WO-010 audit)                            |
-| `validate-config-sync.mjs`                                             | **PORT**                          | CONFIG ↔ props sync                                        |
-| `cache-tokens.mjs`                                                     | **KEEP-REFERENCE**                | Token caching for agents                                   |
+| Script                                                                 | Tag                              | Why                                                        |
+| ---------------------------------------------------------------------- | -------------------------------- | ---------------------------------------------------------- |
+| `assemble-component-use-figma-code.mjs`                                | **DELETE**                       | PRD §17.2 — MCP assembly                                   |
+| `check-payload.mjs`                                                    | **DELETE**                       | PRD §17.2                                                  |
+| `check-use-figma-mcp-args.mjs`                                         | **DELETE**                       | PRD §17.2                                                  |
+| `probe-parent-transport.mjs`                                           | **DELETE**                       | PRD §17.2                                                  |
+| `sync-cache.sh`                                                        | **DELETE**                       | PRD §17.2                                                  |
+| `verify-cache.sh`                                                      | **DELETE**                       | Cache mirror only                                          |
+| `measure-sigma.mjs`                                                    | **DELETE**                       | Breakdown §E                                               |
+| `create-component-step6-all.mjs`                                       | **DELETE**                       | MCP Step 6 orchestration                                   |
+| `qa-assembled-size.mjs`                                                | **DELETE**                       | MCP size QA                                                |
+| `bundle-component-mcp.mjs`                                             | **KEEP-REFERENCE** then discard  | Understand bundle layout                                   |
+| `skills/create-design-system/scripts/bundle-canvas-mcp.mjs`            | **KEEP-REFERENCE**               | Same, style-guide side                                     |
+| `assemble-sync-changelog-figma.mjs`                                    | **KEEP-REFERENCE**               | Changelog assembly pattern → optional plugin op (Sprint 6) |
+| `build-shadcn-props.mjs`                                               | **PORT** (or replace)            | Data pipeline for shadcn manifest                          |
+| `split-shadcn-props.mjs`                                               | **KEEP-REFERENCE**               | One-time migration                                         |
+| `build-create-component-docs.mjs`                                      | **KEEP-REFERENCE**               | Agent-side docs generation                                 |
+| `build-config-block.mjs`                                               | **KEEP-REFERENCE**               | CONFIG projection                                          |
+| `config-projection.mjs` + `config-projection-map.json`                 | **PORT** patterns                | Mode A → CONFIG mapping                                    |
+| `validate-tokens.mjs`                                                  | **PORT**                         | Token validation (WO-010 audit)                            |
+| `validate-config-sync.mjs`                                             | **PORT**                         | CONFIG ↔ props sync                                        |
+| `cache-tokens.mjs`                                                     | **KEEP-REFERENCE**               | Token caching for agents                                   |
 | `qa-assemble-component-code.mjs`                                       | **PORT** patterns → FigHub tests |                                                            |
-| `qa-create-component-skill.mjs`                                        | **PORT** patterns → unit tests    |                                                            |
-| `qa-config-projection.mjs`                                             | **PORT** patterns                 |                                                            |
-| `qa-foundations-shell-manifest.mjs`                                    | **PORT** patterns                 |                                                            |
-| `qa-lively-oasis-contract.mjs`                                         | **PORT** patterns                 |                                                            |
-| `qa-visual-diff.mjs`                                                   | **PORT** patterns                 | Visual regression ideas                                    |
-| `designops-canvas-session.mjs`                                         | **KEEP-REFERENCE**                | Session manifest                                           |
-| `probe-page.mjs`                                                       | **KEEP-REFERENCE**                | Debug                                                      |
-| `mcp-inline-args.txt`, `mcp-args-oneline.txt`, `outfull-mcp-args.json` | **DELETE**                        | Local MCP experiments                                      |
-| `test-fixtures/**`                                                     | **KEEP-REFERENCE**                | QA fixtures for porting tests                              |
+| `qa-create-component-skill.mjs`                                        | **PORT** patterns → unit tests   |                                                            |
+| `qa-config-projection.mjs`                                             | **PORT** patterns                |                                                            |
+| `qa-foundations-shell-manifest.mjs`                                    | **PORT** patterns                |                                                            |
+| `qa-lively-oasis-contract.mjs`                                         | **PORT** patterns                |                                                            |
+| `qa-visual-diff.mjs`                                                   | **PORT** patterns                | Visual regression ideas                                    |
+| `designops-canvas-session.mjs`                                         | **KEEP-REFERENCE**               | Session manifest                                           |
+| `probe-page.mjs`                                                       | **KEEP-REFERENCE**               | Debug                                                      |
+| `mcp-inline-args.txt`, `mcp-args-oneline.txt`, `outfull-mcp-args.json` | **DELETE**                       | Local MCP experiments                                      |
+| `test-fixtures/**`                                                     | **KEEP-REFERENCE**               | QA fixtures for porting tests                              |
 
 ### `c:\Users\jbabc\Documents\GitHub\DesignOps-plugin\templates\`
 
-| File               | Tag                | Notes                                                                                              |
-| ------------------ | ------------------ | -------------------------------------------------------------------------------------------------- |
+| File               | Tag                | Notes                                                                                             |
+| ------------------ | ------------------ | ------------------------------------------------------------------------------------------------- |
 | `agent-handoff.md` | **REPLACE**        | Evolves to FigHub contract + plugin I/O; fields `active_file_key`, `token_css_path`, `open_items` |
 | `workflow.md`      | **KEEP-REFERENCE** | Agent-side workflow prose; FigHub has its own                                                     |
 
@@ -219,16 +219,16 @@ When picking up a Sprint 2+ port ticket, read in this order — **never load all
 
 ## 8. Quick reference: PRD §17 disposition table
 
-| Legacy artifact                                                                                                          | FigHub disposition                                                |
-| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `/new-project`, `/create-design-system` skills                                                                           | Replaced by plugin UI (Sprint 4)                                   |
-| `/create-component` forward draw                                                                                         | Plugin scaffold (Sprint 5)                                         |
-| `/sync-design-system`                                                                                                    | Thin agent skill consuming `drift-report.v1` (FigHub emits doc; legacy skill stays in DesignOps-plugin) |
+| Legacy artifact                                                                                                          | FigHub disposition                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `/new-project`, `/create-design-system` skills                                                                           | Replaced by plugin UI (Sprint 4)                                                                           |
+| `/create-component` forward draw                                                                                         | Plugin scaffold (Sprint 5)                                                                                 |
+| `/sync-design-system`                                                                                                    | Thin agent skill consuming `drift-report.v1` (FigHub emits doc; legacy skill stays in DesignOps-plugin)    |
 | `/dev-handoff`                                                                                                           | Thin agent skill consuming `handoff-context.v1` (FigHub emits doc; legacy skill stays in DesignOps-plugin) |
-| `/code-connect`                                                                                                          | Plugin PR emission + CI publish (Sprint 8)                         |
-| `/accessibility-check`, `/new-language`                                                                                  | Deprecated → Figma Agent (legacy repo; no FigHub WO)              |
-| `/canvas-bundle-runner` + payload scripts + `.min.mcp.js` + `sync-cache.sh` + `measure-sigma.mjs`                        | Do not port — MCP transport only (legacy repo; no FigHub WO)    |
-| `AGENTS.md` MCP anti-spiral body + `conventions/16-mcp-use-figma-workflow.md` + `conventions/17-table-redraw-runbook.md` | Do not port — MCP transport only (legacy repo; no FigHub WO)    |
+| `/code-connect`                                                                                                          | Plugin PR emission + CI publish (Sprint 8)                                                                 |
+| `/accessibility-check`, `/new-language`                                                                                  | Deprecated → Figma Agent (legacy repo; no FigHub WO)                                                       |
+| `/canvas-bundle-runner` + payload scripts + `.min.mcp.js` + `sync-cache.sh` + `measure-sigma.mjs`                        | Do not port — MCP transport only (legacy repo; no FigHub WO)                                               |
+| `AGENTS.md` MCP anti-spiral body + `conventions/16-mcp-use-figma-workflow.md` + `conventions/17-table-redraw-runbook.md` | Do not port — MCP transport only (legacy repo; no FigHub WO)                                               |
 
 ---
 

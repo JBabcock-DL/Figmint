@@ -8,10 +8,10 @@
 
 ## Summary
 
-| Area             | Pass | Fail | N/A |
-| ---------------- | ---- | ---- | --- |
+| Area             | Pass | Fail | N/A                               |
+| ---------------- | ---- | ---- | --------------------------------- |
 | Figma assertions | 0    | 0    | 1 — `node_id` optional spot-check |
-| Functional QA    | 4    | 0    | 0   |
+| Functional QA    | 4    | 0    | 0                                 |
 
 **Full suite:** `npm test -- --run` → **574 passed** | 2 skipped (576 total)  
 **WO-025 scoped:** 23 passed — `curateVariantCombos`, `usageFrameAudit`, `usageFrame.integration`
@@ -26,11 +26,11 @@
 
 ## Figma source
 
-| Field | Value |
-| ----- | ----- |
-| file_key | `cVdPraIafWFBRZnzMPhtrW` |
-| node_id | N/A — subsystem; spot-check during WO-027 sandbox |
-| Captured at | 2026-05-28 |
+| Field       | Value                                             |
+| ----------- | ------------------------------------------------- |
+| file_key    | `cVdPraIafWFBRZnzMPhtrW`                          |
+| node_id     | N/A — subsystem; spot-check during WO-027 sandbox |
+| Captured at | 2026-05-28                                        |
 
 Functional criteria do not require MCP screenshot when integration tests cover FR-SCAF-5. Visual spot-check deferred to WO-027 SPK-027-1.
 
@@ -38,12 +38,12 @@ Functional criteria do not require MCP screenshot when integration tests cover F
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
-| 12 combos → 6 curated instances + labels | **PASS** | `usageFrame.integration.test.ts` |
-| `curateVariantCombos` snapshot tests | **PASS** | 8 tests in `curateVariantCombos.test.ts` |
-| Inline `comp/usage-*` audit | **PASS** | `usageFrameAudit` + integration |
-| SPK-025-1 visual sandbox | **N/A** | End-to-end verified via WO-027 checklist |
+| Acceptance criterion                     | Result   | Note                                     |
+| ---------------------------------------- | -------- | ---------------------------------------- |
+| 12 combos → 6 curated instances + labels | **PASS** | `usageFrame.integration.test.ts`         |
+| `curateVariantCombos` snapshot tests     | **PASS** | 8 tests in `curateVariantCombos.test.ts` |
+| Inline `comp/usage-*` audit              | **PASS** | `usageFrameAudit` + integration          |
+| SPK-025-1 visual sandbox                 | **N/A**  | End-to-end verified via WO-027 checklist |
 
 ### Automated tests
 
@@ -65,11 +65,11 @@ None.
 
 ## Artifacts
 
-| Artifact | Status |
-| -------- | ------ |
-| figma-source.png | Not captured — subsystem |
-| build-screenshot.png | N/A |
-| figma-vs-build.png | N/A |
+| Artifact             | Status                   |
+| -------------------- | ------------------------ |
+| figma-source.png     | Not captured — subsystem |
+| build-screenshot.png | N/A                      |
+| figma-vs-build.png   | N/A                      |
 
 ---
 

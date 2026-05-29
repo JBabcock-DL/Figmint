@@ -2,11 +2,7 @@ import type { DriftReportV1 } from '@detroitlabs/fighub-contracts';
 import { describe, expect, it } from 'vitest';
 
 import driftFixture from '@/io/formats/__fixtures__/drift-report-ac.json';
-import {
-  availableSinks,
-  canExport,
-  isPathInputVisible,
-} from '@/ui/export/availableSinks';
+import { availableSinks, canExport, isPathInputVisible } from '@/ui/export/availableSinks';
 import { createInitialExportSheetState } from '@/ui/export/exportSheetReducer';
 import type { ContractDocument } from '@/ui/export/types';
 

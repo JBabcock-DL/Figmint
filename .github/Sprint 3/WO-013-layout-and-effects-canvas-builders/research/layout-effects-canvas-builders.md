@@ -35,7 +35,7 @@ Eight decisions unblock WO-013 `/plan`:
 
 ### 1. File map — legacy → FigHub
 
-| Legacy                                | Lines | FigHub target                           | Notes                          |
+| Legacy                                | Lines | FigHub target                            | Notes                          |
 | ------------------------------------- | ----- | ---------------------------------------- | ------------------------------ |
 | `layout.js`                           | ~210  | `src/core/canvas/layout.ts`              | `buildLayoutPage(ctx)` export  |
 | `effects.js`                          | ~293  | `src/core/canvas/effects.ts`             | `buildEffectsPage(ctx)` export |

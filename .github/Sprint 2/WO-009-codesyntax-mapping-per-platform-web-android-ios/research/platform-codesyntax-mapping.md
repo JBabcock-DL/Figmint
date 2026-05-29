@@ -262,7 +262,7 @@ Mock `Variable.setVariableCodeSyntax`; assert called 3× with exact platform lit
 | --- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
 | 1   | Should WO-009 ship derivation for Theme when stored missing (dev/test tokens)? | **No** — skip + audit warning. Keeps production parity with legacy.       |
 | 2   | Typography domain: always `.Typography.*` even when path uses `Display/LG`?    | **Yes** — per `typography-slots.json` codeSyntaxRules.                    |
-| 3   | Partial codeSyntax on Primitives from DTCG `$extensions.fighub.codeSyntax`?   | Hybrid: stored platforms win; derive rest. Matches spike fixture pattern. |
+| 3   | Partial codeSyntax on Primitives from DTCG `$extensions.fighub.codeSyntax`?    | Hybrid: stored platforms win; derive rest. Matches spike fixture pattern. |
 
 ---
 

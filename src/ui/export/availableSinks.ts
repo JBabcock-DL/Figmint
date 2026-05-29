@@ -1,7 +1,8 @@
 import { flags } from '@/config/flags';
 import type { SinkId } from '@/io/sinks/types';
 
-import type { ExportSheetState, ExportSinkSelection } from './types';
+import type { ExportSheetState } from './exportSheetReducer';
+import type { ExportSinkSelection } from './types';
 
 export function availableSinks(): SinkId[] {
   const base: SinkId[] = ['download', 'clipboard', 'output-page', 'plugin-data'];

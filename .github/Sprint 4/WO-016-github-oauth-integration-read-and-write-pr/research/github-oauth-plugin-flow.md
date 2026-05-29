@@ -2,7 +2,7 @@
 
 **Ticket:** WO-016 · **Topic:** `github-oauth-plugin-flow` · **Date:** 2026-05-27
 
-> **Spike revision (2026-05-27):** SPK-016-1 proved GitHub OAuth endpoints **cannot** be called from Figma (UI or main) — CORS blocks null-origin preflight. **An HTTPS relay is mandatory** for Device Flow *and* likely all authenticated GitHub API from the plugin. See [spike-github-oauth-results.md](./spike-github-oauth-results.md). D-016-1 / D-016-2 / D-016-6 below are **superseded** where they assumed in-plugin fetch to `github.com`.
+> **Spike revision (2026-05-27):** SPK-016-1 proved GitHub OAuth endpoints **cannot** be called from Figma (UI or main) — CORS blocks null-origin preflight. **An HTTPS relay is mandatory** for Device Flow _and_ likely all authenticated GitHub API from the plugin. See [spike-github-oauth-results.md](./spike-github-oauth-results.md). D-016-1 / D-016-2 / D-016-6 below are **superseded** where they assumed in-plugin fetch to `github.com`.
 
 ---
 
@@ -20,14 +20,14 @@ Token lifecycle stays on the **main thread** (`figma.clientStorage`); OAuth orch
 
 ### 1. Figma plugin OAuth constraints (Device Flow vs Auth Code + PKCE)
 
-| Aspect | Device Flow | Auth Code + PKCE |
-|--------|-------------|------------------|
-| **Client secret** | Not required (`client_id` only) | Not required if token exchange stays in iframe; **relay server still required** for Figma-safe redirect handling |
-| **Public HTTPS server** | **Required** — plugin cannot call GitHub OAuth directly (CORS) | **Required** — Figma redirect OAuth pattern |
-| **UX** | User opens `github.com/login/device`, enters 8-char code | Standard GitHub authorize page in browser tab |
-| **Security** | PKCE N/A; poll with `device_code`; orgs may audit device-code grants | Figma recommends PKCE + read/write key relay; GitHub [added PKCE support Jul 2025](https://github.blog/changelog/2025-07-14-pkce-support-for-oauth-and-github-app-authentication/) |
-| **Figma iframe fit** | `window.open(verification_uri)` + poll relay for token | `window.open` → redirect to relay → poll relay |
-| **Manifest domains** | Relay hostname + `api.github.com` (GitHub OAuth via relay, not direct) | Same + relay hostname |
+| Aspect                  | Device Flow                                                            | Auth Code + PKCE                                                                                                                                                                   |
+| ----------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Client secret**       | Not required (`client_id` only)                                        | Not required if token exchange stays in iframe; **relay server still required** for Figma-safe redirect handling                                                                   |
+| **Public HTTPS server** | **Required** — plugin cannot call GitHub OAuth directly (CORS)         | **Required** — Figma redirect OAuth pattern                                                                                                                                        |
+| **UX**                  | User opens `github.com/login/device`, enters 8-char code               | Standard GitHub authorize page in browser tab                                                                                                                                      |
+| **Security**            | PKCE N/A; poll with `device_code`; orgs may audit device-code grants   | Figma recommends PKCE + read/write key relay; GitHub [added PKCE support Jul 2025](https://github.blog/changelog/2025-07-14-pkce-support-for-oauth-and-github-app-authentication/) |
+| **Figma iframe fit**    | `window.open(verification_uri)` + poll relay for token                 | `window.open` → redirect to relay → poll relay                                                                                                                                     |
+| **Manifest domains**    | Relay hostname + `api.github.com` (GitHub OAuth via relay, not direct) | Same + relay hostname                                                                                                                                                              |
 
 Figma’s OAuth doc requires a **third-party relay server** on the public Internet. **SPK-016-1 confirmed** this applies to GitHub Device Flow as well — not only redirect-based OAuth — because GitHub does not return CORS headers for plugin null-origin `fetch`.
 
@@ -51,10 +51,10 @@ Figma CSP-enforces this list — any fetch to a non-whitelisted host throws. Org
 
 `vite.config.ts` aliases `@/config/flags` to `flags.org.ts` or `flags.community.ts` based on `BUILD_TARGET`:
 
-| Build | `flags.githubOAuth` | `flags.buildTarget` |
-|-------|---------------------|---------------------|
-| Org | `true` | `'org'` |
-| Community | `false` | `'community'` |
+| Build     | `flags.githubOAuth` | `flags.buildTarget` |
+| --------- | ------------------- | ------------------- |
+| Org       | `true`              | `'org'`             |
+| Community | `false`             | `'community'`       |
 
 UI components (Settings tab, Connect GitHub button, repo path fields, Bootstrap “Pull from GitHub”) must wrap on `flags.githubOAuth`. Tree-shaking is not guaranteed — use explicit conditional render, not dead-code assumptions.
 
@@ -76,13 +76,13 @@ Existing pattern: UI sends `{ pluginMessage: { type, … } }` via `parent.postMe
 
 **Proposed message types:**
 
-| Direction | Type | Purpose |
-|-----------|------|---------|
-| UI → main | `github/token/save` | Persist token + repo URL after OAuth completes |
-| UI → main | `github/token/clear` | Disconnect repo |
-| main → UI | `github/token/status` | `{ connected: boolean; repoUrl?: string; scope?: string }` on plugin open |
-| UI → main | `github/contents/fetch` | `{ repoUrl, path, ref? }` — main performs authenticated fetch, returns raw text |
-| main → UI | `github/contents/result` \| `github/contents/error` | File body or error string |
+| Direction | Type                                                | Purpose                                                                         |
+| --------- | --------------------------------------------------- | ------------------------------------------------------------------------------- |
+| UI → main | `github/token/save`                                 | Persist token + repo URL after OAuth completes                                  |
+| UI → main | `github/token/clear`                                | Disconnect repo                                                                 |
+| main → UI | `github/token/status`                               | `{ connected: boolean; repoUrl?: string; scope?: string }` on plugin open       |
+| UI → main | `github/contents/fetch`                             | `{ repoUrl, path, ref? }` — main performs authenticated fetch, returns raw text |
+| main → UI | `github/contents/result` \| `github/contents/error` | File body or error string                                                       |
 
 **Why fetch on main for reads:** keeps the access token off repeated UI↔main round trips after initial save; main-thread `fetch` is supported with `networkAccess` ([Figma network requests doc](https://developers.figma.com/docs/plugins/making-network-requests/)). UI-side `loadFromGitHub` becomes: request contents via message → receive text → `parseTextToDocument` (same as paste/file).
 
@@ -148,13 +148,13 @@ PRD §6.9 FR-CONF-1 / `src/ui/tabs/Settings.tsx` (stub in PRD §7.3, not yet in 
 
 ### 10. Security checklist (PRD §11.3)
 
-| Rule | Implementation |
-|------|----------------|
-| No secrets in bundle | Only `client_id` via build-time env; no `client_secret` |
-| GitHub-only network | Org manifest domains; Community `none` |
-| Revocable tokens | Standard GitHub OAuth App; disconnect clears clientStorage |
+| Rule                        | Implementation                                             |
+| --------------------------- | ---------------------------------------------------------- |
+| No secrets in bundle        | Only `client_id` via build-time env; no `client_secret`    |
+| GitHub-only network         | Org manifest domains; Community `none`                     |
+| Revocable tokens            | Standard GitHub OAuth App; disconnect clears clientStorage |
 | No silent cross-repo access | Single connected repo; URL validated against stored config |
-| Token handling | Main-thread storage; redact in logs |
+| Token handling              | Main-thread storage; redact in logs                        |
 
 ---
 
@@ -172,14 +172,14 @@ PRD §6.9 FR-CONF-1 / `src/ui/tabs/Settings.tsx` (stub in PRD §7.3, not yet in 
 
 ## Open Questions
 
-| # | Question | Owner / resolution |
-|---|----------|-------------------|
-| OQ-16-1 | Has Detroit Labs registered the FigHub OAuth App (client_id + Device Flow enabled)? | Eng lead before `/build` |
-| OQ-16-2 | Device Flow UX acceptable for designers vs browser-tab Auth Code flow? | Design / client feedback during VQA |
-| OQ-16-3 | Should token refresh / expiry handling be implemented for GitHub Apps with expiring user tokens, or is classic OAuth App non-expiring token sufficient for MVP? | Default: OAuth App non-expiring; revisit if app type changes |
-| OQ-16-4 | Exact repo URL normalization for monorepos / GitHub Enterprise (`github.company.com`) — MVP is github.com cloud only? | Confirm Org clients; GHE would need manifest domain additions |
-| OQ-16-5 | Does PRD “read-only by default; write scoped to paths” (§15 risk row) imply a two-phase consent UI before first PR, or is single `repo` grant at connect acceptable? | Product — MVP follows ticket (`repo` at connect) unless overridden |
-| OQ-16-6 | Where does `Settings.tsx` live relative to WO-021 feature-gating ticket — implement Settings shell here or minimal inline panel in WO-016? | Recommend minimal Settings tab in WO-016; WO-021 hardens gating audit |
+| #       | Question                                                                                                                                                             | Owner / resolution                                                    |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| OQ-16-1 | Has Detroit Labs registered the FigHub OAuth App (client_id + Device Flow enabled)?                                                                                  | Eng lead before `/build`                                              |
+| OQ-16-2 | Device Flow UX acceptable for designers vs browser-tab Auth Code flow?                                                                                               | Design / client feedback during VQA                                   |
+| OQ-16-3 | Should token refresh / expiry handling be implemented for GitHub Apps with expiring user tokens, or is classic OAuth App non-expiring token sufficient for MVP?      | Default: OAuth App non-expiring; revisit if app type changes          |
+| OQ-16-4 | Exact repo URL normalization for monorepos / GitHub Enterprise (`github.company.com`) — MVP is github.com cloud only?                                                | Confirm Org clients; GHE would need manifest domain additions         |
+| OQ-16-5 | Does PRD “read-only by default; write scoped to paths” (§15 risk row) imply a two-phase consent UI before first PR, or is single `repo` grant at connect acceptable? | Product — MVP follows ticket (`repo` at connect) unless overridden    |
+| OQ-16-6 | Where does `Settings.tsx` live relative to WO-021 feature-gating ticket — implement Settings shell here or minimal inline panel in WO-016?                           | Recommend minimal Settings tab in WO-016; WO-021 hardens gating audit |
 
 ---
 
@@ -189,27 +189,27 @@ PRD §6.9 FR-CONF-1 / `src/ui/tabs/Settings.tsx` (stub in PRD §7.3, not yet in 
 
 ### Repo inventory (grep-verified 2026-05-27)
 
-| Path | Status | Role |
-| ---- | ------ | ---- |
-| `manifest.org.json` L8–10 | ✅ | `allowedDomains`: `api.github.com`, `github.com` |
-| `manifest.community.json` | ✅ | `allowedDomains: ["none"]` |
-| `vite.config.ts` L7–12, L20 | ✅ | `BUILD_TARGET` → `@/config/flags` alias |
-| `src/config/flags.org.ts` | ✅ | `githubOAuth: true` |
-| `src/config/flags.community.ts` | ✅ | `githubOAuth: false` |
-| `scripts/build-org.mjs` / `build-community.mjs` | ✅ | Manifest copy → `dist/manifest.json` |
-| `src/io/sources/*` | ✅ | WO-006 ingest; no `github.ts` yet |
-| `src/io/github/` | ❌ greenfield | OAuth + API client |
-| `src/io/sinks/githubPR.ts` | ❌ greenfield | Split WO-016 helper vs WO-018 Sink |
-| `src/main.ts` L191+ | ✅ | `figma.ui.onmessage` — extend pattern |
-| `src/ui/App.tsx` L22 | ✅ | Only `flags.buildTarget` consumed today |
+| Path                                            | Status        | Role                                             |
+| ----------------------------------------------- | ------------- | ------------------------------------------------ |
+| `manifest.org.json` L8–10                       | ✅            | `allowedDomains`: `api.github.com`, `github.com` |
+| `manifest.community.json`                       | ✅            | `allowedDomains: ["none"]`                       |
+| `vite.config.ts` L7–12, L20                     | ✅            | `BUILD_TARGET` → `@/config/flags` alias          |
+| `src/config/flags.org.ts`                       | ✅            | `githubOAuth: true`                              |
+| `src/config/flags.community.ts`                 | ✅            | `githubOAuth: false`                             |
+| `scripts/build-org.mjs` / `build-community.mjs` | ✅            | Manifest copy → `dist/manifest.json`             |
+| `src/io/sources/*`                              | ✅            | WO-006 ingest; no `github.ts` yet                |
+| `src/io/github/`                                | ❌ greenfield | OAuth + API client                               |
+| `src/io/sinks/githubPR.ts`                      | ❌ greenfield | Split WO-016 helper vs WO-018 Sink               |
+| `src/main.ts` L191+                             | ✅            | `figma.ui.onmessage` — extend pattern            |
+| `src/ui/App.tsx` L22                            | ✅            | Only `flags.buildTarget` consumed today          |
 
 ### Figma OAuth doc vs GitHub Device Flow (tension resolved)
 
-| Source | Claim | Implication |
-| ------ | ----- | ----------- |
-| [Figma OAuth with Plugins](https://developers.figma.com/docs/plugins/oauth-with-plugins/) | _"The only way to do OAuth in a Figma plugin is to run your own server on the public Internet"_ — relay with read/write keys; desktop `window.open()` has no `window.opener` | **Auth Code + PKCE** still needs Detroit Labs relay hostname in manifest |
-| [GitHub Device Flow](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow) | Browser POST to GitHub OAuth endpoints | **Not callable from Figma sandbox** — CORS blocks null origin (SPK-016-1) |
-| Figma token storage doc | Access token via **`figma.clientStorage` on main thread** | Main owns secrets; relay returns token to plugin |
+| Source                                                                                                                  | Claim                                                                                                                                                                        | Implication                                                               |
+| ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [Figma OAuth with Plugins](https://developers.figma.com/docs/plugins/oauth-with-plugins/)                               | _"The only way to do OAuth in a Figma plugin is to run your own server on the public Internet"_ — relay with read/write keys; desktop `window.open()` has no `window.opener` | **Auth Code + PKCE** still needs Detroit Labs relay hostname in manifest  |
+| [GitHub Device Flow](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow) | Browser POST to GitHub OAuth endpoints                                                                                                                                       | **Not callable from Figma sandbox** — CORS blocks null origin (SPK-016-1) |
+| Figma token storage doc                                                                                                 | Access token via **`figma.clientStorage` on main thread**                                                                                                                    | Main owns secrets; relay returns token to plugin                          |
 
 **Locked interpretation (revised 2026-05-27):** Device Flow is still the preferred **UX** (out-of-band code entry), but HTTP must go through a **FigHub relay** — same infrastructure class as Figma’s Auth Code + PKCE relay pattern.
 
@@ -266,38 +266,38 @@ Response: `content` base64, `encoding: "base64"`, `sha` — decode → `parseTex
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D-016-1 | GitHub **Device Flow via HTTPS relay** for MVP | SPK-016-1: direct plugin fetch to GitHub OAuth blocked by CORS | In-plugin Device Flow (pre-spike assumption) |
-| D-016-2 | Token on main; **all GitHub HTTP via relay** | CORS + clientStorage main-only | Direct main/UI fetch to github.com |
-| D-016-3 | Storage key `fighub:github:token:<normalizedRepoUrl>` | FR-CONF-4 single connected repo | Global single key (blocks repo switch) |
-| D-016-4 | Scope **`repo`** at connect | Private repo read + PR write in one grant | Split read/write scopes (deferred) |
-| D-016-6 | **Relay mandatory** for OAuth + API | UI and main direct fetch both fail CORS | UI-only or main-only GitHub fetch |
+| ID      | Decision                                              | Rationale                                                      | Alternatives rejected                        |
+| ------- | ----------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------- |
+| D-016-1 | GitHub **Device Flow via HTTPS relay** for MVP        | SPK-016-1: direct plugin fetch to GitHub OAuth blocked by CORS | In-plugin Device Flow (pre-spike assumption) |
+| D-016-2 | Token on main; **all GitHub HTTP via relay**          | CORS + clientStorage main-only                                 | Direct main/UI fetch to github.com           |
+| D-016-3 | Storage key `fighub:github:token:<normalizedRepoUrl>` | FR-CONF-4 single connected repo                                | Global single key (blocks repo switch)       |
+| D-016-4 | Scope **`repo`** at connect                           | Private repo read + PR write in one grant                      | Split read/write scopes (deferred)           |
+| D-016-6 | **Relay mandatory** for OAuth + API                   | UI and main direct fetch both fail CORS                        | UI-only or main-only GitHub fetch            |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-016-0 | CLI `--request-only` | `npm run spike:github-oauth:probe` | 200 + user_code | ✅ 2026-05-27 |
-| SPK-016-0b | CLI full Device Flow | `npm run spike:github-oauth` | access_token | ☐ pending |
-| SPK-016-1 | **Figma desktop**: OAuth spike panel → Connect | `access_token` + clientStorage probe | ☐ pending — **blocks `/plan`** |
-| SPK-016-2 | Same in **Figma browser** | Same as SPK-016-1 | ☐ pending |
-| SPK-016-3 | `GET contents` on test repo | JSON loads | ☐ pending (after token) |
-| ~~SPK-016-4~~ | ~~Community build grep~~ | cancelled (single build) | N/A |
+| Spike ID      | Procedure                                      | Pass criteria                        | Status                         |
+| ------------- | ---------------------------------------------- | ------------------------------------ | ------------------------------ | ------------- |
+| SPK-016-0     | CLI `--request-only`                           | `npm run spike:github-oauth:probe`   | 200 + user_code                | ✅ 2026-05-27 |
+| SPK-016-0b    | CLI full Device Flow                           | `npm run spike:github-oauth`         | access_token                   | ☐ pending     |
+| SPK-016-1     | **Figma desktop**: OAuth spike panel → Connect | `access_token` + clientStorage probe | ☐ pending — **blocks `/plan`** |
+| SPK-016-2     | Same in **Figma browser**                      | Same as SPK-016-1                    | ☐ pending                      |
+| SPK-016-3     | `GET contents` on test repo                    | JSON loads                           | ☐ pending (after token)        |
+| ~~SPK-016-4~~ | ~~Community build grep~~                       | cancelled (single build)             | N/A                            |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Likelihood | Mitigation |
-| ---- | --- | ---------- | ---------- |
+| Risk                                   | Sev  | Likelihood         | Mitigation                                   |
+| -------------------------------------- | ---- | ------------------ | -------------------------------------------- |
 | Device Flow blocked by null-origin CSP | High | **Confirmed** (UI) | **Main-thread proxy** (spike fix 2026-05-27) |
-| Designers reject device-code UX | Med | Med | Document upgrade path; design review at VQA |
-| Token in clientStorage inspectable | Low | Certain | PRD §11.3 accepted; scoped + revocable |
-| WO-016 vs WO-018 PR code overlap | Med | Med | D-016-5 ownership split |
-| GHE (`github.enterprise.com`) | Med | Low | MVP github.com only; OQ-16-4 |
+| Designers reject device-code UX        | Med  | Med                | Document upgrade path; design review at VQA  |
+| Token in clientStorage inspectable     | Low  | Certain            | PRD §11.3 accepted; scoped + revocable       |
+| WO-016 vs WO-018 PR code overlap       | Med  | Med                | D-016-5 ownership split                      |
+| GHE (`github.enterprise.com`)          | Med  | Low                | MVP github.com only; OQ-16-4                 |
 
 ---
 

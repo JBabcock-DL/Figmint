@@ -34,11 +34,7 @@ export async function fetchRepoFileContents(
   path: string,
   ref?: string,
 ): Promise<{ text: string; sha: string }> {
-  const response = await githubApiViaRelay(
-    'GET',
-    buildContentsPath(owner, repo, path, ref),
-    token,
-  );
+  const response = await githubApiViaRelay('GET', buildContentsPath(owner, repo, path, ref), token);
 
   if (response.status === 401) {
     throw new GitHubAuthError('GitHub authentication failed. Reconnect in Settings.');

@@ -6,7 +6,6 @@ import type { SinkId } from '@/io/sinks/types';
 import type { ContractDocument } from '@/ui/export/types';
 
 export function defaultDriftExportSinks(githubConnected?: boolean): SinkId[] {
-   
   if (githubConnected === true && flags.githubOAuth && flags.githubPRSink) {
     return ['download', 'github-pr'];
   }

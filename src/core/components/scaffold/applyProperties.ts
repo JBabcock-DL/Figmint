@@ -178,7 +178,11 @@ export function applyPropertiesToVariants(
       }
 
       try {
-        const propKey = variant.addComponentProperty(prop.name, mapped.figmaType, mapped.defaultValue);
+        const propKey = variant.addComponentProperty(
+          prop.name,
+          mapped.figmaType,
+          mapped.defaultValue,
+        );
         recordPropSuccess(propKeys, prop.name, propKey);
 
         const binding = resolvePropBinding(prop.name);

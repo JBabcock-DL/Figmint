@@ -1,13 +1,6 @@
 import type { BindingFailureReason, BindingKind } from './types';
 
-const VALID_KINDS: BindingKind[] = [
-  'fill',
-  'stroke',
-  'radius',
-  'padding',
-  'gap',
-  'text-style',
-];
+const VALID_KINDS: BindingKind[] = ['fill', 'stroke', 'radius', 'padding', 'gap', 'text-style'];
 
 function isBindingKind(value: string): value is BindingKind {
   for (let i = 0; i < VALID_KINDS.length; i++) {
@@ -82,18 +75,17 @@ export function resolveNodeByPath(variantRoot: ComponentNode, nodePath: string):
   return current;
 }
 
-export function validateKindForNode(node: SceneNode, kind: BindingKind): BindingFailureReason | null {
+export function validateKindForNode(
+  node: SceneNode,
+  kind: BindingKind,
+): BindingFailureReason | null {
   if (node.type === 'TEXT') {
     if (kind === 'fill' || kind === 'text-style') {
       return null;
     }
     return 'type-mismatch';
   }
-  if (
-    node.type === 'FRAME' ||
-    node.type === 'COMPONENT' ||
-    node.type === 'INSTANCE'
-  ) {
+  if (node.type === 'FRAME' || node.type === 'COMPONENT' || node.type === 'INSTANCE') {
     if (kind === 'text-style') {
       return 'type-mismatch';
     }

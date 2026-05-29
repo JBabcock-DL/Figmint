@@ -12,7 +12,11 @@ export const DOC_PIPELINE_CHROME_VARIABLES = [
 export const DOC_PIPELINE_TEXT_STYLES = [
   { id: 'style-section', name: '_Doc/Section', fontName: { family: 'Inter', style: 'Regular' } },
   { id: 'style-caption', name: '_Doc/Caption', fontName: { family: 'Inter', style: 'Regular' } },
-  { id: 'style-token-name', name: '_Doc/TokenName', fontName: { family: 'Inter', style: 'Regular' } },
+  {
+    id: 'style-token-name',
+    name: '_Doc/TokenName',
+    fontName: { family: 'Inter', style: 'Regular' },
+  },
   { id: 'style-code', name: '_Doc/Code', fontName: { family: 'Inter', style: 'Regular' } },
 ] as const;
 

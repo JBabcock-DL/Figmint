@@ -66,7 +66,7 @@ describe('buildUsageFrame integration', () => {
     expect(childNames).toEqual(docPipelineSectionNames('button'));
   });
 
-  it('emits Do/Don\'t cards instead of an instance gallery', async () => {
+  it("emits Do/Don't cards instead of an instance gallery", async () => {
     const page = createMockPage();
     const componentSet = createMockComponentSet({
       id: 'set-stable',
@@ -91,7 +91,7 @@ describe('buildUsageFrame integration', () => {
     expect(childNames).toEqual(['usage/do', 'usage/dont']);
   });
 
-  it('returns passing doc-section-width audit and ok when Do/Don\'t cards render', async () => {
+  it("returns passing doc-section-width audit and ok when Do/Don't cards render", async () => {
     const page = createMockPage();
     const componentSet = createMockComponentSet({
       variantNames: ['variant=default, size=sm, disabled=false'],

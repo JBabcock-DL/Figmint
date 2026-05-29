@@ -113,9 +113,17 @@ describe('buildUsageFrameAuditRows', () => {
   });
 
   it('fails comp/doc-section-width when setGroup is collapsed to 1px wide (BUG-S5-001)', () => {
-    const setGroup = createMockFrame({ name: 'doc/component/button/component-set-group', width: 1, height: 42 });
+    const setGroup = createMockFrame({
+      name: 'doc/component/button/component-set-group',
+      width: 1,
+      height: 42,
+    });
     setGroup.appendChild(createMockFrame({ width: 1236, height: 42 }) as unknown as SceneNode);
-    const usageSection = createMockFrame({ name: 'doc/component/button/usage', width: 1640, height: 652 });
+    const usageSection = createMockFrame({
+      name: 'doc/component/button/usage',
+      width: 1640,
+      height: 652,
+    });
     usageSection.appendChild(createMockFrame({ width: 200, height: 100 }) as unknown as SceneNode);
 
     const rows = buildUsageFrameAuditRows({
@@ -134,9 +142,17 @@ describe('buildUsageFrameAuditRows', () => {
   });
 
   it('passes comp/doc-section-width when both sections have non-collapsed geometry', () => {
-    const setGroup = createMockFrame({ name: 'doc/component/button/component-set-group', width: 1236, height: 42 });
+    const setGroup = createMockFrame({
+      name: 'doc/component/button/component-set-group',
+      width: 1236,
+      height: 42,
+    });
     setGroup.appendChild(createMockFrame({ width: 1236, height: 42 }) as unknown as SceneNode);
-    const usageSection = createMockFrame({ name: 'doc/component/button/usage', width: 1640, height: 652 });
+    const usageSection = createMockFrame({
+      name: 'doc/component/button/usage',
+      width: 1640,
+      height: 652,
+    });
     usageSection.appendChild(createMockFrame({ width: 200, height: 100 }) as unknown as SceneNode);
 
     const rows = buildUsageFrameAuditRows({

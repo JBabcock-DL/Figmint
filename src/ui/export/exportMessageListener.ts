@@ -52,10 +52,7 @@ export function registerExportMessageListener(): void {
   });
 }
 
-export function waitForExportMainResults(
-  requestId: string,
-  handlers: ExportMessageHandlers,
-): void {
+export function waitForExportMainResults(requestId: string, handlers: ExportMessageHandlers): void {
   registerExportMessageListener();
   pending.set(requestId, handlers);
 }

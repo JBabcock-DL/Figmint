@@ -44,19 +44,29 @@ describe('resolutionSelectors staging', () => {
 
   it('lists push drifts excluding staged', () => {
     const state = buildState(report, ['var/a'], {});
-    expect(pushDriftsPendingCommit(state).map(function (d) { return d.id; })).toEqual(['var/b']);
+    expect(
+      pushDriftsPendingCommit(state).map(function (d) {
+        return d.id;
+      }),
+    ).toEqual(['var/b']);
   });
 
   it('includes conflict resolved to push in pending commit list', () => {
     const state = buildState(report, [], { 'var/e': { type: 'push' } });
-    const ids = pushDriftsPendingCommit(state).map(function (d) { return d.id; });
+    const ids = pushDriftsPendingCommit(state).map(function (d) {
+      return d.id;
+    });
     expect(ids).toContain('var/e');
     expect(ids).toContain('var/a');
   });
 
   it('excludes denied pull drifts', () => {
     const state = buildState(report, [], {}, ['var/c']);
-    expect(pullDrifts(state).map(function (d) { return d.id; })).toEqual(['var/d']);
+    expect(
+      pullDrifts(state).map(function (d) {
+        return d.id;
+      }),
+    ).toEqual(['var/d']);
   });
 
   it('counts staged push queue', () => {

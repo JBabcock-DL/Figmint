@@ -40,31 +40,31 @@ export interface ComponentSpecProp {
 
 **Legacy lift:** `shadcn-props.schema.json` `$defs/componentEntry.properties` is an **untyped array** (doc-table rows). Per-component JSON (e.g. `shadcn-props/button.json`) stores **5-tuples** `[name, type, default, required, description]` for the Properties + Types doc table — not Figma API calls directly.
 
-| Legacy tuple column | FigHub contract field | Notes |
-| ------------------- | ---------------------- | ----- |
-| `[0]` name | `name` | kebab-case or camelCase preserved |
-| `[1]` type | `type` | legacy allows `"enum"`, `"boolean"`, `"string"`, union strings like `"button" \| "submit"` |
-| `[2]` default | `default` | legacy uses JSON-ish strings (`"false"`, `"\"default\""`) — normalize at apply time |
-| `[3]` required | *(absent)* | doc-only; defer |
-| `[4]` description | *(absent)* | ticket out-of-scope |
+| Legacy tuple column | FigHub contract field | Notes                                                                                      |
+| ------------------- | --------------------- | ------------------------------------------------------------------------------------------ |
+| `[0]` name          | `name`                | kebab-case or camelCase preserved                                                          |
+| `[1]` type          | `type`                | legacy allows `"enum"`, `"boolean"`, `"string"`, union strings like `"button" \| "submit"` |
+| `[2]` default       | `default`             | legacy uses JSON-ish strings (`"false"`, `"\"default\""`) — normalize at apply time        |
+| `[3]` required      | _(absent)_            | doc-only; defer                                                                            |
+| `[4]` description   | _(absent)_            | ticket out-of-scope                                                                        |
 
 **Importer rule (FR-IMP-4):** enum props become variant matrix axes; booleans become boolean props. WO-024 consumes the **normalized** contract, not raw tuples.
 
 ### 2. Two property sources — matrix VARIANT vs explicit props
 
-| Source | Figma type | Created by | WO-024 action |
-| ------ | ---------- | ---------- | ------------- |
-| `variantMatrix` axis keys (`variant`, `size`, `disabled`, …) | `VARIANT` | WO-022 `combineAsVariants` naming (`variant=primary, size=md`) | **Validate** only — assert `componentPropertyDefinitions[axis].variantOptions` matches matrix values |
-| `props[]` with `type: 'boolean'` | `BOOLEAN` | WO-024 `addComponentProperty` | Create + optional bind |
-| `props[]` with `type: 'string'` | `TEXT` | WO-024 | Create when bind target exists; else skip or create unbound |
-| `props[]` with `type: 'node'` | `INSTANCE_SWAP` | WO-024 | Create when default component id resolvable |
-| `props[]` with `type: 'enum'` **matching matrix key** | `VARIANT` | Already from matrix | **Skip** — dedupe |
-| `props[]` with `type: 'enum'` **not in matrix** | — | — | **Skip Figma property** (doc-only until matrix extended) |
-| `props[]` with `type: 'number'` | — | — | **Skip Figma property** v1 (no numeric component property type) |
-| `componentProps.label` flag (archetype) | `TEXT` `"Label"` | WO-024 implicit | Create + bind `text/label.characters` |
-| `componentProps.leadingIcon` + `iconSlots.leading` | `BOOLEAN` `"Leading icon"` | WO-024 implicit | Bind `icon-slot/leading.visible` |
-| `componentProps.trailingIcon` + `iconSlots.trailing` | `BOOLEAN` `"Trailing icon"` | WO-024 implicit | Bind `icon-slot/trailing.visible` |
-| Icon pack / registry default | `INSTANCE_SWAP` | WO-024 implicit | Bind `icon-slot/*.mainComponent` when `DEFAULT_ICON` resolved |
+| Source                                                       | Figma type                  | Created by                                                     | WO-024 action                                                                                        |
+| ------------------------------------------------------------ | --------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `variantMatrix` axis keys (`variant`, `size`, `disabled`, …) | `VARIANT`                   | WO-022 `combineAsVariants` naming (`variant=primary, size=md`) | **Validate** only — assert `componentPropertyDefinitions[axis].variantOptions` matches matrix values |
+| `props[]` with `type: 'boolean'`                             | `BOOLEAN`                   | WO-024 `addComponentProperty`                                  | Create + optional bind                                                                               |
+| `props[]` with `type: 'string'`                              | `TEXT`                      | WO-024                                                         | Create when bind target exists; else skip or create unbound                                          |
+| `props[]` with `type: 'node'`                                | `INSTANCE_SWAP`             | WO-024                                                         | Create when default component id resolvable                                                          |
+| `props[]` with `type: 'enum'` **matching matrix key**        | `VARIANT`                   | Already from matrix                                            | **Skip** — dedupe                                                                                    |
+| `props[]` with `type: 'enum'` **not in matrix**              | —                           | —                                                              | **Skip Figma property** (doc-only until matrix extended)                                             |
+| `props[]` with `type: 'number'`                              | —                           | —                                                              | **Skip Figma property** v1 (no numeric component property type)                                      |
+| `componentProps.label` flag (archetype)                      | `TEXT` `"Label"`            | WO-024 implicit                                                | Create + bind `text/label.characters`                                                                |
+| `componentProps.leadingIcon` + `iconSlots.leading`           | `BOOLEAN` `"Leading icon"`  | WO-024 implicit                                                | Bind `icon-slot/leading.visible`                                                                     |
+| `componentProps.trailingIcon` + `iconSlots.trailing`         | `BOOLEAN` `"Trailing icon"` | WO-024 implicit                                                | Bind `icon-slot/trailing.visible`                                                                    |
+| Icon pack / registry default                                 | `INSTANCE_SWAP`             | WO-024 implicit                                                | Bind `icon-slot/*.mainComponent` when `DEFAULT_ICON` resolved                                        |
 
 **Ticket AC mapping:**
 
@@ -83,13 +83,13 @@ export interface ComponentSpecProp {
 
 **Restrictions (API):**
 
-| Type | `defaultValue` | `options.preferredValues` | `options.description` |
-| ---- | -------------- | ------------------------- | --------------------- |
-| `BOOLEAN` | ✅ boolean | ❌ | ❌ |
-| `TEXT` | ✅ string | ❌ | ❌ |
-| `INSTANCE_SWAP` | ✅ component node id string | ✅ | ❌ |
-| `VARIANT` | ❌ (options from variant names) | ❌ | ❌ |
-| `SLOT` | ❌ | ✅ | ✅ |
+| Type            | `defaultValue`                  | `options.preferredValues` | `options.description` |
+| --------------- | ------------------------------- | ------------------------- | --------------------- |
+| `BOOLEAN`       | ✅ boolean                      | ❌                        | ❌                    |
+| `TEXT`          | ✅ string                       | ❌                        | ❌                    |
+| `INSTANCE_SWAP` | ✅ component node id string     | ✅                        | ❌                    |
+| `VARIANT`       | ❌ (options from variant names) | ❌                        | ❌                    |
+| `SLOT`          | ❌                              | ✅                        | ✅                    |
 
 **Copy-pasteable sequence (per variant component, before or after combine — legacy uses before):**
 
@@ -118,30 +118,30 @@ instance.setProperties({ [propKey]: true });
 
 **Valid `componentPropertyReferences` keys (Figma):**
 
-| Key | Property type | Target node |
-| --- | ------------- | ----------- |
-| `characters` | `TEXT` | `TextNode` |
-| `visible` | `BOOLEAN` | any `SceneNode` |
-| `mainComponent` | `INSTANCE_SWAP` | `InstanceNode` |
+| Key             | Property type   | Target node     |
+| --------------- | --------------- | --------------- |
+| `characters`    | `TEXT`          | `TextNode`      |
+| `visible`       | `BOOLEAN`       | any `SceneNode` |
+| `mainComponent` | `INSTANCE_SWAP` | `InstanceNode`  |
 
 ### 4. Prop type mapping table (contract → Figma)
 
-| `ComponentSpecPropType` | Figma `ComponentPropertyType` | Default coercion | Create property? | Binding convention |
-| ----------------------- | ------------------------------- | ---------------- | ---------------- | ------------------ |
-| `boolean` | `BOOLEAN` | `default ?? false` | ✅ Always | See §5; unbound allowed |
-| `string` | `TEXT` | `String(default ?? '')` | ✅ If bind target OR name in `TEXT_PROP_NAMES` | `text/label` → `characters` when `name` is `label`, `title`, `placeholder`, `helper` |
-| `enum` | `VARIANT` | — | ❌ if axis ∈ `variantMatrix` | N/A — WO-022 owns |
-| `enum` | — | — | ❌ if axis ∉ matrix | Doc-only v1 |
-| `node` | `INSTANCE_SWAP` | component id from registry | ✅ If resolvable | `icon-slot/leading`, `trailing`, `center` → `mainComponent` |
-| `number` | — | — | ❌ v1 | Defer — no Figma numeric property |
+| `ComponentSpecPropType` | Figma `ComponentPropertyType` | Default coercion           | Create property?                               | Binding convention                                                                   |
+| ----------------------- | ----------------------------- | -------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `boolean`               | `BOOLEAN`                     | `default ?? false`         | ✅ Always                                      | See §5; unbound allowed                                                              |
+| `string`                | `TEXT`                        | `String(default ?? '')`    | ✅ If bind target OR name in `TEXT_PROP_NAMES` | `text/label` → `characters` when `name` is `label`, `title`, `placeholder`, `helper` |
+| `enum`                  | `VARIANT`                     | —                          | ❌ if axis ∈ `variantMatrix`                   | N/A — WO-022 owns                                                                    |
+| `enum`                  | —                             | —                          | ❌ if axis ∉ matrix                            | Doc-only v1                                                                          |
+| `node`                  | `INSTANCE_SWAP`               | component id from registry | ✅ If resolvable                               | `icon-slot/leading`, `trailing`, `center` → `mainComponent`                          |
+| `number`                | —                             | —                          | ❌ v1                                          | Defer — no Figma numeric property                                                    |
 
 **Implicit archetype props (from `ComponentSpecArchetypeConfig`):**
 
-| Flag | Figma name | Type | Default | Bind |
-| ---- | ---------- | ---- | ------- | ---- |
-| `componentProps.label` | `Label` | `TEXT` | first label text in variant | `text/label.characters` |
-| `componentProps.leadingIcon` | `Leading icon` | `BOOLEAN` | `true` | `icon-slot/leading.visible` |
-| `componentProps.trailingIcon` | `Trailing icon` | `BOOLEAN` | `false` | `icon-slot/trailing.visible` |
+| Flag                          | Figma name      | Type      | Default                     | Bind                         |
+| ----------------------------- | --------------- | --------- | --------------------------- | ---------------------------- |
+| `componentProps.label`        | `Label`         | `TEXT`    | first label text in variant | `text/label.characters`      |
+| `componentProps.leadingIcon`  | `Leading icon`  | `BOOLEAN` | `true`                      | `icon-slot/leading.visible`  |
+| `componentProps.trailingIcon` | `Trailing icon` | `BOOLEAN` | `false`                     | `icon-slot/trailing.visible` |
 
 Legacy display names use **Title Case with spaces** for element props (`"Leading icon"`) while spec `props[]` uses **exact `name`** from contract (`loading`, not `Loading`) — both patterns coexist; audit rules key off resolved definition keys.
 
@@ -198,14 +198,14 @@ function validateVariantProperties(
 
 ### 8. Testing strategy
 
-| Test | Scope | Assert |
-| ---- | ----- | ------ |
-| Unit: type mapper | `mapSpecPropToFigma()` | boolean → BOOLEAN + default |
-| Unit: filter | `filterPropsForApply()` | enum axis deduped; doc-only skipped |
-| Unit: bind resolver | mock tree | `loading` unbound; `label` → text/label |
-| Integration: loading AC | mock ComponentSet | `componentPropertyDefinitions` contains BOOLEAN default false |
-| Integration: matrix AC | mock set with VARIANT defs | axes match `variantMatrix` |
-| Integration: shadcn button | fixture below | Label + Leading icon + Trailing icon + variant + size |
+| Test                       | Scope                      | Assert                                                        |
+| -------------------------- | -------------------------- | ------------------------------------------------------------- |
+| Unit: type mapper          | `mapSpecPropToFigma()`     | boolean → BOOLEAN + default                                   |
+| Unit: filter               | `filterPropsForApply()`    | enum axis deduped; doc-only skipped                           |
+| Unit: bind resolver        | mock tree                  | `loading` unbound; `label` → text/label                       |
+| Integration: loading AC    | mock ComponentSet          | `componentPropertyDefinitions` contains BOOLEAN default false |
+| Integration: matrix AC     | mock set with VARIANT defs | axes match `variantMatrix`                                    |
+| Integration: shadcn button | fixture below              | Label + Leading icon + Trailing icon + variant + size         |
 
 **Canonical integration fixture** (replace `.button` CSS fixture):
 
@@ -227,7 +227,11 @@ function validateVariantProperties(
   "componentProps": { "label": true, "leadingIcon": true, "trailingIcon": true },
   "iconSlots": { "leading": true, "trailing": true, "size": 24 },
   "bindings": [],
-  "layout": { "direction": "horizontal", "gap": "space/md", "sizing": { "horizontal": "hug", "vertical": "hug" } }
+  "layout": {
+    "direction": "horizontal",
+    "gap": "space/md",
+    "sizing": { "horizontal": "hug", "vertical": "hug" }
+  }
 }
 ```
 
@@ -239,66 +243,66 @@ Path: `src/core/components/scaffold/__fixtures__/component-spec-button-chip.v1.j
 
 ### Repo inventory
 
-| File | Role |
-| ---- | ---- |
-| `packages/contracts/src/componentSpec.v1.ts` | `ComponentSpecProp`, `ComponentSpecPropType`, `variantMatrix`, `componentProps`, `iconSlots` |
-| `src/io/formats/__fixtures__/component-spec-button.json` | **Not** scaffold input — CSS selectors; use new chip fixture |
-| `src/core/components/scaffold/` | **Greenfield** — `applyProperties.ts`, `propBindings.ts`, `types.ts` (WO-024) |
-| `src/core/components/scaffold/applyBindings.ts` | **Greenfield** WO-023 — shared node walker |
-| `src/core/audit/runAudit.ts` | Extend `'component'` scope with prop rules |
-| `DesignOps-plugin/.../01-config-schema.md` §3.3 | Element property semantics |
-| `DesignOps-plugin/.../shadcn-props/button.json` | Reference prop names + `componentProps` flags |
-| `DesignOps-plugin/.../component-composed.mcp.js` L425–489 | Reference `addComponentProperty` + references |
-| `DesignOps-plugin/.../06-audit-checklist.md` S9.5–S9.9 | Audit rules to port |
+| File                                                      | Role                                                                                         |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `packages/contracts/src/componentSpec.v1.ts`              | `ComponentSpecProp`, `ComponentSpecPropType`, `variantMatrix`, `componentProps`, `iconSlots` |
+| `src/io/formats/__fixtures__/component-spec-button.json`  | **Not** scaffold input — CSS selectors; use new chip fixture                                 |
+| `src/core/components/scaffold/`                           | **Greenfield** — `applyProperties.ts`, `propBindings.ts`, `types.ts` (WO-024)                |
+| `src/core/components/scaffold/applyBindings.ts`           | **Greenfield** WO-023 — shared node walker                                                   |
+| `src/core/audit/runAudit.ts`                              | Extend `'component'` scope with prop rules                                                   |
+| `DesignOps-plugin/.../01-config-schema.md` §3.3           | Element property semantics                                                                   |
+| `DesignOps-plugin/.../shadcn-props/button.json`           | Reference prop names + `componentProps` flags                                                |
+| `DesignOps-plugin/.../component-composed.mcp.js` L425–489 | Reference `addComponentProperty` + references                                                |
+| `DesignOps-plugin/.../06-audit-checklist.md` S9.5–S9.9    | Audit rules to port                                                                          |
 
 ### Official API / platform facts
 
-| Fact | Source |
-| ---- | ------ |
-| `addComponentProperty(name, type, defaultValue, options?)` → suffixed key string | [ComponentNode](https://developers.figma.com/docs/plugins/api/ComponentNode/#addcomponentproperty) — 2026-05-28 |
-| `VARIANT` properties have `variantOptions`; no defaultValue | Same + [componentPropertyDefinitions](https://developers.figma.com/docs/plugins/api/properties/ComponentPropertiesMixin-componentpropertydefinitions/) |
-| `componentPropertyReferences` required for property to affect nested layers | [Stack Overflow + Figma docs](https://stackoverflow.com/questions/77731926/figma-plugin-api-how-to-add-component-properties-to-component) — 2026-05-28 |
-| Main thread: use `pluginLog()` not `console.debug` | `memory.md` |
-| ES2017 target — no `?.` / `??` in `applyProperties.ts` | `memory.md` |
+| Fact                                                                             | Source                                                                                                                                                 |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `addComponentProperty(name, type, defaultValue, options?)` → suffixed key string | [ComponentNode](https://developers.figma.com/docs/plugins/api/ComponentNode/#addcomponentproperty) — 2026-05-28                                        |
+| `VARIANT` properties have `variantOptions`; no defaultValue                      | Same + [componentPropertyDefinitions](https://developers.figma.com/docs/plugins/api/properties/ComponentPropertiesMixin-componentpropertydefinitions/) |
+| `componentPropertyReferences` required for property to affect nested layers      | [Stack Overflow + Figma docs](https://stackoverflow.com/questions/77731926/figma-plugin-api-how-to-add-component-properties-to-component) — 2026-05-28 |
+| Main thread: use `pluginLog()` not `console.debug`                               | `memory.md`                                                                                                                                            |
+| ES2017 target — no `?.` / `??` in `applyProperties.ts`                           | `memory.md`                                                                                                                                            |
 
 ### Cross-ticket matrix
 
-| Ticket | Interface / artifact | WO-024 consumes or produces |
-| ------ | -------------------- | --------------------------- |
-| WO-022 | `scaffold()` → `ComponentSetNode`, variant names, layer tree | **Consumes** set + tree; **requires** VARIANT axes from matrix |
-| WO-023 | `applyBindings()`, node path walker | **Consumes** walker; runs **before** WO-024 |
-| WO-010 | `runAudit`, `AuditReportV1` | **Produces** S9.5–S9.9 prop audit rules |
-| WO-025 | Usage frame `setProperties` | **Consumes** returned prop keys |
-| WO-041+ | Importers → `props[]` / `variantMatrix` | **Consumes** normalized spec |
-| WO-003 | `ComponentSpecV1` contract | **Consumes** — no v2 fields |
+| Ticket  | Interface / artifact                                         | WO-024 consumes or produces                                    |
+| ------- | ------------------------------------------------------------ | -------------------------------------------------------------- |
+| WO-022  | `scaffold()` → `ComponentSetNode`, variant names, layer tree | **Consumes** set + tree; **requires** VARIANT axes from matrix |
+| WO-023  | `applyBindings()`, node path walker                          | **Consumes** walker; runs **before** WO-024                    |
+| WO-010  | `runAudit`, `AuditReportV1`                                  | **Produces** S9.5–S9.9 prop audit rules                        |
+| WO-025  | Usage frame `setProperties`                                  | **Consumes** returned prop keys                                |
+| WO-041+ | Importers → `props[]` / `variantMatrix`                      | **Consumes** normalized spec                                   |
+| WO-003  | `ComponentSpecV1` contract                                   | **Consumes** — no v2 fields                                    |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | ---------------------- |
-| D1 | Per-variant `addComponentProperty`, not set-root only | Legacy-proven; bindings need variant child refs | Single call on `ComponentSetNode` without iteration |
-| D2 | VARIANT props owned by WO-022; WO-024 validates | `combineAsVariants` creates VARIANT defs | Re-add VARIANT via API (duplicate / error) |
-| D3 | Skip `props[]` enum when key ∈ `variantMatrix` | Avoid duplicate disabled/size/variant | Second VARIANT property |
-| D4 | Skip doc-only prop names (`className`, `asChild`, …) | No Figma designer value | Create inert TEXT props |
-| D5 | Skip `number` type for Figma v1 | No numeric component property in API | Coerce to TEXT |
-| D6 | Implicit `componentProps` + `iconSlots` flags → element props | Parity with DesignOps chip/button | Require explicit props[] only |
-| D7 | Exact `props[].name` as Figma display name | Matches AC (`loading`) | Title Case all names |
-| D8 | Soft-fail per variant + aggregate audit | Legacy §3.3.3 + PRD no silent pass | Hard throw on first error |
-| D9 | `ApplyPropertiesResult` returns `{ propKeys, variantValidation, failures }` | WO-025 + audit need keys | Void return |
-| D10 | Pipeline: bindings → properties | WO-023 research D8 | Properties before bindings |
+| ID  | Decision                                                                    | Rationale                                       | Alternatives rejected                               |
+| --- | --------------------------------------------------------------------------- | ----------------------------------------------- | --------------------------------------------------- |
+| D1  | Per-variant `addComponentProperty`, not set-root only                       | Legacy-proven; bindings need variant child refs | Single call on `ComponentSetNode` without iteration |
+| D2  | VARIANT props owned by WO-022; WO-024 validates                             | `combineAsVariants` creates VARIANT defs        | Re-add VARIANT via API (duplicate / error)          |
+| D3  | Skip `props[]` enum when key ∈ `variantMatrix`                              | Avoid duplicate disabled/size/variant           | Second VARIANT property                             |
+| D4  | Skip doc-only prop names (`className`, `asChild`, …)                        | No Figma designer value                         | Create inert TEXT props                             |
+| D5  | Skip `number` type for Figma v1                                             | No numeric component property in API            | Coerce to TEXT                                      |
+| D6  | Implicit `componentProps` + `iconSlots` flags → element props               | Parity with DesignOps chip/button               | Require explicit props[] only                       |
+| D7  | Exact `props[].name` as Figma display name                                  | Matches AC (`loading`)                          | Title Case all names                                |
+| D8  | Soft-fail per variant + aggregate audit                                     | Legacy §3.3.3 + PRD no silent pass              | Hard throw on first error                           |
+| D9  | `ApplyPropertiesResult` returns `{ propKeys, variantValidation, failures }` | WO-025 + audit need keys                        | Void return                                         |
+| D10 | Pipeline: bindings → properties                                             | WO-023 research D8                              | Properties before bindings                          |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-024-0 | Repo grep: no `applyProperties` / scaffold dir | Greenfield confirmed | ✅ PASS (2026-05-28) |
-| SPK-024-1 | Read Figma `addComponentProperty` + legacy composed bundle | Type list + suffixed key + references | ✅ PASS (2026-05-28) |
-| SPK-024-2 | Cross-read WO-023 pipeline order | Properties after bindings | ✅ PASS |
-| SPK-024-3 | Live sandbox: boolean `loading` on chip ComponentSet | Panel shows BOOLEAN default false | ☐ **Deferred to `/build` VQA** — requires WO-022 scaffold |
+| Spike ID  | Procedure                                                  | Pass criteria                         | Status                                                    |
+| --------- | ---------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------- |
+| SPK-024-0 | Repo grep: no `applyProperties` / scaffold dir             | Greenfield confirmed                  | ✅ PASS (2026-05-28)                                      |
+| SPK-024-1 | Read Figma `addComponentProperty` + legacy composed bundle | Type list + suffixed key + references | ✅ PASS (2026-05-28)                                      |
+| SPK-024-2 | Cross-read WO-023 pipeline order                           | Properties after bindings             | ✅ PASS                                                   |
+| SPK-024-3 | Live sandbox: boolean `loading` on chip ComponentSet       | Panel shows BOOLEAN default false     | ☐ **Deferred to `/build` VQA** — requires WO-022 scaffold |
 
 **Research-complete gate:** SPK-024-3 deferred until WO-022 lands (same pattern as SPK-023-3).
 
@@ -306,15 +310,15 @@ Path: `src/core/components/scaffold/__fixtures__/component-spec-button-chip.v1.j
 
 ## Risk register
 
-| Risk | Severity | Likelihood | Mitigation |
-| ---- | -------- | ---------- | ---------- |
-| WO-022 variant naming ≠ matrix keys | High | Med | Shared `formatVariantName()` helper; validation in WO-024 |
-| Duplicate prop: matrix axis + props[] boolean | Med | High | D3 dedup filter |
-| `addComponentProperty` throws on read-only library | Med | Low | Pre-check `componentSet.remote`; fail op early |
-| Implicit Label prop vs spec `label` string prop | Med | Med | Prefer explicit props[]; skip implicit if name collision |
-| INSTANCE_SWAP without default component | Med | Med | Skip swap; audit WARN; placeholder slots unchanged |
-| Unbound boolean props confuse designers | Low | Med | Document in usage frame (WO-025); optional bind map expansion |
-| Ticket says ComponentSet-only API call | Low | High | D1 documents iteration; update ticket requirement wording |
+| Risk                                               | Severity | Likelihood | Mitigation                                                    |
+| -------------------------------------------------- | -------- | ---------- | ------------------------------------------------------------- |
+| WO-022 variant naming ≠ matrix keys                | High     | Med        | Shared `formatVariantName()` helper; validation in WO-024     |
+| Duplicate prop: matrix axis + props[] boolean      | Med      | High       | D3 dedup filter                                               |
+| `addComponentProperty` throws on read-only library | Med      | Low        | Pre-check `componentSet.remote`; fail op early                |
+| Implicit Label prop vs spec `label` string prop    | Med      | Med        | Prefer explicit props[]; skip implicit if name collision      |
+| INSTANCE_SWAP without default component            | Med      | Med        | Skip swap; audit WARN; placeholder slots unchanged            |
+| Unbound boolean props confuse designers            | Low      | Med        | Document in usage frame (WO-025); optional bind map expansion |
+| Ticket says ComponentSet-only API call             | Low      | High       | D1 documents iteration; update ticket requirement wording     |
 
 ---
 
@@ -356,11 +360,11 @@ export function applyProperties(
 
 ## Open questions
 
-| # | Question | Status |
-| - | -------- | ------ |
-| OQ-1 | Should unbound booleans (`loading`) get a default bind target in v1? | **RESOLVED — no**; AC requires property existence only |
-| OQ-2 | Title Case element props vs exact spec names for implicit flags? | **RESOLVED — legacy Title Case for implicit; exact for props[]** |
-| OQ-3 | Live SPK-024-3 timing | **Deferred** until WO-022 build complete |
+| #    | Question                                                             | Status                                                           |
+| ---- | -------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| OQ-1 | Should unbound booleans (`loading`) get a default bind target in v1? | **RESOLVED — no**; AC requires property existence only           |
+| OQ-2 | Title Case element props vs exact spec names for implicit flags?     | **RESOLVED — legacy Title Case for implicit; exact for props[]** |
+| OQ-3 | Live SPK-024-3 timing                                                | **Deferred** until WO-022 build complete                         |
 
 ---
 

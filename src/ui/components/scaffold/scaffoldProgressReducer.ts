@@ -130,7 +130,8 @@ export function reduceScaffoldProgress(
     });
     return Object.assign({}, state, {
       steps: erroredSteps,
-      audits: progress.audit !== undefined ? upsertAudit(state.audits, progress.audit) : state.audits,
+      audits:
+        progress.audit !== undefined ? upsertAudit(state.audits, progress.audit) : state.audits,
       running: false,
       error: progress.detail !== undefined ? progress.detail : 'Scaffold step failed',
       failedStep: progress.step,

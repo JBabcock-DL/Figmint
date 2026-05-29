@@ -54,14 +54,14 @@ JSON Schema at `packages/contracts/dist/registry.v1.schema.json` (retrieved 2026
 
 **Evidence:** `DesignOps-plugin/skills/create-component/resolver/merge-registry.mjs` (94 lines) is the authoritative upsert implementation:
 
-| Rule | Behavior |
-| ---- | -------- |
-| Missing registry file | Create `{ fileKey, components: {} }` then merge |
-| `fileKey` mismatch | **Refuse** merge — exit 1 / throw `REGISTRY_FILE_KEY_MISMATCH` |
-| Component key | Upsert `registry.components[component] = record` — **replace**, never append duplicate |
-| Required entry fields | `nodeId`, `key`, `pageName`, `publishedAt`, `version` (integer ≥ 1) |
-| Optional fields | `cvaHash` (default `null`), `composedChildVersions` (object, composites only) |
-| Serialization | `JSON.stringify(registry, null, 2)` + trailing newline |
+| Rule                  | Behavior                                                                               |
+| --------------------- | -------------------------------------------------------------------------------------- |
+| Missing registry file | Create `{ fileKey, components: {} }` then merge                                        |
+| `fileKey` mismatch    | **Refuse** merge — exit 1 / throw `REGISTRY_FILE_KEY_MISMATCH`                         |
+| Component key         | Upsert `registry.components[component] = record` — **replace**, never append duplicate |
+| Required entry fields | `nodeId`, `key`, `pageName`, `publishedAt`, `version` (integer ≥ 1)                    |
+| Optional fields       | `cvaHash` (default `null`), `composedChildVersions` (object, composites only)          |
+| Serialization         | `JSON.stringify(registry, null, 2)` + trailing newline                                 |
 
 Legacy CLI entry shape wraps component name outside the record: `{ fileKey, component, nodeId, key, … }`. FigHub **`buildRegistryEntry`** accepts scaffold output + spec and returns `{ componentKey, entry }` for **`mergeRegistryEntry`**.
 
@@ -73,14 +73,14 @@ Legacy CLI entry shape wraps component name outside the record: `{ fileKey, comp
 
 **Evidence:** `src/io/sources/github.ts` — `loadFromGitHub(repoUrl, path, ref?)` fetches via `postContentsFetch`, parses with `parseTextToDocument`, returns `LoadedDocument` with `GitHubSourceMeta` (`sha`, `path`, `repoUrl`).
 
-| Concern | Locked behavior |
-| ------- | ---------------- |
-| Default path | `.fighub-registry.json` (basename `.fighub-registry` from WO-020 + `.json` extension) |
-| Configurable path | Defer full FR-CONF-5 settings UI; accept `registryPath` parameter defaulting to `.fighub-registry.json` |
-| Missing file (404) | Treat as **greenfield** — return `null` / empty components, do not fail scaffold |
-| Invalid JSON | Surface `ValidationError` to UI; scaffold may still complete with in-memory-only registry |
-| Legacy filename | Accept read of `.designops-registry.json` when designer's repo still uses legacy name (normalization only) |
-| Legacy body (no `v`/`kind`) | `normalizeRegistryInput(parsed)` → wrap as `RegistryV1` if `fileKey` + `components` present |
+| Concern                     | Locked behavior                                                                                            |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Default path                | `.fighub-registry.json` (basename `.fighub-registry` from WO-020 + `.json` extension)                      |
+| Configurable path           | Defer full FR-CONF-5 settings UI; accept `registryPath` parameter defaulting to `.fighub-registry.json`    |
+| Missing file (404)          | Treat as **greenfield** — return `null` / empty components, do not fail scaffold                           |
+| Invalid JSON                | Surface `ValidationError` to UI; scaffold may still complete with in-memory-only registry                  |
+| Legacy filename             | Accept read of `.designops-registry.json` when designer's repo still uses legacy name (normalization only) |
+| Legacy body (no `v`/`kind`) | `normalizeRegistryInput(parsed)` → wrap as `RegistryV1` if `fileKey` + `components` present                |
 
 **Detection:** `src/io/sources/detect.ts` recognizes `v === 1 && kind === 'registry'`. Legacy bodies without envelope fall through to `unknown-contract` — **`normalizeRegistryInput`** runs **before** detect when path ends with `registry.json` or caller hints registry.
 
@@ -90,15 +90,15 @@ Legacy CLI entry shape wraps component name outside the record: `{ fileKey, comp
 
 **Evidence:** WO-022 research defines `ScaffoldResult` with `componentSet`, `variantCount`, `replacedExisting` (`component-scaffold-engine.md` §Decision D8). WO-026 consumes:
 
-| `RegistryComponentEntry` field | Source |
-| ------------------------------ | ------ |
-| `nodeId` | `componentSet.id` (ComponentSet node — ticket AC) |
-| `key` | `componentSet.key` (Figma stable component key for Code Connect / drift) |
-| `pageName` | `targetPage.name` from scaffold call |
-| `publishedAt` | ISO-8601 UTC at merge time |
-| `version` | `(existing.components[spec.name]?.version ?? 0) + 1` |
-| `cvaHash` | Optional — FNV-1a of canonical `variantMatrix` JSON if spec provides no precomputed hash; `null` when absent |
-| `composedChildVersions` | When `spec.composes?.length`: map each child kebab name → `existingRegistry.components[child]?.version ?? null` at merge time (Axis B snapshot per legacy drift §3B.1) |
+| `RegistryComponentEntry` field | Source                                                                                                                                                                 |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nodeId`                       | `componentSet.id` (ComponentSet node — ticket AC)                                                                                                                      |
+| `key`                          | `componentSet.key` (Figma stable component key for Code Connect / drift)                                                                                               |
+| `pageName`                     | `targetPage.name` from scaffold call                                                                                                                                   |
+| `publishedAt`                  | ISO-8601 UTC at merge time                                                                                                                                             |
+| `version`                      | `(existing.components[spec.name]?.version ?? 0) + 1`                                                                                                                   |
+| `cvaHash`                      | Optional — FNV-1a of canonical `variantMatrix` JSON if spec provides no precomputed hash; `null` when absent                                                           |
+| `composedChildVersions`        | When `spec.composes?.length`: map each child kebab name → `existingRegistry.components[child]?.version ?? null` at merge time (Axis B snapshot per legacy drift §3B.1) |
 
 **Component map key:** **`spec.name`** (PascalCase display name, e.g. `"Button"`). Legacy repos keyed by kebab (`button`) — **`loadRegistryFromGitHub`** may optionally alias-read kebab key when PascalCase miss and exactly one case-variant exists; do not dual-write.
 
@@ -108,14 +108,14 @@ Legacy CLI entry shape wraps component name outside the record: `{ fileKey, comp
 
 **Evidence:** WO-020 shipped components:
 
-| Module | Role |
-| ------ | ---- |
-| `src/ui/components/ExportSheet.tsx` | Format/sink UI; registry hides MD checkbox |
-| `src/ui/export/exportSheetReducer.ts` | Registry → `{ json: true, md: false }` initial formats |
-| `src/ui/export/defaultPaths.ts` | Registry basename → `.fighub-registry` |
-| `src/ui/export/serializeForExport.ts` | Registry → single `{basename}.json` via `stableStringify` |
-| `src/ui/export/runExport.ts` | Parallel sinks; GitHub PR payload builder |
-| `src/ui/export/availableSinks.ts` | `github-pr` when `flags.githubOAuth && flags.githubPRSink` |
+| Module                                | Role                                                       |
+| ------------------------------------- | ---------------------------------------------------------- |
+| `src/ui/components/ExportSheet.tsx`   | Format/sink UI; registry hides MD checkbox                 |
+| `src/ui/export/exportSheetReducer.ts` | Registry → `{ json: true, md: false }` initial formats     |
+| `src/ui/export/defaultPaths.ts`       | Registry basename → `.fighub-registry`                     |
+| `src/ui/export/serializeForExport.ts` | Registry → single `{basename}.json` via `stableStringify`  |
+| `src/ui/export/runExport.ts`          | Parallel sinks; GitHub PR payload builder                  |
+| `src/ui/export/availableSinks.ts`     | `github-pr` when `flags.githubOAuth && flags.githubPRSink` |
 
 **Post-scaffold flow (locked):**
 
@@ -141,12 +141,12 @@ scaffold(spec, page) → ScaffoldResult
 
 **Evidence:** Cross-ticket matrix:
 
-| Ticket | Needs from WO-026 |
-| ------ | ----------------- |
-| WO-022 composed archetype | **Read** registry (optional param) — child `nodeId` before composite draw |
-| WO-030 / WO-031 (Sprint 6) | Repo `.fighub-registry.json` as drift baseline |
-| WO-043 dependency scanner | Registry lookup for sub-component refs |
-| WO-037 handoff emission | May bundle registry snapshot in handoff context (separate ticket) |
+| Ticket                     | Needs from WO-026                                                         |
+| -------------------------- | ------------------------------------------------------------------------- |
+| WO-022 composed archetype  | **Read** registry (optional param) — child `nodeId` before composite draw |
+| WO-030 / WO-031 (Sprint 6) | Repo `.fighub-registry.json` as drift baseline                            |
+| WO-043 dependency scanner  | Registry lookup for sub-component refs                                    |
+| WO-037 handoff emission    | May bundle registry snapshot in handoff context (separate ticket)         |
 
 WO-026 **write** path unblocks designer-driven repo sync; WO-022 **read** path can use in-memory merge result before export completes.
 
@@ -172,85 +172,85 @@ WO-026 **write** path unblocks designer-driven repo sync; WO-022 **read** path c
 
 ### Repo inventory
 
-| Path | Role | Status |
-| ---- | ---- | ------ |
-| `packages/contracts/src/registry.v1.ts` | Type definitions | ✅ Exists |
-| `packages/contracts/dist/registry.v1.schema.json` | AJV validation | ✅ Exists |
-| `src/io/sources/github.ts` | `loadFromGitHub` | ✅ Exists |
-| `src/io/sources/detect.ts` | `kind === 'registry'` detection | ✅ Exists |
-| `src/io/sources/parseText.ts` | JSON parse + detect | ✅ Exists |
-| `src/ui/components/ExportSheet.tsx` | Export UI | ✅ WO-020 |
-| `src/ui/export/*` | Reducer, paths, serialize, runExport | ✅ WO-020 |
-| `src/io/formats/stableStringify.ts` | Deterministic JSON | ✅ Exists |
-| `src/config/flags.ts` | OAuth / PR sink flags | ✅ Exists |
-| `src/ui/github/useGitHubConnect.ts` | Repo URL + OAuth state | ✅ WO-016 |
-| `src/ui/tabs/Settings.tsx` | `loadFromGitHub` smoke test (tokens only today) | ✅ Exists |
-| `src/core/components/registry.ts` | Merge + load module | ❌ Greenfield |
-| `tests/unit/core/components/registry.test.ts` | Merge unit tests | ❌ Greenfield |
+| Path                                              | Role                                            | Status        |
+| ------------------------------------------------- | ----------------------------------------------- | ------------- |
+| `packages/contracts/src/registry.v1.ts`           | Type definitions                                | ✅ Exists     |
+| `packages/contracts/dist/registry.v1.schema.json` | AJV validation                                  | ✅ Exists     |
+| `src/io/sources/github.ts`                        | `loadFromGitHub`                                | ✅ Exists     |
+| `src/io/sources/detect.ts`                        | `kind === 'registry'` detection                 | ✅ Exists     |
+| `src/io/sources/parseText.ts`                     | JSON parse + detect                             | ✅ Exists     |
+| `src/ui/components/ExportSheet.tsx`               | Export UI                                       | ✅ WO-020     |
+| `src/ui/export/*`                                 | Reducer, paths, serialize, runExport            | ✅ WO-020     |
+| `src/io/formats/stableStringify.ts`               | Deterministic JSON                              | ✅ Exists     |
+| `src/config/flags.ts`                             | OAuth / PR sink flags                           | ✅ Exists     |
+| `src/ui/github/useGitHubConnect.ts`               | Repo URL + OAuth state                          | ✅ WO-016     |
+| `src/ui/tabs/Settings.tsx`                        | `loadFromGitHub` smoke test (tokens only today) | ✅ Exists     |
+| `src/core/components/registry.ts`                 | Merge + load module                             | ❌ Greenfield |
+| `tests/unit/core/components/registry.test.ts`     | Merge unit tests                                | ❌ Greenfield |
 
 ### Patterns to mirror
 
-| Pattern | Source | FigHub target |
-| ------- | ------ | -------------- |
-| Upsert by component key | `merge-registry.mjs` L67–87 | `mergeRegistryEntry()` |
-| fileKey guard | `merge-registry.mjs` L74–78 | throw typed error |
-| GitHub read via postMessage | `Settings.tsx` L35–42 | `loadRegistryFromGitHub()` |
-| Export default basename | `defaultPaths.ts` L33–34 | reuse, append `.json` only in serialize |
-| Registry JSON-only export | `serializeForExport.ts` L13–21 | consume from ExportSheet |
-| Org vs Community sinks | `availableSinks.ts` L6–11 | `defaultSinks` selection helper |
+| Pattern                     | Source                         | FigHub target                           |
+| --------------------------- | ------------------------------ | --------------------------------------- |
+| Upsert by component key     | `merge-registry.mjs` L67–87    | `mergeRegistryEntry()`                  |
+| fileKey guard               | `merge-registry.mjs` L74–78    | throw typed error                       |
+| GitHub read via postMessage | `Settings.tsx` L35–42          | `loadRegistryFromGitHub()`              |
+| Export default basename     | `defaultPaths.ts` L33–34       | reuse, append `.json` only in serialize |
+| Registry JSON-only export   | `serializeForExport.ts` L13–21 | consume from ExportSheet                |
+| Org vs Community sinks      | `availableSinks.ts` L6–11      | `defaultSinks` selection helper         |
 
 ### Official API / platform facts
 
-| API / limit | Usage | Reference (retrieved 2026-05-28) |
-| ----------- | ----- | -------------------------------- |
-| `ComponentSetNode.id` / `.key` | Registry entry identity | [ComponentSetNode](https://developers.figma.com/docs/plugins/api/componentsetnode/) |
-| `figma.fileKey` | Registry `fileKey` top-level | [figma.fileKey](https://developers.figma.com/docs/plugins/api/figma/#filekey) |
-| GitHub Contents API | Read registry JSON | [GET repository contents](https://docs.github.com/en/rest/repos/contents#get-repository-content) — via WO-016 relay |
-| pluginData 100 kB/key | Not used for registry file (repo is SoT) | [setPluginData](https://developers.figma.com/docs/plugins/api/node-properties/#setplugindata) |
+| API / limit                    | Usage                                    | Reference (retrieved 2026-05-28)                                                                                    |
+| ------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `ComponentSetNode.id` / `.key` | Registry entry identity                  | [ComponentSetNode](https://developers.figma.com/docs/plugins/api/componentsetnode/)                                 |
+| `figma.fileKey`                | Registry `fileKey` top-level             | [figma.fileKey](https://developers.figma.com/docs/plugins/api/figma/#filekey)                                       |
+| GitHub Contents API            | Read registry JSON                       | [GET repository contents](https://docs.github.com/en/rest/repos/contents#get-repository-content) — via WO-016 relay |
+| pluginData 100 kB/key          | Not used for registry file (repo is SoT) | [setPluginData](https://developers.figma.com/docs/plugins/api/node-properties/#setplugindata)                       |
 
 ### Cross-ticket matrix
 
-| Ticket | Interface / artifact | WO-026 consumes or produces |
-| ------ | -------------------- | --------------------------- |
-| WO-003 | `RegistryV1`, JSON Schema | **Produces** validated documents |
-| WO-016 | `loadFromGitHub`, OAuth | **Consumes** read path |
-| WO-020 | ExportSheet, default paths, sinks | **Consumes** emission UI |
-| WO-022 | `ScaffoldResult`, `ComponentSpecV1` | **Consumes** scaffold output |
-| WO-027 | Components tab orchestration | **Produces** API called post-scaffold |
-| WO-030 / WO-031 | Drift detector | **Produces** repo registry file (via export) |
-| Sprint 8 Code Connect | Mapping URLs | **Out of scope** — uses `key` from registry |
+| Ticket                | Interface / artifact                | WO-026 consumes or produces                  |
+| --------------------- | ----------------------------------- | -------------------------------------------- |
+| WO-003                | `RegistryV1`, JSON Schema           | **Produces** validated documents             |
+| WO-016                | `loadFromGitHub`, OAuth             | **Consumes** read path                       |
+| WO-020                | ExportSheet, default paths, sinks   | **Consumes** emission UI                     |
+| WO-022                | `ScaffoldResult`, `ComponentSpecV1` | **Consumes** scaffold output                 |
+| WO-027                | Components tab orchestration        | **Produces** API called post-scaffold        |
+| WO-030 / WO-031       | Drift detector                      | **Produces** repo registry file (via export) |
+| Sprint 8 Code Connect | Mapping URLs                        | **Out of scope** — uses `key` from registry  |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D1 | Pure module `src/core/components/registry.ts` | Testable; no UI in core | Inline merge in Components tab |
-| D2 | Port `merge-registry.mjs` upsert semantics | Proven legacy behavior; drift tooling expects it | Custom merge with duplicate rows |
-| D3 | Map key = `spec.name` (PascalCase) | Ticket AC "Button"; matches ComponentSpec | Legacy kebab-only keys |
-| D4 | Auto-increment `version` on upsert | Enables Sprint 6 stale detection | Caller-supplied version only |
-| D5 | Always refresh `publishedAt` on upsert | Matches legacy drift timestamps | Preserve original publishedAt |
-| D6 | 404 → empty registry (greenfield) | Scaffold must not block on missing file | Fail closed on missing registry |
-| D7 | fileKey mismatch → error | Prevent cross-file pollution (legacy L74–78) | Silent overwrite |
-| D8 | Stage + ExportSheet; no silent PR | FR-SCAF-6 + preview-first PRD §11.4 | Auto-open PR without confirmation |
-| D9 | Default sinks: Org `github-pr`, Community `download` | Ticket Req 3 + WO-021 gating | Always download |
-| D10 | Normalize legacy `.designops-registry.json` on read | Migration from DesignOps repos | Reject non-v1 bodies |
-| D11 | No spec fields in registry entry | Contract `additionalProperties: false` | Extend entry with archetype/props (needs v2) |
-| D12 | No Code Connect URL in registry | Not in schema; `key` suffices | Add v2 field for mapping URL |
-| D13 | `composedChildVersions` snapshot at composite merge | Legacy Axis B drift (`sync-design-system` §3B.1) | Omit until Sprint 6 |
+| ID  | Decision                                             | Rationale                                        | Alternatives rejected                        |
+| --- | ---------------------------------------------------- | ------------------------------------------------ | -------------------------------------------- |
+| D1  | Pure module `src/core/components/registry.ts`        | Testable; no UI in core                          | Inline merge in Components tab               |
+| D2  | Port `merge-registry.mjs` upsert semantics           | Proven legacy behavior; drift tooling expects it | Custom merge with duplicate rows             |
+| D3  | Map key = `spec.name` (PascalCase)                   | Ticket AC "Button"; matches ComponentSpec        | Legacy kebab-only keys                       |
+| D4  | Auto-increment `version` on upsert                   | Enables Sprint 6 stale detection                 | Caller-supplied version only                 |
+| D5  | Always refresh `publishedAt` on upsert               | Matches legacy drift timestamps                  | Preserve original publishedAt                |
+| D6  | 404 → empty registry (greenfield)                    | Scaffold must not block on missing file          | Fail closed on missing registry              |
+| D7  | fileKey mismatch → error                             | Prevent cross-file pollution (legacy L74–78)     | Silent overwrite                             |
+| D8  | Stage + ExportSheet; no silent PR                    | FR-SCAF-6 + preview-first PRD §11.4              | Auto-open PR without confirmation            |
+| D9  | Default sinks: Org `github-pr`, Community `download` | Ticket Req 3 + WO-021 gating                     | Always download                              |
+| D10 | Normalize legacy `.designops-registry.json` on read  | Migration from DesignOps repos                   | Reject non-v1 bodies                         |
+| D11 | No spec fields in registry entry                     | Contract `additionalProperties: false`           | Extend entry with archetype/props (needs v2) |
+| D12 | No Code Connect URL in registry                      | Not in schema; `key` suffices                    | Add v2 field for mapping URL                 |
+| D13 | `composedChildVersions` snapshot at composite merge  | Legacy Axis B drift (`sync-design-system` §3B.1) | Omit until Sprint 6                          |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-026-1 | Unit: merge into empty registry, then upsert same key | Second merge replaces entry; `version` 1→2; other keys untouched | ☐ pending — `/build` Phase 1 |
-| SPK-026-2 | Unit: `fileKey` mismatch throws | Error code `REGISTRY_FILE_KEY_MISMATCH`; no mutation | ☐ pending |
-| SPK-026-3 | Unit: normalize legacy body `{ fileKey, components }` without `v`/`kind` | Output validates against AJV schema | ☐ pending |
-| SPK-026-4 | Integration: scaffold Button in sandbox → ExportSheet → download `.fighub-registry.json` | File contains `Button` entry with ComponentSet `nodeId` | ☐ pending — VQA / WO-027 |
-| SPK-026-5 | Org build: ExportSheet with `github-pr` selected → PR contains registry JSON | PR file path `.fighub-registry.json`; valid JSON | ☐ deferred — requires OAuth + connected repo (WO-016 PASS) |
+| Spike ID  | Procedure                                                                                | Pass criteria                                                    | Status                                                     |
+| --------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------- |
+| SPK-026-1 | Unit: merge into empty registry, then upsert same key                                    | Second merge replaces entry; `version` 1→2; other keys untouched | ☐ pending — `/build` Phase 1                               |
+| SPK-026-2 | Unit: `fileKey` mismatch throws                                                          | Error code `REGISTRY_FILE_KEY_MISMATCH`; no mutation             | ☐ pending                                                  |
+| SPK-026-3 | Unit: normalize legacy body `{ fileKey, components }` without `v`/`kind`                 | Output validates against AJV schema                              | ☐ pending                                                  |
+| SPK-026-4 | Integration: scaffold Button in sandbox → ExportSheet → download `.fighub-registry.json` | File contains `Button` entry with ComponentSet `nodeId`          | ☐ pending — VQA / WO-027                                   |
+| SPK-026-5 | Org build: ExportSheet with `github-pr` selected → PR contains registry JSON             | PR file path `.fighub-registry.json`; valid JSON                 | ☐ deferred — requires OAuth + connected repo (WO-016 PASS) |
 
 **Research-complete gate:** SPK-026-1..3 are unit-test gates before `/build`; SPK-026-4..5 run at VQA with WO-027.
 
@@ -258,15 +258,15 @@ WO-026 **write** path unblocks designer-driven repo sync; WO-022 **read** path c
 
 ## Risk register
 
-| Risk | Severity | Likelihood | Mitigation |
-| ---- | -------- | ---------- | ---------- |
-| PascalCase vs kebab registry keys break legacy repos | Medium | Medium | Normalization read alias; document migration in plan |
-| Designer skips ExportSheet — repo stale | Medium | High | WO-027 UI copy: "Export registry to sync repo"; badge in Sync tab (Sprint 6) |
-| `loadFromGitHub` fails (OAuth/network) | Medium | Medium | Allow in-memory registry + export to download sink without read |
-| Invalid existing registry blocks merge | Low | Low | Parse errors surface; offer "Replace registry" with greenfield |
-| Ticket Req 2 implies spec fields in registry | Low | High | Refine ticket Requirements (done in research pass) |
-| UI fixture invalid shape misleads tests | Low | Medium | Fix `tests/fixtures/ui/export/registry.json` in build |
-| Composed `composedChildVersions` wrong if child not in registry | Medium | Medium | Set null for missing children; composed archetype already errors (WO-022) |
+| Risk                                                            | Severity | Likelihood | Mitigation                                                                   |
+| --------------------------------------------------------------- | -------- | ---------- | ---------------------------------------------------------------------------- |
+| PascalCase vs kebab registry keys break legacy repos            | Medium   | Medium     | Normalization read alias; document migration in plan                         |
+| Designer skips ExportSheet — repo stale                         | Medium   | High       | WO-027 UI copy: "Export registry to sync repo"; badge in Sync tab (Sprint 6) |
+| `loadFromGitHub` fails (OAuth/network)                          | Medium   | Medium     | Allow in-memory registry + export to download sink without read              |
+| Invalid existing registry blocks merge                          | Low      | Low        | Parse errors surface; offer "Replace registry" with greenfield               |
+| Ticket Req 2 implies spec fields in registry                    | Low      | High       | Refine ticket Requirements (done in research pass)                           |
+| UI fixture invalid shape misleads tests                         | Low      | Medium     | Fix `tests/fixtures/ui/export/registry.json` in build                        |
+| Composed `composedChildVersions` wrong if child not in registry | Medium   | Medium     | Set null for missing children; composed archetype already errors (WO-022)    |
 
 ---
 
@@ -307,12 +307,12 @@ export async function loadRegistryFromGitHub(
 
 ## Open questions
 
-| # | Question | Owner | Status |
-| - | -------- | ----- | ------ |
-| OQ-1 | Configurable registry path (FR-CONF-5) in Settings? | WO-027 / Settings ticket | **OPEN** — default `.fighub-registry.json` for WO-026; path param on API |
-| OQ-2 | Store Code Connect URL in registry? | Sprint 8 | **RESOLVED — no**; use Figma `key` |
-| OQ-3 | Registry map key casing for legacy repos? | `/plan` | **RESOLVED** — write PascalCase (`spec.name`); read alias kebab when safe |
-| OQ-4 | Auto-open ExportSheet vs banner? | WO-027 UX | **OPEN** — lean auto-open modal after scaffold success |
+| #    | Question                                            | Owner                    | Status                                                                    |
+| ---- | --------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------- |
+| OQ-1 | Configurable registry path (FR-CONF-5) in Settings? | WO-027 / Settings ticket | **OPEN** — default `.fighub-registry.json` for WO-026; path param on API  |
+| OQ-2 | Store Code Connect URL in registry?                 | Sprint 8                 | **RESOLVED — no**; use Figma `key`                                        |
+| OQ-3 | Registry map key casing for legacy repos?           | `/plan`                  | **RESOLVED** — write PascalCase (`spec.name`); read alias kebab when safe |
+| OQ-4 | Auto-open ExportSheet vs banner?                    | WO-027 UX                | **OPEN** — lean auto-open modal after scaffold success                    |
 
 ---
 

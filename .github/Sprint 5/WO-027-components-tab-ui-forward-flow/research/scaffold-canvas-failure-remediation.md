@@ -36,17 +36,17 @@ Manual Components tab VQA (checklist items **C** and **D**) exposed **four indep
 
 **Evidence:**
 
-| Path | File role | Valid registry load? |
-| ---- | --------- | -------------------- |
-| `packages/contracts/dist/registry.v1.schema.json` | JSON Schema for `RegistryV1` contract | ❌ — no `kind: "registry"` instance |
-| `.fighub-registry.json` (default) | Runtime registry document in consumer repo | ✅ when present on GitHub |
-| `tests/fixtures/*.json` | Test RegistryV1 payloads | ✅ in tests only |
+| Path                                              | File role                                  | Valid registry load?                |
+| ------------------------------------------------- | ------------------------------------------ | ----------------------------------- |
+| `packages/contracts/dist/registry.v1.schema.json` | JSON Schema for `RegistryV1` contract      | ❌ — no `kind: "registry"` instance |
+| `.fighub-registry.json` (default)                 | Runtime registry document in consumer repo | ✅ when present on GitHub           |
+| `tests/fixtures/*.json`                           | Test RegistryV1 payloads                   | ✅ in tests only                    |
 
 **Code:** `src/ui/components/scaffold/loadRegistryFromRepo.ts` L13–18 returns `registry: null` with that message when `loadRegistryFromGitHub` gets 404. `normalizeRegistryInput` in `src/core/components/registry.ts` validates `kind: 'registry'`, `v: 1` — a schema file fails validation if fetched.
 
 **Implication:** User pointed registry path at the **contracts package schema artifact** (visible in IDE) instead of a repo-root `.fighub-registry.json`. Scaffold + export still work; registry starts empty and upserts after scaffold.
 
-**Fix (WO-027):** When loaded JSON fails normalization, surface: *"Path exists but is not a RegistryV1 document (found JSON Schema?). Use `.fighub-registry.json` at repo root."* Add path hint in Settings/Components registry field placeholder.
+**Fix (WO-027):** When loaded JSON fails normalization, surface: _"Path exists but is not a RegistryV1 document (found JSON Schema?). Use `.fighub-registry.json` at repo root."_ Add path hint in Settings/Components registry field placeholder.
 
 ---
 
@@ -54,12 +54,12 @@ Manual Components tab VQA (checklist items **C** and **D**) exposed **four indep
 
 **Symptom:**
 
-| Rule ID | Diagnostic |
-| ------- | ---------- |
-| `comp/prop-label-text` | Label TEXT property missing |
-| `comp/prop-leading-icon-boolean` | Leading icon BOOLEAN property missing |
-| `comp/prop-trailing-icon-boolean` | Trailing icon BOOLEAN property missing |
-| `comp/prop-add-zero-failures` | 48 property add failure(s); all variants failed for at least one prop |
+| Rule ID                           | Diagnostic                                                            |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `comp/prop-label-text`            | Label TEXT property missing                                           |
+| `comp/prop-leading-icon-boolean`  | Leading icon BOOLEAN property missing                                 |
+| `comp/prop-trailing-icon-boolean` | Trailing icon BOOLEAN property missing                                |
+| `comp/prop-add-zero-failures`     | 48 property add failure(s); all variants failed for at least one prop |
 
 **Evidence — failure arithmetic:**
 
@@ -83,12 +83,12 @@ Canonical Button spec (`tests/fixtures/component-spec-button-canonical.json`):
 
 **Hypothesis ranking:**
 
-| Rank | Hypothesis | Likelihood | Fix direction |
-| ---- | ---------- | ---------- | ------------- |
-| H1 | Post-combine per-variant `addComponentProperty` rejected by Figma | **High** | Move adds pre-combine (legacy) |
-| H2 | Must use `componentSet.addComponentProperty` once post-combine | Medium | Spike set-root API; wire refs per variant |
-| H3 | Display name / VARIANT name collision | Low | Names don't collide with axes |
-| H4 | Read-only / remote ComponentSet | Low | User file is local Untitled draft |
+| Rank | Hypothesis                                                        | Likelihood | Fix direction                             |
+| ---- | ----------------------------------------------------------------- | ---------- | ----------------------------------------- |
+| H1   | Post-combine per-variant `addComponentProperty` rejected by Figma | **High**   | Move adds pre-combine (legacy)            |
+| H2   | Must use `componentSet.addComponentProperty` once post-combine    | Medium     | Spike set-root API; wire refs per variant |
+| H3   | Display name / VARIANT name collision                             | Low        | Names don't collide with axes             |
+| H4   | Read-only / remote ComponentSet                                   | Low        | User file is local Untitled draft         |
 
 **Vitest gap:** `tests/unit/core/components/scaffold/applyProperties.test.ts` mocks `addComponentProperty` on isolated components — never exercises post-`combineAsVariants` Figma behavior. Integration mock `combineAsVariants` (`figmaScaffold.ts` L83–99) does not simulate API restrictions.
 
@@ -111,10 +111,10 @@ Canonical Button spec (`tests/fixtures/component-spec-button-canonical.json`):
 
 **Mock false confidence:**
 
-| Layer | Default size after build | `combineAsVariants` mock |
-| ----- | ------------------------ | ------------------------- |
-| `MockFrame` | 100×100 (`figmaFrames.ts` L40–41) | Preserves child dimensions |
-| Real Figma | Hug content | May reset variant bounds to 1×1 when parent set uses FIXED×AUTO grid |
+| Layer       | Default size after build          | `combineAsVariants` mock                                             |
+| ----------- | --------------------------------- | -------------------------------------------------------------------- |
+| `MockFrame` | 100×100 (`figmaFrames.ts` L40–41) | Preserves child dimensions                                           |
+| Real Figma  | Hug content                       | May reset variant bounds to 1×1 when parent set uses FIXED×AUTO grid |
 
 **Vitest:** `chip.test.ts` + `scaffold.integration.test.ts` pass `comp/scaffold-one-px-master` on mocks — **does not prove sandbox geometry**.
 
@@ -133,11 +133,11 @@ Canonical Button spec (`tests/fixtures/component-spec-button-canonical.json`):
 
 **Evidence — what FigHub builds today (WO-025):**
 
-| Artifact | Page | Purpose |
-| -------- | ---- | ------- |
-| `{name} — ComponentSet` | **Components** (`ensureComponentsPage`) | Variant matrix output |
-| `{name}/forward-scaffold` wrapper | Components | Horizontal wrapper around set + usage column |
-| `{name}/usage-examples` | Components | FR-SCAF-5 **instance gallery** (max 6 curated combos) |
+| Artifact                          | Page                                    | Purpose                                               |
+| --------------------------------- | --------------------------------------- | ----------------------------------------------------- |
+| `{name} — ComponentSet`           | **Components** (`ensureComponentsPage`) | Variant matrix output                                 |
+| `{name}/forward-scaffold` wrapper | Components                              | Horizontal wrapper around set + usage column          |
+| `{name}/usage-examples`           | Components                              | FR-SCAF-5 **instance gallery** (max 6 curated combos) |
 
 **Code:** `runScaffold.ts` L39–48 `ensureComponentsPage()`; `usageFrame.ts` L58–83 wrapper creation with `resize(1,1)` starter frame.
 
@@ -167,25 +167,25 @@ Canonical Button spec (`tests/fixtures/component-spec-button-canonical.json`):
 
 ### Repo inventory
 
-| Path | Role |
-| ---- | ---- |
-| `src/core/components/scaffold/index.ts` L210–213 | `combineAsVariants` then finalize — properties run later in `runScaffold.ts` |
-| `src/core/components/scaffold/applyProperties.ts` L77–112 | Post-combine per-variant `addComponentProperty` |
-| `src/core/components/scaffold/archetypes/chip.ts` | Button/chip geometry — missing `layoutSizing*` |
-| `src/core/audit/rules/componentRules.ts` | Failed rule IDs from user report |
-| `src/ui/components/scaffold/loadRegistryFromRepo.ts` | Registry 404 message |
-| `tests/fixtures/component-spec-button-canonical.json` | 12-variant Button VQA fixture |
-| `tests/unit/core/components/scaffold/__mocks__/figmaScaffold.ts` | Mock `combineAsVariants` — no sizing reset |
+| Path                                                             | Role                                                                         |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `src/core/components/scaffold/index.ts` L210–213                 | `combineAsVariants` then finalize — properties run later in `runScaffold.ts` |
+| `src/core/components/scaffold/applyProperties.ts` L77–112        | Post-combine per-variant `addComponentProperty`                              |
+| `src/core/components/scaffold/archetypes/chip.ts`                | Button/chip geometry — missing `layoutSizing*`                               |
+| `src/core/audit/rules/componentRules.ts`                         | Failed rule IDs from user report                                             |
+| `src/ui/components/scaffold/loadRegistryFromRepo.ts`             | Registry 404 message                                                         |
+| `tests/fixtures/component-spec-button-canonical.json`            | 12-variant Button VQA fixture                                                |
+| `tests/unit/core/components/scaffold/__mocks__/figmaScaffold.ts` | Mock `combineAsVariants` — no sizing reset                                   |
 
 ### Cross-ticket matrix
 
-| Ticket | Failure class | Remediation owner |
-| ------ | ------------- | ----------------- |
-| WO-022 | 1×1 variant masters | Post-combine hug pass + chip `layoutSizing*` |
-| WO-024 | 48 property add failures | Pre-combine property timing / set-root API spike |
-| WO-025 | Broken usage gallery layout | Depends on WO-022; scope note for Foundations doc |
-| WO-027 | Registry path UX, audit panel copy | Validation + hide irrelevant push stats |
-| WO-026 | (none observed) | Registry upsert OK with empty start |
+| Ticket | Failure class                      | Remediation owner                                 |
+| ------ | ---------------------------------- | ------------------------------------------------- |
+| WO-022 | 1×1 variant masters                | Post-combine hug pass + chip `layoutSizing*`      |
+| WO-024 | 48 property add failures           | Pre-combine property timing / set-root API spike  |
+| WO-025 | Broken usage gallery layout        | Depends on WO-022; scope note for Foundations doc |
+| WO-027 | Registry path UX, audit panel copy | Validation + hide irrelevant push stats           |
+| WO-026 | (none observed)                    | Registry upsert OK with empty start               |
 
 ### Official API facts
 
@@ -196,36 +196,36 @@ Canonical Button spec (`tests/fixtures/component-spec-button-canonical.json`):
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | ---------------------- |
-| D1 | **Block WO-027 re-VQA** until WO-022 + WO-024 sandbox fixes land | User confirmed panel OK; canvas failures are subsystem | Re-VQA panel-only (already PASS) |
-| D2 | **Primary property fix: pre-combine adds** | Matches legacy; explains 100% add failure rate post-combine | Keep post-combine iteration (failed in sandbox) |
-| D3 | **Foundations doc page deferred** | WO-025 FR-SCAF-5 is instance gallery only | Expand WO-025 scope mid-sprint (too large) |
-| D4 | **Registry schema path → validation error** | Prevent confusing schema vs instance | Silent null registry (current) |
-| D5 | **Add SPK-027-2/3 spikes** before `/plan` updates on WO-022/024 | Mocks don't model Figma combine/property API | Fix without spike (risk repeat failure) |
+| ID  | Decision                                                         | Rationale                                                   | Alternatives rejected                           |
+| --- | ---------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------- |
+| D1  | **Block WO-027 re-VQA** until WO-022 + WO-024 sandbox fixes land | User confirmed panel OK; canvas failures are subsystem      | Re-VQA panel-only (already PASS)                |
+| D2  | **Primary property fix: pre-combine adds**                       | Matches legacy; explains 100% add failure rate post-combine | Keep post-combine iteration (failed in sandbox) |
+| D3  | **Foundations doc page deferred**                                | WO-025 FR-SCAF-5 is instance gallery only                   | Expand WO-025 scope mid-sprint (too large)      |
+| D4  | **Registry schema path → validation error**                      | Prevent confusing schema vs instance                        | Silent null registry (current)                  |
+| D5  | **Add SPK-027-2/3 spikes** before `/plan` updates on WO-022/024  | Mocks don't model Figma combine/property API                | Fix without spike (risk repeat failure)         |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-027-2 | Sandbox: scaffold Button canonical; log each `addComponentProperty` error message pre- vs post-combine | Post-combine failure messages captured; pre-combine ≥1 prop succeeds | ☐ pending |
-| SPK-027-3 | Sandbox: after scaffold, measure variant master width×height before/after post-combine hug pass | All 12 variants ≥ 48×32 px | ☐ pending |
-| SPK-027-4 | Sandbox: try `componentSet.addComponentProperty('Label','TEXT','Button')` once post-combine | Property appears in `componentPropertyDefinitions` + panel | ☐ pending |
-| SPK-027-1 (existing) | Full Components tab manual VQA | G2 <5s, canvas matches reference | ☐ blocked on SPK-027-2/3 |
+| Spike ID             | Procedure                                                                                              | Pass criteria                                                        | Status                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- | ------------------------ |
+| SPK-027-2            | Sandbox: scaffold Button canonical; log each `addComponentProperty` error message pre- vs post-combine | Post-combine failure messages captured; pre-combine ≥1 prop succeeds | ☐ pending                |
+| SPK-027-3            | Sandbox: after scaffold, measure variant master width×height before/after post-combine hug pass        | All 12 variants ≥ 48×32 px                                           | ☐ pending                |
+| SPK-027-4            | Sandbox: try `componentSet.addComponentProperty('Label','TEXT','Button')` once post-combine            | Property appears in `componentPropertyDefinitions` + panel           | ☐ pending                |
+| SPK-027-1 (existing) | Full Components tab manual VQA                                                                         | G2 <5s, canvas matches reference                                     | ☐ blocked on SPK-027-2/3 |
 
 ---
 
 ## Risk register
 
-| Risk | Severity | Likelihood | Mitigation |
-| ---- | -------- | ---------- | ---------- |
-| Pre-combine props lost at combine | High | Low | Legacy proof; wire refs before combine |
-| Set-root API can't bind per-variant layers | Med | Med | Hybrid: set-root define + per-variant reference pass |
-| Font missing → zero-size text → 1×1 | Med | Med | `ensureScaffoldFonts` fallback to Inter Regular; audit font load |
-| User expects Foundations doc in Phase 2 | Med | High | UI copy + future doc ticket; link v60 reference |
-| Re-VQA without bootstrap variables | Med | Med | Checklist: bootstrap-complete first (ticket precondition) |
+| Risk                                       | Severity | Likelihood | Mitigation                                                       |
+| ------------------------------------------ | -------- | ---------- | ---------------------------------------------------------------- |
+| Pre-combine props lost at combine          | High     | Low        | Legacy proof; wire refs before combine                           |
+| Set-root API can't bind per-variant layers | Med      | Med        | Hybrid: set-root define + per-variant reference pass             |
+| Font missing → zero-size text → 1×1        | Med      | Med        | `ensureScaffoldFonts` fallback to Inter Regular; audit font load |
+| User expects Foundations doc in Phase 2    | Med      | High       | UI copy + future doc ticket; link v60 reference                  |
+| Re-VQA without bootstrap variables         | Med      | Med        | Checklist: bootstrap-complete first (ticket precondition)        |
 
 ---
 
@@ -260,11 +260,11 @@ Canonical Button spec (`tests/fixtures/component-spec-button-canonical.json`):
 
 ## Open questions
 
-| # | Question | Status |
-| - | -------- | ------ |
-| OQ-1 | Exact Figma error string for post-combine `addComponentProperty` | **OPEN** — capture in SPK-027-2 |
-| OQ-2 | Should registry default path in UI show monorepo `.fighub-registry.json` example for FigHub dev repo? | **OPEN** — product call |
-| OQ-3 | Phase 2 GA requires Foundations doc page or only ComponentSet + gallery? | **RESOLVED** — Phase 2 = ComponentSet + FR-SCAF-5 gallery per PRD §12; Foundations doc = later phase (user expectation noted) |
+| #    | Question                                                                                              | Status                                                                                                                        |
+| ---- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| OQ-1 | Exact Figma error string for post-combine `addComponentProperty`                                      | **OPEN** — capture in SPK-027-2                                                                                               |
+| OQ-2 | Should registry default path in UI show monorepo `.fighub-registry.json` example for FigHub dev repo? | **OPEN** — product call                                                                                                       |
+| OQ-3 | Phase 2 GA requires Foundations doc page or only ComponentSet + gallery?                              | **RESOLVED** — Phase 2 = ComponentSet + FR-SCAF-5 gallery per PRD §12; Foundations doc = later phase (user expectation noted) |
 
 ---
 

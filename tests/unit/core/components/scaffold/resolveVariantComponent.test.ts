@@ -17,10 +17,10 @@ describe('resolveVariantComponent', () => {
     const v1 = createMockComponent({ name: 'size=default, variant=outline' });
     const set = combineAsVariants([asComponentNode(v0), asComponentNode(v1)], page);
 
-    const resolved = resolveVariantComponent(
-      asComponentSetNode(set),
-      { size: 'sm', variant: 'default' },
-    );
+    const resolved = resolveVariantComponent(asComponentSetNode(set), {
+      size: 'sm',
+      variant: 'default',
+    });
 
     expect(resolved.name).toBe('size=sm, variant=default');
   });

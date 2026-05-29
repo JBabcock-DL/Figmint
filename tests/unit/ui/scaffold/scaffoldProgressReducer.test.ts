@@ -43,8 +43,8 @@ describe('scaffoldProgressReducer', () => {
       componentSetName: 'Button',
       registry: { v: 1, kind: 'registry', fileKey: 'fk', components: {} },
       audits: [],
-        scaffold: {
-          componentSet: { id: 'cs:1' } as import('@figma/plugin-typings').ComponentSetNode,
+      scaffold: {
+        componentSet: { id: 'cs:1' } as import('@figma/plugin-typings').ComponentSetNode,
         variantCount: 12,
         variantByKey: {},
         replacedExisting: false,

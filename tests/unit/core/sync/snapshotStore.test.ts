@@ -138,8 +138,10 @@ describe('snapshotStore', () => {
   });
 
   it('persistSnapshot throws when payload exceeds size guard', () => {
-    const hugeComponents: Record<string, { nodeId: string; key: string; pageName: string; publishedAt: string; version: number }> =
-      {};
+    const hugeComponents: Record<
+      string,
+      { nodeId: string; key: string; pageName: string; publishedAt: string; version: number }
+    > = {};
     for (let i = 0; i < 1500; i++) {
       hugeComponents['ComponentWithAVeryLongNameForSizeGuardTesting' + String(i)] = {
         nodeId: 'CS:' + String(i),

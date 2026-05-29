@@ -69,7 +69,10 @@ export function hashVariantMatrix(matrix: Record<string, (string | boolean)[]>):
   return fnv1a32Hex(JSON.stringify(canonical));
 }
 
-export function buildScaffoldId(specName: string, matrix: Record<string, (string | boolean)[]>): string {
+export function buildScaffoldId(
+  specName: string,
+  matrix: Record<string, (string | boolean)[]>,
+): string {
   return 'fighub:scaffold:v1:' + specName + ':' + hashVariantMatrix(matrix);
 }
 

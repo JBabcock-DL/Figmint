@@ -1,5 +1,8 @@
 import type { AxisSizing } from '../types';
 
+/** Frame or component nodes that support auto-layout resize + axis sizing. */
+export type LayoutSizingNode = FrameNode | ComponentNode | ComponentSetNode;
+
 function toFrameSizingMode(mode: 'FIXED' | 'HUG' | 'AUTO'): 'FIXED' | 'AUTO' {
   if (mode === 'HUG') {
     return 'AUTO';
@@ -41,7 +44,7 @@ export function resizeRect(rect: RectangleNode, w: number, h: number): void {
  * `figma.resize()` resets both modes to FIXED; this helper restores the intended pair after resize.
  */
 export function resizeThenApplySizing(
-  frame: FrameNode,
+  frame: LayoutSizingNode,
   w: number,
   h: number,
   sizing: AxisSizing,
@@ -106,7 +109,7 @@ export function reassertHug(frame: FrameNode, axis?: 'vertical' | 'horizontal' |
 /**
  * §3.1.2 — STRETCH on parent axis align items collapses table geometry.
  */
-export function assertValidAxisAlign(parent: FrameNode): void {
+export function assertValidAxisAlign(parent: LayoutSizingNode): void {
   const primaryAlign = parent.primaryAxisAlignItems as string;
   if (primaryAlign === 'STRETCH') {
     throw new Error(

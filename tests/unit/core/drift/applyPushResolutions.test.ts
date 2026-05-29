@@ -6,7 +6,12 @@ import {
   resolutionsForBulkPush,
 } from '@/core/drift/applyPushResolutions';
 import { buildComponentDriftEntry } from '@/core/drift/components';
-import type { ComponentSpecV1, DriftReportV1, TokensV1, VariableDriftEntry } from '@detroitlabs/fighub-contracts';
+import type {
+  ComponentSpecV1,
+  DriftReportV1,
+  TokensV1,
+  VariableDriftEntry,
+} from '@detroitlabs/fighub-contracts';
 
 import baseTokens from '../../../fixtures/ui/export/tokens.json';
 import buttonSpec from '../../../fixtures/component-spec/chip-button-minimal.v1.json';
@@ -83,11 +88,7 @@ describe('buildPushCommitFiles', () => {
     const files = buildPushCommitFiles({
       report: report,
       resolutions: {},
-      driftIds: [
-        'var/Layout/spacing-4',
-        'var/Theme/radius-md',
-        'cmp/button',
-      ],
+      driftIds: ['var/Layout/spacing-4', 'var/Theme/radius-md', 'cmp/button'],
       baseTokens: repoTokens,
       tokensPath: 'design/tokens.json',
       specsPath: 'components/',
@@ -100,7 +101,9 @@ describe('buildPushCommitFiles', () => {
       return file.path === 'design/tokens.json';
     });
     expect(tokensFile).toBeDefined();
-    const parsedTokens = JSON.parse(tokensFile !== undefined ? tokensFile.content : '{}') as TokensV1;
+    const parsedTokens = JSON.parse(
+      tokensFile !== undefined ? tokensFile.content : '{}',
+    ) as TokensV1;
     expect(parsedTokens.kind).toBe('tokens');
     const spacingToken = parsedTokens.tokens.find(function (token) {
       return token.collection === 'layout' && token.name === 'spacing-4';
@@ -115,7 +118,9 @@ describe('buildPushCommitFiles', () => {
       return file.path === 'components/button.json';
     });
     expect(specFile).toBeDefined();
-    const parsedSpec = JSON.parse(specFile !== undefined ? specFile.content : '{}') as ComponentSpecV1;
+    const parsedSpec = JSON.parse(
+      specFile !== undefined ? specFile.content : '{}',
+    ) as ComponentSpecV1;
     expect(parsedSpec.variantMatrix).toEqual({ variant: ['default', 'primary'] });
     expect(parsedSpec.framework).toBe('react');
   });
@@ -134,7 +139,9 @@ describe('buildPushCommitFiles', () => {
       drifts: [drift],
     };
 
-    expect(effectiveResolutionDirection(drift, { 'var/Layout/spacing-8': { type: 'push' } })).toBe('push');
+    expect(effectiveResolutionDirection(drift, { 'var/Layout/spacing-8': { type: 'push' } })).toBe(
+      'push',
+    );
     expect(effectiveResolutionDirection(drift, {})).toBeNull();
 
     const files = buildPushCommitFiles({

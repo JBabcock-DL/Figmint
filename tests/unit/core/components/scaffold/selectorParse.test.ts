@@ -45,8 +45,12 @@ describe('resolveNodeByPath', () => {
   it('walks WO-022 slash layer names on direct children', () => {
     const variant = createMockComponent();
     variant.appendChild(createMockFrame({ name: 'text/label' }, false) as unknown as SceneNode);
-    variant.appendChild(createMockFrame({ name: 'icon-slot/leading' }, false) as unknown as SceneNode);
-    variant.appendChild(createMockFrame({ name: 'state-layer/hover' }, false) as unknown as SceneNode);
+    variant.appendChild(
+      createMockFrame({ name: 'icon-slot/leading' }, false) as unknown as SceneNode,
+    );
+    variant.appendChild(
+      createMockFrame({ name: 'state-layer/hover' }, false) as unknown as SceneNode,
+    );
     variant.appendChild(createMockFrame({ name: 'focus-ring' }, false) as unknown as SceneNode);
 
     const component = asComponentNode(variant);

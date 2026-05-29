@@ -16,49 +16,49 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 ## Acceptance criteria traceability
 
-| Ticket AC / requirement | Plan step(s) | Verification |
-| ----------------------- | ------------ | -------------- |
-| AC: New Button → registry entry with ComponentSet `nodeId` | Steps 4, 5, 8, 14 | `registry.test.ts` + integration fixture |
-| AC: Re-scaffold updates entry; `version` increments | Steps 3, 6, 14 | upsert test SPK-026-1 |
-| AC: Document validates `RegistryV1` | Steps 7, 15 | AJV against `dist/registry.v1.schema.json` |
-| AC: Unit tests: merge, fileKey guard, version bump, legacy normalize | Steps 6–7, 14–15 | `registry.test.ts` |
-| Req 1: `registry.ts` four functions + load wrapper | Steps 2–5, 9 | typecheck + tests |
-| Req 2: `RegistryComponentEntry` fields only | Steps 4, Notes | schema AJV + no extra keys in fixtures |
-| Req 3: ExportSheet staging, default sinks | Steps 10–12, 16 | component tests + manual VQA |
-| Req 3 UX: title "Update registry"; JSON only | Steps 11–12 | ExportSheet test / grep |
-| Testing: Vitest merge suite | Steps 14–15 | CI |
-| Testing: ExportSheet integration | Step 16 | `registryExport.test.tsx` |
-| Telemetry: `console.debug` UI on merge + export | Step 12 | grep gate |
+| Ticket AC / requirement                                              | Plan step(s)      | Verification                               |
+| -------------------------------------------------------------------- | ----------------- | ------------------------------------------ |
+| AC: New Button → registry entry with ComponentSet `nodeId`           | Steps 4, 5, 8, 14 | `registry.test.ts` + integration fixture   |
+| AC: Re-scaffold updates entry; `version` increments                  | Steps 3, 6, 14    | upsert test SPK-026-1                      |
+| AC: Document validates `RegistryV1`                                  | Steps 7, 15       | AJV against `dist/registry.v1.schema.json` |
+| AC: Unit tests: merge, fileKey guard, version bump, legacy normalize | Steps 6–7, 14–15  | `registry.test.ts`                         |
+| Req 1: `registry.ts` four functions + load wrapper                   | Steps 2–5, 9      | typecheck + tests                          |
+| Req 2: `RegistryComponentEntry` fields only                          | Steps 4, Notes    | schema AJV + no extra keys in fixtures     |
+| Req 3: ExportSheet staging, default sinks                            | Steps 10–12, 16   | component tests + manual VQA               |
+| Req 3 UX: title "Update registry"; JSON only                         | Steps 11–12       | ExportSheet test / grep                    |
+| Testing: Vitest merge suite                                          | Steps 14–15       | CI                                         |
+| Testing: ExportSheet integration                                     | Step 16           | `registryExport.test.tsx`                  |
+| Telemetry: `console.debug` UI on merge + export                      | Step 12           | grep gate                                  |
 
 ---
 
 ## Wrong vs correct lift
 
-| Wrong (do not copy) | Why | Correct lift |
-| ------------------- | --- | ------------ |
-| Run `merge-registry.mjs` as subprocess | MCP/CLI artifact | Inline TS in `registry.ts` |
-| Legacy `registry.schema.json` fields | Missing `v`/`kind`; extra keys | `RegistryV1` + `RegistryComponentEntry` from WO-003 |
-| Kebab-case write keys (`button`) | Ticket AC uses `Button` | Write **`spec.name`**; read-alias kebab only on load |
-| Store `archetype`, `variantMatrix`, `props` in registry | Schema forbids | Keep in `component-spec.v1.json` export (WO-027) |
-| Auto-open GitHub PR without ExportSheet | FR-SCAF-6 / PRD §11.4 | Stage document; designer confirms |
-| `JSON.stringify` in merge module | Non-deterministic key order in PRs | Return objects; `stableStringify` at export |
-| `console.debug` on main thread | Project convention | UI iframe only; GitHub via existing bridge logs |
-| Caller-supplied `version` without bump | Sprint 6 stale detection needs monotonic version | `version = (existing ?? 0) + 1` on every upsert |
-| Silent overwrite on `fileKey` mismatch | Cross-file pollution | Throw `REGISTRY_FILE_KEY_MISMATCH` |
+| Wrong (do not copy)                                     | Why                                              | Correct lift                                         |
+| ------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------- |
+| Run `merge-registry.mjs` as subprocess                  | MCP/CLI artifact                                 | Inline TS in `registry.ts`                           |
+| Legacy `registry.schema.json` fields                    | Missing `v`/`kind`; extra keys                   | `RegistryV1` + `RegistryComponentEntry` from WO-003  |
+| Kebab-case write keys (`button`)                        | Ticket AC uses `Button`                          | Write **`spec.name`**; read-alias kebab only on load |
+| Store `archetype`, `variantMatrix`, `props` in registry | Schema forbids                                   | Keep in `component-spec.v1.json` export (WO-027)     |
+| Auto-open GitHub PR without ExportSheet                 | FR-SCAF-6 / PRD §11.4                            | Stage document; designer confirms                    |
+| `JSON.stringify` in merge module                        | Non-deterministic key order in PRs               | Return objects; `stableStringify` at export          |
+| `console.debug` on main thread                          | Project convention                               | UI iframe only; GitHub via existing bridge logs      |
+| Caller-supplied `version` without bump                  | Sprint 6 stale detection needs monotonic version | `version = (existing ?? 0) + 1` on every upsert      |
+| Silent overwrite on `fileKey` mismatch                  | Cross-file pollution                             | Throw `REGISTRY_FILE_KEY_MISMATCH`                   |
 
 ---
 
 ## Lift map
 
-| Legacy (DesignOps-plugin) | FigHub target | Notes |
-| ------------------------- | -------------- | ----- |
-| `skills/create-component/resolver/merge-registry.mjs` L67–87 upsert | `mergeRegistryEntry()` | Replace, never duplicate row |
-| `merge-registry.mjs` L74–78 fileKey guard | `assertRegistryFileKey()` → throw | Error code `REGISTRY_FILE_KEY_MISMATCH` |
-| `merge-registry.mjs` greenfield create | `createEmptyRegistry(fileKey)` | `{ v:1, kind:'registry', fileKey, components:{} }` |
-| `registry.schema.json` entry fields | `RegistryComponentEntry` | Optional `cvaHash`, `composedChildVersions` |
-| CLI `{ fileKey, component, nodeId, … }` wrapper | `buildRegistryEntry()` input struct | Component key separate from entry |
-| GitHub read (implicit in resolver flow) | `loadRegistryFromGitHub()` | Wraps `loadFromGitHub` from `src/io/sources/github.ts` |
-| `JSON.stringify(registry, null, 2)` | `serializeForExport` + `stableStringify` | WO-020 path |
+| Legacy (DesignOps-plugin)                                           | FigHub target                            | Notes                                                  |
+| ------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------ |
+| `skills/create-component/resolver/merge-registry.mjs` L67–87 upsert | `mergeRegistryEntry()`                   | Replace, never duplicate row                           |
+| `merge-registry.mjs` L74–78 fileKey guard                           | `assertRegistryFileKey()` → throw        | Error code `REGISTRY_FILE_KEY_MISMATCH`                |
+| `merge-registry.mjs` greenfield create                              | `createEmptyRegistry(fileKey)`           | `{ v:1, kind:'registry', fileKey, components:{} }`     |
+| `registry.schema.json` entry fields                                 | `RegistryComponentEntry`                 | Optional `cvaHash`, `composedChildVersions`            |
+| CLI `{ fileKey, component, nodeId, … }` wrapper                     | `buildRegistryEntry()` input struct      | Component key separate from entry                      |
+| GitHub read (implicit in resolver flow)                             | `loadRegistryFromGitHub()`               | Wraps `loadFromGitHub` from `src/io/sources/github.ts` |
+| `JSON.stringify(registry, null, 2)`                                 | `serializeForExport` + `stableStringify` | WO-020 path                                            |
 
 ---
 
@@ -143,10 +143,7 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
   ```ts
   export function createEmptyRegistry(fileKey: string): RegistryV1;
 
-  export function assertRegistryFileKey(
-    registry: RegistryV1,
-    fileKey: string,
-  ): void; // throws RegistryMergeError REGISTRY_FILE_KEY_MISMATCH
+  export function assertRegistryFileKey(registry: RegistryV1, fileKey: string): void; // throws RegistryMergeError REGISTRY_FILE_KEY_MISMATCH
 
   export function mergeRegistryEntry(
     registry: RegistryV1,
@@ -166,15 +163,15 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 - [x] **Step 4** — Implement `buildRegistryEntry(input: BuildRegistryEntryInput): RegistryComponentEntry`:
 
-  | Field | Source |
-  | ----- | ------ |
-  | `nodeId` | `input.scaffold.componentSet.id` |
-  | `key` | `input.scaffold.componentSet.key` |
-  | `pageName` | `input.targetPage.name` |
-  | `publishedAt` | `input.now ?? new Date()` → `toISOString()` |
-  | `version` | `(existing.components[spec.name]?.version ?? 0) + 1` where `existing = input.existingRegistry` |
-  | `cvaHash` | When `spec.variantMatrix` present: FNV-1a of `stableStringify(spec.variantMatrix)` (reuse `@/io/formats/stableStringify`); else omit or `null` per schema |
-  | `composedChildVersions` | When `spec.composes?.length`: for each child kebab ref, `existing.components[child]?.version ?? null` |
+  | Field                   | Source                                                                                                                                                    |
+  | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `nodeId`                | `input.scaffold.componentSet.id`                                                                                                                          |
+  | `key`                   | `input.scaffold.componentSet.key`                                                                                                                         |
+  | `pageName`              | `input.targetPage.name`                                                                                                                                   |
+  | `publishedAt`           | `input.now ?? new Date()` → `toISOString()`                                                                                                               |
+  | `version`               | `(existing.components[spec.name]?.version ?? 0) + 1` where `existing = input.existingRegistry`                                                            |
+  | `cvaHash`               | When `spec.variantMatrix` present: FNV-1a of `stableStringify(spec.variantMatrix)` (reuse `@/io/formats/stableStringify`); else omit or `null` per schema |
+  | `composedChildVersions` | When `spec.composes?.length`: for each child kebab ref, `existing.components[child]?.version ?? null`                                                     |
 
   **Do not** copy `spec.archetype`, `variantMatrix`, `props`, or `bindings` into the entry.
 
@@ -184,10 +181,7 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
   ```ts
   export function upsertRegistryEntry(input: UpsertRegistryEntryInput): RegistryV1 {
-    const base =
-      input.registry !== null
-        ? input.registry
-        : createEmptyRegistry(input.fileKey);
+    const base = input.registry !== null ? input.registry : createEmptyRegistry(input.fileKey);
     assertRegistryFileKey(base, input.fileKey);
     const entry = buildRegistryEntry({
       spec: input.spec,
@@ -207,18 +201,17 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 - [x] **Step 6** — Implement `normalizeRegistryInput(raw: unknown): NormalizeRegistryResult | NormalizeRegistryFailure`:
 
-  | Input shape | Output |
-  | ----------- | ------ |
-  | Valid `RegistryV1` (`v===1`, `kind==='registry'`, `fileKey`, `components`) | `{ ok: true, registry }` |
-  | Legacy `{ fileKey, components }` without envelope | Wrap: `{ v:1, kind:'registry', fileKey, components }` |
-  | Legacy kebab-only keys in `components` | Pass through on read (no rewrite); document in Notes |
-  | Missing `fileKey` or non-object `components` | `{ ok: false, message }` |
-  | Extra top-level keys on envelope | Strip or reject per AJV strictness — **reject** with message (safer for `additionalProperties: false`) |
+  | Input shape                                                                | Output                                                                                                 |
+  | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+  | Valid `RegistryV1` (`v===1`, `kind==='registry'`, `fileKey`, `components`) | `{ ok: true, registry }`                                                                               |
+  | Legacy `{ fileKey, components }` without envelope                          | Wrap: `{ v:1, kind:'registry', fileKey, components }`                                                  |
+  | Legacy kebab-only keys in `components`                                     | Pass through on read (no rewrite); document in Notes                                                   |
+  | Missing `fileKey` or non-object `components`                               | `{ ok: false, message }`                                                                               |
+  | Extra top-level keys on envelope                                           | Strip or reject per AJV strictness — **reject** with message (safer for `additionalProperties: false`) |
 
   **Done when:** SPK-026-3 legacy fixture normalizes and validates (Step 15).
 
 - [x] **Step 7** — Implement `resolveRegistryReadPath(path?: string, tryLegacy?: boolean): string` helper (in `registry.ts` or `registryExport.ts`):
-
   - Default `path = DEFAULT_REGISTRY_PATH` (`.fighub-registry.json`).
   - When `tryLegacy === true` and primary 404, caller may retry `LEGACY_REGISTRY_PATH` (UI layer only).
 
@@ -249,7 +242,6 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
   **Done when:** mocked 404 → `null`; mocked valid body → `RegistryV1`.
 
 - [x] **Step 9** — Implement optional **read alias** `resolveComponentKey(registry, specName: string): string`:
-
   - Primary lookup `registry.components[specName]`.
   - If miss and exactly one key matches case-insensitive (`button` vs `Button`), use that key for **version read only** in `buildRegistryEntry`; **write** always uses `spec.name`.
 
@@ -269,14 +261,14 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
   ): AuditRuleResult[];
   ```
 
-  | ruleId | pass when |
-  | ------ | --------- |
-  | `comp/registry-envelope` | `registry.v === 1 && registry.kind === 'registry'` |
-  | `comp/registry-entry-present` | `registry.components[componentKey]` defined |
-  | `comp/registry-entry-nodeid` | `entry.nodeId.length > 0` |
-  | `comp/registry-entry-key` | `entry.key.length > 0` |
-  | `comp/registry-entry-version` | `entry.version >= 1` integer |
-  | `comp/registry-filekey` | `registry.fileKey.length > 0` |
+  | ruleId                        | pass when                                          |
+  | ----------------------------- | -------------------------------------------------- |
+  | `comp/registry-envelope`      | `registry.v === 1 && registry.kind === 'registry'` |
+  | `comp/registry-entry-present` | `registry.components[componentKey]` defined        |
+  | `comp/registry-entry-nodeid`  | `entry.nodeId.length > 0`                          |
+  | `comp/registry-entry-key`     | `entry.key.length > 0`                             |
+  | `comp/registry-entry-version` | `entry.version >= 1` integer                       |
+  | `comp/registry-filekey`       | `registry.fileKey.length > 0`                      |
 
   Return rows inline (do **not** register in `runAudit('component')` yet — WO-027 orchestrator merges scaffold + registry rows).
 
@@ -325,9 +317,7 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
     registryPath?: string;
   }
 
-  export async function runRegistryExportFlow(
-    input: RegistryExportFlowInput,
-  ): Promise<{
+  export async function runRegistryExportFlow(input: RegistryExportFlowInput): Promise<{
     registry: RegistryV1;
     auditRows: AuditRuleResult[];
     exportProps: ReturnType<typeof prepareRegistryExport>;
@@ -348,7 +338,6 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
   **Done when:** unit test mocks merge; debug log grep in implementation.
 
 - [x] **Step 13** — Wire **manual VQA seam** in `src/ui/App.tsx` (minimal, behind dev-only flag or existing demo button):
-
   - After successful scaffold demo (or new "Registry export demo" button), render `<ExportSheet {...prepareRegistryExport(registry)} />`.
   - Document: **WO-027 removes** this seam and calls `runRegistryExportFlow` from Components tab.
 
@@ -358,22 +347,21 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 - [x] **Step 14** — Implement `tests/unit/core/components/registry.test.ts`:
 
-  | Test case | Assert |
-  | --------- | ------ |
-  | Greenfield upsert | `version === 1`; `nodeId`/`key` from mock ComponentSet |
-  | Second upsert same `spec.name` | `version === 2`; single row |
-  | Other keys preserved | Upsert `Button` leaves `Input` entry unchanged |
-  | `fileKey` mismatch | `RegistryMergeError` code `REGISTRY_FILE_KEY_MISMATCH`; registry unchanged |
-  | `mergeRegistryEntry` direct | Replace semantics |
-  | `normalizeRegistryInput` legacy | SPK-026-3 |
-  | `composedChildVersions` | Composite spec with two child refs — snapshot versions from fixture registry |
+  | Test case                       | Assert                                                                       |
+  | ------------------------------- | ---------------------------------------------------------------------------- |
+  | Greenfield upsert               | `version === 1`; `nodeId`/`key` from mock ComponentSet                       |
+  | Second upsert same `spec.name`  | `version === 2`; single row                                                  |
+  | Other keys preserved            | Upsert `Button` leaves `Input` entry unchanged                               |
+  | `fileKey` mismatch              | `RegistryMergeError` code `REGISTRY_FILE_KEY_MISMATCH`; registry unchanged   |
+  | `mergeRegistryEntry` direct     | Replace semantics                                                            |
+  | `normalizeRegistryInput` legacy | SPK-026-3                                                                    |
+  | `composedChildVersions`         | Composite spec with two child refs — snapshot versions from fixture registry |
 
   Mock `ScaffoldResult` + `PageNode` + `ComponentSetNode` with `{ id: 'CS:1', key: 'abc123' }`.
 
   **Done when:** SPK-026-1, SPK-026-2, SPK-026-3 marked covered in test names.
 
 - [x] **Step 15** — AJV validation gate `tests/unit/core/components/registry.schema.test.ts`:
-
   - Import `registry.v1.schema.json` from `packages/contracts/dist/`.
   - Every file in `tests/fixtures/registry/*.json` (after normalize) validates.
   - Upsert output from Step 14 tests validates.
@@ -381,7 +369,6 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
   **Done when:** CI includes schema test file.
 
 - [x] **Step 16** — `tests/unit/ui/components/registryExport.test.tsx`:
-
   - `defaultRegistryExportSinks(true)` returns `['download', 'github-pr']` when flags true (mock flags module).
   - `defaultRegistryExportSinks(false)` returns `['download']`.
   - `prepareRegistryExport` → ExportSheet initial state: json only, path default `.fighub-registry` from `defaultExportBasename`.
@@ -425,12 +412,12 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 - [x] **Step 19** — Pre-plan spike documentation in test descriptions:
 
-  | Spike | Covered by |
-  | ----- | ---------- |
-  | SPK-026-1 | Step 14 version bump |
-  | SPK-026-2 | Step 14 fileKey guard |
-  | SPK-026-3 | Step 6 + 15 legacy normalize |
-  | SPK-026-4 | Step 13 + WO-027 VQA |
+  | Spike     | Covered by                                    |
+  | --------- | --------------------------------------------- |
+  | SPK-026-1 | Step 14 version bump                          |
+  | SPK-026-2 | Step 14 fileKey guard                         |
+  | SPK-026-3 | Step 6 + 15 legacy normalize                  |
+  | SPK-026-4 | Step 13 + WO-027 VQA                          |
   | SPK-026-5 | Deferred OAuth PR — skip `describe` with note |
 
   **Done when:** default CI green.
@@ -456,16 +443,16 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 ## Dependencies & Tools
 
-| Dependency | Role in WO-026 |
-| ---------- | -------------- |
-| **WO-003** | `RegistryV1`, `RegistryComponentEntry`, `AuditRuleResult`; `dist/registry.v1.schema.json` |
-| **WO-016** | `loadFromGitHub`, `postContentsFetch`, OAuth / `useGitHubConnect` repo URL |
+| Dependency | Role in WO-026                                                                                             |
+| ---------- | ---------------------------------------------------------------------------------------------------------- |
+| **WO-003** | `RegistryV1`, `RegistryComponentEntry`, `AuditRuleResult`; `dist/registry.v1.schema.json`                  |
+| **WO-016** | `loadFromGitHub`, `postContentsFetch`, OAuth / `useGitHubConnect` repo URL                                 |
 | **WO-020** | `ExportSheet`, `createInitialExportSheetState`, `serializeForExport`, `runExport`, `defaultExportBasename` |
-| **WO-022** | `ScaffoldResult`, `ComponentSpecV1` input — **must be merged before build** |
-| **WO-027** | Consumes `runRegistryExportFlow`; owns auto-open ExportSheet UX (OQ-4) |
-| **Lift** | `merge-registry.mjs`, `registry.schema.json` (field reference only) |
-| **Vitest** | Unit + UI tests |
-| **AJV** | Schema validation test (WO-003 dist artifact) |
+| **WO-022** | `ScaffoldResult`, `ComponentSpecV1` input — **must be merged before build**                                |
+| **WO-027** | Consumes `runRegistryExportFlow`; owns auto-open ExportSheet UX (OQ-4)                                     |
+| **Lift**   | `merge-registry.mjs`, `registry.schema.json` (field reference only)                                        |
+| **Vitest** | Unit + UI tests                                                                                            |
+| **AJV**    | Schema validation test (WO-003 dist artifact)                                                              |
 
 **Tools:** `npm run lint`, `npm run typecheck`, `npm test`; `gh api graphql` for project status only; no Figma MCP in CI.
 
@@ -473,13 +460,13 @@ The UI layer adds **`loadRegistryFromGitHub`** (wraps WO-016 **`loadFromGitHub`*
 
 ## Open Questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
-| OQ-1 | Configurable registry path in Settings (FR-CONF-5)? | **OPEN** — `registryPath` param on APIs; default `.fighub-registry.json` |
-| OQ-2 | Code Connect URL in registry? | **RESOLVED — no** (Sprint 8); use `key` + `nodeId` |
-| OQ-3 | Legacy kebab read alias? | **RESOLVED** — read alias in Step 9; write `spec.name` |
-| OQ-4 | Auto-open ExportSheet vs banner? | **RESOLVED** — WO-027 auto-opens ExportSheet via `prepareRegistryExport(result.registry)` after `scaffold/result`; WO-026 `runRegistryExportFlow` is optional for standalone demos |
-| OQ-5 | Invalid existing registry blocks scaffold? | **RESOLVED** — merge proceeds in-memory; `loadWarning` surfaced; export still offered via download |
+| ID   | Question                                            | Status                                                                                                                                                                             |
+| ---- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OQ-1 | Configurable registry path in Settings (FR-CONF-5)? | **OPEN** — `registryPath` param on APIs; default `.fighub-registry.json`                                                                                                           |
+| OQ-2 | Code Connect URL in registry?                       | **RESOLVED — no** (Sprint 8); use `key` + `nodeId`                                                                                                                                 |
+| OQ-3 | Legacy kebab read alias?                            | **RESOLVED** — read alias in Step 9; write `spec.name`                                                                                                                             |
+| OQ-4 | Auto-open ExportSheet vs banner?                    | **RESOLVED** — WO-027 auto-opens ExportSheet via `prepareRegistryExport(result.registry)` after `scaffold/result`; WO-026 `runRegistryExportFlow` is optional for standalone demos |
+| OQ-5 | Invalid existing registry blocks scaffold?          | **RESOLVED** — merge proceeds in-memory; `loadWarning` surfaced; export still offered via download                                                                                 |
 
 ---
 

@@ -7,7 +7,9 @@ export function toVariableDriftId(collectionName: string, variableName: string):
   return 'var/' + toVariableKey(collectionName, variableName);
 }
 
-export function parseVariableDriftId(id: string): { collectionName: string; variableName: string } | null {
+export function parseVariableDriftId(
+  id: string,
+): { collectionName: string; variableName: string } | null {
   if (!id.startsWith('var/')) {
     return null;
   }

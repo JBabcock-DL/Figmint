@@ -16,9 +16,7 @@ function doc(kind: LoadedDocument['kind'], payload: unknown): LoadedDocument {
 
 describe('components ingest kind filter', () => {
   it('accepts component-spec', () => {
-    const outcome = classifyComponentsIngest(
-      doc('component-spec', canonicalFixture),
-    );
+    const outcome = classifyComponentsIngest(doc('component-spec', canonicalFixture));
     expect(outcome.ok).toBe(true);
     if (outcome.ok) {
       expect(outcome.kind).toBe('component-spec');

@@ -4,10 +4,7 @@ import { useReducer } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { SyncChangesPanel } from '@/ui/components/SyncChangesPanel';
-import {
-  createInitialResolutionState,
-  reduceResolution,
-} from '@/ui/drift/resolutionReducer';
+import { createInitialResolutionState, reduceResolution } from '@/ui/drift/resolutionReducer';
 
 import resolutionAc from '../../../fixtures/drift/drift-report-resolution-ac.v1.json';
 import type { DriftReportV1 } from '@detroitlabs/fighub-contracts';
@@ -19,23 +16,13 @@ interface HarnessProps {
 }
 
 function ResolutionHarness(props: HarnessProps) {
-  const [state, dispatch] = useReducer(
-    reduceResolution,
-    undefined,
-    function () {
-      const initial = createInitialResolutionState();
-      initial.report = acReport;
-      return initial;
-    },
-  );
+  const [state, dispatch] = useReducer(reduceResolution, undefined, function () {
+    const initial = createInitialResolutionState();
+    initial.report = acReport;
+    return initial;
+  });
 
-  return (
-    <SyncChangesPanel
-      state={state}
-      dispatch={dispatch}
-      onAcceptPull={props.onAcceptPull}
-    />
-  );
+  return <SyncChangesPanel state={state} dispatch={dispatch} onAcceptPull={props.onAcceptPull} />;
 }
 
 describe('resolution flow integration', () => {
@@ -71,9 +58,9 @@ describe('resolution flow integration', () => {
 
     const denyButtons = within(pullSection as HTMLElement).getAllByRole('button', { name: 'Deny' });
     await user.click(denyButtons[1]);
-    expect(within(pullSection as HTMLElement).queryAllByRole('button', { name: 'Deny' }).length).toBe(
-      denyButtons.length - 1,
-    );
+    expect(
+      within(pullSection as HTMLElement).queryAllByRole('button', { name: 'Deny' }).length,
+    ).toBe(denyButtons.length - 1);
   });
 
   it('requires conflict resolve before push commit includes conflict row', async () => {

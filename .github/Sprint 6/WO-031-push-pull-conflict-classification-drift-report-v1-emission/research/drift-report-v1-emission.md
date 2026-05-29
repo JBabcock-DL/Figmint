@@ -42,14 +42,14 @@ Also `tests/fixtures/ui/export/drift-report.json` for Export sandbox.
 
 ### 4. Export pipeline
 
-| Step | Module | Notes |
-| ---- | ------ | ----- |
-| Serialize JSON | `src/io/formats/index.ts` | `format(doc, 'json')` |
-| Render MD | `src/io/formats/markdown.ts` | Routes drift-report kind |
-| Prepare content | `src/io/sinks/prepareContent.ts` | Dual json+md |
-| Sinks | `src/io/sinks/index.ts` | 5 sinks including github-pr |
-| UI | `src/ui/components/ExportSheet.tsx` | Sink selection |
-| PR flow | `src/io/github/createPullRequestFlow.ts` | Branch + blob + PR |
+| Step            | Module                                   | Notes                       |
+| --------------- | ---------------------------------------- | --------------------------- |
+| Serialize JSON  | `src/io/formats/index.ts`                | `format(doc, 'json')`       |
+| Render MD       | `src/io/formats/markdown.ts`             | Routes drift-report kind    |
+| Prepare content | `src/io/sinks/prepareContent.ts`         | Dual json+md                |
+| Sinks           | `src/io/sinks/index.ts`                  | 5 sinks including github-pr |
+| UI              | `src/ui/components/ExportSheet.tsx`      | Sink selection              |
+| PR flow         | `src/io/github/createPullRequestFlow.ts` | Branch + blob + PR          |
 
 **Gap:** No runtime produces live report from detectors — only static samples.
 
@@ -62,12 +62,13 @@ export function buildDriftReport(input: {
   meta: DriftReportMeta;
   syncedCount: number;
 }): DriftReportV1 {
-  const drifts = [...input.variableDrifts, ...input.componentDrifts]
-    .sort((a, b) => a.id.localeCompare(b.id));
+  const drifts = [...input.variableDrifts, ...input.componentDrifts].sort((a, b) =>
+    a.id.localeCompare(b.id),
+  );
   const summary = {
-    push: drifts.filter(d => d.direction === 'push').length,
-    pull: drifts.filter(d => d.direction === 'pull').length,
-    conflict: drifts.filter(d => d.direction === 'conflict').length,
+    push: drifts.filter((d) => d.direction === 'push').length,
+    pull: drifts.filter((d) => d.direction === 'pull').length,
+    conflict: drifts.filter((d) => d.direction === 'conflict').length,
     synced: input.syncedCount,
   };
   return { v: 1, kind: 'drift-report', meta: input.meta, summary, drifts };
@@ -98,58 +99,58 @@ Ops program already declares `detect-drift` in `packages/contracts/src/opsProgra
 
 ### Repo inventory
 
-| Exists | Path | Role |
-| ------ | ---- | ---- |
-| ✅ | `packages/contracts/src/driftReport.v1.ts` | Schema |
-| ✅ | `src/io/formats/markdown/driftReport.ts` | MD renderer |
-| ✅ | `src/ui/export/sampleDriftReport.ts` | Sandbox sample |
-| ✅ | `src/io/sinks/githubPR.ts` | PR sink |
-| ✅ | `tests/unit/io/formats/driftReport.test.ts` | MD tests |
-| ❌ | `src/core/drift/report.ts` | Greenfield aggregator |
-| ❌ | Live detect→report handler | Greenfield |
+| Exists | Path                                        | Role                  |
+| ------ | ------------------------------------------- | --------------------- |
+| ✅     | `packages/contracts/src/driftReport.v1.ts`  | Schema                |
+| ✅     | `src/io/formats/markdown/driftReport.ts`    | MD renderer           |
+| ✅     | `src/ui/export/sampleDriftReport.ts`        | Sandbox sample        |
+| ✅     | `src/io/sinks/githubPR.ts`                  | PR sink               |
+| ✅     | `tests/unit/io/formats/driftReport.test.ts` | MD tests              |
+| ❌     | `src/core/drift/report.ts`                  | Greenfield aggregator |
+| ❌     | Live detect→report handler                  | Greenfield            |
 
 ### Cross-ticket matrix
 
-| Ticket | Role |
-| ------ | ---- |
-| WO-029 | Supplies VariableDriftEntry[] |
-| WO-030 | Supplies ComponentDriftEntry[] |
-| WO-019 | Dual format serialization |
-| WO-020 | ExportSheet UI |
-| WO-003 | Contract package |
+| Ticket | Role                              |
+| ------ | --------------------------------- |
+| WO-029 | Supplies VariableDriftEntry[]     |
+| WO-030 | Supplies ComponentDriftEntry[]    |
+| WO-019 | Dual format serialization         |
+| WO-020 | ExportSheet UI                    |
+| WO-003 | Contract package                  |
 | WO-032 | Consumes report for resolution UI |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Rejected |
-| -- | -------- | --------- | -------- |
-| D-031-1 | No new MD renderer | Already tested | Duplicate driftReport.ts |
-| D-031-2 | synced in summary only | WO-029 D-029-4 | Full synced table |
-| D-031-3 | Sort drifts by id | Deterministic PR diffs | Insertion order |
-| D-031-4 | PR commits both json+md | FR-IO-3 dual format | MD only |
-| D-031-5 | figmaFileKey from figma.fileKey \|\| '' | Untitled file behavior | Block report on empty |
+| ID      | Decision                                | Rationale              | Rejected                 |
+| ------- | --------------------------------------- | ---------------------- | ------------------------ |
+| D-031-1 | No new MD renderer                      | Already tested         | Duplicate driftReport.ts |
+| D-031-2 | synced in summary only                  | WO-029 D-029-4         | Full synced table        |
+| D-031-3 | Sort drifts by id                       | Deterministic PR diffs | Insertion order          |
+| D-031-4 | PR commits both json+md                 | FR-IO-3 dual format    | MD only                  |
+| D-031-5 | figmaFileKey from figma.fileKey \|\| '' | Untitled file behavior | Block report on empty    |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-031-1 | E2E: mock drifts → buildDriftReport → format json+md | Schema valid; headings match AC fixture | ☐ pending |
-| SPK-031-2 | Render MD; paste into GitHub preview | Tables render | ☐ manual VQA |
-| SPK-031-3 | PR sink with drift sample | PR opened on test repo | ☐ deferred (needs OAuth) |
+| Spike ID  | Procedure                                            | Pass criteria                           | Status                   |
+| --------- | ---------------------------------------------------- | --------------------------------------- | ------------------------ |
+| SPK-031-1 | E2E: mock drifts → buildDriftReport → format json+md | Schema valid; headings match AC fixture | ☐ pending                |
+| SPK-031-2 | Render MD; paste into GitHub preview                 | Tables render                           | ☐ manual VQA             |
+| SPK-031-3 | PR sink with drift sample                            | PR opened on test repo                  | ☐ deferred (needs OAuth) |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Lik | Mitigation |
-| ---- | --- | --- | ---------- |
-| Large drift payload in PR | Med | Low | Truncate cells via truncateUnknown (existing) |
-| Summary/drift count mismatch | Med | Med | Unit test invariant checker |
-| github-pr sink without OAuth | Low | Med | ExportSheet disables sink (existing pattern) |
+| Risk                         | Sev | Lik | Mitigation                                    |
+| ---------------------------- | --- | --- | --------------------------------------------- |
+| Large drift payload in PR    | Med | Low | Truncate cells via truncateUnknown (existing) |
+| Summary/drift count mismatch | Med | Med | Unit test invariant checker                   |
+| github-pr sink without OAuth | Low | Med | ExportSheet disables sink (existing pattern)  |
 
 ---
 
@@ -165,7 +166,7 @@ Ops program already declares `detect-drift` in `packages/contracts/src/opsProgra
 
 ## Open questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
+| ID       | Question                                   | Status                                             |
+| -------- | ------------------------------------------ | -------------------------------------------------- |
 | OQ-031-1 | Sprint label in PR title — auto or manual? | **RESOLVED:** optional meta field; omit if unknown |
-| OQ-031-2 | Include detect timestamp in filename? | **RESOLVED:** yes `drift-2026-05-28` ISO date |
+| OQ-031-2 | Include detect timestamp in filename?      | **RESOLVED:** yes `drift-2026-05-28` ISO date      |

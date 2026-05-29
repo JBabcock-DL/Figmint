@@ -256,10 +256,7 @@ export class MockFrame {
     this.pluginData[key] = value;
   }
 
-  findAll(
-    callback?: (node: SceneNode) => boolean,
-    options?: { type?: NodeType },
-  ): SceneNode[] {
+  findAll(callback?: (node: SceneNode) => boolean, options?: { type?: NodeType }): SceneNode[] {
     const matches: SceneNode[] = [];
     const visit = function visit(node: SceneNode): void {
       let typeOk = true;

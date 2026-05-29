@@ -19,10 +19,11 @@ describe('usageFrame helper functions', () => {
 
   it('formats tuple labels in sorted axis order', () => {
     expect(
-      formatVariantTupleLabel(
-        { disabled: false, size: 'sm', variant: 'default' },
-        ['disabled', 'size', 'variant'],
-      ),
+      formatVariantTupleLabel({ disabled: false, size: 'sm', variant: 'default' }, [
+        'disabled',
+        'size',
+        'variant',
+      ]),
     ).toBe('disabled=false, size=sm, variant=default');
   });
 

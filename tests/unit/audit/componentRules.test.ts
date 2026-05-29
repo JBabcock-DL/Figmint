@@ -4,7 +4,10 @@ import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import chipFixture from '@/core/components/scaffold/__fixtures__/component-spec-button-chip.v1.json';
 import { runAudit } from '@/core/audit/runAudit';
-import { checkPropAddZeroFailures, checkVariantMatrixMatch } from '@/core/audit/rules/componentRules';
+import {
+  checkPropAddZeroFailures,
+  checkVariantMatrixMatch,
+} from '@/core/audit/rules/componentRules';
 
 describe('componentRules audit', () => {
   const chipSpec = chipFixture as ComponentSpecV1;

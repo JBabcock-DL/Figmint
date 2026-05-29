@@ -69,8 +69,7 @@ export async function resolveComponentSpecFromRepo(
     }
   }
 
-  const isTestRuntime =
-    import.meta.env.MODE === 'test' || import.meta.env.VITEST === 'true';
+  const isTestRuntime = import.meta.env.MODE === 'test' || import.meta.env.VITEST === 'true';
   if (import.meta.env.DEV && !isTestRuntime) {
     const { loadBenchFixture } = await import('@/ui/benchFixtures');
     const doc = loadBenchFixture('component-spec-button-canonical');

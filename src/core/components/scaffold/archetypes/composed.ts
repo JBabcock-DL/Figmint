@@ -72,7 +72,9 @@ export async function buildComposedVariant(ctx: ScaffoldBuildContext): Promise<V
       const inst = (componentSet as unknown as ComponentNode).createInstance();
       if (entry.defaultProps !== undefined && typeof inst.setProperties === 'function') {
         try {
-          inst.setProperties(entry.defaultProps);
+          inst.setProperties(
+            entry.defaultProps as unknown as Record<string, string | boolean | VariableAlias>,
+          );
         } catch {
           // Beta composed scaffold — defaultProps are best-effort only.
         }

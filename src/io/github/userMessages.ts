@@ -5,8 +5,7 @@ export const GITHUB_PR_EMPTY_REPO = {
   hint: 'Push an initial commit to the repo first.',
 } as const;
 
-export const GITHUB_PR_BRANCH_EXISTS_HINT =
-  'Change branch pattern or delete the remote branch.';
+export const GITHUB_PR_BRANCH_EXISTS_HINT = 'Change branch pattern or delete the remote branch.';
 
 export function formatBranchExistsMessage(branch: string): string {
   return 'A branch named `' + branch + '` already exists.';

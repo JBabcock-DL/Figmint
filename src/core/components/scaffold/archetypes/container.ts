@@ -1,4 +1,8 @@
-import { assertValidAxisAlign, reassertHug, resizeThenApplySizing } from '@/core/canvas/helpers/autoLayout';
+import {
+  assertValidAxisAlign,
+  reassertHug,
+  resizeThenApplySizing,
+} from '@/core/canvas/helpers/autoLayout';
 
 import { ensureScaffoldFonts } from '../context';
 import type { ScaffoldBuildContext, VariantBuildResult } from '../types';
@@ -26,7 +30,11 @@ function readContainerWidth(ctx: ScaffoldBuildContext): number {
   return 360;
 }
 
-function readContainerString(container: Record<string, unknown> | undefined, key: string, fallback: string): string {
+function readContainerString(
+  container: Record<string, unknown> | undefined,
+  key: string,
+  fallback: string,
+): string {
   if (container === undefined) {
     return fallback;
   }
@@ -37,7 +45,11 @@ function readContainerString(container: Record<string, unknown> | undefined, key
   return fallback;
 }
 
-function readContainerNumber(container: Record<string, unknown> | undefined, key: string, fallback: number): number {
+function readContainerNumber(
+  container: Record<string, unknown> | undefined,
+  key: string,
+  fallback: number,
+): number {
   if (container === undefined) {
     return fallback;
   }
@@ -90,7 +102,7 @@ async function createSampleText(
 
 function createDashedSlot(
   name: string,
-  label: string,
+  _label: string,
   w: number,
   h: number,
   stretch: boolean,
@@ -135,7 +147,10 @@ async function appendDashedSlotCaption(
   slot.appendChild(caption);
 }
 
-async function buildTabsContainer(ctx: ScaffoldBuildContext, width: number): Promise<ComponentNode> {
+async function buildTabsContainer(
+  ctx: ScaffoldBuildContext,
+  width: number,
+): Promise<ComponentNode> {
   const container = ctx.spec.container as Record<string, unknown> | undefined;
   const tabs = readContainerTabs(container);
   const activeIdx = readContainerNumber(container, 'activeIndex', 0);
@@ -204,17 +219,30 @@ async function buildTabsContainer(ctx: ScaffoldBuildContext, width: number): Pro
   }
   component.appendChild(list);
 
-  const panel = createDashedSlot('TabsContent', tabs[activeIdx] + ' content', width, panelMinHeight, true);
+  const panel = createDashedSlot(
+    'TabsContent',
+    tabs[activeIdx] + ' content',
+    width,
+    panelMinHeight,
+    true,
+  );
   await appendDashedSlotCaption(ctx, panel, tabs[activeIdx] + ' content');
   component.appendChild(panel);
 
   return component;
 }
 
-async function buildAccordionContainer(ctx: ScaffoldBuildContext, width: number): Promise<ComponentNode> {
+async function buildAccordionContainer(
+  ctx: ScaffoldBuildContext,
+  width: number,
+): Promise<ComponentNode> {
   const container = ctx.spec.container as Record<string, unknown> | undefined;
   const titleText = readContainerString(container, 'titleText', 'Is it accessible?');
-  const panelText = readContainerString(container, 'panelText', 'Yes. It adheres to the WAI-ARIA design pattern.');
+  const panelText = readContainerString(
+    container,
+    'panelText',
+    'Yes. It adheres to the WAI-ARIA design pattern.',
+  );
   const expanded = isExpandedVariant(ctx.variantName);
 
   const component = figma.createComponent();
@@ -298,7 +326,9 @@ function finalizeContainerSizing(component: ComponentNode): void {
   }
 }
 
-export async function buildContainerVariant(ctx: ScaffoldBuildContext): Promise<VariantBuildResult> {
+export async function buildContainerVariant(
+  ctx: ScaffoldBuildContext,
+): Promise<VariantBuildResult> {
   await ensureScaffoldFonts(ctx);
 
   const kind = readContainerKind(ctx);

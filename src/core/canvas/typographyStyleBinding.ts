@@ -1,7 +1,4 @@
-import {
-  loadTypographySlots,
-  type TypographyBodyVariant,
-} from '@/core/canvas/data/loadCanvasData';
+import { loadTypographySlots, type TypographyBodyVariant } from '@/core/canvas/data/loadCanvasData';
 import type { VariablePathMap } from '@/core/canvas/lib/variables';
 import { resolvePath } from '@/core/canvas/lib/variables';
 import { pluginLog } from '@/core/pluginLog';
@@ -129,7 +126,11 @@ function fontStyleForWeight(weight: number, variant: BodyVariantKind | null): st
   return 'Regular';
 }
 
-function tryBind(style: TextStyle, field: VariableBindableTextField, variable: Variable | null): boolean {
+function tryBind(
+  style: TextStyle,
+  field: VariableBindableTextField,
+  variable: Variable | null,
+): boolean {
   if (variable === null) {
     return false;
   }
@@ -211,15 +212,11 @@ export async function applyTypographyVariableBindings(
   tryBind(style, 'lineHeight', lineVar);
 
   const resolvedFamily =
-    familyVar !== null
-      ? resolveVariableValueAtTypography100(familyVar, ctx)
-      : null;
-  const resolvedSize =
-    sizeVar !== null ? resolveVariableValueAtTypography100(sizeVar, ctx) : null;
+    familyVar !== null ? resolveVariableValueAtTypography100(familyVar, ctx) : null;
+  const resolvedSize = sizeVar !== null ? resolveVariableValueAtTypography100(sizeVar, ctx) : null;
   const resolvedWeight =
     weightVar !== null ? resolveVariableValueAtTypography100(weightVar, ctx) : null;
-  const resolvedLine =
-    lineVar !== null ? resolveVariableValueAtTypography100(lineVar, ctx) : null;
+  const resolvedLine = lineVar !== null ? resolveVariableValueAtTypography100(lineVar, ctx) : null;
 
   const family =
     typeof resolvedFamily === 'string' && resolvedFamily !== '' ? resolvedFamily : 'Inter';

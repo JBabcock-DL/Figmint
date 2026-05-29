@@ -1,4 +1,4 @@
-# WO-057 — Bootstrap text-styles spec (Doc/* + Label/*)
+# WO-057 — Bootstrap text-styles spec (Doc/_ + Label/_)
 
 > **Status:** Research-complete · 2026-05-28
 > **Quality bar:** `.github/templates/research-quality-bar.md`
@@ -8,7 +8,7 @@
 
 **Ticket Requirement 7 is already fulfilled.** The four `_Doc/*` text styles (`_Doc/Section`, `_Doc/TokenName`, `_Doc/Code`, `_Doc/Caption`) and the seven `Label/*` slot styles (including SM, MD, LG) are already published by the existing bootstrap pipeline. No new push code, no new fixture entries, no DTCG-shape definitions are required from WO-057.
 
-The audit gate ([`audit-gate-spec.md`](./audit-gate-spec.md)) handles the missing-prerequisite case at scaffold time. Per the locked decision (D3 in lift-map), Requirement 7 of `ticket.md` is amended to: **"Verify that bootstrap already publishes the required Doc/* text styles and Label/*/font-family variables."**
+The audit gate ([`audit-gate-spec.md`](./audit-gate-spec.md)) handles the missing-prerequisite case at scaffold time. Per the locked decision (D3 in lift-map), Requirement 7 of `ticket.md` is amended to: **"Verify that bootstrap already publishes the required Doc/_ text styles and Label/_/font-family variables."**
 
 **Locked recommendation:** No bootstrap extension work in WO-057's scope. The ticket Requirement 7 wording must be amended (Step 6 in research skill); the plan must NOT include "extend bootstrap" build steps.
 
@@ -35,12 +35,12 @@ The DOC_STYLE_TOKEN_PREFIX map in `src/core/canvas/typographyStyleBinding.ts` li
 
 So:
 
-| Doc style | Backing slot | Resolved properties (mode-100) |
-| --------- | ------------ | ------------------------------ |
-| `_Doc/Section` | `Headline/LG` | Headline LG font-family, font-size, font-weight, line-height |
-| `_Doc/TokenName` | `Label/LG` | Label LG font-family, font-size, font-weight, line-height |
-| `_Doc/Code` | `Label/SM` | Label SM font-family, font-size, font-weight, line-height |
-| `_Doc/Caption` | `Body/SM` | Body SM font-family, font-size, font-weight, line-height |
+| Doc style        | Backing slot  | Resolved properties (mode-100)                               |
+| ---------------- | ------------- | ------------------------------------------------------------ |
+| `_Doc/Section`   | `Headline/LG` | Headline LG font-family, font-size, font-weight, line-height |
+| `_Doc/TokenName` | `Label/LG`    | Label LG font-family, font-size, font-weight, line-height    |
+| `_Doc/Code`      | `Label/SM`    | Label SM font-family, font-size, font-weight, line-height    |
+| `_Doc/Caption`   | `Body/SM`     | Body SM font-family, font-size, font-weight, line-height     |
 
 The styles bind to the Typography variables (mode-aware) so theme switches Just Work.
 
@@ -62,7 +62,7 @@ src/core/canvas/data/typography-slots.json:28:    { "slot": "Label/MD", "fontSiz
 "name": "Label/MD/font-family",
 ```
 
-Plus lines 2905, 2925, 2945 for `Label/MD/font-size`, `font-weight`, `line-height`. The fixture similarly defines Label/SM/* and Label/LG/* variables across the typography section. Verified by grep at start of this research (lift-map F5).
+Plus lines 2905, 2925, 2945 for `Label/MD/font-size`, `font-weight`, `line-height`. The fixture similarly defines Label/SM/_ and Label/LG/_ variables across the typography section. Verified by grep at start of this research (lift-map F5).
 
 The 4 properties per slot × 7 slots × 8 Android-curve modes = the full typography slot model from `/skills/labs-design-ops:create-design-system`.
 
@@ -94,7 +94,7 @@ src/core/variables/__fixtures__/bootstrap-complete.v1.json:
 
 > Design-system bootstrap **continues to publish** `_Doc/Section`, `_Doc/TokenName`, `_Doc/Code`, `_Doc/Caption` text styles plus `Label/SM`, `Label/MD`, `Label/LG` (verified by audit gate — no new bootstrap work).
 
-### F6 — Naming-prefix delta (legacy "Doc/X" vs FigHub "_Doc/X")
+### F6 — Naming-prefix delta (legacy "Doc/X" vs FigHub "\_Doc/X")
 
 Per [`doc-pipeline-lift-map.md`](./doc-pipeline-lift-map.md) F6 + D2: legacy contract names them `Doc/X` (no underscore). FigHub names them `_Doc/X` (underscore prefix to keep them from cluttering the published-style picker for non-doc users).
 
@@ -119,13 +119,13 @@ No bootstrap code changes.
 
 ### Bootstrap publishing code (already shipped)
 
-| File | Lines | Role |
-| ---- | ----- | ---- |
-| `src/core/canvas/publishTypographyStyles.ts` | 1-112 | Publishes 4 `_Doc/*` + 27 slot styles; binds to Typography variables |
-| `src/core/canvas/typographyStyleBinding.ts` | 10-13 | Maps `_Doc/X` → backing slot (`Headline/LG`, `Label/LG`, `Label/SM`, `Body/SM`) |
-| `src/core/canvas/data/typography-slots.json` | (whole file) | Slot definitions for all 27 styles |
-| `src/core/variables/__fixtures__/bootstrap-complete.v1.json` | 2845+ | Pre-baked Label/MD/* variables (plus Label/SM, Label/LG by analogy) |
-| `src/core/bootstrap/runBootstrap.ts` | 1-100 | Bootstrap orchestrator — calls `publishTypographyStyles` after token push |
+| File                                                         | Lines        | Role                                                                            |
+| ------------------------------------------------------------ | ------------ | ------------------------------------------------------------------------------- |
+| `src/core/canvas/publishTypographyStyles.ts`                 | 1-112        | Publishes 4 `_Doc/*` + 27 slot styles; binds to Typography variables            |
+| `src/core/canvas/typographyStyleBinding.ts`                  | 10-13        | Maps `_Doc/X` → backing slot (`Headline/LG`, `Label/LG`, `Label/SM`, `Body/SM`) |
+| `src/core/canvas/data/typography-slots.json`                 | (whole file) | Slot definitions for all 27 styles                                              |
+| `src/core/variables/__fixtures__/bootstrap-complete.v1.json` | 2845+        | Pre-baked Label/MD/\* variables (plus Label/SM, Label/LG by analogy)            |
+| `src/core/bootstrap/runBootstrap.ts`                         | 1-100        | Bootstrap orchestrator — calls `publishTypographyStyles` after token push       |
 
 ### Bootstrap audit verification (already shipped)
 
@@ -133,50 +133,50 @@ No bootstrap code changes.
 
 ### Color-token presence (verified)
 
-| Token | In fixture? |
-| ----- | ----------- |
-| `color/background/content` | ✅ |
-| `color/background/content-muted` | ✅ |
-| `color/background/variant` | ✅ |
-| `color/border/subtle` | ✅ |
+| Token                            | In fixture? |
+| -------------------------------- | ----------- |
+| `color/background/content`       | ✅          |
+| `color/background/content-muted` | ✅          |
+| `color/background/variant`       | ✅          |
+| `color/border/subtle`            | ✅          |
 
 ### Cross-ticket matrix
 
-| Ticket | Bootstrap interface | This WO depends on |
-| ------ | ------------------- | ------------------ |
-| WO-011 (color primitives) | Pushed primitives + theme color tokens | YES — gate verifies 4 color tokens |
-| WO-012 (typography styles) | Published `_Doc/*` + slot styles | YES — gate verifies 4 doc text styles + 3 Label font-family variables |
-| WO-013 (layout + effects) | Pushed Layout + Effects variables | NO direct dependency |
-| WO-008 (variable push engine) | Push primitive — no direct UI | YES — gate reads from the pushed Theme + Typography collections |
+| Ticket                        | Bootstrap interface                    | This WO depends on                                                    |
+| ----------------------------- | -------------------------------------- | --------------------------------------------------------------------- |
+| WO-011 (color primitives)     | Pushed primitives + theme color tokens | YES — gate verifies 4 color tokens                                    |
+| WO-012 (typography styles)    | Published `_Doc/*` + slot styles       | YES — gate verifies 4 doc text styles + 3 Label font-family variables |
+| WO-013 (layout + effects)     | Pushed Layout + Effects variables      | NO direct dependency                                                  |
+| WO-008 (variable push engine) | Push primitive — no direct UI          | YES — gate reads from the pushed Theme + Typography collections       |
 
 ## Decision log
 
-| # | Decision | Rationale |
-| --- | -------- | --------- |
-| D1 | No new DTCG text-style definitions in WO-057 scope | All 4 Doc styles + 7 Label styles already published by `publishTypographyStyles.ts` |
-| D2 | No new fixture entries in `bootstrap-complete.v1.json` | All required color tokens + font-family variables already present |
-| D3 | Ticket Requirement 7 is amended (not scope-added) — see F5 | Original wording over-scopes; actual requirement is verification, not publication |
-| D4 | Section emitters resolve text styles via `findTextStyleByName(_, '_Doc/Section')` with underscore prefix | FigHub convention (D2 in lift-map) |
-| D5 | If a user somehow has `_Doc/Section` but not `_Doc/Caption`, the audit gate flags ALL missing styles in one row | One actionable error per scaffold run |
-| D6 | The `verifySlotTextStyles` helper in bootstrap is the model for the new audit gate's presence check | Mirror the pattern for consistency |
+| #   | Decision                                                                                                        | Rationale                                                                           |
+| --- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| D1  | No new DTCG text-style definitions in WO-057 scope                                                              | All 4 Doc styles + 7 Label styles already published by `publishTypographyStyles.ts` |
+| D2  | No new fixture entries in `bootstrap-complete.v1.json`                                                          | All required color tokens + font-family variables already present                   |
+| D3  | Ticket Requirement 7 is amended (not scope-added) — see F5                                                      | Original wording over-scopes; actual requirement is verification, not publication   |
+| D4  | Section emitters resolve text styles via `findTextStyleByName(_, '_Doc/Section')` with underscore prefix        | FigHub convention (D2 in lift-map)                                                  |
+| D5  | If a user somehow has `_Doc/Section` but not `_Doc/Caption`, the audit gate flags ALL missing styles in one row | One actionable error per scaffold run                                               |
+| D6  | The `verifySlotTextStyles` helper in bootstrap is the model for the new audit gate's presence check             | Mirror the pattern for consistency                                                  |
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-BOOTSTRAP-1 | Run bootstrap on empty file with `bootstrap-complete` fixture; assert all 4 `_Doc/*` styles + 27 slot styles + 4 required color tokens + 3 Label/*/font-family variables present | All 38 prerequisites confirmed | ☐ pending (build) — covered by SPK-AUDIT-1 in [`audit-gate-spec.md`](./audit-gate-spec.md) |
-| SPK-BOOTSTRAP-2 | Manually delete `_Doc/Caption` after bootstrap; trigger scaffold; assert preflight gate fires | Gate fires with single missing-style row | ☐ pending (build) |
-| SPK-BOOTSTRAP-3 | Run bootstrap THEN scaffold on Plugin Sandbox `cVdPraIafWFBRZnzMPhtrW`; assert no preflight error | Full 5-section frame produced | ☐ pending (build Phase 2 end) |
+| Spike ID        | Procedure                                                                                                                                                                         | Pass criteria                            | Status                                                                                     |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------ |
+| SPK-BOOTSTRAP-1 | Run bootstrap on empty file with `bootstrap-complete` fixture; assert all 4 `_Doc/*` styles + 27 slot styles + 4 required color tokens + 3 Label/\*/font-family variables present | All 38 prerequisites confirmed           | ☐ pending (build) — covered by SPK-AUDIT-1 in [`audit-gate-spec.md`](./audit-gate-spec.md) |
+| SPK-BOOTSTRAP-2 | Manually delete `_Doc/Caption` after bootstrap; trigger scaffold; assert preflight gate fires                                                                                     | Gate fires with single missing-style row | ☐ pending (build)                                                                          |
+| SPK-BOOTSTRAP-3 | Run bootstrap THEN scaffold on Plugin Sandbox `cVdPraIafWFBRZnzMPhtrW`; assert no preflight error                                                                                 | Full 5-section frame produced            | ☐ pending (build Phase 2 end)                                                              |
 
 ## Risk register
 
-| Risk | Severity | Likelihood | Mitigation |
-| ---- | -------- | ---------- | ---------- |
-| R1 — Bootstrap publish order changes in a future sprint and breaks the audit gate's presence check | Low | Low | Audit gate is name-based, not order-based; resilient to publish-order changes. |
-| R2 — User's Figma file has `_Doc/Section` as a remote-library style instead of a local style | Medium | Low | `getLocalTextStylesAsync()` returns local + remote published in same file; name match works regardless. Watch in VQA. |
-| R3 — A user re-renames `_Doc/Section` to `Doc/Section` (no prefix) | Low | Low | Gate fires correctly; user re-publishes via bootstrap. |
-| R4 — `Headline/LG` slot doesn't exist (delta with `_Doc/Section`'s backing — typographyStyleBinding.ts line 10) — would break `applyTypographyVariableBindings` silently | Medium | Low | `publishTypographyStyles.ts` line 93 already collects `missing` and surfaces; bootstrap result has the count. WO-057 audit gate adds a redundant check at scaffold time. |
-| R5 — `Body/SM` not in `listExpectedSlotStyleNames()` would mean `_Doc/Caption` binding falls back; could cause caption to render wrong fontWeight | Medium | Low | `_Doc/Caption` has DOC_STYLE_TOKEN_PREFIX = `Body/SM` per `typographyStyleBinding.ts:13`; verify `Body/SM` is one of the 27 expected slots (likely YES per typography-slots.json structure). |
+| Risk                                                                                                                                                                     | Severity | Likelihood | Mitigation                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R1 — Bootstrap publish order changes in a future sprint and breaks the audit gate's presence check                                                                       | Low      | Low        | Audit gate is name-based, not order-based; resilient to publish-order changes.                                                                                                               |
+| R2 — User's Figma file has `_Doc/Section` as a remote-library style instead of a local style                                                                             | Medium   | Low        | `getLocalTextStylesAsync()` returns local + remote published in same file; name match works regardless. Watch in VQA.                                                                        |
+| R3 — A user re-renames `_Doc/Section` to `Doc/Section` (no prefix)                                                                                                       | Low      | Low        | Gate fires correctly; user re-publishes via bootstrap.                                                                                                                                       |
+| R4 — `Headline/LG` slot doesn't exist (delta with `_Doc/Section`'s backing — typographyStyleBinding.ts line 10) — would break `applyTypographyVariableBindings` silently | Medium   | Low        | `publishTypographyStyles.ts` line 93 already collects `missing` and surfaces; bootstrap result has the count. WO-057 audit gate adds a redundant check at scaffold time.                     |
+| R5 — `Body/SM` not in `listExpectedSlotStyleNames()` would mean `_Doc/Caption` binding falls back; could cause caption to render wrong fontWeight                        | Medium   | Low        | `_Doc/Caption` has DOC_STYLE_TOKEN_PREFIX = `Body/SM` per `typographyStyleBinding.ts:13`; verify `Body/SM` is one of the 27 expected slots (likely YES per typography-slots.json structure). |
 
 ## Recommendations
 
@@ -197,7 +197,7 @@ No bootstrap code changes.
 - `FigHub/src/core/canvas/publishTypographyStyles.ts` (130 lines) — proves Doc + Label slot styles published.
 - `FigHub/src/core/canvas/typographyStyleBinding.ts:10-13` — `DOC_STYLE_TOKEN_PREFIX` mapping.
 - `FigHub/src/core/canvas/data/typography-slots.json` — slot definitions.
-- `FigHub/src/core/variables/__fixtures__/bootstrap-complete.v1.json:2845+` — Label/MD/* variables.
+- `FigHub/src/core/variables/__fixtures__/bootstrap-complete.v1.json:2845+` — Label/MD/\* variables.
 - `FigHub/src/core/bootstrap/runBootstrap.ts` — bootstrap orchestrator.
 - `DesignOps-plugin/skills/create-component/conventions/04-doc-pipeline-contract.md` §11 — text-style assignment rule.
 - [`audit-gate-spec.md`](./audit-gate-spec.md) — preflight gate consumes the publish set.

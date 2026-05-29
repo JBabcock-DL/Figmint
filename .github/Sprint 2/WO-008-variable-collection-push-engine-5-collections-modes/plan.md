@@ -80,7 +80,7 @@ Implement a deterministic, Plugin-API-only push engine under `src/core/variables
 | Dependency           | Role                                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------------------- |
 | **WO-002**           | Plugin scaffold, `esbuild` `es2017` main target, `src/core/` layout                                           |
-| **WO-003**           | `@detroitlabs/fighub-contracts` import path; `TokensV1` stub until WO-055 fills body                         |
+| **WO-003**           | `@detroitlabs/fighub-contracts` import path; `TokensV1` stub until WO-055 fills body                          |
 | **WO-055**           | Canonical `TokensV1` / `TokenV1` types in `packages/contracts/src/tokens.v1.ts` — WO-008 mirrors until merged |
 | **WO-007**           | Production-scale `TokensV1` fixtures for integration/bench (minimal fixture in Step 25 unblocks earlier)      |
 | **WO-009**           | Replaces `deriveCodeSyntax` stub in `codeSyntax.ts`; push call sites unchanged                                |

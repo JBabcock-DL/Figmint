@@ -18,10 +18,7 @@ import {
   MockFrame,
   MockTextNode,
 } from '../__mocks__/figmaFrames';
-import {
-  DOC_PIPELINE_TEXT_STYLES,
-  installDocPipelineVariableMocks,
-} from './docPipelineMocks';
+import { DOC_PIPELINE_TEXT_STYLES, installDocPipelineVariableMocks } from './docPipelineMocks';
 
 const FIXTURE_DIR = join(dirname(fileURLToPath(import.meta.url)), '../../../../fixtures');
 
@@ -64,7 +61,7 @@ describe('buildUsageNotes', () => {
     installUsageFigmaMocks();
   });
 
-  it('emits doc/component/button/usage with two Do/Don\'t cards (snapshot)', async () => {
+  it("emits doc/component/button/usage with two Do/Don't cards (snapshot)", async () => {
     const docRoot = createMockFrame({
       name: 'doc/component/button',
       layoutMode: 'VERTICAL',

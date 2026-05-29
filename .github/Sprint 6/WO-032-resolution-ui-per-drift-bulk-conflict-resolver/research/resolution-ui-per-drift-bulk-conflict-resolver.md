@@ -14,11 +14,11 @@ Build the **drift resolution UX**: filter chips (All / Push / Pull / Conflict), 
 
 ### 1. UX surface (post WO-033 absorption)
 
-| Was (WO-033) | Now (WO-058 + WO-032) |
-| ------------ | --------------------- |
-| Dedicated Sync tab in nav | Settings repo card **Drift** section expandable |
-| Tab badge `Sync · 4↑ 2↓` | Badge on Settings nav or repo card header |
-| On-open detect | Fetch/Pull refreshes drift cache; mount hook on Settings |
+| Was (WO-033)              | Now (WO-058 + WO-032)                                    |
+| ------------------------- | -------------------------------------------------------- |
+| Dedicated Sync tab in nav | Settings repo card **Drift** section expandable          |
+| Tab badge `Sync · 4↑ 2↓`  | Badge on Settings nav or repo card header                |
+| On-open detect            | Fetch/Pull refreshes drift cache; mount hook on Settings |
 
 `src/ui/App.tsx` tabs today: bootstrap, components, export, settings — **no Sync tab** (lines 13–20). Add drift UI inside `Settings.tsx` below repo card.
 
@@ -62,12 +62,12 @@ interface ResolutionState {
 
 ### 4. Per-action side effects
 
-| Action | Variable drift | Component drift | Snapshot |
-| ------ | -------------- | --------------- | -------- |
-| Push | Stage repo file diff for PR | Stage spec JSON update | update on PR merge confirmation OR optimistic on push commit |
-| Pull | WO-008 `pushVariables(repoValues)` | Re-scaffold or patch bindings/props | update after apply success |
-| Skip | none | none | none |
-| Custom (conflict) | Write chosen value to both? → Push OR Pull based on choice | Same | update with chosen value |
+| Action            | Variable drift                                             | Component drift                     | Snapshot                                                     |
+| ----------------- | ---------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| Push              | Stage repo file diff for PR                                | Stage spec JSON update              | update on PR merge confirmation OR optimistic on push commit |
+| Pull              | WO-008 `pushVariables(repoValues)`                         | Re-scaffold or patch bindings/props | update after apply success                                   |
+| Skip              | none                                                       | none                                | none                                                         |
+| Custom (conflict) | Write chosen value to both? → Push OR Pull based on choice | Same                                | update with chosen value                                     |
 
 **Pull apply component strategy (OQ-S6-4):**
 
@@ -101,11 +101,11 @@ Reuse `src/io/github/createPullRequestFlow.ts`:
 
 ### 8. Testing strategy
 
-| Layer | Coverage |
-| ----- | -------- |
-| Unit | DriftList filter logic, bulk enable rules, resolution reducer |
+| Layer       | Coverage                                                       |
+| ----------- | -------------------------------------------------------------- |
+| Unit        | DriftList filter logic, bulk enable rules, resolution reducer  |
 | Integration | Mock report 10 drifts (4 push, 3 pull, 3 conflict) — ticket AC |
-| E2E manual | Designer resolves without leaving plugin |
+| E2E manual  | Designer resolves without leaving plugin                       |
 
 Fixture: extend `drift-report-ac.json` to 10 entries for AC scenario.
 
@@ -115,60 +115,60 @@ Fixture: extend `drift-report-ac.json` to 10 entries for AC scenario.
 
 ### Repo inventory
 
-| Exists | Path | Role |
-| ------ | ---- | ---- |
-| ✅ | `src/ui/components/ExportSheet.tsx` | Sink orchestration pattern |
-| ✅ | `src/ui/tabs/Settings.tsx` | Host surface |
-| ✅ | `src/io/github/createPullRequestFlow.ts` | Bulk PR |
-| ✅ | `src/core/variables/push.ts` | Pull-apply variables |
-| ✅ | `src/core/components/scaffold/pipeline.ts` | Re-scaffold |
-| ❌ | `src/ui/components/DriftList.tsx` | Greenfield |
-| ❌ | `src/ui/components/ConflictResolver.tsx` | Greenfield |
-| ❌ | Resolution message types | Greenfield |
+| Exists | Path                                       | Role                       |
+| ------ | ------------------------------------------ | -------------------------- |
+| ✅     | `src/ui/components/ExportSheet.tsx`        | Sink orchestration pattern |
+| ✅     | `src/ui/tabs/Settings.tsx`                 | Host surface               |
+| ✅     | `src/io/github/createPullRequestFlow.ts`   | Bulk PR                    |
+| ✅     | `src/core/variables/push.ts`               | Pull-apply variables       |
+| ✅     | `src/core/components/scaffold/pipeline.ts` | Re-scaffold                |
+| ❌     | `src/ui/components/DriftList.tsx`          | Greenfield                 |
+| ❌     | `src/ui/components/ConflictResolver.tsx`   | Greenfield                 |
+| ❌     | Resolution message types                   | Greenfield                 |
 
 ### Cross-ticket matrix
 
-| Ticket | Role |
-| ------ | ---- |
-| WO-031 | DriftReport input |
-| WO-008 | Variable pull apply |
-| WO-018 | PR emission |
-| WO-028/058 | Snapshot updates |
-| WO-033 | Badge/on-open (absorbed into Settings) |
+| Ticket     | Role                                   |
+| ---------- | -------------------------------------- |
+| WO-031     | DriftReport input                      |
+| WO-008     | Variable pull apply                    |
+| WO-018     | PR emission                            |
+| WO-028/058 | Snapshot updates                       |
+| WO-033     | Badge/on-open (absorbed into Settings) |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Rejected |
-| -- | -------- | --------- | -------- |
-| D-032-1 | Settings-embedded panel | WO-033 absorption | Standalone Sync tab |
-| D-032-2 | Session-only resolutions | Ticket out of scope | clientStorage persist |
-| D-032-3 | Optimistic snapshot on pull | Immediate UX | Wait for PR merge on push only |
-| D-032-4 | Surgical patch for props/bindings | Faster than full scaffold | Always re-scaffold |
-| D-032-5 | Custom value JSON editor | Power users for conflicts | Skip-only conflicts |
+| ID      | Decision                          | Rationale                 | Rejected                       |
+| ------- | --------------------------------- | ------------------------- | ------------------------------ |
+| D-032-1 | Settings-embedded panel           | WO-033 absorption         | Standalone Sync tab            |
+| D-032-2 | Session-only resolutions          | Ticket out of scope       | clientStorage persist          |
+| D-032-3 | Optimistic snapshot on pull       | Immediate UX              | Wait for PR merge on push only |
+| D-032-4 | Surgical patch for props/bindings | Faster than full scaffold | Always re-scaffold             |
+| D-032-5 | Custom value JSON editor          | Power users for conflicts | Skip-only conflicts            |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-032-1 | Storybook-style: mock 10-drift report + resolve all | All actions set; bulk enabled correctly | ☐ pending |
-| SPK-032-2 | Bulk push 2 variable drifts → test PR | Single PR, 2 files | ☐ deferred OAuth |
-| SPK-032-3 | Bulk pull 2 variable drifts → sandbox | Figma values match repo | ☐ sandbox VQA |
-| SPK-032-4 | 3 conflicts unresolved → bulk disabled | Buttons disabled | ☐ unit test |
+| Spike ID  | Procedure                                           | Pass criteria                           | Status           |
+| --------- | --------------------------------------------------- | --------------------------------------- | ---------------- |
+| SPK-032-1 | Storybook-style: mock 10-drift report + resolve all | All actions set; bulk enabled correctly | ☐ pending        |
+| SPK-032-2 | Bulk push 2 variable drifts → test PR               | Single PR, 2 files                      | ☐ deferred OAuth |
+| SPK-032-3 | Bulk pull 2 variable drifts → sandbox               | Figma values match repo                 | ☐ sandbox VQA    |
+| SPK-032-4 | 3 conflicts unresolved → bulk disabled              | Buttons disabled                        | ☐ unit test      |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Lik | Mitigation |
-| ---- | --- | --- | ---------- |
-| Partial pull failure mid-batch | High | Med | Transaction log; rollback message; Figma undo |
-| Push PR fails after snapshot update | Med | Low | Snapshot update only after PR success for push |
-| Component patch vs scaffold wrong | Med | Med | Hash gate from WO-030 |
-| UI overload 100+ drifts | Med | Low | Virtualize list; paginate |
+| Risk                                | Sev  | Lik | Mitigation                                     |
+| ----------------------------------- | ---- | --- | ---------------------------------------------- |
+| Partial pull failure mid-batch      | High | Med | Transaction log; rollback message; Figma undo  |
+| Push PR fails after snapshot update | Med  | Low | Snapshot update only after PR success for push |
+| Component patch vs scaffold wrong   | Med  | Med | Hash gate from WO-030                          |
+| UI overload 100+ drifts             | Med  | Low | Virtualize list; paginate                      |
 
 ---
 
@@ -184,10 +184,10 @@ Fixture: extend `drift-report-ac.json` to 10 entries for AC scenario.
 
 ## Open questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
-| OQ-032-1 | Custom value editor: raw JSON or typed form? | **Default:** typed by kind (color picker vs number); JSON fallback |
-| OQ-032-2 | Push snapshot update timing | **RESOLVED:** on PR open success (not merge) — designer can revert via Skip next detect |
+| ID       | Question                                     | Status                                                                                  |
+| -------- | -------------------------------------------- | --------------------------------------------------------------------------------------- |
+| OQ-032-1 | Custom value editor: raw JSON or typed form? | **Default:** typed by kind (color picker vs number); JSON fallback                      |
+| OQ-032-2 | Push snapshot update timing                  | **RESOLVED:** on PR open success (not merge) — designer can revert via Skip next detect |
 
 ---
 
@@ -219,11 +219,10 @@ type ResolutionBulkPullRequest = {
 
 ## Appendix B — Bulk enable rules (unit-test table)
 
-| Selected rows | Any conflict unresolved? | Bulk Push | Bulk Pull |
-| ------------- | ------------------------ | --------- | --------- |
-| 4 push, 0 pull | no | enabled | disabled |
-| 0 push, 3 pull | no | disabled | enabled |
-| 2 push, 1 conflict (unresolved) | yes | disabled | disabled |
-| 2 push, 1 conflict (resolved) | no | enabled | disabled |
-| 0 selected | no | disabled | disabled |
-
+| Selected rows                   | Any conflict unresolved? | Bulk Push | Bulk Pull |
+| ------------------------------- | ------------------------ | --------- | --------- |
+| 4 push, 0 pull                  | no                       | enabled   | disabled  |
+| 0 push, 3 pull                  | no                       | disabled  | enabled   |
+| 2 push, 1 conflict (unresolved) | yes                      | disabled  | disabled  |
+| 2 push, 1 conflict (resolved)   | no                       | enabled   | disabled  |
+| 0 selected                      | no                       | disabled  | disabled  |

@@ -121,8 +121,7 @@ export function createMockComponentSetWithVariants(
   options?: MockComponentSetFactoryOptions,
 ): MockComponentSetFactoryResult {
   const variantCount = options?.variantCount !== undefined ? options.variantCount : 2;
-  const includeLabel =
-    options?.includeLabel !== undefined ? options.includeLabel : true;
+  const includeLabel = options?.includeLabel !== undefined ? options.includeLabel : true;
   const includeIconSlots =
     options?.includeIconSlots !== undefined ? options.includeIconSlots : true;
 
@@ -134,7 +133,10 @@ export function createMockComponentSetWithVariants(
 
   for (let i = 0; i < variantCount; i++) {
     const variant = createMockComponent({ name: 'variant=' + String(i) });
-    buildChipVariantTree(variant, { includeLabel: includeLabel, includeIconSlots: includeIconSlots });
+    buildChipVariantTree(variant, {
+      includeLabel: includeLabel,
+      includeIconSlots: includeIconSlots,
+    });
     attachAddComponentProperty(variant, i, addPropertyCalls);
     componentSet.appendChild(variant);
     variants.push(variant);
