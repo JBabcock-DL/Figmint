@@ -18,11 +18,11 @@
     "spike:github-oauth": "node scripts/spike-github-device-flow.mjs",
     "spike:github-oauth:probe": "node scripts/spike-github-device-flow.mjs --request-only",
     "dev": "node scripts/dev.mjs",
-    "lint": "eslint .",
+    "lint": "npm run build --workspace=@detroitlabs/fighub-contracts && eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "typecheck": "tsc --noEmit -p .",
+    "typecheck": "npm run build --workspace=@detroitlabs/fighub-contracts && tsc --noEmit -p .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:sprint6-drift": "vitest run tests/unit/core/drift tests/integration/core/drift tests/unit/ui/drift tests/unit/ui/components/DriftList tests/integration/ui/drift"
