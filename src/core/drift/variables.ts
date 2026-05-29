@@ -146,8 +146,7 @@ export function detectVariableDrift(input: VariableDriftDetectInput): VariableDr
   let syncedCount = 0;
 
   for (const key of Object.keys(keySet)) {
-    const figmaValue =
-      input.figmaTokens[key] !== undefined ? input.figmaTokens[key] : null;
+    const figmaValue = input.figmaTokens[key] !== undefined ? input.figmaTokens[key] : null;
     const repoValue = input.repoTokens[key] !== undefined ? input.repoTokens[key] : null;
     const snapshotValue =
       input.snapshotTokens[key] !== undefined ? input.snapshotTokens[key] : null;

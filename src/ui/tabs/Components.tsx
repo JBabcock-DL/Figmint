@@ -57,21 +57,16 @@ export interface ComponentsTabProps {
   onOpenSettings?: () => void;
 }
 
-export function Components({
-  repoUrl,
-  github,
-  specsPath,
-  onOpenSettings,
-}: ComponentsTabProps) {
+export function Components({ repoUrl, github, specsPath, onOpenSettings }: ComponentsTabProps) {
   const [registryKeys, setRegistryKeys] = useState<string[]>([]);
   const [selectedKey, setSelectedKey] = useState('');
   const [registryStatus, setRegistryStatus] = useState('');
   const [draft, setDraft] = useState<ComponentSpecV1 | null>(null);
   const [ingestError, setIngestError] = useState<string | null>(null);
   const [sourceLabel, setSourceLabel] = useState<string | null>(null);
-  const [validation, setValidation] = useState<
-    Awaited<ReturnType<typeof validateComponentSpecDraft>> | null
-  >(null);
+  const [validation, setValidation] = useState<Awaited<
+    ReturnType<typeof validateComponentSpecDraft>
+  > | null>(null);
   const [showAudit, setShowAudit] = useState(false);
 
   const [progressState, dispatchProgress] = useReducer(
@@ -155,12 +150,14 @@ export function Components({
       setRegistryKeys([]);
       return;
     }
-    setRegistryKeys(
-      loaded.registry !== null ? Object.keys(loaded.registry.components).sort() : [],
+    setRegistryKeys(loaded.registry !== null ? Object.keys(loaded.registry.components).sort() : []);
+    setRegistryStatus(
+      loaded.message !== undefined
+        ? loaded.message
+        : syncRegistryLoadedMessage(
+            loaded.registry !== null ? Object.keys(loaded.registry.components).length : 0,
+          ),
     );
-    setRegistryStatus(loaded.message !== undefined ? loaded.message : syncRegistryLoadedMessage(
-      loaded.registry !== null ? Object.keys(loaded.registry.components).length : 0,
-    ));
   }, []);
 
   useEffect(
@@ -190,28 +187,28 @@ export function Components({
     [github.connected, repoUrl, specsPath],
   );
 
-  const updateDraftField = useCallback(function (
-    field: 'variantMatrix' | 'props' | 'bindings',
-    jsonText: string,
-  ) {
-    if (draft === null) {
-      return;
-    }
-    const parsed = validateSpecJsonField(field, jsonText);
-    if (!parsed.ok) {
-      setValidation(parsed);
-      return;
-    }
-    const next = cloneSpec(draft);
-    if (field === 'variantMatrix') {
-      next.variantMatrix = parsed.value as ComponentSpecV1['variantMatrix'];
-    } else if (field === 'props') {
-      next.props = parsed.value as ComponentSpecV1['props'];
-    } else {
-      next.bindings = parsed.value as ComponentSpecV1['bindings'];
-    }
-    setDraft(next);
-  }, [draft]);
+  const updateDraftField = useCallback(
+    function (field: 'variantMatrix' | 'props' | 'bindings', jsonText: string) {
+      if (draft === null) {
+        return;
+      }
+      const parsed = validateSpecJsonField(field, jsonText);
+      if (!parsed.ok) {
+        setValidation(parsed);
+        return;
+      }
+      const next = cloneSpec(draft);
+      if (field === 'variantMatrix') {
+        next.variantMatrix = parsed.value as ComponentSpecV1['variantMatrix'];
+      } else if (field === 'props') {
+        next.props = parsed.value as ComponentSpecV1['props'];
+      } else {
+        next.bindings = parsed.value as ComponentSpecV1['bindings'];
+      }
+      setDraft(next);
+    },
+    [draft],
+  );
 
   const canScaffold =
     draft !== null && validation !== null && validation.ok === true && !progressState.running;
@@ -242,7 +239,7 @@ export function Components({
       if (typeof data !== 'object' || data === null || !('pluginMessage' in data)) {
         return undefined;
       }
-      return (data).pluginMessage;
+      return data.pluginMessage;
     }
 
     function onMessage(event: MessageEvent) {
@@ -285,8 +282,8 @@ export function Components({
       <section style={SECTION_BORDER} aria-label="Paste or load spec">
         <h2 style={SECTION_HEADING}>Paste or load spec</h2>
         <p style={{ color: '#666', fontSize: 10, lineHeight: 1.45, margin: '0 0 8px' }}>
-          Fastest way to scaffold your first component. Browse all repo components (multiselect) ships
-          in WO-056.
+          Fastest way to scaffold your first component. Browse all repo components (multiselect)
+          ships in WO-056.
         </p>
         {bannerDoc !== null ? (
           <ClipboardBanner doc={bannerDoc} onLoad={acceptBanner} onDismiss={dismissBanner} />
@@ -347,7 +344,13 @@ export function Components({
                   onChange={function (e) {
                     void handleSelectRegistryKey(e.target.value);
                   }}
-                  style={{ boxSizing: 'border-box', fontSize: 11, marginTop: 4, padding: '6px 8px', width: '100%' }}
+                  style={{
+                    boxSizing: 'border-box',
+                    fontSize: 11,
+                    marginTop: 4,
+                    padding: '6px 8px',
+                    width: '100%',
+                  }}
                 >
                   <option value="">Select a linked component…</option>
                   {registryKeys.map(function (key) {
@@ -442,9 +445,7 @@ export function Components({
               padding: 8,
             }}
           >
-            {progressState.failedStep !== null
-              ? progressState.failedStep + ': '
-              : ''}
+            {progressState.failedStep !== null ? progressState.failedStep + ': ' : ''}
             {progressState.error}
           </p>
         ) : null}
@@ -453,10 +454,7 @@ export function Components({
       {progressState.running || progressState.result !== null || progressState.error !== null ? (
         <section style={SECTION_BORDER} aria-label="Scaffold progress">
           <h2 style={SECTION_HEADING}>Progress</h2>
-          <ScaffoldStepList
-            steps={progressState.steps}
-            failedStep={progressState.failedStep}
-          />
+          <ScaffoldStepList steps={progressState.steps} failedStep={progressState.failedStep} />
           <p style={{ color: '#666', fontSize: 10, margin: '6px 0 0' }}>
             {String(completedSteps)} / {String(progressState.steps.length)} steps
           </p>

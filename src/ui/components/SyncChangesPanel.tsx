@@ -140,7 +140,10 @@ export function SyncChangesPanel(props: SyncChangesPanelProps) {
         </details>
       ) : null}
 
-      <details open={pendingPush.length > 0 || stagedCount > 0} style={{ border: '1px solid #ddd', borderRadius: '6px', padding: '8px' }}>
+      <details
+        open={pendingPush.length > 0 || stagedCount > 0}
+        style={{ border: '1px solid #ddd', borderRadius: '6px', padding: '8px' }}
+      >
         <summary style={{ cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>
           Changes to push ({String(pendingPush.length)} pending
           {stagedCount > 0 ? ', ' + String(stagedCount) + ' committed' : ''})
@@ -237,7 +240,8 @@ export function SyncChangesPanel(props: SyncChangesPanelProps) {
         </summary>
         {pullCount === 0 ? (
           <p style={{ color: '#767676', fontSize: '10px', margin: '8px 0 0' }}>
-            No repo changes waiting. Tap <strong>Pull</strong> when the badge shows incoming changes.
+            No repo changes waiting. Tap <strong>Pull</strong> when the badge shows incoming
+            changes.
           </p>
         ) : (
           <ul style={{ ...listStyle, marginTop: '8px' }}>
@@ -254,7 +258,12 @@ export function SyncChangesPanel(props: SyncChangesPanelProps) {
                           props.onAcceptPull(drift.id);
                         }
                       }}
-                      style={{ fontSize: '10px', minHeight: '32px', padding: '4px 8px', fontWeight: 600 }}
+                      style={{
+                        fontSize: '10px',
+                        minHeight: '32px',
+                        padding: '4px 8px',
+                        fontWeight: 600,
+                      }}
                     >
                       Accept
                     </button>

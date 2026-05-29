@@ -17,10 +17,7 @@ import {
   runDetectDrift,
 } from '@/core/drift';
 import { collectFigmaComponentComparablesFromSnapshot } from '@/core/drift/detectOrchestration';
-import {
-  buildPushCommitFiles,
-  resolutionsForBulkPush,
-} from '@/core/drift/applyPushResolutions';
+import { buildPushCommitFiles, resolutionsForBulkPush } from '@/core/drift/applyPushResolutions';
 import { applyPullResolutions } from '@/core/drift/applyPullResolutions';
 import type { ComponentComparable } from '@/core/drift/types';
 import { getRegistryFromSnapshot } from '@/core/sync/snapshotStore';
@@ -60,10 +57,7 @@ import {
   type ResolutionBulkPushMessage,
   type ResolutionBulkResultMessage,
 } from '@/io/messages/drift';
-import {
-  isSnapshotReadMessage,
-  type SnapshotReadResultMessage,
-} from '@/io/messages/snapshot';
+import { isSnapshotReadMessage, type SnapshotReadResultMessage } from '@/io/messages/snapshot';
 import {
   isPushVariablesMessage,
   type PushErrorMessage,
@@ -256,7 +250,10 @@ async function handleGitHubRepoFetch(requestId: string, repoUrl: string): Promis
       error: extractErrorMessage(error),
     };
     figma.ui.postMessage(errResponse);
-    pluginLog('[main] github/repo/fetch failed', errResponse.error !== undefined ? errResponse.error : '');
+    pluginLog(
+      '[main] github/repo/fetch failed',
+      errResponse.error !== undefined ? errResponse.error : '',
+    );
   }
 }
 
@@ -486,7 +483,10 @@ function handleSnapshotRead(requestId: string): void {
       registry: registry,
     };
     figma.ui.postMessage(response);
-    pluginLog('[main] snapshot/read ok', String(Object.keys(registry.components).length) + ' entries');
+    pluginLog(
+      '[main] snapshot/read ok',
+      String(Object.keys(registry.components).length) + ' entries',
+    );
   } catch (error) {
     const errResponse: SnapshotReadResultMessage = {
       type: 'snapshot/read/result',
@@ -495,7 +495,10 @@ function handleSnapshotRead(requestId: string): void {
       error: extractErrorMessage(error),
     };
     figma.ui.postMessage(errResponse);
-    pluginLog('[main] snapshot/read failed', errResponse.error !== undefined ? errResponse.error : '');
+    pluginLog(
+      '[main] snapshot/read failed',
+      errResponse.error !== undefined ? errResponse.error : '',
+    );
   }
 }
 
@@ -533,11 +536,16 @@ async function handleDriftDetectVariables(
       error: extractErrorMessage(error),
     };
     figma.ui.postMessage(errResponse);
-    pluginLog('[main] drift/detect-variables failed', errResponse.error !== undefined ? errResponse.error : '');
+    pluginLog(
+      '[main] drift/detect-variables failed',
+      errResponse.error !== undefined ? errResponse.error : '',
+    );
   }
 }
 
-function collectFigmaComponentComparables(specNames: Record<string, boolean>): Record<string, ComponentComparable> {
+function collectFigmaComponentComparables(
+  specNames: Record<string, boolean>,
+): Record<string, ComponentComparable> {
   return collectFigmaComponentComparablesFromSnapshot(specNames);
 }
 
@@ -571,7 +579,10 @@ async function handleDriftBuildReport(
       error: extractErrorMessage(error),
     };
     figma.ui.postMessage(errResponse);
-    pluginLog('[main] drift/build-report failed', errResponse.error !== undefined ? errResponse.error : '');
+    pluginLog(
+      '[main] drift/build-report failed',
+      errResponse.error !== undefined ? errResponse.error : '',
+    );
   }
 }
 
@@ -595,10 +606,7 @@ function handleDriftDetectComponents(
       keySet[key] = true;
     }
 
-    const options =
-      quickDetect === true
-        ? { quickDetect: true }
-        : undefined;
+    const options = quickDetect === true ? { quickDetect: true } : undefined;
 
     const result = detectComponentDrift({
       repoSpecs: repoMap,
@@ -627,7 +635,10 @@ function handleDriftDetectComponents(
       error: extractErrorMessage(error),
     };
     figma.ui.postMessage(errResponse);
-    pluginLog('[main] drift/detect-components failed', errResponse.error !== undefined ? errResponse.error : '');
+    pluginLog(
+      '[main] drift/detect-components failed',
+      errResponse.error !== undefined ? errResponse.error : '',
+    );
   }
 }
 
@@ -712,7 +723,9 @@ const DEFAULT_TOKENS_PATH = 'design/tokens.json';
 const DEFAULT_SPECS_PATH = 'components/';
 
 function buildFullSpecMap(
-  specs: { name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }[] | undefined,
+  specs:
+    | { name: string; spec: import('@detroitlabs/fighub-contracts').ComponentSpecV1 }[]
+    | undefined,
 ): Record<string, import('@detroitlabs/fighub-contracts').ComponentSpecV1> {
   const result: Record<string, import('@detroitlabs/fighub-contracts').ComponentSpecV1> = {};
   if (specs === undefined) {
@@ -756,8 +769,7 @@ async function handleResolutionBulkPush(message: ResolutionBulkPushMessage): Pro
       message.resolutions,
       message.driftIds,
     );
-    const tokensWireFormat =
-      message.tokensWireFormat === 'canonical' ? 'canonical' : 'dtcg';
+    const tokensWireFormat = message.tokensWireFormat === 'canonical' ? 'canonical' : 'dtcg';
     const staged = buildPushCommitFiles({
       report: message.report,
       resolutions: bulkResolutions,
@@ -847,7 +859,10 @@ async function handleResolutionBulkPush(message: ResolutionBulkPushMessage): Pro
       error: extractErrorMessage(error),
     };
     figma.ui.postMessage(errResponse);
-    pluginLog('[main] resolution/bulk-push failed', errResponse.error !== undefined ? errResponse.error : '');
+    pluginLog(
+      '[main] resolution/bulk-push failed',
+      errResponse.error !== undefined ? errResponse.error : '',
+    );
   }
 }
 
@@ -878,7 +893,10 @@ async function handleResolutionBulkPull(message: ResolutionBulkPullMessage): Pro
       appliedCount: 0,
     };
     figma.ui.postMessage(errResponse);
-    pluginLog('[main] resolution/bulk-pull failed', errResponse.error !== undefined ? errResponse.error : '');
+    pluginLog(
+      '[main] resolution/bulk-pull failed',
+      errResponse.error !== undefined ? errResponse.error : '',
+    );
   }
 }
 
@@ -901,7 +919,10 @@ async function handleGitHubOAuthStart(requestId: string, scope: string): Promise
       error: extractErrorMessage(error),
     };
     figma.ui.postMessage(response);
-    pluginLog('[main] github/oauth/start failed', response.error !== undefined ? response.error : '');
+    pluginLog(
+      '[main] github/oauth/start failed',
+      response.error !== undefined ? response.error : '',
+    );
   }
 }
 
@@ -1240,7 +1261,10 @@ async function handleExportRun(message: ExportRunMessage): Promise<void> {
           message: 'Output page export failed',
           error: extractErrorMessage(error),
         };
-        pluginLog('[main] export/output-page failed', result.error !== undefined ? result.error : '');
+        pluginLog(
+          '[main] export/output-page failed',
+          result.error !== undefined ? result.error : '',
+        );
       }
     } else if (sink === 'plugin-data') {
       try {
@@ -1253,7 +1277,10 @@ async function handleExportRun(message: ExportRunMessage): Promise<void> {
           message: 'Plugin data export failed',
           error: extractErrorMessage(error),
         };
-        pluginLog('[main] export/plugin-data failed', result.error !== undefined ? result.error : '');
+        pluginLog(
+          '[main] export/plugin-data failed',
+          result.error !== undefined ? result.error : '',
+        );
       }
     } else if (sink === 'github-pr') {
       if (message.githubPR === undefined) {
@@ -1384,7 +1411,9 @@ figma.ui.onmessage = (message: unknown) => {
   }
 
   if (isDriftDetectVariablesMessage(message)) {
-    handleDriftDetectVariables(message.requestId, message.repoTokens).catch(function (error: unknown) {
+    handleDriftDetectVariables(message.requestId, message.repoTokens).catch(function (
+      error: unknown,
+    ) {
       const errResponse: DriftDetectVariablesResultMessage = {
         type: 'drift/detect-variables/result',
         requestId: message.requestId,
@@ -1392,7 +1421,10 @@ figma.ui.onmessage = (message: unknown) => {
         error: extractErrorMessage(error),
       };
       figma.ui.postMessage(errResponse);
-      pluginLog('[main] drift/detect-variables unhandled', errResponse.error !== undefined ? errResponse.error : '');
+      pluginLog(
+        '[main] drift/detect-variables unhandled',
+        errResponse.error !== undefined ? errResponse.error : '',
+      );
     });
     return;
   }
@@ -1417,7 +1449,10 @@ figma.ui.onmessage = (message: unknown) => {
         error: extractErrorMessage(error),
       };
       figma.ui.postMessage(errResponse);
-      pluginLog('[main] drift/build-report unhandled', errResponse.error !== undefined ? errResponse.error : '');
+      pluginLog(
+        '[main] drift/build-report unhandled',
+        errResponse.error !== undefined ? errResponse.error : '',
+      );
     });
     return;
   }
@@ -1508,15 +1543,15 @@ figma.ui.onmessage = (message: unknown) => {
   }
 
   if (isGitHubTokenSaveMessage(message)) {
-    handleGitHubTokenSave(message.repoUrl, message.accessToken, message.scope).catch(
-      function (error: unknown) {
-        const errResponse: GitHubErrorMessage = {
-          type: 'github/error',
-          message: extractErrorMessage(error),
-        };
-        figma.ui.postMessage(errResponse);
-      },
-    );
+    handleGitHubTokenSave(message.repoUrl, message.accessToken, message.scope).catch(function (
+      error: unknown,
+    ) {
+      const errResponse: GitHubErrorMessage = {
+        type: 'github/error',
+        message: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
     return;
   }
 
@@ -1554,19 +1589,16 @@ figma.ui.onmessage = (message: unknown) => {
   }
 
   if (isGitHubContentsFetchMessage(message)) {
-    handleGitHubContentsFetch(
-      message.requestId,
-      message.repoUrl,
-      message.path,
-      message.ref,
-    ).catch(function (error: unknown) {
-      const errResponse: GitHubContentsErrorMessage = {
-        type: 'github/contents/error',
-        requestId: message.requestId,
-        message: extractErrorMessage(error),
-      };
-      figma.ui.postMessage(errResponse);
-    });
+    handleGitHubContentsFetch(message.requestId, message.repoUrl, message.path, message.ref).catch(
+      function (error: unknown) {
+        const errResponse: GitHubContentsErrorMessage = {
+          type: 'github/contents/error',
+          requestId: message.requestId,
+          message: extractErrorMessage(error),
+        };
+        figma.ui.postMessage(errResponse);
+      },
+    );
     return;
   }
 
@@ -1681,32 +1713,32 @@ figma.ui.onmessage = (message: unknown) => {
   }
 
   if (isSinkOutputPageMessage(message)) {
-    handleSinkOutputPage(message.requestId, message.doc, message.options).catch(
-      function (error: unknown) {
-        const errResponse: SinkErrorMessage = {
-          type: 'sink/error',
-          requestId: message.requestId,
-          message: extractErrorMessage(error),
-        };
-        figma.ui.postMessage(errResponse);
-        pluginLog('[main] sink/output-page unhandled', errResponse.message);
-      },
-    );
+    handleSinkOutputPage(message.requestId, message.doc, message.options).catch(function (
+      error: unknown,
+    ) {
+      const errResponse: SinkErrorMessage = {
+        type: 'sink/error',
+        requestId: message.requestId,
+        message: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+      pluginLog('[main] sink/output-page unhandled', errResponse.message);
+    });
     return;
   }
 
   if (isSinkPluginDataMessage(message)) {
-    handleSinkPluginData(message.requestId, message.doc, message.options).catch(
-      function (error: unknown) {
-        const errResponse: SinkErrorMessage = {
-          type: 'sink/error',
-          requestId: message.requestId,
-          message: extractErrorMessage(error),
-        };
-        figma.ui.postMessage(errResponse);
-        pluginLog('[main] sink/plugin-data unhandled', errResponse.message);
-      },
-    );
+    handleSinkPluginData(message.requestId, message.doc, message.options).catch(function (
+      error: unknown,
+    ) {
+      const errResponse: SinkErrorMessage = {
+        type: 'sink/error',
+        requestId: message.requestId,
+        message: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+      pluginLog('[main] sink/plugin-data unhandled', errResponse.message);
+    });
     return;
   }
 

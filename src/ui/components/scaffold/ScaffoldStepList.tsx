@@ -1,6 +1,9 @@
 import type { ScaffoldStepId } from '@/io/messages/scaffold';
 
-import { countCompletedSteps, type ScaffoldStepState } from '@/ui/components/scaffold/scaffoldProgressReducer';
+import {
+  countCompletedSteps,
+  type ScaffoldStepState,
+} from '@/ui/components/scaffold/scaffoldProgressReducer';
 import { ProgressBar } from '@/ui/components/ProgressBar';
 
 const STATUS_ICON: Record<ScaffoldStepState['status'], string> = {
@@ -21,11 +24,7 @@ export function ScaffoldStepList({ steps, failedStep }: ScaffoldStepListProps) {
 
   return (
     <div>
-      <ProgressBar
-        value={completed}
-        max={steps.length}
-        label="Scaffold step progress"
-      />
+      <ProgressBar value={completed} max={steps.length} label="Scaffold step progress" />
       <ol
         aria-label="Scaffold steps"
         style={{

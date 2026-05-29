@@ -219,28 +219,28 @@ These defaults apply **without asking the user** unless they explicitly override
 
 ### `/plan` output location
 
-| Rule | Detail |
-| ---- | ------ |
-| **Canonical path** | `.github/Sprint {N}/{TICKET-ID}-*/plan.md` only |
-| **Forbidden** | IDE sidecars (`.plan.md`, plan-mode buffers, summaries in chat) as the only artifact |
-| **Verification** | After writing, re-read `plan.md`; report `wc -l plan.md`. If missing Approach/Steps/Build Agents/Dependencies/Open Questions/Notes → do not move to In Planning |
-| **Depth** | Sub-agent-ready: every step has file paths + **Done when** + signatures where non-obvious. Include **AC traceability table**. Multi-file WOs: typically **≥200 lines**; platform/integration WOs **≥350 lines** (see plan-quality-bar.md) |
+| Rule               | Detail                                                                                                                                                                                                                                    |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Canonical path** | `.github/Sprint {N}/{TICKET-ID}-*/plan.md` only                                                                                                                                                                                           |
+| **Forbidden**      | IDE sidecars (`.plan.md`, plan-mode buffers, summaries in chat) as the only artifact                                                                                                                                                      |
+| **Verification**   | After writing, re-read `plan.md`; report `wc -l plan.md`. If missing Approach/Steps/Build Agents/Dependencies/Open Questions/Notes → do not move to In Planning                                                                           |
+| **Depth**          | Sub-agent-ready: every step has file paths + **Done when** + signatures where non-obvious. Include **AC traceability table**. Multi-file WOs: typically **≥200 lines**; platform/integration WOs **≥350 lines** (see plan-quality-bar.md) |
 
 ### `/build` prerequisites
 
-| Gate | Action if failed |
-| ---- | ---------------- |
-| `plan.md` empty, stub, or `_TBD_` steps | Stop — re-run `/plan` |
-| No `## Build Agents` section | Stop — planner must define phases |
-| Steps not checkable (`- [ ] **Step N**`) | Stop — expand plan |
+| Gate                                     | Action if failed                  |
+| ---------------------------------------- | --------------------------------- |
+| `plan.md` empty, stub, or `_TBD_` steps  | Stop — re-run `/plan`             |
+| No `## Build Agents` section             | Stop — planner must define phases |
+| Steps not checkable (`- [ ] **Step N**`) | Stop — expand plan                |
 
 ### Git strategy (default)
 
-| Setting | Value |
-| ------- | ----- |
-| **Default** | **`main`** — work on current branch; **do not commit or push** unless user asks |
-| **Override** | User says `branch-per-agent` → `{TICKET-ID}/{domain}` branches + PRs (requires worktrees for parallel agents) |
-| **Do not ask** | When `memory.md` lists git strategy as locked, use it verbatim |
+| Setting        | Value                                                                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Default**    | **`main`** — work on current branch; **do not commit or push** unless user asks                               |
+| **Override**   | User says `branch-per-agent` → `{TICKET-ID}/{domain}` branches + PRs (requires worktrees for parallel agents) |
+| **Do not ask** | When `memory.md` lists git strategy as locked, use it verbatim                                                |
 
 ### Sprint dependency order (Sprint 4 I/O)
 

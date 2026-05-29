@@ -19,9 +19,9 @@ export interface ExportSandboxProps {
 }
 
 export function ExportSandbox({ exportDemo, onExportDemoChange }: ExportSandboxProps) {
-  const [liveDriftProps, setLiveDriftProps] = useState<ReturnType<typeof prepareDriftExport> | null>(
-    null,
-  );
+  const [liveDriftProps, setLiveDriftProps] = useState<ReturnType<
+    typeof prepareDriftExport
+  > | null>(null);
   const [liveError, setLiveError] = useState('');
 
   return (

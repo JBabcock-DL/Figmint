@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  isDriftBuildReportMessage,
-  isDriftBuildReportResultMessage,
-} from '@/io/messages/drift';
+import { isDriftBuildReportMessage, isDriftBuildReportResultMessage } from '@/io/messages/drift';
 
 import tokensPayload from '../../../fixtures/ui/export/tokens.json';
 import componentSpecPayload from '../../../fixtures/ui/export/component-spec.json';

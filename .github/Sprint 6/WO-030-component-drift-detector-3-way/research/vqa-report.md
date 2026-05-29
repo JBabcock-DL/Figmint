@@ -8,10 +8,10 @@
 
 ## Summary
 
-| Area | Pass | Fail | N/A |
-| ---- | ---- | ---- | --- |
-| Figma assertions | — | — | All (subsystem) |
-| Functional QA | 4 | 0 | 0 |
+| Area             | Pass | Fail | N/A             |
+| ---------------- | ---- | ---- | --------------- |
+| Figma assertions | —    | —    | All (subsystem) |
+| Functional QA    | 4    | 0    | 0               |
 
 ---
 
@@ -23,12 +23,12 @@
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
+| Acceptance criterion               | Result   | Note                                    |
+| ---------------------------------- | -------- | --------------------------------------- |
 | Loading variant added → push drift | **PASS** | `component-button-loading-push.v1.json` |
-| New prop in repo → pull drift | **PASS** | `component-button-prop-pull.v1.json` |
-| Both sides changed → conflict | **PASS** | `component-button-conflict.v1.json` |
-| 20-component file <2s | **PASS** | `components.bench.test.ts` |
+| New prop in repo → pull drift      | **PASS** | `component-button-prop-pull.v1.json`    |
+| Both sides changed → conflict      | **PASS** | `component-button-conflict.v1.json`     |
+| 20-component file <2s              | **PASS** | `components.bench.test.ts`              |
 
 ### Automated test run (2026-05-28)
 

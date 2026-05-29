@@ -21,16 +21,16 @@ The dual-build pipeline from **WO-002 is already implemented and CI-green**: two
 
 ### 1. Current dual-build pipeline (WO-002 — landed)
 
-| Piece | Path | Behavior |
-| ----- | ---- | -------- |
-| Community orchestrator | `scripts/build-community.mjs` | Wipes `dist/`, sets `BUILD_TARGET=community`, runs UI → finalize → main Vite passes, copies `manifest.community.json` → `dist/manifest.json` |
-| Org orchestrator | `scripts/build-org.mjs` | Same sequence with `BUILD_TARGET=org`, copies `manifest.org.json` |
-| Vite config | `vite.config.ts` | Reads `BUILD_TARGET` + `VITE_BUILD_THREAD`; aliases `@/config/flags` → `flags.community.ts` or `flags.org.ts`; defines `import.meta.env.BUILD_TARGET` and `PACKAGE_VERSION` |
-| UI finalize | `scripts/finalize-ui-html.mjs` | Runs between UI and main passes so `__html__` is injected into `code.js` |
-| Dev default | `scripts/dev.mjs` | Watches **community** target only (reasonable default for daily work) |
-| Package scripts | `package.json` | `build:community`, `build:org` — **no umbrella `build` yet** |
-| Typecheck default | `tsconfig.json` | `@/config/flags` → `flags.community.ts` (IDE + `tsc`) |
-| Test default | `vitest.config.ts` | Same community alias |
+| Piece                  | Path                           | Behavior                                                                                                                                                                    |
+| ---------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Community orchestrator | `scripts/build-community.mjs`  | Wipes `dist/`, sets `BUILD_TARGET=community`, runs UI → finalize → main Vite passes, copies `manifest.community.json` → `dist/manifest.json`                                |
+| Org orchestrator       | `scripts/build-org.mjs`        | Same sequence with `BUILD_TARGET=org`, copies `manifest.org.json`                                                                                                           |
+| Vite config            | `vite.config.ts`               | Reads `BUILD_TARGET` + `VITE_BUILD_THREAD`; aliases `@/config/flags` → `flags.community.ts` or `flags.org.ts`; defines `import.meta.env.BUILD_TARGET` and `PACKAGE_VERSION` |
+| UI finalize            | `scripts/finalize-ui-html.mjs` | Runs between UI and main passes so `__html__` is injected into `code.js`                                                                                                    |
+| Dev default            | `scripts/dev.mjs`              | Watches **community** target only (reasonable default for daily work)                                                                                                       |
+| Package scripts        | `package.json`                 | `build:community`, `build:org` — **no umbrella `build` yet**                                                                                                                |
+| Typecheck default      | `tsconfig.json`                | `@/config/flags` → `flags.community.ts` (IDE + `tsc`)                                                                                                                       |
+| Test default           | `vitest.config.ts`             | Same community alias                                                                                                                                                        |
 
 Build order is locked (from WO-002 / memory): **clean → UI build → finalize → main build**. Both threads share the same flag alias so UI and sandbox code see identical `flags` values.
 
@@ -38,11 +38,11 @@ Build order is locked (from WO-002 / memory): **clean → UI build → finalize 
 
 ### 2. Manifest `networkAccess` differences
 
-| Field | `manifest.community.json` | `manifest.org.json` |
-| ----- | ------------------------- | ------------------- |
-| `name` | `FigHub` | `FigHub (Org)` |
-| `id` | `fighub-community-dev-placeholder` | `fighub-org-dev-placeholder` |
-| `networkAccess.allowedDomains` | `["none"]` | `["https://api.github.com", "https://github.com"]` |
+| Field                          | `manifest.community.json`          | `manifest.org.json`                                |
+| ------------------------------ | ---------------------------------- | -------------------------------------------------- |
+| `name`                         | `FigHub`                           | `FigHub (Org)`                                     |
+| `id`                           | `fighub-community-dev-placeholder` | `fighub-org-dev-placeholder`                       |
+| `networkAccess.allowedDomains` | `["none"]`                         | `["https://api.github.com", "https://github.com"]` |
 
 Figma's `"none"` value blocks all outbound network from the plugin sandbox and UI iframe. Org build explicitly opts into GitHub REST/OAuth endpoints only. Plugin IDs remain dev placeholders until publish tickets assign real Community / private-org IDs.
 
@@ -70,22 +70,22 @@ Only consumer today: `src/ui/App.tsx` displays `flags.buildTarget` in the header
 
 Add a shared type (`src/config/flags.types.ts` or inline `satisfies`) so both files stay shape-identical. Proposed Phase 1 + forward-compatible shape:
 
-| Flag | Community | Org | Gated surface | Owner ticket |
-| ---- | --------- | --- | ------------- | ------------ |
-| `buildTarget` | `'community'` | `'org'` | Header label, diagnostics | WO-002 |
-| `githubOAuth` | `false` | `true` | OAuth settings panel, GitHub **input** source, token storage UI | WO-016 |
-| `githubPRSink` | `false` | `true` | ExportSheet "Open GitHub PR" checkbox; `githubPR` sink registration | WO-018, WO-020 |
-| `componentImport` | `false` | `true` | Phase 4 import tab (future) | PRD §13.1 |
-| `codeConnectPR` | `false` | `true` | Phase 4 Code Connect PR flow (future) | PRD §13.1 |
-| `evcProjector` | `false` | `true` | Extended Variable Collections theme inheritance (Enterprise files) | WO-005 spike |
-| `tokenTemplates` | `false` | `true` | Pre-configured token templates picker (later add-on per ticket out-of-scope) | PRD §13.1 |
+| Flag              | Community     | Org     | Gated surface                                                                | Owner ticket   |
+| ----------------- | ------------- | ------- | ---------------------------------------------------------------------------- | -------------- |
+| `buildTarget`     | `'community'` | `'org'` | Header label, diagnostics                                                    | WO-002         |
+| `githubOAuth`     | `false`       | `true`  | OAuth settings panel, GitHub **input** source, token storage UI              | WO-016         |
+| `githubPRSink`    | `false`       | `true`  | ExportSheet "Open GitHub PR" checkbox; `githubPR` sink registration          | WO-018, WO-020 |
+| `componentImport` | `false`       | `true`  | Phase 4 import tab (future)                                                  | PRD §13.1      |
+| `codeConnectPR`   | `false`       | `true`  | Phase 4 Code Connect PR flow (future)                                        | PRD §13.1      |
+| `evcProjector`    | `false`       | `true`  | Extended Variable Collections theme inheritance (Enterprise files)           | WO-005 spike   |
+| `tokenTemplates`  | `false`       | `true`  | Pre-configured token templates picker (later add-on per ticket out-of-scope) | PRD §13.1      |
 
 **Sinks that need no flag (always on in both builds for Phase 1 GA):** download, clipboard, Output page, pluginData — PRD §13.1 marks these ✅ for Community and Org. WO-017 implements them unconditionally; ExportSheet always lists them.
 
 **Future org-only (stub now, wire when ticket lands):**
 
-| Flag | Notes |
-| ---- | ----- |
+| Flag                 | Notes                                                                         |
+| -------------------- | ----------------------------------------------------------------------------- |
 | `variablesRestBatch` | Multi-file batch via Variables REST — PRD §13.1 "future"; out of WO-021 scope |
 
 `githubOAuth` and `githubPRSink` will both be `false`/`true` in lockstep for Phase 1, but **keep separate keys**: OAuth gates auth UI and read path; `githubPRSink` gates write/PR path and ExportSheet affordance. Splitting them avoids a single mega-flag and matches WO-016 vs WO-018 ownership.
@@ -98,12 +98,14 @@ Add a shared type (`src/config/flags.types.ts` or inline `satisfies`) so both fi
 import { flags } from '@/config/flags';
 
 // Render gate
-{flags.githubPRSink && (
-  <label>
-    <input type="checkbox" name="sink-github-pr" />
-    Open GitHub PR
-  </label>
-)}
+{
+  flags.githubPRSink && (
+    <label>
+      <input type="checkbox" name="sink-github-pr" />
+      Open GitHub PR
+    </label>
+  );
+}
 
 // Sink registry (WO-020 / WO-021 integration)
 const SINK_CATALOG = [
@@ -129,12 +131,12 @@ if (!flags.githubOAuth) {
 
 **Forbidden patterns:**
 
-| Anti-pattern | Why |
-| ------------ | --- |
-| `if (import.meta.env.BUILD_TARGET === 'org')` for feature UI | Duplicates flag source; env is for diagnostics only |
-| `import(...)` / separate entry files per build | Creates divergent code paths; violates single-codebase rule |
-| Vite `resolve.alias` to stub modules in community build | Hides missing implementations; breaks type parity |
-| Tree-shaking GitHub modules out of community bundle | Unnecessary — dead code is fine; manifest blocks network anyway |
+| Anti-pattern                                                 | Why                                                             |
+| ------------------------------------------------------------ | --------------------------------------------------------------- |
+| `if (import.meta.env.BUILD_TARGET === 'org')` for feature UI | Duplicates flag source; env is for diagnostics only             |
+| `import(...)` / separate entry files per build               | Creates divergent code paths; violates single-codebase rule     |
+| Vite `resolve.alias` to stub modules in community build      | Hides missing implementations; breaks type parity               |
+| Tree-shaking GitHub modules out of community bundle          | Unnecessary — dead code is fine; manifest blocks network anyway |
 
 **Import rule:** All I/O modules (`src/io/sources/github.ts`, `src/io/sinks/githubPR.ts`, etc.) are **statically imported** in both builds. Community never invokes them because UI gates and manifest block network.
 
@@ -144,20 +146,20 @@ if (!flags.githubOAuth) {
 
 Derived from PRD §13.1, scoped to Sprint 4 I/O + existing bootstrap work. WO-021 verification checklist:
 
-| Capability | Community | Org | Verification |
-| ---------- | --------- | --- | ------------ |
-| Bootstrap (5-collection push + style-guide canvas) | ✅ | ✅ | WO-008–015 — already shipped |
-| Paste / file / clipboard input | ✅ | ✅ | WO-006 — shipped |
-| Download / clipboard / Output page / pluginData sinks | ✅ | ✅ | WO-017 + WO-019 + WO-020 |
-| Dual-format export (JSON + GFM markdown) | ✅ | ✅ | WO-019 |
-| Unified ExportSheet | ✅ | ✅ (minus GitHub row) | WO-020 + WO-021 flags |
-| GitHub OAuth + read from repo | ❌ | ✅ | WO-016; hidden when `!flags.githubOAuth` |
-| GitHub PR output sink | ❌ | ✅ | WO-018; hidden when `!flags.githubPRSink` |
-| Component import | ❌ | ✅ (Phase 4) | Flag stub only in WO-021 |
-| Code Connect PR emission | ❌ | ✅ (Phase 4) | Flag stub only |
-| EVC theme projector | ❌ | ✅ (Enterprise) | Flag stub; runtime still plan-gated |
-| Multi-file Variables REST batch | ❌ | ✅ (future) | Out of scope |
-| Pre-configured token templates | ❌ | ✅ (later) | Out of scope |
+| Capability                                            | Community | Org                   | Verification                              |
+| ----------------------------------------------------- | --------- | --------------------- | ----------------------------------------- |
+| Bootstrap (5-collection push + style-guide canvas)    | ✅        | ✅                    | WO-008–015 — already shipped              |
+| Paste / file / clipboard input                        | ✅        | ✅                    | WO-006 — shipped                          |
+| Download / clipboard / Output page / pluginData sinks | ✅        | ✅                    | WO-017 + WO-019 + WO-020                  |
+| Dual-format export (JSON + GFM markdown)              | ✅        | ✅                    | WO-019                                    |
+| Unified ExportSheet                                   | ✅        | ✅ (minus GitHub row) | WO-020 + WO-021 flags                     |
+| GitHub OAuth + read from repo                         | ❌        | ✅                    | WO-016; hidden when `!flags.githubOAuth`  |
+| GitHub PR output sink                                 | ❌        | ✅                    | WO-018; hidden when `!flags.githubPRSink` |
+| Component import                                      | ❌        | ✅ (Phase 4)          | Flag stub only in WO-021                  |
+| Code Connect PR emission                              | ❌        | ✅ (Phase 4)          | Flag stub only                            |
+| EVC theme projector                                   | ❌        | ✅ (Enterprise)       | Flag stub; runtime still plan-gated       |
+| Multi-file Variables REST batch                       | ❌        | ✅ (future)           | Out of scope                              |
+| Pre-configured token templates                        | ❌        | ✅ (later)            | Out of scope                              |
 
 **Phase 1 exit benchmark (ticket AC):** bootstrap path ≥10× speedup vs MCP baseline — tracked separately (WO-015 bench artifacts); WO-021 does not own the benchmark but must not regress build/load time.
 
@@ -185,16 +187,16 @@ Optional WO-021 enhancement: Vitest matrix or a second job step that runs critic
 
 WO-021 should **not** implement OAuth, sinks, serializer, or ExportSheet from scratch. Integration scope:
 
-| Step | Action |
-| ---- | ------ |
-| 1 | Land WO-016 → WO-020 on `main` (each uses local `flags.githubOAuth` / `flags.githubPRSink` checks as they merge) |
-| 2 | Introduce `FigHubFlags` shared type; extend both flag files with I/O keys |
-| 3 | Centralize sink visibility helper (`visibleSinks()` or equivalent) consumed by ExportSheet |
-| 4 | Audit grep for `BUILD_TARGET`, dynamic imports, and GitHub UI not behind flags |
-| 5 | Add `npm run build` umbrella script |
-| 6 | Integration tests: community bundle has no GitHub checkbox in ExportSheet render; org bundle shows it |
-| 7 | Manual smoke: load each manifest in Figma dev mode; confirm community cannot reach GitHub (network + UI) |
-| 8 | Document real plugin IDs when publish tickets replace placeholders |
+| Step | Action                                                                                                           |
+| ---- | ---------------------------------------------------------------------------------------------------------------- |
+| 1    | Land WO-016 → WO-020 on `main` (each uses local `flags.githubOAuth` / `flags.githubPRSink` checks as they merge) |
+| 2    | Introduce `FigHubFlags` shared type; extend both flag files with I/O keys                                        |
+| 3    | Centralize sink visibility helper (`visibleSinks()` or equivalent) consumed by ExportSheet                       |
+| 4    | Audit grep for `BUILD_TARGET`, dynamic imports, and GitHub UI not behind flags                                   |
+| 5    | Add `npm run build` umbrella script                                                                              |
+| 6    | Integration tests: community bundle has no GitHub checkbox in ExportSheet render; org bundle shows it            |
+| 7    | Manual smoke: load each manifest in Figma dev mode; confirm community cannot reach GitHub (network + UI)         |
+| 8    | Document real plugin IDs when publish tickets replace placeholders                                               |
 
 **Dependency order:** WO-002 ✅ → WO-016, WO-017, WO-019 (parallel) → WO-018 (needs 016+017) → WO-020 (needs 017–019) → **WO-021** (wires + audits + umbrella build).
 
@@ -213,13 +215,13 @@ WO-021 should **not** implement OAuth, sinks, serializer, or ExportSheet from sc
 
 ## Open Questions
 
-| ID | Question | Recommendation |
-| -- | -------- | -------------- |
-| OQ-A | Should `githubOAuth` and `githubPRSink` always mirror each other? | Yes for Phase 1; keep separate keys for future split (e.g. read-only org mode). |
-| OQ-B | Separate `dist-community/` and `dist-org/` output dirs? | Not required for WO-021; document that sequential builds overwrite `dist/`. Revisit if publish pipeline needs both artifacts simultaneously. |
-| OQ-C | Vitest org-flag runs — matrix job vs duplicate test file? | `/plan` to pick; minimum is one org-alias test file for ExportSheet. |
-| OQ-D | Real Figma plugin IDs — when? | Out of WO-021; placeholders OK until Community/Org publish tickets. |
-| OQ-E | Main-thread GitHub calls — stub no-op in community or throw? | Throw on invocation with clear message; code path should be unreachable from UI. |
+| ID   | Question                                                          | Recommendation                                                                                                                               |
+| ---- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| OQ-A | Should `githubOAuth` and `githubPRSink` always mirror each other? | Yes for Phase 1; keep separate keys for future split (e.g. read-only org mode).                                                              |
+| OQ-B | Separate `dist-community/` and `dist-org/` output dirs?           | Not required for WO-021; document that sequential builds overwrite `dist/`. Revisit if publish pipeline needs both artifacts simultaneously. |
+| OQ-C | Vitest org-flag runs — matrix job vs duplicate test file?         | `/plan` to pick; minimum is one org-alias test file for ExportSheet.                                                                         |
+| OQ-D | Real Figma plugin IDs — when?                                     | Out of WO-021; placeholders OK until Community/Org publish tickets.                                                                          |
+| OQ-E | Main-thread GitHub calls — stub no-op in community or throw?      | Throw on invocation with clear message; code path should be unreachable from UI.                                                             |
 
 ---
 
@@ -227,25 +229,25 @@ WO-021 should **not** implement OAuth, sinks, serializer, or ExportSheet from sc
 
 ### Repo inventory (grep-verified 2026-05-27)
 
-| Path | Status | Role |
-| ---- | ------ | ---- |
-| `scripts/build-community.mjs` | ✅ | `BUILD_TARGET=community`, copies community manifest |
-| `scripts/build-org.mjs` | ✅ | `BUILD_TARGET=org`, copies org manifest |
-| `vite.config.ts` L7–12 | ✅ | Flags alias per build target |
-| `vitest.config.ts` | ✅ | Community flags alias for tests |
-| `tsconfig.json` | ✅ | Community flags for IDE/tsc |
-| `.github/workflows/ci.yml` | ✅ | Runs both builds sequentially |
-| `package.json` | ✅ | `build:community`, `build:org` — **no** `build` umbrella |
-| `src/ui/App.tsx` L22 | ✅ | Only consumer of `flags` today |
+| Path                          | Status | Role                                                     |
+| ----------------------------- | ------ | -------------------------------------------------------- |
+| `scripts/build-community.mjs` | ✅     | `BUILD_TARGET=community`, copies community manifest      |
+| `scripts/build-org.mjs`       | ✅     | `BUILD_TARGET=org`, copies org manifest                  |
+| `vite.config.ts` L7–12        | ✅     | Flags alias per build target                             |
+| `vitest.config.ts`            | ✅     | Community flags alias for tests                          |
+| `tsconfig.json`               | ✅     | Community flags for IDE/tsc                              |
+| `.github/workflows/ci.yml`    | ✅     | Runs both builds sequentially                            |
+| `package.json`                | ✅     | `build:community`, `build:org` — **no** `build` umbrella |
+| `src/ui/App.tsx` L22          | ✅     | Only consumer of `flags` today                           |
 
 ### Phase 1 GA matrix (PRD §13.1 — validated against research)
 
-| Capability | Community | Org | Gate |
-| ---------- | --------- | --- | ---- |
-| download / clipboard / Output / pluginData | ✅ | ✅ | none |
-| GitHub OAuth + read | ❌ | ✅ | `githubOAuth` + manifest |
-| GitHub PR sink | ❌ | ✅ | `githubPRSink` + manifest |
-| componentImport / codeConnectPR / evcProjector | ❌ | ✅ | existing flags |
+| Capability                                     | Community | Org | Gate                      |
+| ---------------------------------------------- | --------- | --- | ------------------------- |
+| download / clipboard / Output / pluginData     | ✅        | ✅  | none                      |
+| GitHub OAuth + read                            | ❌        | ✅  | `githubOAuth` + manifest  |
+| GitHub PR sink                                 | ❌        | ✅  | `githubPRSink` + manifest |
+| componentImport / codeConnectPR / evcProjector | ❌        | ✅  | existing flags            |
 
 ### Defense in depth (validated)
 
@@ -257,33 +259,33 @@ WO-021 should **not** implement OAuth, sinks, serializer, or ExportSheet from sc
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D-021-1 | WO-021 after WO-016–020 | Integration audit, not greenfield | Re-build dual pipeline |
-| D-021-2 | Add `githubPRSink` separate from `githubOAuth` | Read vs write ownership | Single mega-flag |
-| D-021-3 | `"build": "build:community && build:org"` | Ticket AC | Replace CI steps |
-| D-021-4 | No conditional imports | PRD §13.2 | Separate entry points |
-| D-021-5 | Sequential dist overwrite OK | CI already does this | dual dist dirs (OQ-B defer) |
+| ID      | Decision                                       | Rationale                         | Alternatives rejected       |
+| ------- | ---------------------------------------------- | --------------------------------- | --------------------------- |
+| D-021-1 | WO-021 after WO-016–020                        | Integration audit, not greenfield | Re-build dual pipeline      |
+| D-021-2 | Add `githubPRSink` separate from `githubOAuth` | Read vs write ownership           | Single mega-flag            |
+| D-021-3 | `"build": "build:community && build:org"`      | Ticket AC                         | Replace CI steps            |
+| D-021-4 | No conditional imports                         | PRD §13.2                         | Separate entry points       |
+| D-021-5 | Sequential dist overwrite OK                   | CI already does this              | dual dist dirs (OQ-B defer) |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-021-1 | Add `npm run build`; run locally | Both builds green; org manifest in dist | ☐ at build |
+| Spike ID  | Procedure                                              | Pass criteria                                          | Status         |
+| --------- | ------------------------------------------------------ | ------------------------------------------------------ | -------------- |
+| SPK-021-1 | Add `npm run build`; run locally                       | Both builds green; org manifest in dist                | ☐ at build     |
 | SPK-021-2 | `grep -r "api.github.com" dist/` after community build | No runtime fetch strings required; UI gates sufficient | ☐ audit script |
-| SPK-021-3 | Vitest org-flag alias test file | ExportSheet shows github-pr when org flags mocked | ☐ at build |
+| SPK-021-3 | Vitest org-flag alias test file                        | ExportSheet shows github-pr when org flags mocked      | ☐ at build     |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Likelihood | Mitigation |
-| ---- | --- | ---------- | ---------- |
-| Missed UI gate ships GitHub button in Community | Med | Low | SPK-021-2 grep + manifest backstop |
-| Flags shape drift between community/org files | Med | Med | Shared `FigHubFlags` type |
-| WO-021 builds before sinks exist | High | Med | Dependency: merge 016–020 first |
+| Risk                                            | Sev  | Likelihood | Mitigation                         |
+| ----------------------------------------------- | ---- | ---------- | ---------------------------------- |
+| Missed UI gate ships GitHub button in Community | Med  | Low        | SPK-021-2 grep + manifest backstop |
+| Flags shape drift between community/org files   | Med  | Med        | Shared `FigHubFlags` type          |
+| WO-021 builds before sinks exist                | High | Med        | Dependency: merge 016–020 first    |
 
 ---
 

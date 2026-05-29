@@ -8,10 +8,10 @@
 
 ## Summary
 
-| Area             | Pass  | Fail | N/A                     |
-| ---------------- | ----- | ---- | ----------------------- |
-| Figma assertions | 0     | 0    | All (design frame TBD)  |
-| Functional QA    | 4     | 0    | 1                       |
+| Area             | Pass  | Fail  | N/A                    |
+| ---------------- | ----- | ----- | ---------------------- |
+| Figma assertions | 0     | 0     | All (design frame TBD) |
+| Functional QA    | 4     | 0     | 1                      |
 | **Overall**      | **4** | **0** | —                      |
 
 Functional acceptance criteria pass via Vitest + RTL. Figma pixel comparison deferred until design frame assigned.
@@ -32,21 +32,21 @@ No assertion table — Figma N/A (design deferred).
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
-| ExportSheet renders all six `ContractDocument` variants | **PASS** | `ExportSheet.test.tsx` — `it.each(ALL_EXPORT_FIXTURES)` |
+| Acceptance criterion                                           | Result   | Note                                                                   |
+| -------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+| ExportSheet renders all six `ContractDocument` variants        | **PASS** | `ExportSheet.test.tsx` — `it.each(ALL_EXPORT_FIXTURES)`                |
 | Five sinks when `flags.githubOAuth`; github-pr absent when off | **PASS** | `availableSinks.test.ts` + mocked `availableSinks` in ExportSheet test |
-| Multi-sink parallel; partial failure per-sink | **PASS** | `runExport.test.ts` + ExportSheet partial ✓/✗ test |
-| Path defaults per contract kind | **PASS** | `defaultPaths.test.ts` — 6 rows + component slug |
-| Community build github-pr hidden | **N/A** | WO-021 deferred; gating tested via mock when OAuth off |
+| Multi-sink parallel; partial failure per-sink                  | **PASS** | `runExport.test.ts` + ExportSheet partial ✓/✗ test                     |
+| Path defaults per contract kind                                | **PASS** | `defaultPaths.test.ts` — 6 rows + component slug                       |
+| Community build github-pr hidden                               | **N/A**  | WO-021 deferred; gating tested via mock when OAuth off                 |
 
 ### Accessibility (Testing section)
 
-| Check | Result | Note |
-| ----- | ------ | ---- |
-| Checkbox groups labeled | **PASS** | `<fieldset>` + `<legend>` Format / Destinations |
-| Export/Cancel keyboard reachable | **PASS** | Native `<button>` elements |
-| Per-sink status `role="status"` | **PASS** | `ExportSheet.tsx` line 195 |
+| Check                            | Result   | Note                                            |
+| -------------------------------- | -------- | ----------------------------------------------- |
+| Checkbox groups labeled          | **PASS** | `<fieldset>` + `<legend>` Format / Destinations |
+| Export/Cancel keyboard reachable | **PASS** | Native `<button>` elements                      |
+| Per-sink status `role="status"`  | **PASS** | `ExportSheet.tsx` line 195                      |
 
 ### Automated test output
 
@@ -65,11 +65,11 @@ None.
 
 ## Artifacts
 
-| Artifact | Path | Status |
-| -------- | ---- | ------ |
-| Figma source screenshot | `research/figma-source.png` | N/A — no design frame |
-| Build screenshot | `research/build-screenshot.png` | N/A — no dev server; Plugin Sandbox manual optional |
-| Figma vs build overlay | `research/figma-vs-build.png` | N/A |
+| Artifact                | Path                            | Status                                              |
+| ----------------------- | ------------------------------- | --------------------------------------------------- |
+| Figma source screenshot | `research/figma-source.png`     | N/A — no design frame                               |
+| Build screenshot        | `research/build-screenshot.png` | N/A — no dev server; Plugin Sandbox manual optional |
+| Figma vs build overlay  | `research/figma-vs-build.png`   | N/A                                                 |
 
 ---
 

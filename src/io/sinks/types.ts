@@ -1,12 +1,7 @@
 import type { ContractKind, LoadedDocument } from '@/io/sources/types';
 
 export type OutputFormat = 'json' | 'md';
-export type SinkId =
-  | 'download'
-  | 'clipboard'
-  | 'output-page'
-  | 'plugin-data'
-  | 'github-pr';
+export type SinkId = 'download' | 'clipboard' | 'output-page' | 'plugin-data' | 'github-pr';
 
 export type SinkFailureCode =
   | 'auth-required'

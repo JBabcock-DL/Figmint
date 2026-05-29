@@ -5,7 +5,11 @@ import { describe, expect, it } from 'vitest';
 
 import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
-import { HEX_FALLBACK_PALETTE, createScaffoldContext, ensureScaffoldFonts } from '@/core/components/scaffold/context';
+import {
+  HEX_FALLBACK_PALETTE,
+  createScaffoldContext,
+  ensureScaffoldFonts,
+} from '@/core/components/scaffold/context';
 import {
   inferArchetype,
   projectBuildContext,

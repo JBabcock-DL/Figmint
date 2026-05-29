@@ -21,8 +21,7 @@ export type DeviceTokenPollResult =
 
 const DEVICE_CODE_URL = 'https://github.com/login/device/code';
 const ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token';
-const DEVICE_GRANT =
-  'urn:ietf:params:oauth:grant-type:device_code';
+const DEVICE_GRANT = 'urn:ietf:params:oauth:grant-type:device_code';
 
 function jsonHeaders(): HeadersInit {
   return {
@@ -102,18 +101,14 @@ export async function pollDeviceTokenOnce(
   }
 
   if (error === 'slow_down') {
-    const interval =
-      typeof body.interval === 'number' ? body.interval : 5;
+    const interval = typeof body.interval === 'number' ? body.interval : 5;
     return { status: 'slow_down', interval };
   }
 
   return {
     status: 'error',
     error,
-    description:
-      typeof body.error_description === 'string'
-        ? body.error_description
-        : undefined,
+    description: typeof body.error_description === 'string' ? body.error_description : undefined,
   };
 }
 

@@ -76,7 +76,9 @@ describe('driftChangeSummary', () => {
           id: 'comp/Button',
           kind: 'component',
           direction: 'push',
-          figma: { comparable: { specName: 'Button', variantMatrixHash: 'a', props: [], bindings: [] } },
+          figma: {
+            comparable: { specName: 'Button', variantMatrixHash: 'a', props: [], bindings: [] },
+          },
           repo: null,
           lastSynced: null,
         },

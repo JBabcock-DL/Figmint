@@ -20,10 +20,10 @@ WO-058 collapses FigHub's GitHub I/O into a **GitHub Desktop–style** designer 
 
 2026-05-28 designer scaffold on `Dw8NkEiG91NhjYqRPNTOOu` failed:
 
-| Audit rule | Root cause |
-| ---------- | ---------- |
+| Audit rule               | Root cause                                          |
+| ------------------------ | --------------------------------------------------- |
 | `comp/registry-envelope` | `registry.fileKey === ''` on Untitled/unsaved files |
-| `comp/registry-filekey` | Same — `figma.fileKey` empty string |
+| `comp/registry-filekey`  | Same — `figma.fileKey` empty string                 |
 
 Source: `src/core/components/registryAuditRows.ts` lines 13–21, 54–59 — gates on `registry.fileKey.length > 0`.
 
@@ -33,10 +33,10 @@ Source: `src/core/components/registryAuditRows.ts` lines 13–21, 54–59 — ga
 
 `src/ui/tabs/Settings.tsx` exposes **three path inputs**:
 
-| Field | State key | Default | Lines |
-| ----- | --------- | ------- | ----- |
-| Repo URL | `repoUrl` | — | 142–152 |
-| Tokens path | `tokensPath` | `design/tokens.json` | 154–164 |
+| Field                | State key      | Default                 | Lines   |
+| -------------------- | -------------- | ----------------------- | ------- |
+| Repo URL             | `repoUrl`      | —                       | 142–152 |
+| Tokens path          | `tokensPath`   | `design/tokens.json`    | 154–164 |
 | Figma sync file path | `registryPath` | `.fighub-registry.json` | 166–176 |
 
 Plus dev-only "Test read tokens path" and "Open test PR" sections (lines 216–252) — **move PR smoke test behind dev flag or delete** in favor of real Push button.
@@ -57,19 +57,19 @@ After WO-058: registry loads **automatically from canvas snapshot** on tab mount
 
 ### 4. Files referencing `.fighub-registry.json` (deletion inventory)
 
-| Path | Action |
-| ---- | ------ |
-| `src/core/components/registry.types.ts:10` | Remove `DEFAULT_REGISTRY_PATH` or repurpose as deprecated constant |
-| `src/ui/components/scaffold/constants.ts:1` | Delete `DEFAULT_REGISTRY_PATH` |
-| `src/ui/export/defaultPaths.ts:34` | Remove `registry` kind path |
-| `src/ui/components/registryExport.ts` | **Rewrite:** snapshot upsert only; delete GitHub load + ExportSheet prep for repo |
-| `src/ui/components/scaffold/loadRegistryFromRepo.ts` | **Delete** or replace with `loadRegistryFromSnapshot()` |
-| `src/main.ts:209-214` | Stop returning `registryPath` in session loaded |
-| `src/io/messages/github.ts:40-41` | Remove `registryPath` from session messages |
-| `src/io/github/storage.ts:14-15` | Remove `registryPath` from config |
-| `src/ui/github/useGitHubSession.ts` | Remove registry path state |
-| `src/ui/App.tsx:158,174` | Stop passing `registryPath` |
-| `tests/unit/**` (registry export, loadRegistry, defaultPaths) | Update fixtures |
+| Path                                                          | Action                                                                            |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `src/core/components/registry.types.ts:10`                    | Remove `DEFAULT_REGISTRY_PATH` or repurpose as deprecated constant                |
+| `src/ui/components/scaffold/constants.ts:1`                   | Delete `DEFAULT_REGISTRY_PATH`                                                    |
+| `src/ui/export/defaultPaths.ts:34`                            | Remove `registry` kind path                                                       |
+| `src/ui/components/registryExport.ts`                         | **Rewrite:** snapshot upsert only; delete GitHub load + ExportSheet prep for repo |
+| `src/ui/components/scaffold/loadRegistryFromRepo.ts`          | **Delete** or replace with `loadRegistryFromSnapshot()`                           |
+| `src/main.ts:209-214`                                         | Stop returning `registryPath` in session loaded                                   |
+| `src/io/messages/github.ts:40-41`                             | Remove `registryPath` from session messages                                       |
+| `src/io/github/storage.ts:14-15`                              | Remove `registryPath` from config                                                 |
+| `src/ui/github/useGitHubSession.ts`                           | Remove registry path state                                                        |
+| `src/ui/App.tsx:158,174`                                      | Stop passing `registryPath`                                                       |
+| `tests/unit/**` (registry export, loadRegistry, defaultPaths) | Update fixtures                                                                   |
 
 Grep-verified: **~25 test files** reference registry path — batch update in same PR.
 
@@ -79,13 +79,13 @@ Canonical spec: [WO-028 snapshot research](../../Sprint%206/WO-028-snapshot-mech
 
 **Implementation summary for WO-058:**
 
-| Artifact | Path |
-| -------- | ---- |
-| Contract | `packages/contracts/src/snapshot.v1.ts` |
-| Store | `src/core/sync/snapshotStore.ts` (or `src/core/drift/snapshot.ts`) |
-| Hidden frame | `_FigHubSnapshotStore` on FigHub Output page |
-| pluginData key | `fighub:snapshot:v1` |
-| Registry SSOT | `snapshot.registry.components` mirrors `RegistryV1.components` |
+| Artifact       | Path                                                               |
+| -------------- | ------------------------------------------------------------------ |
+| Contract       | `packages/contracts/src/snapshot.v1.ts`                            |
+| Store          | `src/core/sync/snapshotStore.ts` (or `src/core/drift/snapshot.ts`) |
+| Hidden frame   | `_FigHubSnapshotStore` on FigHub Output page                       |
+| pluginData key | `fighub:snapshot:v1`                                               |
+| Registry SSOT  | `snapshot.registry.components` mirrors `RegistryV1.components`     |
 
 **New helpers:**
 
@@ -100,14 +100,14 @@ Scaffold pipeline (`runScaffold.ts:305`) calls `buildRegistryAuditRows` — swit
 
 ### 6. Audit rules decision (locked)
 
-| Rule | Disposition | Rationale |
-| ---- | ----------- | --------- |
-| `comp/registry-envelope` | **DELETE** | No repo envelope; snapshot uses `kind: 'snapshot'` |
-| `comp/registry-filekey` | **DELETE** | Empty fileKey on Untitled is expected; not a designer error |
-| `comp/registry-entry-present` | **KEEP** | Still validates component keyed after scaffold |
-| `comp/registry-entry-nodeid` | **KEEP** | |
-| `comp/registry-entry-key` | **KEEP** | |
-| `comp/registry-entry-version` | **KEEP** | |
+| Rule                          | Disposition | Rationale                                                   |
+| ----------------------------- | ----------- | ----------------------------------------------------------- |
+| `comp/registry-envelope`      | **DELETE**  | No repo envelope; snapshot uses `kind: 'snapshot'`          |
+| `comp/registry-filekey`       | **DELETE**  | Empty fileKey on Untitled is expected; not a designer error |
+| `comp/registry-entry-present` | **KEEP**    | Still validates component keyed after scaffold              |
+| `comp/registry-entry-nodeid`  | **KEEP**    |                                                             |
+| `comp/registry-entry-key`     | **KEEP**    |                                                             |
+| `comp/registry-entry-version` | **KEEP**    |                                                             |
 
 Optional future: `sync/snapshot-present` info row if snapshot node missing (warn, not error).
 
@@ -135,7 +135,9 @@ export interface FigHubJsonV1 {
 **Parser:** `src/io/formats/fighubJson.ts`
 
 ```typescript
-export const FIGHUB_JSON_DEFAULTS: Required<Pick<FigHubJsonV1, 'tokensPath' | 'specsPath' | 'exportBasePath'>> & { designSystemBranch: string | null } = {
+export const FIGHUB_JSON_DEFAULTS: Required<
+  Pick<FigHubJsonV1, 'tokensPath' | 'specsPath' | 'exportBasePath'>
+> & { designSystemBranch: string | null } = {
   tokensPath: 'design/tokens.json',
   specsPath: 'components/',
   exportBasePath: 'docs/fighub/',
@@ -171,11 +173,11 @@ export function resolveFigHubConfig(parsed: FigHubJsonV1 | null): ResolvedFigHub
 
 ### 8. Fetch / Pull / Push semantics
 
-| Action | Designer copy | Behavior |
-| ------ | ------------- | -------- |
-| **Fetch** | "Fetch latest" | GitHub: GET default-branch HEAD SHA for `fighub.json` + `tokensPath` + list `specsPath` dir (shallow metadata only). Updates **last-fetched** timestamp. Does **not** mutate Figma canvas. |
-| **Pull** | "Pull design system" | Fetch + download tokens JSON + cache in `clientStorage` per repo + optional variable push preview. Updates snapshot **pull** keys for tokens applied. Registry: read specs index from repo file listing (future WO-056 catalog) — Phase 1: no bulk spec download. |
-| **Push** | "Push updates" | Opens PR via relay with staged changes (shallow: single test/doc file or pending export queue). Full drift-resolution push deferred to WO-032. |
+| Action    | Designer copy        | Behavior                                                                                                                                                                                                                                                          |
+| --------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fetch** | "Fetch latest"       | GitHub: GET default-branch HEAD SHA for `fighub.json` + `tokensPath` + list `specsPath` dir (shallow metadata only). Updates **last-fetched** timestamp. Does **not** mutate Figma canvas.                                                                        |
+| **Pull**  | "Pull design system" | Fetch + download tokens JSON + cache in `clientStorage` per repo + optional variable push preview. Updates snapshot **pull** keys for tokens applied. Registry: read specs index from repo file listing (future WO-056 catalog) — Phase 1: no bulk spec download. |
+| **Push**  | "Push updates"       | Opens PR via relay with staged changes (shallow: single test/doc file or pending export queue). Full drift-resolution push deferred to WO-032.                                                                                                                    |
 
 **State persisted per repo** (`StoredGitHubConfig` → rename/extend `StoredRepoSyncState`):
 
@@ -218,13 +220,13 @@ Remove `tokensPath` / `registryPath` from user-editable config — paths come **
 
 ### 10. Push PR conventions (locked)
 
-| Field | Value |
-| ----- | ----- |
-| **Committer** | Authenticated user (OAuth token) — FigHub does not have a bot identity |
-| **PR title** | `fighub: push updates from Figma` (generic Phase 1); drift-specific titles from WO-031 pattern later |
-| **PR body** | Existing `buildPrBody()` from `src/io/github/prBody.ts` — includes plugin version, Figma file URL, contract kind |
-| **Branch** | `fighub/push-{YYYYMMDD}-{hhmm}` via `buildDefaultHeadBranch` |
-| **Files** | Under `exportBasePath` from resolved config |
+| Field         | Value                                                                                                            |
+| ------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Committer** | Authenticated user (OAuth token) — FigHub does not have a bot identity                                           |
+| **PR title**  | `fighub: push updates from Figma` (generic Phase 1); drift-specific titles from WO-031 pattern later             |
+| **PR body**   | Existing `buildPrBody()` from `src/io/github/prBody.ts` — includes plugin version, Figma file URL, contract kind |
+| **Branch**    | `fighub/push-{YYYYMMDD}-{hhmm}` via `buildDefaultHeadBranch`                                                     |
+| **Files**     | Under `exportBasePath` from resolved config                                                                      |
 
 Sign-off: FigHub is **author in prose**, user is **GitHub commit author**.
 
@@ -299,89 +301,89 @@ Remove:
 
 ### Repo inventory — exists today
 
-| Path | Role |
-| ---- | ---- |
-| `src/io/github/storage.ts` | Per-repo token + config in clientStorage |
-| `src/io/github/githubUiBridge.ts` | OAuth + contents fetch relay |
-| `src/io/github/createPullRequestFlow.ts` | PR creation via relay |
-| `src/io/sources/github.ts` | `loadFromGitHub(repo, path)` |
-| `src/io/sinks/outputPage.ts` | FigHub Output page |
-| `src/core/components/registry.ts` | Upsert/merge logic — **keep**, change persistence target |
-| `src/core/components/registryAuditRows.ts` | Audit rows — **trim** |
-| `src/ui/tabs/Settings.tsx` | 3-field UI — **replace** |
-| `src/ui/tabs/Components.tsx` | Load registry + export — **simplify** |
+| Path                                       | Role                                                     |
+| ------------------------------------------ | -------------------------------------------------------- |
+| `src/io/github/storage.ts`                 | Per-repo token + config in clientStorage                 |
+| `src/io/github/githubUiBridge.ts`          | OAuth + contents fetch relay                             |
+| `src/io/github/createPullRequestFlow.ts`   | PR creation via relay                                    |
+| `src/io/sources/github.ts`                 | `loadFromGitHub(repo, path)`                             |
+| `src/io/sinks/outputPage.ts`               | FigHub Output page                                       |
+| `src/core/components/registry.ts`          | Upsert/merge logic — **keep**, change persistence target |
+| `src/core/components/registryAuditRows.ts` | Audit rows — **trim**                                    |
+| `src/ui/tabs/Settings.tsx`                 | 3-field UI — **replace**                                 |
+| `src/ui/tabs/Components.tsx`               | Load registry + export — **simplify**                    |
 
 ### Greenfield
 
-| Path | Phase |
-| ---- | ----- |
-| `packages/contracts/src/snapshot.v1.ts` | 1 |
-| `packages/contracts/src/fighubJson.v1.ts` | 2 |
-| `src/core/sync/snapshotStore.ts` | 1 |
-| `src/io/formats/fighubJson.ts` | 2 |
-| `src/io/messages/snapshot.ts` | 1 |
-| `src/ui/components/RepoSyncCard.tsx` | 2 |
-| `src/ui/sync/useRepoSync.ts` | 2 |
+| Path                                      | Phase |
+| ----------------------------------------- | ----- |
+| `packages/contracts/src/snapshot.v1.ts`   | 1     |
+| `packages/contracts/src/fighubJson.v1.ts` | 2     |
+| `src/core/sync/snapshotStore.ts`          | 1     |
+| `src/io/formats/fighubJson.ts`            | 2     |
+| `src/io/messages/snapshot.ts`             | 1     |
+| `src/ui/components/RepoSyncCard.tsx`      | 2     |
+| `src/ui/sync/useRepoSync.ts`              | 2     |
 
 ### Official API / platform
 
-| Fact | Source |
-| ---- | ------ |
-| pluginData 100KB limit | Figma Plugin API, 2026-05-28 |
-| OAuth Device Flow via relay mandatory | memory.md WO-016 SPK-016-1 |
-| `figma.fileKey` empty on unsaved files | memory.md 2026-05-28 |
+| Fact                                                            | Source                                       |
+| --------------------------------------------------------------- | -------------------------------------------- |
+| pluginData 100KB limit                                          | Figma Plugin API, 2026-05-28                 |
+| OAuth Device Flow via relay mandatory                           | memory.md WO-016 SPK-016-1                   |
+| `figma.fileKey` empty on unsaved files                          | memory.md 2026-05-28                         |
 | GitHub Contents API GET `/repos/{owner}/{repo}/contents/{path}` | Via relay — existing `fetchRepoFileContents` |
 
 ### Cross-ticket matrix
 
-| Ticket | Relationship |
-| ------ | ------------ |
-| WO-028 | Snapshot spec absorbed — Phase 1 |
-| WO-033 | Badge + on-open detect on repo card |
-| WO-026 | Superseded — delete emission |
-| WO-029–032 | Blocked until WO-058 Phase 1 snapshot API |
-| WO-057 | Preflight gate — extend for malformed fighub.json |
-| WO-056 | Future catalog may use Fetch metadata |
+| Ticket     | Relationship                                      |
+| ---------- | ------------------------------------------------- |
+| WO-028     | Snapshot spec absorbed — Phase 1                  |
+| WO-033     | Badge + on-open detect on repo card               |
+| WO-026     | Superseded — delete emission                      |
+| WO-029–032 | Blocked until WO-058 Phase 1 snapshot API         |
+| WO-057     | Preflight gate — extend for malformed fighub.json |
+| WO-056     | Future catalog may use Fetch metadata             |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Rejected |
-| -- | -------- | --------- | -------- |
-| D-058-1 | Delete registry repo file entirely | Designer rejection root cause | Keep optional sync file |
-| D-058-2 | Delete envelope + filekey audit rules | Spurious FAIL on Untitled files | Repurpose against pluginData |
-| D-058-3 | fighub.json optional with defaults | Never block connect | Require fighub.json |
-| D-058-4 | Paths only from fighub.json | Remove Settings path inputs | Keep tokensPath override in Settings |
-| D-058-5 | Push commits as OAuth user | No FigHub bot account | Machine account |
-| D-058-6 | Three build phases | De-risk snapshot before UI | Single big-bang PR |
-| D-058-7 | Pull Phase 1 = tokens only | Scope control | Full spec pull |
-| D-058-8 | Snapshot module under `src/core/sync/` | Separates from drift detect logic | Collapse into drift/ |
+| ID      | Decision                               | Rationale                         | Rejected                             |
+| ------- | -------------------------------------- | --------------------------------- | ------------------------------------ |
+| D-058-1 | Delete registry repo file entirely     | Designer rejection root cause     | Keep optional sync file              |
+| D-058-2 | Delete envelope + filekey audit rules  | Spurious FAIL on Untitled files   | Repurpose against pluginData         |
+| D-058-3 | fighub.json optional with defaults     | Never block connect               | Require fighub.json                  |
+| D-058-4 | Paths only from fighub.json            | Remove Settings path inputs       | Keep tokensPath override in Settings |
+| D-058-5 | Push commits as OAuth user             | No FigHub bot account             | Machine account                      |
+| D-058-6 | Three build phases                     | De-risk snapshot before UI        | Single big-bang PR                   |
+| D-058-7 | Pull Phase 1 = tokens only             | Scope control                     | Full spec pull                       |
+| D-058-8 | Snapshot module under `src/core/sync/` | Separates from drift detect logic | Collapse into drift/                 |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-058-1 | Sandbox: write/read 50KB snapshot JSON on hidden frame | Round-trip + reopen plugin | ☐ pending `/build` |
-| SPK-058-2 | Scaffold Button in Plugin Sandbox after migration | Zero envelope/filekey FAIL rows | ☐ VQA |
-| SPK-058-3 | Fetch with missing fighub.json | Defaults applied; no error banner | ☐ unit test |
-| SPK-058-4 | Fetch with malformed fighub.json | Warning banner; defaults | ☐ unit test |
-| SPK-058-5 | Push opens PR on test repo via relay | PR URL returned | ☐ manual OAuth |
-| SPK-058-6 | Components tab without "Load sync registry" | Registry from snapshot on mount | ☐ UI test |
+| Spike ID  | Procedure                                              | Pass criteria                     | Status             |
+| --------- | ------------------------------------------------------ | --------------------------------- | ------------------ |
+| SPK-058-1 | Sandbox: write/read 50KB snapshot JSON on hidden frame | Round-trip + reopen plugin        | ☐ pending `/build` |
+| SPK-058-2 | Scaffold Button in Plugin Sandbox after migration      | Zero envelope/filekey FAIL rows   | ☐ VQA              |
+| SPK-058-3 | Fetch with missing fighub.json                         | Defaults applied; no error banner | ☐ unit test        |
+| SPK-058-4 | Fetch with malformed fighub.json                       | Warning banner; defaults          | ☐ unit test        |
+| SPK-058-5 | Push opens PR on test repo via relay                   | PR URL returned                   | ☐ manual OAuth     |
+| SPK-058-6 | Components tab without "Load sync registry"            | Registry from snapshot on mount   | ☐ UI test          |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Lik | Mitigation |
-| ---- | --- | --- | ---------- |
-| Snapshot >100KB | High | Low | Size guard; SPK-058-1 |
-| Breaking existing users with custom paths | Med | Med | One-time migration: on Fetch, ignore stored tokensPath |
-| Pull applies wrong branch | Med | Low | Resolve default branch on Fetch; cache SHA |
-| Registry data loss on snapshot clear | High | Low | Document `clearSnapshot`; no silent wipe |
-| Test suite churn (~25 files) | Low | High | Single commit batch-updates tests |
+| Risk                                      | Sev  | Lik  | Mitigation                                             |
+| ----------------------------------------- | ---- | ---- | ------------------------------------------------------ |
+| Snapshot >100KB                           | High | Low  | Size guard; SPK-058-1                                  |
+| Breaking existing users with custom paths | Med  | Med  | One-time migration: on Fetch, ignore stored tokensPath |
+| Pull applies wrong branch                 | Med  | Low  | Resolve default branch on Fetch; cache SHA             |
+| Registry data loss on snapshot clear      | High | Low  | Document `clearSnapshot`; no silent wipe               |
+| Test suite churn (~25 files)              | Low  | High | Single commit batch-updates tests                      |
 
 ---
 
@@ -416,10 +418,10 @@ Remove:
 
 ## Open questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
-| OQ-058-1 | Final fighub.json fields beyond minimum | **RESOLVED** — see §7 schema |
-| OQ-058-2 | Push commit author | **RESOLVED** — OAuth user |
-| OQ-058-3 | Repurpose vs delete registry audit rules | **RESOLVED** — delete envelope + filekey |
-| OQ-058-4 | Keep dev PR smoke test in Settings? | **Default:** remove; Push button replaces |
-| OQ-058-5 | Multi-repo support | **Out of scope** — single active repo (existing `lastRepoUrl`) |
+| ID       | Question                                 | Status                                                         |
+| -------- | ---------------------------------------- | -------------------------------------------------------------- |
+| OQ-058-1 | Final fighub.json fields beyond minimum  | **RESOLVED** — see §7 schema                                   |
+| OQ-058-2 | Push commit author                       | **RESOLVED** — OAuth user                                      |
+| OQ-058-3 | Repurpose vs delete registry audit rules | **RESOLVED** — delete envelope + filekey                       |
+| OQ-058-4 | Keep dev PR smoke test in Settings?      | **Default:** remove; Push button replaces                      |
+| OQ-058-5 | Multi-repo support                       | **Out of scope** — single active repo (existing `lastRepoUrl`) |

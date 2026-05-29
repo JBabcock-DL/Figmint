@@ -27,7 +27,9 @@ function isTokensV1(value: unknown): value is TokensV1 {
   return value.v === 1 && value.kind === 'tokens' && Array.isArray(value.tokens);
 }
 
-export function isDriftDetectVariablesMessage(message: unknown): message is DriftDetectVariablesMessage {
+export function isDriftDetectVariablesMessage(
+  message: unknown,
+): message is DriftDetectVariablesMessage {
   if (!isRecord(message)) {
     return false;
   }
@@ -69,7 +71,9 @@ function isComponentSpecV1(value: unknown): value is ComponentSpecV1 {
   return value.v === 1 && value.kind === 'component-spec' && typeof value.name === 'string';
 }
 
-export function isDriftDetectComponentsMessage(message: unknown): message is DriftDetectComponentsMessage {
+export function isDriftDetectComponentsMessage(
+  message: unknown,
+): message is DriftDetectComponentsMessage {
   if (!isRecord(message)) {
     return false;
   }
@@ -260,7 +264,9 @@ export function isOpsDetectDriftResultMessage(
   return message.type === 'ops/detect-drift/result' && typeof message.requestId === 'string';
 }
 
-export function isResolutionBulkPushMessage(message: unknown): message is ResolutionBulkPushMessage {
+export function isResolutionBulkPushMessage(
+  message: unknown,
+): message is ResolutionBulkPushMessage {
   if (!isRecord(message)) {
     return false;
   }
@@ -272,7 +278,9 @@ export function isResolutionBulkPushMessage(message: unknown): message is Resolu
   );
 }
 
-export function isResolutionBulkPullMessage(message: unknown): message is ResolutionBulkPullMessage {
+export function isResolutionBulkPullMessage(
+  message: unknown,
+): message is ResolutionBulkPullMessage {
   if (!isRecord(message)) {
     return false;
   }

@@ -32,20 +32,20 @@
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
-| `loading` boolean default false | **PASS** | `applyProperties.test.ts` + integration |
-| VARIANT axes validated (WO-022 creates) | **PASS** | `variantPropsValidate` via integration |
-| Chip Button fixture + implicit props | **PASS** | `component-spec-button-chip.v1.json` integration |
-| `ApplyPropertiesResult` soft-fail | **PASS** | `componentRules.test.ts` S9.5–S9.9 |
-| SPK-024-3 sandbox designer panel | **N/A** | Covered by WO-027 end-to-end sandbox gate |
+| Acceptance criterion                    | Result   | Note                                             |
+| --------------------------------------- | -------- | ------------------------------------------------ |
+| `loading` boolean default false         | **PASS** | `applyProperties.test.ts` + integration          |
+| VARIANT axes validated (WO-022 creates) | **PASS** | `variantPropsValidate` via integration           |
+| Chip Button fixture + implicit props    | **PASS** | `component-spec-button-chip.v1.json` integration |
+| `ApplyPropertiesResult` soft-fail       | **PASS** | `componentRules.test.ts` S9.5–S9.9               |
+| SPK-024-3 sandbox designer panel        | **N/A**  | Covered by WO-027 end-to-end sandbox gate        |
 
 ### Remediation verification (SPK-027-2)
 
-| Fix | Result | Evidence |
-| --- | ------ | -------- |
+| Fix                                                       | Result   | Evidence                                                                   |
+| --------------------------------------------------------- | -------- | -------------------------------------------------------------------------- |
 | Pre-combine `applyPropertiesToVariants()` in `scaffold()` | **PASS** | `index.ts` before `combineAsVariants`; `applyPropertiesPreCombine.test.ts` |
-| Post-combine validate-only when defs exist | **PASS** | `applyProperties.ts` `componentSetHasNonVariantProperties` |
+| Post-combine validate-only when defs exist                | **PASS** | `applyProperties.ts` `componentSetHasNonVariantProperties`                 |
 
 ### Automated tests
 

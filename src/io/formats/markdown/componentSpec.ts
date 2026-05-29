@@ -46,12 +46,7 @@ export function renderComponentSpecMarkdown(doc: ComponentSpecV1): string {
     sections.push('');
     const propRows = [...doc.props]
       .sort((a, b) => a.name.localeCompare(b.name))
-      .map((prop) => [
-        prop.name,
-        prop.type,
-        formatDefault(prop.default),
-        formatEnum(prop.enum),
-      ]);
+      .map((prop) => [prop.name, prop.type, formatDefault(prop.default), formatEnum(prop.enum)]);
     sections.push(renderGfmTable(['name', 'type', 'default', 'enum'], propRows));
     sections.push('');
   }

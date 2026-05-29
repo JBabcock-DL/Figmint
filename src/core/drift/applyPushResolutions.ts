@@ -195,10 +195,14 @@ export function mergeTokensForPush(baseTokens: TokensV1, pushTokensList: Token[]
   };
 }
 
-function comparableToSpec(comparable: ComponentComparable, baseSpec?: ComponentSpecV1): ComponentSpecV1 | null {
+function comparableToSpec(
+  comparable: ComponentComparable,
+  baseSpec?: ComponentSpecV1,
+): ComponentSpecV1 | null {
   if (baseSpec !== undefined) {
     return Object.assign({}, baseSpec, {
-      variantMatrix: comparable.variantMatrix !== undefined ? comparable.variantMatrix : baseSpec.variantMatrix,
+      variantMatrix:
+        comparable.variantMatrix !== undefined ? comparable.variantMatrix : baseSpec.variantMatrix,
       props: comparable.props,
       bindings: comparable.bindings,
     });
@@ -251,7 +255,11 @@ export function buildPushCommitFiles(input: BuildPushCommitFilesInput): PushComm
       if (parsed === null || comparable === null) {
         continue;
       }
-      const token = variableComparableToToken(parsed.collectionName, parsed.variableName, comparable);
+      const token = variableComparableToToken(
+        parsed.collectionName,
+        parsed.variableName,
+        comparable,
+      );
       if (token !== null) {
         pushTokensList.push(token);
       }
@@ -278,8 +286,7 @@ export function buildPushCommitFiles(input: BuildPushCommitFilesInput): PushComm
   const files: PushCommitFile[] = [];
   if (pushTokensList.length > 0) {
     const merged = mergeTokensForPush(input.baseTokens, pushTokensList);
-    const wireFormat =
-      input.tokensWireFormat !== undefined ? input.tokensWireFormat : 'dtcg';
+    const wireFormat = input.tokensWireFormat !== undefined ? input.tokensWireFormat : 'dtcg';
     files.push({
       path: input.tokensPath,
       content: serializeTokensForRepo(merged, wireFormat),
@@ -309,12 +316,12 @@ export function snapshotKeysForPushDrifts(
         break;
       }
       if (drift.kind === 'variable') {
-        const comparable = extractVariableComparable((drift).figma);
+        const comparable = extractVariableComparable(drift.figma);
         if (comparable !== null) {
           keys.push({ key: drift.id, value: comparable });
         }
       } else {
-        const comparable = extractComponentComparable((drift).figma);
+        const comparable = extractComponentComparable(drift.figma);
         if (comparable !== null) {
           keys.push({ key: drift.id, value: comparable });
         }

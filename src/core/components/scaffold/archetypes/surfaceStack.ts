@@ -252,7 +252,8 @@ export async function buildSurfaceStackVariant(
   }
 
   const stateRoleRaw = surface !== undefined ? surface.stateRole : undefined;
-  const stateRole = typeof stateRoleRaw === 'string' && stateRoleRaw.length > 0 ? stateRoleRaw : null;
+  const stateRole =
+    typeof stateRoleRaw === 'string' && stateRoleRaw.length > 0 ? stateRoleRaw : null;
   if (stateRole !== null) {
     createStateLayer('hover', component);
     createStateLayer('pressed', component);

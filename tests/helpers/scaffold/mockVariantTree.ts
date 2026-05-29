@@ -17,13 +17,19 @@ type BindableFrame = MockFrame & {
   topRightRadius: number;
   bottomLeftRadius: number;
   bottomRightRadius: number;
-  setBoundVariable(field: string, variable: { id: string; name: string; resolvedType: string }): void;
+  setBoundVariable(
+    field: string,
+    variable: { id: string; name: string; resolvedType: string },
+  ): void;
 };
 
 type BindableText = MockTextNode & {
   textStyleId: string;
   boundVariables: Record<string, { id: string }>;
-  setBoundVariable(field: string, variable: { id: string; name: string; resolvedType: string }): void;
+  setBoundVariable(
+    field: string,
+    variable: { id: string; name: string; resolvedType: string },
+  ): void;
 };
 
 function enhanceBindableFrame(frame: MockFrame): BindableFrame {
@@ -56,20 +62,28 @@ function enhanceBindableText(text: MockTextNode): BindableText {
 }
 
 function buildVariantLayerTree(): BindableFrame {
-  const root = enhanceBindableFrame(createMockFrame({ name: 'variant=primary, size=default' }, false));
+  const root = enhanceBindableFrame(
+    createMockFrame({ name: 'variant=primary, size=default' }, false),
+  );
   Object.defineProperty(root, 'type', { value: 'COMPONENT' });
 
   root.appendChild(
-    enhanceBindableFrame(createMockFrame({ name: 'icon-slot/leading' }, false)) as unknown as SceneNode,
+    enhanceBindableFrame(
+      createMockFrame({ name: 'icon-slot/leading' }, false),
+    ) as unknown as SceneNode,
   );
   const labelText = enhanceBindableText(new MockTextNode());
   labelText.name = 'text/label';
   root.appendChild(labelText as unknown as SceneNode);
   root.appendChild(
-    enhanceBindableFrame(createMockFrame({ name: 'icon-slot/trailing' }, false)) as unknown as SceneNode,
+    enhanceBindableFrame(
+      createMockFrame({ name: 'icon-slot/trailing' }, false),
+    ) as unknown as SceneNode,
   );
   root.appendChild(
-    enhanceBindableFrame(createMockFrame({ name: 'state-layer/hover' }, false)) as unknown as SceneNode,
+    enhanceBindableFrame(
+      createMockFrame({ name: 'state-layer/hover' }, false),
+    ) as unknown as SceneNode,
   );
   root.appendChild(
     enhanceBindableFrame(createMockFrame({ name: 'focus-ring' }, false)) as unknown as SceneNode,

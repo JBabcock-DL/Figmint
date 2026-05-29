@@ -249,9 +249,7 @@ export function isGitHubRepoFetchResultMessage(
   if (!isRecord(message)) {
     return false;
   }
-  return (
-    message.type === 'github/repo/fetch-result' && typeof message.requestId === 'string'
-  );
+  return message.type === 'github/repo/fetch-result' && typeof message.requestId === 'string';
 }
 
 export function isGitHubRepoPullMessage(message: unknown): message is GitHubRepoPullMessage {

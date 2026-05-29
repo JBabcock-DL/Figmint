@@ -1,15 +1,8 @@
 import { useCallback, useReducer } from 'react';
 
 import type { SinkId } from '@/io/sinks/types';
-import {
-  availableSinks,
-  canExport,
-  isPathInputVisible,
-} from '@/ui/export/availableSinks';
-import {
-  createInitialExportSheetState,
-  reduceExportSheet,
-} from '@/ui/export/exportSheetReducer';
+import { availableSinks, canExport, isPathInputVisible } from '@/ui/export/availableSinks';
+import { createInitialExportSheetState, reduceExportSheet } from '@/ui/export/exportSheetReducer';
 import { runExport } from '@/ui/export/runExport';
 import type { ContractDocument, ExportSheetProps } from '@/ui/export/types';
 

@@ -18,7 +18,10 @@ export type ContractDocument =
   | { kind: 'registry'; payload: RegistryV1 }
   | { kind: 'tokens'; payload: TokensV1 };
 
-export interface ExportFormatSelection { json: boolean; md: boolean }
+export interface ExportFormatSelection {
+  json: boolean;
+  md: boolean;
+}
 
 export type ExportSinkSelection = Record<SinkId, boolean>;
 

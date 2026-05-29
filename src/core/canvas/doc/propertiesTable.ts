@@ -135,13 +135,7 @@ export function orderPropsForDocTable(spec: ComponentSpecV1): ComponentSpecProp[
 }
 
 function propRowValues(prop: ComponentSpecProp): [string, string, string, string, string] {
-  return [
-    prop.name,
-    formatPropType(prop),
-    formatPropDefault(prop),
-    'no',
-    propDescription(prop),
-  ];
+  return [prop.name, formatPropType(prop), formatPropDefault(prop), 'no', propDescription(prop)];
 }
 
 function styleIdForColumn(
@@ -175,13 +169,7 @@ async function appendPropertiesHeaderRow(
 
   for (let c = 0; c < PROPERTIES_TABLE_COLUMNS.length; c++) {
     const col = PROPERTIES_TABLE_COLUMNS[c];
-    const cell = createHeaderCell(
-      col.width,
-      col.header,
-      col.id,
-      mutedVar,
-      docStyles.Caption,
-    );
+    const cell = createHeaderCell(col.width, col.header, col.id, mutedVar, docStyles.Caption);
     header.appendChild(cell);
   }
 
@@ -208,10 +196,7 @@ async function appendPropertiesBodyRow(
     const col = PROPERTIES_TABLE_COLUMNS[j];
     const cell = createBodyCell(col.width, 'VERTICAL', col.id);
     const styleId = styleIdForColumn(docStyles, col.bodyStyle);
-    const fillVar =
-      col.bodyStyle === 'Caption'
-        ? mutedVar
-        : contentVar;
+    const fillVar = col.bodyStyle === 'Caption' ? mutedVar : contentVar;
     const text = await makeTableText(values[j], col.width, styleId, fillVar);
     cell.appendChild(text);
     reassertBodyCell(cell);

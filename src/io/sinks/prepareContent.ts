@@ -50,10 +50,7 @@ function serializePayload(doc: LoadedDocument): { json: string; markdown: string
   };
 }
 
-export function prepareSinkContent(
-  doc: LoadedDocument,
-  options: FormatOptions,
-): PreparedContent {
+export function prepareSinkContent(doc: LoadedDocument, options: FormatOptions): PreparedContent {
   const serialized = serializePayload(doc);
   const baseName =
     options.baseName !== undefined && options.baseName !== ''

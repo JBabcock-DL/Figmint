@@ -2,10 +2,7 @@
 
 import { hashVariantMatrix } from '@/core/components/scaffold/variantMatrix';
 
-import {
-  extractPropsFromDefinitions,
-  extractVariantMatrixFromDefinitions,
-} from './componentDiff';
+import { extractPropsFromDefinitions, extractVariantMatrixFromDefinitions } from './componentDiff';
 import type { ComponentComparable } from './types';
 
 function scanBindings(node: SceneNode, prefix: string, out: ComponentComparable['bindings']): void {
@@ -54,6 +51,9 @@ export function figmaComponentSetToComparable(
     props: extractPropsFromDefinitions(definitions),
     bindings: bindings,
     nodeId: componentSet.id,
-    pageName: componentSet.parent !== null && componentSet.parent.type === 'PAGE' ? componentSet.parent.name : undefined,
+    pageName:
+      componentSet.parent !== null && componentSet.parent.type === 'PAGE'
+        ? componentSet.parent.name
+        : undefined,
   };
 }

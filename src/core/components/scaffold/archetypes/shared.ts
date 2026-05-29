@@ -47,7 +47,10 @@ export function createDashedIconSlot(name: string, size: number): FrameNode {
   return slot;
 }
 
-export function createStateLayer(role: 'hover' | 'pressed' | 'focus', parent: FrameNode): FrameNode {
+export function createStateLayer(
+  role: 'hover' | 'pressed' | 'focus',
+  parent: FrameNode,
+): FrameNode {
   assertValidAxisAlign(parent);
   const layer = figma.createFrame();
   layer.name = 'state-layer/' + role;

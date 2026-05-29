@@ -178,15 +178,11 @@ export function checkCompBindingVerified(input: ComponentAuditInput): AuditRuleR
     }
     const target = resolveNodeByPath(variant, parsed.nodePath);
     if (target === null) {
-      issues.push(
-        binding.selector + ': expected bind on missing node, found none',
-      );
+      issues.push(binding.selector + ': expected bind on missing node, found none');
       continue;
     }
     if (!verifyBindingOnNode(target, parsed.kind)) {
-      issues.push(
-        binding.selector + ': expected bind on ' + target.name + ', found none',
-      );
+      issues.push(binding.selector + ': expected bind on ' + target.name + ', found none');
     }
   }
 

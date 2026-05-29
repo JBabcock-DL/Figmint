@@ -1,6 +1,10 @@
 /// <reference types="@figma/plugin-typings" />
 
-import { MockFrame, MockTextNode, resetMockFigmaFrames } from '../../../core/canvas/__mocks__/figmaFrames';
+import {
+  MockFrame,
+  MockTextNode,
+  resetMockFigmaFrames,
+} from '../../../core/canvas/__mocks__/figmaFrames';
 
 let nextPageId = 1;
 

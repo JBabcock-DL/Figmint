@@ -28,7 +28,9 @@ describe('buildScaffoldAuditRows', () => {
 
   it('passes comp/scaffold-naming when every child name parses', () => {
     const set = createMockComponentSet();
-    set.appendChild(createMockComponent({ name: 'disabled=false, size=sm, variant=a' }) as unknown as SceneNode);
+    set.appendChild(
+      createMockComponent({ name: 'disabled=false, size=sm, variant=a' }) as unknown as SceneNode,
+    );
     const rows = buildScaffoldAuditRows(asComponentSetNode(set), 1);
     const row = rows.find((entry) => entry.ruleId === 'comp/scaffold-naming');
     expect(row).toBeDefined();
@@ -57,7 +59,9 @@ describe('buildScaffoldAuditRows', () => {
   it('fails comp/scaffold-one-px-master when a child is a 1px master sliver', () => {
     const set = createMockComponentSet();
     const child = createMockComponent({ name: 'variant=default', width: 120, height: 1 });
-    child.appendChild(createMockComponent({ name: 'text/label', width: 10, height: 10 }) as unknown as SceneNode);
+    child.appendChild(
+      createMockComponent({ name: 'text/label', width: 10, height: 10 }) as unknown as SceneNode,
+    );
     set.appendChild(child as unknown as SceneNode);
     const rows = buildScaffoldAuditRows(asComponentSetNode(set), 1);
     const row = rows.find((entry) => entry.ruleId === 'comp/scaffold-one-px-master');

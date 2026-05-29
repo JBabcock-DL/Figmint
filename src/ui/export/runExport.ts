@@ -136,9 +136,7 @@ function buildGithubPRPayload(
         owner: ownerRepo.owner,
         repo: ownerRepo.repo,
         baseBranch:
-          github.baseBranch !== undefined && github.baseBranch !== ''
-            ? github.baseBranch
-            : 'main',
+          github.baseBranch !== undefined && github.baseBranch !== '' ? github.baseBranch : 'main',
         commitMessage: commitMessage,
         headBranch: headBranch,
         prTitle: commitMessage,
@@ -166,13 +164,7 @@ async function runUiSinks(
     tasks.push(
       runSinkFn(sink, loaded, formatOptions)
         .then(function (result) {
-          recordSinkResult(
-            ctx,
-            result.sink,
-            result.ok,
-            result.message,
-            result.error,
-          );
+          recordSinkResult(ctx, result.sink, result.ok, result.message, result.error);
         })
         .catch(function (error: unknown) {
           const errMessage = error instanceof Error ? error.message : String(error);
@@ -188,13 +180,7 @@ function waitForMainExport(requestId: string, ctx: SinkResultRecord): Promise<vo
   return new Promise(function (resolve) {
     waitForExportMainResults(requestId, {
       onSinkResult: function (message) {
-        recordSinkResult(
-          ctx,
-          message.sink,
-          message.ok,
-          message.message,
-          message.error,
-        );
+        recordSinkResult(ctx, message.sink, message.ok, message.message, message.error);
       },
       onComplete: function () {
         resolve();
@@ -302,8 +288,7 @@ export async function runExport(
   const loaded = contractToLoaded(doc);
   const formatOptions = buildFormatOptions(state);
   const files = buildExportFiles(doc, state.formats, state.path);
-  const runSinkFn =
-    options?.runSinkFn !== undefined ? options.runSinkFn : runSink;
+  const runSinkFn = options?.runSinkFn !== undefined ? options.runSinkFn : runSink;
 
   const uiSinks = selectedUiSinks(state);
   await Promise.all([

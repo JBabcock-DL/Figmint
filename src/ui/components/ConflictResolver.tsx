@@ -29,7 +29,9 @@ export function ConflictResolver(props: ConflictResolverProps) {
         padding: '8px',
       }}
     >
-      <div style={{ display: 'grid', gap: '8px', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+      <div
+        style={{ display: 'grid', gap: '8px', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}
+      >
         <div>
           <strong style={{ fontSize: '10px' }}>Last synced</strong>
           <pre style={{ fontSize: '9px', margin: '4px 0 0', whiteSpace: 'pre-wrap' }}>
@@ -54,16 +56,32 @@ export function ConflictResolver(props: ConflictResolverProps) {
         aria-label="Resolution choice"
         style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}
       >
-        <button type="button" onClick={props.onKeepFigma} style={{ fontSize: '10px', minHeight: '32px' }}>
+        <button
+          type="button"
+          onClick={props.onKeepFigma}
+          style={{ fontSize: '10px', minHeight: '32px' }}
+        >
           Keep Figma
         </button>
-        <button type="button" onClick={props.onKeepRepo} style={{ fontSize: '10px', minHeight: '32px' }}>
+        <button
+          type="button"
+          onClick={props.onKeepRepo}
+          style={{ fontSize: '10px', minHeight: '32px' }}
+        >
           Keep Repo
         </button>
-        <button type="button" onClick={props.onSkip} style={{ fontSize: '10px', minHeight: '32px' }}>
+        <button
+          type="button"
+          onClick={props.onSkip}
+          style={{ fontSize: '10px', minHeight: '32px' }}
+        >
           Skip
         </button>
-        <button type="button" onClick={props.onClose} style={{ fontSize: '10px', minHeight: '32px' }}>
+        <button
+          type="button"
+          onClick={props.onClose}
+          style={{ fontSize: '10px', minHeight: '32px' }}
+        >
           Close
         </button>
       </div>

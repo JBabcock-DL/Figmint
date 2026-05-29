@@ -7,14 +7,14 @@
 
 ## Spike matrix
 
-| Spike ID | Layer | Procedure | Pass criteria | Status | Evidence |
-| -------- | ----- | --------- | ------------- | ------ | -------- |
-| SPK-016-0 | CLI (Node) | `npm run spike:github-oauth:probe` | HTTP 200 + `user_code` from `/login/device/code` | ✅ 2026-05-27 | Automated — Device Flow enabled |
-| SPK-016-0b | CLI full | `npm run spike:github-oauth` | `access_token` after browser authorize | ☐ pending | Interactive — run before `/plan` if Figma spike blocked |
-| SPK-016-1 | Figma **desktop** | Relay + `npm run build` → OAuth spike panel → Connect | Token + clientStorage probe OK | ✅ 2026-05-27 | Figma desktop — relay + clientStorage |
-| SPK-016-2 | Figma **browser** | Same in figma.com | Same | ☐ pending | Strongly recommended |
-| SPK-016-3 | API | `--probe-api=OWNER/REPO/path` after token | HTTP 200 contents | ☐ pending | After SPK-016-0b or SPK-016-1 |
-| ~~SPK-016-4~~ | ~~Community build~~ | N/A | N/A | **cancelled** | Single-build decision (WO-021 deferred) |
+| Spike ID      | Layer               | Procedure                                             | Pass criteria                                    | Status        | Evidence                                                |
+| ------------- | ------------------- | ----------------------------------------------------- | ------------------------------------------------ | ------------- | ------------------------------------------------------- |
+| SPK-016-0     | CLI (Node)          | `npm run spike:github-oauth:probe`                    | HTTP 200 + `user_code` from `/login/device/code` | ✅ 2026-05-27 | Automated — Device Flow enabled                         |
+| SPK-016-0b    | CLI full            | `npm run spike:github-oauth`                          | `access_token` after browser authorize           | ☐ pending     | Interactive — run before `/plan` if Figma spike blocked |
+| SPK-016-1     | Figma **desktop**   | Relay + `npm run build` → OAuth spike panel → Connect | Token + clientStorage probe OK                   | ✅ 2026-05-27 | Figma desktop — relay + clientStorage                   |
+| SPK-016-2     | Figma **browser**   | Same in figma.com                                     | Same                                             | ☐ pending     | Strongly recommended                                    |
+| SPK-016-3     | API                 | `--probe-api=OWNER/REPO/path` after token             | HTTP 200 contents                                | ☐ pending     | After SPK-016-0b or SPK-016-1                           |
+| ~~SPK-016-4~~ | ~~Community build~~ | N/A                                                   | N/A                                              | **cancelled** | Single-build decision (WO-021 deferred)                 |
 
 **Gate for `/plan`:** SPK-016-0 ✅ and SPK-016-1 ✅ **met** (2026-05-27). SPK-016-2 strongly recommended before `/build` VQA.
 
@@ -37,16 +37,16 @@ PASS SPK-016-0 (--request-only): OAuth app + Device Flow enabled
 
 **Failure modes:**
 
-| Error | Fix |
-| ----- | --- |
-| `device_flow_disabled` | Enable Device Flow on OAuth app settings |
-| `incorrect_client_credentials` | Check `GITHUB_OAUTH_CLIENT_ID` in `.env.local`, rebuild |
-| `FAIL: GITHUB_OAUTH_CLIENT_ID not set` | Fill `.env.local`, run `npm run build` for UI spike |
+| Error                                  | Fix                                                     |
+| -------------------------------------- | ------------------------------------------------------- |
+| `device_flow_disabled`                 | Enable Device Flow on OAuth app settings                |
+| `incorrect_client_credentials`         | Check `GITHUB_OAUTH_CLIENT_ID` in `.env.local`, rebuild |
+| `FAIL: GITHUB_OAUTH_CLIENT_ID not set` | Fill `.env.local`, run `npm run build` for UI spike     |
 
 ### Result log
 
-| Date | Operator | Result | Notes |
-| ---- | -------- | ------ | ----- |
+| Date       | Operator  | Result   | Notes                              |
+| ---------- | --------- | -------- | ---------------------------------- |
 | 2026-05-27 | Automated | **PASS** | `npm run spike:github-oauth:probe` |
 
 ---
@@ -73,7 +73,7 @@ node scripts/spike-github-device-flow.mjs --probe-api=YOUR_USER/YOUR_REPO/design
 
 | Date | Operator | Result | Notes |
 | ---- | -------- | ------ | ----- |
-| | | | |
+|      |          |        |       |
 
 ---
 
@@ -102,12 +102,12 @@ This matches [Figma OAuth with Plugins](https://developers.figma.com/docs/plugin
 
 ### Record
 
-| Environment | Date | Result | Error (if any) |
-| ----------- | ---- | ------ | -------------- |
-| Figma desktop (Windows) — UI direct fetch | 2026-05-27 | **FAIL** | CORS — Failed to fetch |
-| Figma desktop (Windows) — main direct fetch | 2026-05-27 | **FAIL** | CORS — same preflight block |
-| Figma desktop — relay (`localhost:8787`) | 2026-05-27 | **PASS** | Token received (scope: repo); clientStorage OK · preview=gho_…BHIt |
-| Figma browser (figma.com) — relay | | ☐ PASS / ☐ FAIL | Production relay URL TBD |
+| Environment                                 | Date       | Result          | Error (if any)                                                      |
+| ------------------------------------------- | ---------- | --------------- | ------------------------------------------------------------------- |
+| Figma desktop (Windows) — UI direct fetch   | 2026-05-27 | **FAIL**        | CORS — Failed to fetch                                              |
+| Figma desktop (Windows) — main direct fetch | 2026-05-27 | **FAIL**        | CORS — same preflight block                                         |
+| Figma desktop — relay (`localhost:8787`)    | 2026-05-27 | **PASS**        | Token received (scope: repo); clientStorage OK · preview=gho\_…BHIt |
+| Figma browser (figma.com) — relay           |            | ☐ PASS / ☐ FAIL | Production relay URL TBD                                            |
 
 **Architecture (spike):** UI → `postMessage` → main → `relayClient.ts` → `localhost:8787` → GitHub OAuth API. Token saved via `figma.clientStorage` on main thread.
 
@@ -127,7 +127,7 @@ Or use GitHub API manually with spike token.
 
 | Repo | Path | HTTP | Notes |
 | ---- | ---- | ---- | ----- |
-| | | | |
+|      |      |      |       |
 
 ---
 

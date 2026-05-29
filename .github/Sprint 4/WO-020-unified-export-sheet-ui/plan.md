@@ -12,12 +12,12 @@ State in **`exportSheetReducer.ts`** (mirror `bootstrapProgressReducer.ts`). No 
 
 ## Acceptance criteria traceability
 
-| Ticket AC | Plan steps |
-| --------- | ---------- |
+| Ticket AC                                       | Plan steps        |
+| ----------------------------------------------- | ----------------- |
 | Component tests all 6 ContractDocument variants | Steps 3, 9–10, 14 |
-| GitHub PR hidden when `!flags.githubOAuth` | Steps 6, 14 |
-| Multi-sink parallel + partial failure | Steps 7–8, 14 |
-| Path defaults per kind | Steps 2, 14 |
+| GitHub PR hidden when `!flags.githubOAuth`      | Steps 6, 14       |
+| Multi-sink parallel + partial failure           | Steps 7–8, 14     |
+| Path defaults per kind                          | Steps 2, 14       |
 
 ---
 
@@ -29,32 +29,29 @@ State in **`exportSheetReducer.ts`** (mirror `bootstrapProgressReducer.ts`). No 
 npm install -D @testing-library/react @testing-library/jest-dom @testing-library/user-event
 ```
 
-  - Create `tests/setup/dom.ts`: `import '@testing-library/jest-dom/vitest'`.
-  - Add to `vitest.config.ts`: `setupFiles: ['tests/setup/dom.ts']`.
-  - **Done when:** smoke render test passes.
+- Create `tests/setup/dom.ts`: `import '@testing-library/jest-dom/vitest'`.
+- Add to `vitest.config.ts`: `setupFiles: ['tests/setup/dom.ts']`.
+- **Done when:** smoke render test passes.
 
 - [x] **Step 2** — Implement `src/ui/export/defaultPaths.ts`:
 
 ```ts
 import type { ContractDocument } from './types';
 
-export function defaultExportBasename(
-  doc: ContractDocument,
-  now?: Date,
-): string;
+export function defaultExportBasename(doc: ContractDocument, now?: Date): string;
 ```
 
-| `kind` | Return (no extension) |
-| ------ | ----------------------- |
-| `drift-report` | `docs/fighub/drift-{YYYY-MM-DD}` |
-| `handoff-context` | `docs/fighub/handoff-{date}` |
-| `ops-program` | `docs/fighub/ops-{date}` |
-| `component-spec` | `docs/fighub/components/{kebab(name)}` |
-| `registry` | `.fighub-registry` |
-| `tokens` | `docs/fighub/tokens-{date}` |
+| `kind`            | Return (no extension)                  |
+| ----------------- | -------------------------------------- |
+| `drift-report`    | `docs/fighub/drift-{YYYY-MM-DD}`       |
+| `handoff-context` | `docs/fighub/handoff-{date}`           |
+| `ops-program`     | `docs/fighub/ops-{date}`               |
+| `component-spec`  | `docs/fighub/components/{kebab(name)}` |
+| `registry`        | `.fighub-registry`                     |
+| `tokens`          | `docs/fighub/tokens-{date}`            |
 
-  - `kebab(name)` from `payload.name` on component-spec.
-  - **Done when:** `tests/unit/ui/export/defaultPaths.test.ts` — 6 rows + component slug.
+- `kebab(name)` from `payload.name` on component-spec.
+- **Done when:** `tests/unit/ui/export/defaultPaths.test.ts` — 6 rows + component slug.
 
 - [x] **Step 3** — Create `src/ui/export/types.ts`:
 
@@ -79,7 +76,7 @@ export interface ExportSheetProps {
 }
 ```
 
-  - Import `SinkId` from `@/io/sinks/types` (includes `github-pr` when WO-018 merged).
+- Import `SinkId` from `@/io/sinks/types` (includes `github-pr` when WO-018 merged).
 
 - [x] **Step 4** — Implement `src/ui/export/exportSheetReducer.ts`:
 
@@ -103,9 +100,9 @@ export type ExportSheetAction =
   | { type: 'reset' };
 ```
 
-  - Initial sinks: intersect `defaultSinks` with `availableSinks()` (see Step 6).
-  - Initial formats: both true except registry → json only.
-  - **Done when:** reducer tests cover partial failure (2 ok, 1 fail).
+- Initial sinks: intersect `defaultSinks` with `availableSinks()` (see Step 6).
+- Initial formats: both true except registry → json only.
+- **Done when:** reducer tests cover partial failure (2 ok, 1 fail).
 
 - [x] **Step 5** — Create `src/io/messages/export.ts`:
 
@@ -137,8 +134,8 @@ export interface ExportCompleteMessage {
 }
 ```
 
-  - Guards: `isExportRunMessage`, `isExportSinkResultMessage`, `isExportCompleteMessage`.
-  - **Done when:** `tests/unit/io/messages/export.test.ts`.
+- Guards: `isExportRunMessage`, `isExportSinkResultMessage`, `isExportCompleteMessage`.
+- **Done when:** `tests/unit/io/messages/export.test.ts`.
 
 - [x] **Step 6** — Implement `src/ui/export/availableSinks.ts`:
 
@@ -159,7 +156,9 @@ export function isPathInputVisible(sinks: ExportSinkSelection): boolean {
 
 export function canExport(state: ExportSheetState): boolean {
   const hasFormat = state.formats.json || state.formats.md;
-  const hasSink = Object.keys(state.sinks).some(function (k) { return state.sinks[k as SinkId]; });
+  const hasSink = Object.keys(state.sinks).some(function (k) {
+    return state.sinks[k as SinkId];
+  });
   return hasFormat && hasSink && !state.exporting;
 }
 ```
@@ -174,10 +173,10 @@ export function buildExportFiles(
 ): Array<{ path: string; content: string; format: 'json' | 'md' }>;
 ```
 
-  - Paths: `{basename}.v1.json`, `{basename}.v1.md` (registry: `{basename}.json` only if kind registry).
-  - Content: `format(payload, 'json'|'md')` from WO-019.
-  - Registry: skip md even if checkbox somehow true.
-  - **Done when:** test produces 2 files for drift-report both formats.
+- Paths: `{basename}.v1.json`, `{basename}.v1.md` (registry: `{basename}.json` only if kind registry).
+- Content: `format(payload, 'json'|'md')` from WO-019.
+- Registry: skip md even if checkbox somehow true.
+- **Done when:** test produces 2 files for drift-report both formats.
 
 - [x] **Step 8** — Implement `src/ui/export/runExport.ts`:
 
@@ -190,6 +189,7 @@ export async function runExport(
 ```
 
 **Algorithm:**
+
 1. `requestId = 'export-' + Date.now()`
 2. `dispatch({ type: 'start-export', requestId })`
 3. Build `LoadedDocument` from ContractDocument for sinks
@@ -199,7 +199,7 @@ export async function runExport(
 7. Listen for `export/sink-result` / `export/complete` (register listener module `exportMessageListener.ts`)
 8. `dispatch({ type: 'complete' })`; call `onComplete`
 
-  - **Done when:** test with mocked runSink + postMessage shows 3 results with 1 failure.
+- **Done when:** test with mocked runSink + postMessage shows 3 results with 1 failure.
 
 - [x] **Step 9** — Wire `src/main.ts` `handleExportRun(message: ExportRunMessage)`:
   - For `output-page`: convert to sink message / call `writeToOutputPage` directly
@@ -243,19 +243,19 @@ export async function runExport(
 </section>
 ```
 
-  - **Done when:** renders without crash for each fixture document.
+- **Done when:** renders without crash for each fixture document.
 
 - [x] **Step 11** — Create `tests/fixtures/ui/export/` — one JSON per ContractDocument kind (minimal valid v1 payloads).
 
 - [x] **Step 12** — Component tests `tests/unit/ui/components/ExportSheet.test.tsx`:
 
-| Test | Assert |
-| ---- | ------ |
-| drift-report fixture | format + sink fieldsets render |
-| registry fixture | MD checkbox absent/disabled |
+| Test                    | Assert                             |
+| ----------------------- | ---------------------------------- |
+| drift-report fixture    | format + sink fieldsets render     |
+| registry fixture        | MD checkbox absent/disabled        |
 | flags.githubOAuth false | github-pr checkbox not in document |
-| partial mock failure | one ✗ one ✓ in status list |
-| Export disabled | when no format selected |
+| partial mock failure    | one ✗ one ✓ in status list         |
+| Export disabled         | when no format selected            |
 
 - [x] **Step 13** — Integrate in `src/ui/App.tsx`:
   - Add **Export** tab or section with button "Export sample drift report" opening `<ExportSheet document={sample} defaultSinks={['download']} />`.
@@ -271,31 +271,36 @@ export async function runExport(
 ## Build Agents
 
 ### Phase 1 (parallel — after WO-019 `format` exists)
+
 - `code-build` — **Steps 1–4**: testing libs, defaultPaths, types, reducer.
 
 ### Phase 2 (parallel)
+
 - `code-build` — **Steps 5–7**: export messages, availableSinks, serializeForExport.
 
 ### Phase 3 (sequential — needs WO-017/018 main handlers)
+
 - `code-build` — **Steps 8–9**: runExport + main handler.
 
 ### Phase 4 (parallel)
+
 - `code-build` — **Steps 10–12**: ExportSheet component + fixtures + tests.
 
 ### Phase 5
+
 - `code-build` — **Steps 13–15**: App integration, listener, CI.
 
 ---
 
 ## Dependencies & Tools
 
-| Dependency | Notes |
-| ---------- | ----- |
-| WO-019 | `format()` in serializeForExport |
-| WO-017 | `runSink` for download/clipboard |
-| WO-018 | github-pr in main handler |
-| WO-016 | token for github-pr |
-| `@testing-library/react` | new devDep |
+| Dependency               | Notes                            |
+| ------------------------ | -------------------------------- |
+| WO-019                   | `format()` in serializeForExport |
+| WO-017                   | `runSink` for download/clipboard |
+| WO-018                   | github-pr in main handler        |
+| WO-016                   | token for github-pr              |
+| `@testing-library/react` | new devDep                       |
 
 Figma VQA: **N/A** until design frame assigned.
 
@@ -303,10 +308,10 @@ Figma VQA: **N/A** until design frame assigned.
 
 ## Open Questions
 
-| # | Question | Resolution |
-| - | -------- | ---------- |
+| #       | Question                    | Resolution            |
+| ------- | --------------------------- | --------------------- |
 | OQ-20-1 | Clipboard when both formats | **RESOLVED:** copy MD |
-| OQ-20-2 | Storybook | **RESOLVED:** no |
+| OQ-20-2 | Storybook                   | **RESOLVED:** no      |
 
 ---
 
@@ -318,14 +323,14 @@ UI: `Promise.allSettled(download, clipboard)` || postMessage `export/run` for ma
 
 ### Style tokens (copy from Bootstrap)
 
-| Token | Value |
-| ----- | ----- |
-| body font | 11px Inter |
-| section header | 13px |
-| success | `#0a6b0a` |
-| error | `#b00020` |
-| muted | `#666` |
-| border | `#ddd` |
+| Token          | Value      |
+| -------------- | ---------- |
+| body font      | 11px Inter |
+| section header | 13px       |
+| success        | `#0a6b0a`  |
+| error          | `#b00020`  |
+| muted          | `#666`     |
+| border         | `#ddd`     |
 
 ### References
 

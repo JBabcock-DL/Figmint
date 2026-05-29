@@ -18,9 +18,7 @@ function inferFileFormat(path: string): 'json' | 'md' {
 }
 
 function buildFigmaFileUrl(figmaFileKey: string, figmaFileName: string): string {
-  return (
-    'https://www.figma.com/design/' + figmaFileKey + '/' + encodeURIComponent(figmaFileName)
-  );
+  return 'https://www.figma.com/design/' + figmaFileKey + '/' + encodeURIComponent(figmaFileName);
 }
 
 export async function executeGithubPRSink(ctx: GithubPRSinkContext): Promise<SinkResult> {
@@ -99,8 +97,7 @@ export async function executeGithubPRSink(ctx: GithubPRSinkContext): Promise<Sin
         ok: false,
         sink: 'github-pr',
         message: error.mapped.message,
-        error:
-          error.mapped.hint !== undefined ? error.mapped.hint : error.mapped.message,
+        error: error.mapped.hint !== undefined ? error.mapped.hint : error.mapped.message,
         code: error.mapped.code,
       };
     }

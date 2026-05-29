@@ -8,11 +8,11 @@
 
 ## Summary
 
-| Area             | Pass  | Fail | N/A                     |
-| ---------------- | ----- | ---- | ----------------------- |
-| Figma assertions | 0     | 0    | All (no Figma artifact) |
-| Functional QA    | 5     | 0    | 1                       |
-| **Overall**      | **5** | **0** | —                      |
+| Area             | Pass  | Fail  | N/A                     |
+| ---------------- | ----- | ----- | ----------------------- |
+| Figma assertions | 0     | 0     | All (no Figma artifact) |
+| Functional QA    | 5     | 0     | 1                       |
+| **Overall**      | **5** | **0** | —                       |
 
 Automated tests (374/374) plus manual Settings smoke pass on Figma desktop.
 
@@ -32,22 +32,22 @@ No assertion table — Figma N/A.
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
-| Device Flow OAuth end-to-end (desktop + browser) | **PASS** | Desktop: Settings Connect + device code + token stored. Browser (figma.com) not re-run this session — desktop sufficient for MVP gate. |
-| Read `design/tokens.json` into valid `LoadedDocument` | **PASS** | Manual: `Loaded tokens-dtcg via github` against `JBabcock-DL/FigHub` |
-| Open PR with single file change | **PASS** | Manual: [PR #58](https://github.com/JBabcock-DL/FigHub/pull/58) on `fighub/test-export-2026-05-28` |
-| Token persists across re-opens; Disconnect clears | **PASS** | `storage.test.ts` + manual connect/disconnect observed |
-| Community build shows no GitHub UI | **N/A** | WO-021 deferred — single build |
-| No `client_secret` in bundle/repo | **PASS** | `rg client_secret src/` — zero matches |
+| Acceptance criterion                                  | Result   | Note                                                                                                                                   |
+| ----------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Device Flow OAuth end-to-end (desktop + browser)      | **PASS** | Desktop: Settings Connect + device code + token stored. Browser (figma.com) not re-run this session — desktop sufficient for MVP gate. |
+| Read `design/tokens.json` into valid `LoadedDocument` | **PASS** | Manual: `Loaded tokens-dtcg via github` against `JBabcock-DL/FigHub`                                                                   |
+| Open PR with single file change                       | **PASS** | Manual: [PR #58](https://github.com/JBabcock-DL/FigHub/pull/58) on `fighub/test-export-2026-05-28`                                     |
+| Token persists across re-opens; Disconnect clears     | **PASS** | `storage.test.ts` + manual connect/disconnect observed                                                                                 |
+| Community build shows no GitHub UI                    | **N/A**  | WO-021 deferred — single build                                                                                                         |
+| No `client_secret` in bundle/repo                     | **PASS** | `rg client_secret src/` — zero matches                                                                                                 |
 
 ### Manual VQA (Plan Step 22)
 
-| Check | Result | Evidence |
-| ----- | ------ | -------- |
+| Check           | Result   | Evidence                                              |
+| --------------- | -------- | ----------------------------------------------------- |
 | Relay + Connect | **PASS** | `npm run spike:oauth-relay`, Settings tab Device Flow |
-| Read smoke | **PASS** | `design/tokens.json` → `tokens-dtcg` |
-| Test PR | **PASS** | `docs/fighub/test-export.v1.json` → PR #58 |
+| Read smoke      | **PASS** | `design/tokens.json` → `tokens-dtcg`                  |
+| Test PR         | **PASS** | `docs/fighub/test-export.v1.json` → PR #58            |
 
 ### Fixes during VQA
 
@@ -64,11 +64,11 @@ None.
 
 ## Artifacts
 
-| Artifact | Path | Status |
-| -------- | ---- | ------ |
-| Figma source screenshot | `research/figma-source.png` | N/A |
-| Build screenshot | `research/build-screenshot.png` | N/A |
-| Figma vs build overlay | `research/figma-vs-build.png` | N/A |
+| Artifact                | Path                            | Status |
+| ----------------------- | ------------------------------- | ------ |
+| Figma source screenshot | `research/figma-source.png`     | N/A    |
+| Build screenshot        | `research/build-screenshot.png` | N/A    |
+| Figma vs build overlay  | `research/figma-vs-build.png`   | N/A    |
 
 ---
 

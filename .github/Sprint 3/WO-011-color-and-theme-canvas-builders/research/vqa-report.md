@@ -8,10 +8,10 @@
 
 ## Summary
 
-| Area | Pass | Fail | N/A |
-|------|------|------|-----|
-| Figma assertions | 0 | 0 | All (subsystem ticket) |
-| Functional QA | 4 | 0 | 0 |
+| Area             | Pass | Fail | N/A                    |
+| ---------------- | ---- | ---- | ---------------------- |
+| Figma assertions | 0    | 0    | All (subsystem ticket) |
+| Functional QA    | 4    | 0    | 0                      |
 
 **Recommendation:** **Ship**
 
@@ -31,18 +31,18 @@ N/A.
 
 ## Functional QA results
 
-| Criterion | Result | Note |
-|-----------|--------|------|
+| Criterion                                                    | Result   | Note                                                                                                   |
+| ------------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------ |
 | Visually correct Primitives + Theme pages after push + build | **PASS** | Full bootstrap with `bootstrap-complete`; Documentation collection for table chrome; designer sign-off |
-| Legacy node naming for canvas audit | **PASS** | `doc/table-group/{slug}` hierarchy |
-| Vitest row projection from fixtures | **PASS** | `primitivesRows`, `themeRows`, `colorFormats` green |
-| Bench each builder < 3 s (~100 swatches) | **PASS** | Bootstrap integration — see `research/canvas-bench-result.md` |
+| Legacy node naming for canvas audit                          | **PASS** | `doc/table-group/{slug}` hierarchy                                                                     |
+| Vitest row projection from fixtures                          | **PASS** | `primitivesRows`, `themeRows`, `colorFormats` green                                                    |
+| Bench each builder < 3 s (~100 swatches)                     | **PASS** | Bootstrap integration — see `research/canvas-bench-result.md`                                          |
 
 ### Testing & verification
 
-| Check | Result | Note |
-|-------|--------|------|
-| Vitest pure functions | **PASS** | 224/224 repo tests green |
+| Check                     | Result   | Note                         |
+| ------------------------- | -------- | ---------------------------- |
+| Vitest pure functions     | **PASS** | 224/224 repo tests green     |
 | Figma manual push → build | **PASS** | Bootstrap tab E2E 2026-05-27 |
 
 ---
@@ -55,12 +55,12 @@ None — prior fails (visual + bench) closed by bootstrap-complete VQA session a
 
 ## Artifacts
 
-| Artifact | Path |
-|----------|------|
-| figma-source.png | N/A |
-| build-screenshot.png | N/A |
-| figma-vs-build.png | N/A |
-| Bench record | `research/canvas-bench-result.md` |
+| Artifact             | Path                              |
+| -------------------- | --------------------------------- |
+| figma-source.png     | N/A                               |
+| build-screenshot.png | N/A                               |
+| figma-vs-build.png   | N/A                               |
+| Bench record         | `research/canvas-bench-result.md` |
 
 ---
 

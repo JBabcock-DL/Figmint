@@ -80,51 +80,48 @@ describe('executeGithubPRSink', () => {
     const pullBodies: unknown[] = [];
     let blobPostCount = 0;
 
-    vi.spyOn(relayClient, 'githubApiViaRelay').mockImplementation(async function (
-      method,
-      path,
-      _token,
-      body,
-    ) {
-      calls.push(method + ' ' + path);
+    vi.spyOn(relayClient, 'githubApiViaRelay').mockImplementation(
+      async function (method, path, _token, body) {
+        calls.push(method + ' ' + path);
 
-      if (path === '/repos/acme/widgets') {
-        return { ok: true, status: 200, body: { full_name: 'acme/widgets' } };
-      }
-      if (path === '/repos/acme/widgets/git/ref/heads/main') {
-        return { ok: true, status: 200, body: { object: { sha: 'base-sha' } } };
-      }
-      if (path === '/repos/acme/widgets/git/commits/base-sha') {
-        return { ok: true, status: 200, body: { tree: { sha: 'tree-sha' } } };
-      }
-      if (path === '/repos/acme/widgets/git/refs') {
-        return { ok: true, status: 201, body: { ref: 'refs/heads/' + HEAD_BRANCH } };
-      }
-      if (path === '/repos/acme/widgets/git/blobs' && method === 'POST') {
-        blobPostCount++;
-        return { ok: true, status: 201, body: { sha: 'blob-sha-' + String(blobPostCount) } };
-      }
-      if (path === '/repos/acme/widgets/git/trees' && method === 'POST') {
-        treeBodies.push(body);
-        return { ok: true, status: 201, body: { sha: 'new-tree-sha' } };
-      }
-      if (path === '/repos/acme/widgets/git/commits') {
-        return { ok: true, status: 201, body: { sha: 'commit-sha' } };
-      }
-      if (path === '/repos/acme/widgets/git/refs/heads/' + HEAD_BRANCH_ENCODED) {
-        return { ok: true, status: 200, body: { object: { sha: 'commit-sha' } } };
-      }
-      if (path === '/repos/acme/widgets/pulls' && method === 'POST') {
-        pullBodies.push(body);
-        return {
-          ok: true,
-          status: 201,
-          body: { html_url: 'https://github.com/acme/widgets/pull/42', number: 42 },
-        };
-      }
+        if (path === '/repos/acme/widgets') {
+          return { ok: true, status: 200, body: { full_name: 'acme/widgets' } };
+        }
+        if (path === '/repos/acme/widgets/git/ref/heads/main') {
+          return { ok: true, status: 200, body: { object: { sha: 'base-sha' } } };
+        }
+        if (path === '/repos/acme/widgets/git/commits/base-sha') {
+          return { ok: true, status: 200, body: { tree: { sha: 'tree-sha' } } };
+        }
+        if (path === '/repos/acme/widgets/git/refs') {
+          return { ok: true, status: 201, body: { ref: 'refs/heads/' + HEAD_BRANCH } };
+        }
+        if (path === '/repos/acme/widgets/git/blobs' && method === 'POST') {
+          blobPostCount++;
+          return { ok: true, status: 201, body: { sha: 'blob-sha-' + String(blobPostCount) } };
+        }
+        if (path === '/repos/acme/widgets/git/trees' && method === 'POST') {
+          treeBodies.push(body);
+          return { ok: true, status: 201, body: { sha: 'new-tree-sha' } };
+        }
+        if (path === '/repos/acme/widgets/git/commits') {
+          return { ok: true, status: 201, body: { sha: 'commit-sha' } };
+        }
+        if (path === '/repos/acme/widgets/git/refs/heads/' + HEAD_BRANCH_ENCODED) {
+          return { ok: true, status: 200, body: { object: { sha: 'commit-sha' } } };
+        }
+        if (path === '/repos/acme/widgets/pulls' && method === 'POST') {
+          pullBodies.push(body);
+          return {
+            ok: true,
+            status: 201,
+            body: { html_url: 'https://github.com/acme/widgets/pull/42', number: 42 },
+          };
+        }
 
-      throw new Error('Unexpected path: ' + path);
-    });
+        throw new Error('Unexpected path: ' + path);
+      },
+    );
 
     const result = await executeGithubPRSink(ctx);
 

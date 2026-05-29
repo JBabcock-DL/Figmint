@@ -8,10 +8,10 @@
 
 ## Summary
 
-| Area | Pass | Fail | N/A |
-| ---- | ---- | ---- | --- |
-| Figma assertions | — | — | All (subsystem) |
-| Functional QA | 4 | 0 | 0 |
+| Area             | Pass | Fail | N/A             |
+| ---------------- | ---- | ---- | --------------- |
+| Figma assertions | —    | —    | All (subsystem) |
+| Functional QA    | 4    | 0    | 0               |
 
 ---
 
@@ -23,12 +23,12 @@
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
+| Acceptance criterion                        | Result   | Note                                                        |
+| ------------------------------------------- | -------- | ----------------------------------------------------------- |
 | 10-variable AC fixture classifies correctly | **PASS** | `variable-drift-ac-10.v1.json` + `variables.detect.test.ts` |
-| 400-variable comparison <2s | **PASS** | Bench <100ms in CI |
-| Integration test (repo + snapshot path) | **PASS** | `variableDrift.integration.test.ts` |
-| Main handler `drift/detect-variables` | **PASS** | `main.ts` wired |
+| 400-variable comparison <2s                 | **PASS** | Bench <100ms in CI                                          |
+| Integration test (repo + snapshot path)     | **PASS** | `variableDrift.integration.test.ts`                         |
+| Main handler `drift/detect-variables`       | **PASS** | `main.ts` wired                                             |
 
 ### Automated test run (2026-05-28)
 
@@ -47,11 +47,11 @@ None.
 
 ## Artifacts
 
-| Artifact | Path |
-| -------- | ---- |
-| figma-source.png | N/A |
-| build-screenshot.png | N/A |
-| figma-vs-build.png | N/A |
+| Artifact             | Path |
+| -------------------- | ---- |
+| figma-source.png     | N/A  |
+| build-screenshot.png | N/A  |
+| figma-vs-build.png   | N/A  |
 
 ---
 

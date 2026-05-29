@@ -32,13 +32,13 @@
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
-| New Button → registry entry with `nodeId` | **PASS** | `registry.test.ts` greenfield upsert |
-| Re-scaffold → version increment, no duplicate | **PASS** | version 1→2 test |
-| `RegistryV1` schema validation | **PASS** | AJV gate on fixtures + upsert output |
-| Merge, fileKey guard, legacy normalize | **PASS** | SPK-026-1/2/3 covered in unit tests |
-| End-to-end ExportSheet in Components tab | **N/A** | WO-027 owns; WO-026 API verified in isolation |
+| Acceptance criterion                          | Result   | Note                                          |
+| --------------------------------------------- | -------- | --------------------------------------------- |
+| New Button → registry entry with `nodeId`     | **PASS** | `registry.test.ts` greenfield upsert          |
+| Re-scaffold → version increment, no duplicate | **PASS** | version 1→2 test                              |
+| `RegistryV1` schema validation                | **PASS** | AJV gate on fixtures + upsert output          |
+| Merge, fileKey guard, legacy normalize        | **PASS** | SPK-026-1/2/3 covered in unit tests           |
+| End-to-end ExportSheet in Components tab      | **N/A**  | WO-027 owns; WO-026 API verified in isolation |
 
 ### Automated tests
 

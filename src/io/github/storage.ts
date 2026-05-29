@@ -117,7 +117,11 @@ async function writeJson(key: string, value: unknown): Promise<void> {
 
 export async function getToken(repoUrl: string): Promise<StoredGitHubToken | null> {
   const stored = await readJson<StoredGitHubToken>(tokenStorageKey(repoUrl));
-  if (stored === null || typeof stored.accessToken !== 'string' || stored.accessToken.length === 0) {
+  if (
+    stored === null ||
+    typeof stored.accessToken !== 'string' ||
+    stored.accessToken.length === 0
+  ) {
     return null;
   }
   return stored;
@@ -149,10 +153,8 @@ export async function setSyncState(
       partial.resolvedConfig !== undefined ? partial.resolvedConfig : existing.resolvedConfig,
     lastFetchedAt:
       partial.lastFetchedAt !== undefined ? partial.lastFetchedAt : existing.lastFetchedAt,
-    lastPulledAt:
-      partial.lastPulledAt !== undefined ? partial.lastPulledAt : existing.lastPulledAt,
-    lastPushedAt:
-      partial.lastPushedAt !== undefined ? partial.lastPushedAt : existing.lastPushedAt,
+    lastPulledAt: partial.lastPulledAt !== undefined ? partial.lastPulledAt : existing.lastPulledAt,
+    lastPushedAt: partial.lastPushedAt !== undefined ? partial.lastPushedAt : existing.lastPushedAt,
     defaultBranch:
       partial.defaultBranch !== undefined && partial.defaultBranch.length > 0
         ? partial.defaultBranch

@@ -40,7 +40,7 @@ Implement a **pure hybrid** codeSyntax layer under `src/core/variables/` that ma
 
 | Dependency                     | Role                                                                                                                                                                                                                                   |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **WO-055**                     | `TokensV1` / `CanonicalToken` + `CodeSyntaxPlatform` on `@detroitlabs/fighub-contracts` — **required** for production types; Phase 1 may use fixture objects matching research sketch until WO-055 merges.                            |
+| **WO-055**                     | `TokensV1` / `CanonicalToken` + `CodeSyntaxPlatform` on `@detroitlabs/fighub-contracts` — **required** for production types; Phase 1 may use fixture objects matching research sketch until WO-055 merges.                             |
 | **WO-008**                     | `push.ts` integration point — calls `applyCodeSyntax(variable, token)` after all mode values; WO-009 does not implement push. Build order: WO-009 Phase 1–2 can complete before WO-008 merges; E2E push verification waits for WO-008. |
 | **WO-007**                     | Legacy/DTCG adapters must populate stored Theme triples from `theme-aliases.json` etc. — not WO-009 scope; mapper consumes whatever is on the token.                                                                                   |
 | **@figma/plugin-typings**      | `Variable` type for `applyCodeSyntax` only (already in root `package.json`).                                                                                                                                                           |
@@ -54,7 +54,7 @@ Implement a **pure hybrid** codeSyntax layer under `src/core/variables/` that ma
 | --- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | Derive Theme when stored missing (dev tokens)?                     | **No** — `mapCodeSyntax` returns stored-only for theme; empty → skip all platforms (WO-010 audit flags later).                              |
 | 2   | Typography iOS always `.Typography.*`?                             | **Yes** — per `typography-slots.json` / research §2.                                                                                        |
-| 3   | Partial DTCG `$extensions.fighub.codeSyntax` on Primitives?       | **Yes** — hybrid: stored platform wins, derive the rest.                                                                                    |
+| 3   | Partial DTCG `$extensions.fighub.codeSyntax` on Primitives?        | **Yes** — hybrid: stored platform wins, derive the rest.                                                                                    |
 | 4   | WO-008 research says `push.ts` owns `setVariableCodeSyntax` inline | **Superseded by WO-009 research lock:** `applyCodeSyntax` in `codeSyntax.ts` is the sole call site; update WO-008 plan at integration time. |
 
 ## Notes

@@ -18,22 +18,22 @@ Implement a **pure, testable** variable drift detector under `src/core/drift/` t
 
 ## AC traceability
 
-| AC / Req | Plan step(s) |
-| -------- | ------------ |
-| Req 1 `classify.ts` shared | Steps 1–2 |
-| Req 2 `variables.ts` detector | Steps 3–8 |
-| Req 3 slash key namespace | Step 4 |
-| Req 4 reuse compare.ts | Steps 3, 5 |
-| Req 5 classification table | Steps 2, 6 |
-| Req 6 missing snapshot → S:=R | Step 2 |
-| Req 7 repo adapt → flatten | Step 7 |
-| Req 8 Figma flatten from audit read | Step 6 |
-| Req 9 report id prefix `var/` | Step 8 |
-| Req 10 message `drift/detect-variables` | Steps 11–12 |
-| Req 11 WO-031 integration | Step 8 |
-| AC 10-var fixture | Steps 9–10 |
-| AC 400-var <2s | Step 10 |
-| AC integration sample repo + Figma | Step 13 |
+| AC / Req                                | Plan step(s) |
+| --------------------------------------- | ------------ |
+| Req 1 `classify.ts` shared              | Steps 1–2    |
+| Req 2 `variables.ts` detector           | Steps 3–8    |
+| Req 3 slash key namespace               | Step 4       |
+| Req 4 reuse compare.ts                  | Steps 3, 5   |
+| Req 5 classification table              | Steps 2, 6   |
+| Req 6 missing snapshot → S:=R           | Step 2       |
+| Req 7 repo adapt → flatten              | Step 7       |
+| Req 8 Figma flatten from audit read     | Step 6       |
+| Req 9 report id prefix `var/`           | Step 8       |
+| Req 10 message `drift/detect-variables` | Steps 11–12  |
+| Req 11 WO-031 integration               | Step 8       |
+| AC 10-var fixture                       | Steps 9–10   |
+| AC 400-var <2s                          | Step 10      |
+| AC integration sample repo + Figma      | Step 13      |
 
 ---
 
@@ -42,6 +42,7 @@ Implement a **pure, testable** variable drift detector under `src/core/drift/` t
 ### Phase A — Shared classifier + types
 
 - [x] **Step 1** — Add `src/core/drift/types.ts`:
+
   ```typescript
   export type DriftDirection = 'push' | 'pull' | 'conflict' | 'synced';
 
@@ -62,71 +63,86 @@ Implement a **pure, testable** variable drift detector under `src/core/drift/` t
     syncedCount: number;
   }
   ```
+
   **Done when:** `npm run typecheck` passes; no Plugin API imports in this file.
 
 - [x] **Step 2** — Implement `src/core/drift/classify.ts`:
+
   ```typescript
   export function classifyThreeWay<T>(
     figma: T | null,
     repo: T | null,
     snapshot: T | null,
     equal: (a: T, b: T) => boolean,
-  ): DriftDirection
+  ): DriftDirection;
   ```
+
   - Missing snapshot baseline: `const baseline = snapshot !== null ? snapshot : repo` (PRD risk row — D-029-3).
   - Apply locked table from research Appendix B; null-present keys use presence rules from research §1 edge table.
   - Export `isSynced(direction: DriftDirection): boolean`.
-  **Done when:** `tests/unit/core/drift/classify.test.ts` covers all four directions + both-moved-same-way synced + missing snapshot baseline.
+    **Done when:** `tests/unit/core/drift/classify.test.ts` covers all four directions + both-moved-same-way synced + missing snapshot baseline.
 
 - [x] **Step 3** — Add `src/core/drift/variableEqual.ts`:
+
   ```typescript
-  export function variableStatesEqual(a: VariableComparable, b: VariableComparable): boolean
+  export function variableStatesEqual(a: VariableComparable, b: VariableComparable): boolean;
   ```
+
   - Compare `resolvedType` first (mismatch → false).
   - For each mode in union of `valuesByMode` keys, use `valuesEqual` from `@/core/variables/compare`.
   - Compare `codeSyntax` triple (WEB/ANDROID/iOS) with empty-string default for missing platform.
-  **Done when:** `tests/unit/core/drift/variableEqual.test.ts` — color epsilon, alias id match, codeSyntax mismatch.
+    **Done when:** `tests/unit/core/drift/variableEqual.test.ts` — color epsilon, alias id match, codeSyntax mismatch.
 
 ### Phase B — Flatten + detect
 
 - [x] **Step 4** — Add `src/core/drift/variableKeys.ts`:
+
   ```typescript
-  export function toVariableDriftId(collectionName: string, variableName: string): string
-  export function parseVariableDriftId(id: string): { collectionName: string; variableName: string } | null
+  export function toVariableDriftId(collectionName: string, variableName: string): string;
+  export function parseVariableDriftId(
+    id: string,
+  ): { collectionName: string; variableName: string } | null;
   ```
+
   - Key format: `{collectionName}/{variableName}` (Figma slash paths — never dots).
   - Report id: `'var/' + key`.
-  **Done when:** unit test round-trip; rejects dot-only legacy keys.
+    **Done when:** unit test round-trip; rejects dot-only legacy keys.
 
 - [x] **Step 5** — Implement flatten helpers in `src/core/drift/variables.ts`:
+
   ```typescript
   export function flattenFigmaVariableSnapshots(
     collections: FigmaCollectionSnapshot[],
-  ): Record<string, VariableComparable>
+  ): Record<string, VariableComparable>;
 
-  export function flattenRepoTokens(tokens: TokensV1): Record<string, VariableComparable>
+  export function flattenRepoTokens(tokens: TokensV1): Record<string, VariableComparable>;
   ```
+
   - Figma: map each `FigmaVariableSnapshot` using `collectionName + '/' + name` (strip leading slash if present).
   - Repo: walk `TokensV1.collections` + `tokens` using same mode-name keys as push engine (`src/core/variables/collections.ts` mode map); resolve aliases via existing adapter path where needed.
-  **Done when:** `tests/unit/core/drift/variables.flatten.test.ts` with minimal TokensV1 + mock Figma snapshots.
+    **Done when:** `tests/unit/core/drift/variables.flatten.test.ts` with minimal TokensV1 + mock Figma snapshots.
 
 - [x] **Step 6** — Implement snapshot token read in `src/core/drift/snapshotTokens.ts`:
+
   ```typescript
-  export function readVariableSnapshotTokens(): Record<string, VariableComparable>
+  export function readVariableSnapshotTokens(): Record<string, VariableComparable>;
   ```
+
   - Read `getSnapshot().keys`; filter keys starting with `var/`; parse value as `VariableComparable`.
   - Missing or corrupt entry → omit (classifier treats as missing snapshot for that key).
-  **Done when:** unit test with mocked snapshot frame pluginData (reuse `snapshotStore` test harness).
+    **Done when:** unit test with mocked snapshot frame pluginData (reuse `snapshotStore` test harness).
 
 - [x] **Step 7** — Implement core detector in `src/core/drift/variables.ts`:
+
   ```typescript
-  export function detectVariableDrift(input: VariableDriftDetectInput): VariableDriftDetectResult
+  export function detectVariableDrift(input: VariableDriftDetectInput): VariableDriftDetectResult;
   ```
+
   - Union all keys from figma, repo, snapshot maps.
   - For each key: `classifyThreeWay(figma[key], repo[key], snapshot[key], variableStatesEqual)`.
   - Build `VariableDriftEntry` with `id: toVariableDriftId(...)`, `kind: 'variable'`, triple payloads (`figma`, `repo`, `lastSynced`).
   - Omit `synced` from `drifts[]`; increment `syncedCount`.
-  **Done when:** passes AC fixture (Step 9).
+    **Done when:** passes AC fixture (Step 9).
 
 - [x] **Step 8** — Add `src/core/drift/index.ts` barrel exporting classify, variables, types, snapshotTokens.
 
@@ -135,14 +151,15 @@ Implement a **pure, testable** variable drift detector under `src/core/drift/` t
 - [x] **Step 9** — Create `tests/fixtures/drift/variable-drift-ac-10.v1.json`:
   - Input maps for figma/repo/snapshot matching research Appendix A (3 push, 2 pull, 1 conflict, 4 synced).
   - Expected `drifts` length 6; `syncedCount` 4.
-  **Done when:** referenced by detector test; counts match ticket AC.
+    **Done when:** referenced by detector test; counts match ticket AC.
 
 - [x] **Step 10** — Add `tests/unit/core/drift/variables.detect.test.ts`:
   - Load AC fixture; assert directions and ids.
   - Bench: synthetic 400-key maps; assert detect-only < 100ms (Vitest `performance.now()`).
-  **Done when:** SPK-029-1 + SPK-029-2 pass criteria met.
+    **Done when:** SPK-029-1 + SPK-029-2 pass criteria met.
 
 - [x] **Step 11** — Add `src/io/messages/drift.ts` (partial — variable detect only):
+
   ```typescript
   export interface DriftDetectVariablesMessage {
     type: 'drift/detect-variables';
@@ -157,22 +174,23 @@ Implement a **pure, testable** variable drift detector under `src/core/drift/` t
     error?: string;
   }
   ```
+
   - Type guards mirroring `snapshot.ts` pattern.
-  **Done when:** guards exported; no handler yet.
+    **Done when:** guards exported; no handler yet.
 
 - [x] **Step 12** — Wire `handleDriftDetectVariables` in `src/main.ts`:
   - On message: `readFigmaVariableState()` → flatten; `readVariableSnapshotTokens()`; flatten repo from message payload.
   - Call `detectVariableDrift`; post result.
   - Use `pluginLog()` only (ES2017 — no `?.`/`??`).
-  **Done when:** `tests/unit/io/messages/drift.detect-variables.test.ts` with mocked figma globals OR integration test posting message.
+    **Done when:** `tests/unit/io/messages/drift.detect-variables.test.ts` with mocked figma globals OR integration test posting message.
 
 - [x] **Step 13** — Add `tests/integration/core/drift/variableDrift.integration.test.ts`:
   - Inline repo fixture + mock Figma snapshot arrays (no live Figma).
   - End-to-end: adapt wire JSON → detect → assert 6 drift rows.
-  **Done when:** `npm test -- tests/unit/core/drift tests/integration/core/drift/variableDrift` green.
+    **Done when:** `npm test -- tests/unit/core/drift tests/integration/core/drift/variableDrift` green.
 
 - [x] **Step 14** — CI gate: `npm run typecheck && npm test -- tests/unit/core/drift tests/integration/core/drift/variableDrift`.
-  **Done when:** all green; no `.fighub-registry` references introduced.
+      **Done when:** all green; no `.fighub-registry` references introduced.
 
 ---
 
@@ -203,13 +221,13 @@ Implement a **pure, testable** variable drift detector under `src/core/drift/` t
 
 ## Dependencies & Tools
 
-| Dependency | Status | Usage |
-| ---------- | ------ | ----- |
-| WO-058 Phase 1 `snapshotStore.ts` | ✅ shipped | `getSnapshot()`, `updateSnapshotKeys` (future WO-032) |
-| WO-008 `compare.ts`, `readFigmaVariableState.ts` | ✅ shipped | Equality + Figma read |
-| WO-031 | downstream | Consumes `VariableDriftEntry[]` |
-| WO-030 | parallel | Shares `classify.ts` — coordinate merge order |
-| `@detroitlabs/fighub-contracts` | ✅ | `VariableDriftEntry`, `TokensV1` |
+| Dependency                                       | Status     | Usage                                                 |
+| ------------------------------------------------ | ---------- | ----------------------------------------------------- |
+| WO-058 Phase 1 `snapshotStore.ts`                | ✅ shipped | `getSnapshot()`, `updateSnapshotKeys` (future WO-032) |
+| WO-008 `compare.ts`, `readFigmaVariableState.ts` | ✅ shipped | Equality + Figma read                                 |
+| WO-031                                           | downstream | Consumes `VariableDriftEntry[]`                       |
+| WO-030                                           | parallel   | Shares `classify.ts` — coordinate merge order         |
+| `@detroitlabs/fighub-contracts`                  | ✅         | `VariableDriftEntry`, `TokensV1`                      |
 
 **Tools:** Vitest only. No Figma MCP for unit tests; optional sandbox VQA post-build.
 
@@ -217,11 +235,11 @@ Implement a **pure, testable** variable drift detector under `src/core/drift/` t
 
 ## Open Questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
-| OQ-029-1 | Include codeSyntax in drift compare? | **RESOLVED:** yes — Step 3 |
-| OQ-029-2 | Remote-only tokens outside 5-collection model? | **RESOLVED:** union all keys — Step 7 |
-| OQ-029-3 | Who fetches repo tokens for detect? | **RESOLVED:** UI passes `TokensV1` on message until WO-058 Phase 2 Fetch cache |
+| ID       | Question                                       | Status                                                                         |
+| -------- | ---------------------------------------------- | ------------------------------------------------------------------------------ |
+| OQ-029-1 | Include codeSyntax in drift compare?           | **RESOLVED:** yes — Step 3                                                     |
+| OQ-029-2 | Remote-only tokens outside 5-collection model? | **RESOLVED:** union all keys — Step 7                                          |
+| OQ-029-3 | Who fetches repo tokens for detect?            | **RESOLVED:** UI passes `TokensV1` on message until WO-058 Phase 2 Fetch cache |
 
 ---
 
@@ -232,12 +250,12 @@ Implement a **pure, testable** variable drift detector under `src/core/drift/` t
 - **Snapshot key convention:** persist comparable at `var/{collection}/{name}` via `updateSnapshotKeys` after first successful sync (WO-032 pull/push); until then missing snapshot → S:=R.
 - **Wrong vs correct:**
 
-| Wrong | Correct |
-| ----- | ------- |
-| Dot-separated token keys | Slash paths matching Figma `variable.name` |
-| Duplicate equality logic | Reuse `valuesEqual` via `variableStatesEqual` |
-| List 410 synced rows in report | Summary count only (D-029-4) |
-| Fetch repo inside main detector | UI supplies adapted `TokensV1` on message |
+| Wrong                           | Correct                                       |
+| ------------------------------- | --------------------------------------------- |
+| Dot-separated token keys        | Slash paths matching Figma `variable.name`    |
+| Duplicate equality logic        | Reuse `valuesEqual` via `variableStatesEqual` |
+| List 410 synced rows in report  | Summary count only (D-029-4)                  |
+| Fetch repo inside main detector | UI supplies adapted `TokensV1` on message     |
 
 ### Module tree
 

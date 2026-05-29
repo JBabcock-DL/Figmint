@@ -26,7 +26,9 @@ export async function requestDriftReport(input: RequestDriftReportInput): Promis
       }
       window.removeEventListener('message', onMessage);
       if (typed.ok !== true || typed.report === undefined) {
-        reject(new Error(typeof typed.error === 'string' ? typed.error : 'Drift report build failed'));
+        reject(
+          new Error(typeof typed.error === 'string' ? typed.error : 'Drift report build failed'),
+        );
         return;
       }
       resolve(typed.report as DriftReportV1);

@@ -28,8 +28,20 @@ const buttonLikeSpec: ComponentSpecV1 = {
   archetype: 'chip',
   variantMatrix: acMatrix,
   props: [
-    { name: 'variant', type: 'enum', default: 'default', required: false, description: 'Visual style' },
-    { name: 'size', type: 'enum', default: 'default', required: false, description: 'Control size' },
+    {
+      name: 'variant',
+      type: 'enum',
+      default: 'default',
+      required: false,
+      description: 'Visual style',
+    },
+    {
+      name: 'size',
+      type: 'enum',
+      default: 'default',
+      required: false,
+      description: 'Control size',
+    },
   ],
   bindings: [],
   layout: {

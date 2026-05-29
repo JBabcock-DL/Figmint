@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import type { VariableComparable } from '@/core/drift/types';
 import { variableStatesEqual } from '@/core/drift/variableEqual';
 
-function floatComparable(value: number, codeSyntax?: Partial<Record<'WEB' | 'ANDROID' | 'iOS', string>>): VariableComparable {
+function floatComparable(
+  value: number,
+  codeSyntax?: Partial<Record<'WEB' | 'ANDROID' | 'iOS', string>>,
+): VariableComparable {
   return {
     resolvedType: 'FLOAT',
     valuesByMode: { Default: value },

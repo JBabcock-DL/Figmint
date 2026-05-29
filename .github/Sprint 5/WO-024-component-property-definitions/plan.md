@@ -16,59 +16,59 @@ WO-024 implements FR-SCAF-4: a **post-bindings pass** that materializes Figma **
 
 ## AC traceability
 
-| Ticket acceptance criterion | Plan step(s) |
-| --------------------------- | ------------ |
+| Ticket acceptance criterion                                                                      | Plan step(s)       |
+| ------------------------------------------------------------------------------------------------ | ------------------ |
 | `props: [{ name: 'loading', type: 'boolean', default: false }]` → Boolean property default false | Steps 4, 6, 14, 16 |
-| Variant matrix axes appear as VARIANT properties (WO-022 creates; WO-024 validates) | Steps 5, 13, 16 |
-| Integration test: chip Button fixture with implicit Label + icon BOOLEAN props | Steps 1, 12, 16 |
-| `ApplyPropertiesResult` surfaces failures; soft-fail per variant matches legacy §3.3.3 | Steps 4, 7, 15, 16 |
+| Variant matrix axes appear as VARIANT properties (WO-022 creates; WO-024 validates)              | Steps 5, 13, 16    |
+| Integration test: chip Button fixture with implicit Label + icon BOOLEAN props                   | Steps 1, 12, 16    |
+| `ApplyPropertiesResult` surfaces failures; soft-fail per variant matches legacy §3.3.3           | Steps 4, 7, 15, 16 |
 
-| Ticket requirement | Plan step(s) |
-| ------------------ | ------------ |
-| `applyProperties.ts` post-bindings pass | Steps 4, 8 |
-| VARIANT from matrix only — validate, do not re-add | Steps 5, 13 |
-| Explicit `props[]` filter + map boolean/string/node | Steps 2, 3, 6 |
+| Ticket requirement                                         | Plan step(s)  |
+| ---------------------------------------------------------- | ------------- |
+| `applyProperties.ts` post-bindings pass                    | Steps 4, 8    |
+| VARIANT from matrix only — validate, do not re-add         | Steps 5, 13   |
+| Explicit `props[]` filter + map boolean/string/node        | Steps 2, 3, 6 |
 | Implicit element props from `componentProps` / `iconSlots` | Steps 4, 6, 7 |
-| `componentPropertyReferences` binding via convention map | Steps 7, 14 |
-| Pipeline: scaffold → applyBindings → applyProperties | Step 8 |
-| Audit S9.5–S9.9 + variant-matrix validation | Steps 9, 15 |
+| `componentPropertyReferences` binding via convention map   | Steps 7, 14   |
+| Pipeline: scaffold → applyBindings → applyProperties       | Step 8        |
+| Audit S9.5–S9.9 + variant-matrix validation                | Steps 9, 15   |
 
 ---
 
 ## Prop type mapping table (contract → Figma)
 
-| `ComponentSpecPropType` | Figma `ComponentPropertyType` | Default coercion | Create property? | Binding convention | Notes |
-| ----------------------- | ------------------------------- | ---------------- | ---------------- | -------------------- | ----- |
-| `boolean` | `BOOLEAN` | `default !== undefined ? Boolean(default) : false` | ✅ Always | Optional via `PROP_NODE_BINDINGS[name]`; unbound allowed (AC: `loading`) | Exact `props[].name` as display name |
-| `string` | `TEXT` | `default !== undefined ? String(default) : ''` | ✅ Always | `label`→`text/label.characters`, `title`→`text/title`, `placeholder`→`text/placeholder`, `helper`→`text/helper` | Create even when bind target missing (soft WARN) |
-| `enum` | `VARIANT` | — | ❌ if axis key ∈ `variantMatrix` | N/A | WO-022 owns VARIANT; dedupe filter skips |
-| `enum` | — | — | ❌ if axis ∉ matrix | N/A | Doc-only v1 |
-| `node` | `INSTANCE_SWAP` | component node id string when registry resolves | ✅ If default resolvable | `icon`→`icon-slot/center.mainComponent`; leading/trailing via implicit flags | Skip + WARN when no default component |
-| `number` | — | — | ❌ v1 | — | Ticket out-of-scope |
+| `ComponentSpecPropType` | Figma `ComponentPropertyType` | Default coercion                                   | Create property?                 | Binding convention                                                                                              | Notes                                            |
+| ----------------------- | ----------------------------- | -------------------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `boolean`               | `BOOLEAN`                     | `default !== undefined ? Boolean(default) : false` | ✅ Always                        | Optional via `PROP_NODE_BINDINGS[name]`; unbound allowed (AC: `loading`)                                        | Exact `props[].name` as display name             |
+| `string`                | `TEXT`                        | `default !== undefined ? String(default) : ''`     | ✅ Always                        | `label`→`text/label.characters`, `title`→`text/title`, `placeholder`→`text/placeholder`, `helper`→`text/helper` | Create even when bind target missing (soft WARN) |
+| `enum`                  | `VARIANT`                     | —                                                  | ❌ if axis key ∈ `variantMatrix` | N/A                                                                                                             | WO-022 owns VARIANT; dedupe filter skips         |
+| `enum`                  | —                             | —                                                  | ❌ if axis ∉ matrix              | N/A                                                                                                             | Doc-only v1                                      |
+| `node`                  | `INSTANCE_SWAP`               | component node id string when registry resolves    | ✅ If default resolvable         | `icon`→`icon-slot/center.mainComponent`; leading/trailing via implicit flags                                    | Skip + WARN when no default component            |
+| `number`                | —                             | —                                                  | ❌ v1                            | —                                                                                                               | Ticket out-of-scope                              |
 
 ---
 
 ## Wrong vs correct (lift drift guard)
 
-| Wrong | Correct |
-| ----- | ------- |
-| Call `addComponentProperty(..., 'VARIANT', ...)` after `combineAsVariants` | VARIANT axes owned by WO-022; WO-024 **validates** only via `variantPropsValidate.ts` |
-| Add properties on ComponentSet root only | Iterate every variant `ComponentNode` in `componentSet.children` (legacy composed.mcp.js L425–489) |
-| Lift full `component-*.mcp.js` doc pipeline | Port property loop only — no usage cards, no matrix specimen |
-| Re-run `combineAsVariants` to fix matrix drift | Audit FAIL `comp/variant-matrix-match`; do not repair by re-scaffolding |
-| Use bare prop name in `componentPropertyReferences` | Use suffixed key returned from `addComponentProperty` (e.g. `"loading#4:0"`) |
-| Import bindings from WO-023 before merge | Prefer `resolveBindingTarget` export from WO-023; local duplicate only if WO-023 not merged |
+| Wrong                                                                      | Correct                                                                                            |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Call `addComponentProperty(..., 'VARIANT', ...)` after `combineAsVariants` | VARIANT axes owned by WO-022; WO-024 **validates** only via `variantPropsValidate.ts`              |
+| Add properties on ComponentSet root only                                   | Iterate every variant `ComponentNode` in `componentSet.children` (legacy composed.mcp.js L425–489) |
+| Lift full `component-*.mcp.js` doc pipeline                                | Port property loop only — no usage cards, no matrix specimen                                       |
+| Re-run `combineAsVariants` to fix matrix drift                             | Audit FAIL `comp/variant-matrix-match`; do not repair by re-scaffolding                            |
+| Use bare prop name in `componentPropertyReferences`                        | Use suffixed key returned from `addComponentProperty` (e.g. `"loading#4:0"`)                       |
+| Import bindings from WO-023 before merge                                   | Prefer `resolveBindingTarget` export from WO-023; local duplicate only if WO-023 not merged        |
 
 ---
 
 **Implicit archetype props (Title Case display names — legacy §3.3.2):**
 
-| Flag condition | Figma display name | Type | Default | Bind target |
-| -------------- | ------------------ | ---- | ------- | ----------- |
-| `componentProps.label === true` | `Label` | `TEXT` | first `text/label` characters in variant | `text/label.characters` |
-| `componentProps.leadingIcon === true` && `iconSlots.leading === true` | `Leading icon` | `BOOLEAN` | `true` | `icon-slot/leading.visible` |
-| `componentProps.trailingIcon === true` && `iconSlots.trailing === true` | `Trailing icon` | `BOOLEAN` | `false` | `icon-slot/trailing.visible` |
-| icon registry default resolved | *(slot-specific INSTANCE_SWAP)* | `INSTANCE_SWAP` | resolved component id | `icon-slot/{leading\|trailing\|center}.mainComponent` |
+| Flag condition                                                          | Figma display name              | Type            | Default                                  | Bind target                                           |
+| ----------------------------------------------------------------------- | ------------------------------- | --------------- | ---------------------------------------- | ----------------------------------------------------- |
+| `componentProps.label === true`                                         | `Label`                         | `TEXT`          | first `text/label` characters in variant | `text/label.characters`                               |
+| `componentProps.leadingIcon === true` && `iconSlots.leading === true`   | `Leading icon`                  | `BOOLEAN`       | `true`                                   | `icon-slot/leading.visible`                           |
+| `componentProps.trailingIcon === true` && `iconSlots.trailing === true` | `Trailing icon`                 | `BOOLEAN`       | `false`                                  | `icon-slot/trailing.visible`                          |
+| icon registry default resolved                                          | _(slot-specific INSTANCE_SWAP)_ | `INSTANCE_SWAP` | resolved component id                    | `icon-slot/{leading\|trailing\|center}.mainComponent` |
 
 **Doc-only skip list (`DOC_ONLY_PROP_NAMES`):** `className`, `class`, `style`, `asChild`, `type`, `ref`, `key`, `children` — no `addComponentProperty` call.
 
@@ -107,13 +107,13 @@ src/core/audit/rules/
 
 ## Lift map (DesignOps → FigHub)
 
-| Legacy source | FigHub target | Action |
-| ------------- | -------------- | ------ |
-| `create-component/conventions/01-config-schema.md` §3.3 | `propFilter.ts`, `propBindings.ts` | Port element prop semantics + soft-fail |
-| `create-component/shadcn-props.schema.json` | `propFilter.ts` | Reference prop shapes; consume normalized contract only |
-| `create-component/shadcn-props/button.json` | `__fixtures__/component-spec-button-chip.v1.json` | Chip button fixture — **not** CSS-selector fixture |
-| `canvas-templates/bundles/component-composed.mcp.js` L425–489 | `applyProperties.ts` | Per-variant `addComponentProperty` + references sequence |
-| `create-component/conventions/06-audit-checklist.md` S9.5–S9.9 | `componentRules.ts` | Audit rules for component scope |
+| Legacy source                                                  | FigHub target                                     | Action                                                   |
+| -------------------------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------- |
+| `create-component/conventions/01-config-schema.md` §3.3        | `propFilter.ts`, `propBindings.ts`                | Port element prop semantics + soft-fail                  |
+| `create-component/shadcn-props.schema.json`                    | `propFilter.ts`                                   | Reference prop shapes; consume normalized contract only  |
+| `create-component/shadcn-props/button.json`                    | `__fixtures__/component-spec-button-chip.v1.json` | Chip button fixture — **not** CSS-selector fixture       |
+| `canvas-templates/bundles/component-composed.mcp.js` L425–489  | `applyProperties.ts`                              | Per-variant `addComponentProperty` + references sequence |
+| `create-component/conventions/06-audit-checklist.md` S9.5–S9.9 | `componentRules.ts`                               | Audit rules for component scope                          |
 
 **Drift guard:** do **not** lift doc pipeline (`buildPropertiesTable`, matrix specimen grid, usage cards) — those belong to WO-025+. Do **not** open multiple `*.mcp.js` bundles in one session.
 
@@ -172,9 +172,9 @@ export function applyProperties(
 ): ApplyPropertiesResult;
 ```
 
-  - Pre-check: if `componentSet.remote === true`, return `{ ok: false, failures: [{ variantName: '*', propName: '*', message: 'read-only library component' }], ...empty }`.
-  - Call `filterPropsForApply`, `buildImplicitPropPlan`, then delegate to Steps 5–7 helpers.
-  - **Done when:** `applyProperties.ts` compiles; exports match signature; empty spec returns `{ ok: true }` with empty maps on mock set.
+- Pre-check: if `componentSet.remote === true`, return `{ ok: false, failures: [{ variantName: '*', propName: '*', message: 'read-only library component' }], ...empty }`.
+- Call `filterPropsForApply`, `buildImplicitPropPlan`, then delegate to Steps 5–7 helpers.
+- **Done when:** `applyProperties.ts` compiles; exports match signature; empty spec returns `{ ok: true }` with empty maps on mock set.
 
 - [x] **Step 5** — Implement `src/core/components/scaffold/variantPropsValidate.ts`:
   - Export `validateVariantProperties(componentSet: ComponentSetNode, matrix: ComponentSpecV1['variantMatrix']): Record<string, VariantAxisValidation>`.
@@ -214,24 +214,24 @@ const bindingsResult = applyBindings(spec, set);
 const propsResult = applyProperties(spec, set);
 ```
 
-  - `applyProperties` **must** run only after `applyBindings` completes successfully enough that layer tree exists (bindings soft-fail is OK; missing tree is not).
-  - Log via `pluginLog('[scaffold] applyProperties', { ok: propsResult.ok, propCount: Object.keys(propsResult.propKeys).length })`.
-  - **Done when:** grep `applyBindings` immediately before `applyProperties` in scaffold index; no call order inversion in repo.
+- `applyProperties` **must** run only after `applyBindings` completes successfully enough that layer tree exists (bindings soft-fail is OK; missing tree is not).
+- Log via `pluginLog('[scaffold] applyProperties', { ok: propsResult.ok, propCount: Object.keys(propsResult.propKeys).length })`.
+- **Done when:** grep `applyBindings` immediately before `applyProperties` in scaffold index; no call order inversion in repo.
 
 - [x] **Step 9** — Extend component audit scope `src/core/audit/rules/componentRules.ts`:
   - Add rules (lift S9.5–S9.9 + new matrix rule):
 
-| ruleId | Severity | Pass condition |
-| ------ | -------- | -------------- |
-| `comp/prop-label-text` | error | When implicit/explicit Label planned, TEXT def exists |
-| `comp/prop-leading-icon-boolean` | error | When leading icon flags set, BOOLEAN `"Leading icon"` exists |
-| `comp/prop-trailing-icon-boolean` | error | When trailing icon flags set, BOOLEAN `"Trailing icon"` exists |
-| `comp/prop-add-zero-failures` | error | `ApplyPropertiesResult.failures.length === 0` OR at least one prop succeeded per logical name |
-| `comp/variant-matrix-match` | error | All `variantAxes[axis].ok === true` |
-| `comp/prop-bind-target-missing` | warn | Binding attempted but node path missing |
+| ruleId                            | Severity | Pass condition                                                                                |
+| --------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
+| `comp/prop-label-text`            | error    | When implicit/explicit Label planned, TEXT def exists                                         |
+| `comp/prop-leading-icon-boolean`  | error    | When leading icon flags set, BOOLEAN `"Leading icon"` exists                                  |
+| `comp/prop-trailing-icon-boolean` | error    | When trailing icon flags set, BOOLEAN `"Trailing icon"` exists                                |
+| `comp/prop-add-zero-failures`     | error    | `ApplyPropertiesResult.failures.length === 0` OR at least one prop succeeded per logical name |
+| `comp/variant-matrix-match`       | error    | All `variantAxes[axis].ok === true`                                                           |
+| `comp/prop-bind-target-missing`   | warn     | Binding attempted but node path missing                                                       |
 
-  - Extend `runAudit` overload for `scope: 'component'` accepting `{ spec, componentSet, applyPropertiesResult }`.
-  - **Done when:** `tests/unit/audit/runAudit.test.ts` (or new `componentRules.test.ts`) covers pass/fail for matrix mismatch + prop failures.
+- Extend `runAudit` overload for `scope: 'component'` accepting `{ spec, componentSet, applyPropertiesResult }`.
+- **Done when:** `tests/unit/audit/runAudit.test.ts` (or new `componentRules.test.ts`) covers pass/fail for matrix mismatch + prop failures.
 
 - [x] **Step 10** — Implement `resolveBindingTarget.ts` (if not exported by WO-023):
   - Slash-separated path walker from variant root: `text/label`, `icon-slot/leading`, etc.
@@ -307,14 +307,14 @@ const propsResult = applyProperties(spec, set);
 
 ## Dependencies & Tools
 
-| Dependency | Role | Blocker? |
-| ---------- | ---- | -------- |
-| WO-022 `scaffold()` | Produces `ComponentSetNode`, variant names, layer tree, VARIANT defs via `combineAsVariants` | Phase 3 pipeline wire; SPK-024-3 VQA |
-| WO-023 `applyBindings()` | Runs **before** `applyProperties`; may export `resolveBindingTarget` | Phase 3 ordering; Step 10 import |
-| WO-010 `runAudit` | Extend `scope: 'component'` | Phase 4 |
-| WO-003 `@detroitlabs/fighub-contracts` | `ComponentSpecV1`, `ComponentSpecProp` | Phase 1 |
-| WO-025 usage frame | Consumes `ApplyPropertiesResult.propKeys` | Downstream — not built here |
-| WO-027 Components tab | Imports `applyProperties` from `applyProperties.ts` (not `properties.ts`) | Downstream |
+| Dependency                             | Role                                                                                         | Blocker?                             |
+| -------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------ |
+| WO-022 `scaffold()`                    | Produces `ComponentSetNode`, variant names, layer tree, VARIANT defs via `combineAsVariants` | Phase 3 pipeline wire; SPK-024-3 VQA |
+| WO-023 `applyBindings()`               | Runs **before** `applyProperties`; may export `resolveBindingTarget`                         | Phase 3 ordering; Step 10 import     |
+| WO-010 `runAudit`                      | Extend `scope: 'component'`                                                                  | Phase 4                              |
+| WO-003 `@detroitlabs/fighub-contracts` | `ComponentSpecV1`, `ComponentSpecProp`                                                       | Phase 1                              |
+| WO-025 usage frame                     | Consumes `ApplyPropertiesResult.propKeys`                                                    | Downstream — not built here          |
+| WO-027 Components tab                  | Imports `applyProperties` from `applyProperties.ts` (not `properties.ts`)                    | Downstream                           |
 
 **Tools:** Vitest (unit + integration), TypeScript strict, `pluginLog()` for main-thread logging (never `console.debug` in `code.js`).
 
@@ -329,11 +329,11 @@ const propsResult = applyProperties(spec, set);
 
 ## Open Questions
 
-| # | Question | Status |
-| - | -------- | ------ |
-| OQ-1 | Unbound booleans default bind target in v1? | **RESOLVED — no**; AC requires property existence only |
-| OQ-2 | Title Case for implicit vs exact name for `props[]`? | **RESOLVED — legacy Title Case implicit; exact spec names for explicit** |
-| OQ-3 | Live SPK-024-3 timing | **Deferred** to Step 17 after WO-022 merge |
+| #    | Question                                                      | Status                                                                                  |
+| ---- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| OQ-1 | Unbound booleans default bind target in v1?                   | **RESOLVED — no**; AC requires property existence only                                  |
+| OQ-2 | Title Case for implicit vs exact name for `props[]`?          | **RESOLVED — legacy Title Case implicit; exact spec names for explicit**                |
+| OQ-3 | Live SPK-024-3 timing                                         | **Deferred** to Step 17 after WO-022 merge                                              |
 | OQ-4 | Import `resolveBindingTarget` from WO-023 vs local duplicate? | **RESOLVED — prefer WO-023 export; local copy only if WO-023 not merged at build time** |
 
 ---

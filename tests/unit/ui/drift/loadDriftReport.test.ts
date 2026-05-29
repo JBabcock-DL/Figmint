@@ -18,7 +18,12 @@ describe('requestDriftReport', () => {
     const reportPromise = requestDriftReport({
       repoUrl: 'https://github.com/detroitlabs/fighub',
       repoTokens: tokensPayload as import('@detroitlabs/fighub-contracts').TokensV1,
-      repoSpecs: [{ name: 'Button', spec: componentSpecPayload as import('@detroitlabs/fighub-contracts').ComponentSpecV1 }],
+      repoSpecs: [
+        {
+          name: 'Button',
+          spec: componentSpecPayload as import('@detroitlabs/fighub-contracts').ComponentSpecV1,
+        },
+      ],
     });
 
     const requestId = postMessage.mock.calls[0][0].pluginMessage.requestId as string;

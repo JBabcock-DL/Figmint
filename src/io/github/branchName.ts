@@ -7,9 +7,7 @@ export function formatBranchPattern(
   contractKind: string,
   dateUtc: string,
 ): string {
-  return pattern
-    .replace(/\{contractKind\}/g, contractKind)
-    .replace(/\{date\}/g, dateUtc);
+  return pattern.replace(/\{contractKind\}/g, contractKind).replace(/\{date\}/g, dateUtc);
 }
 
 export function withCollisionSuffix(branch: string, attempt: number): string {

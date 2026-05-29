@@ -2,11 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { adapt } from '@/io/sources/adapters';
 import { isAdaptedTokensV1 } from '@/io/messages/push';
-import {
-  countBenchFixtureTokens,
-  loadBenchFixture,
-  type BenchFixtureId,
-} from '@/ui/benchFixtures';
+import { countBenchFixtureTokens, loadBenchFixture, type BenchFixtureId } from '@/ui/benchFixtures';
 
 describe('benchFixtures', () => {
   it('bootstrap-complete adapts with tokens in all five collections', () => {

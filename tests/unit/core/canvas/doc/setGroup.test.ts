@@ -13,9 +13,7 @@ import {
   asComponentSetNode,
   createMockComponentSet,
 } from '../../components/scaffold/__mocks__/figmaScaffold';
-import {
-  ensureComponentSetGroup,
-} from '@/core/components/scaffold/usageFrame';
+import { ensureComponentSetGroup } from '@/core/components/scaffold/usageFrame';
 
 import {
   asFrameNode,
@@ -25,10 +23,7 @@ import {
   MockFrame,
   MockTextNode,
 } from '../__mocks__/figmaFrames';
-import {
-  DOC_PIPELINE_TEXT_STYLES,
-  installDocPipelineVariableMocks,
-} from './docPipelineMocks';
+import { DOC_PIPELINE_TEXT_STYLES, installDocPipelineVariableMocks } from './docPipelineMocks';
 
 const FIXTURE_DIR = join(dirname(fileURLToPath(import.meta.url)), '../../../../fixtures');
 
@@ -67,11 +62,7 @@ describe('extendComponentSetGroup', () => {
       asComponentSetNode(componentSet),
       'button',
     );
-    await extendComponentSetGroup(
-      setGroup,
-      asComponentSetNode(componentSet),
-      loadButtonSpec(),
-    );
+    await extendComponentSetGroup(setGroup, asComponentSetNode(componentSet), loadButtonSpec());
 
     const setGroupMock = setGroup as unknown as MockFrame;
     expect(setGroupMock.name).toBe('doc/component/button/component-set-group');

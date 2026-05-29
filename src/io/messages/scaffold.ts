@@ -1,8 +1,4 @@
-import type {
-  AuditReportV1,
-  ComponentSpecV1,
-  RegistryV1,
-} from '@detroitlabs/fighub-contracts';
+import type { AuditReportV1, ComponentSpecV1, RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 import type {
   ApplyBindingsResult,

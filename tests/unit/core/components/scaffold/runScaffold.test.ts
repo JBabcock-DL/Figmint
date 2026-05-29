@@ -87,7 +87,8 @@ describe('runScaffoldComponent doc-preflight', () => {
   });
 
   it('exits before ensureComponentScaffoldTarget when preflight fails', async () => {
-    const diagnostic = 'Run design-system bootstrap first. Missing color tokens: color/border/subtle';
+    const diagnostic =
+      'Run design-system bootstrap first. Missing color tokens: color/border/subtle';
     runDocPipelinePreflightAudit.mockResolvedValue(makePreflightAudit(false, diagnostic));
 
     await runScaffoldComponent(canonicalFixture as ComponentSpecV1);
@@ -121,7 +122,10 @@ describe('runScaffoldComponent doc-preflight', () => {
 
   it('runs ensureComponentScaffoldTarget after preflight passes', async () => {
     runDocPipelinePreflightAudit.mockResolvedValue(
-      makePreflightAudit(true, 'All required tokens, text styles, and font-family variables present.'),
+      makePreflightAudit(
+        true,
+        'All required tokens, text styles, and font-family variables present.',
+      ),
     );
     ensureComponentScaffoldTarget.mockImplementation(function () {
       throw new Error('stop-after-target');

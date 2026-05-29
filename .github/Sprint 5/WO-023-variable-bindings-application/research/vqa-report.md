@@ -32,12 +32,12 @@
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
-| 10 bindings on every variant, zero failures | **PASS** | `applyBindings.integration.test.ts` — 11 bindings × 2 variants |
+| Acceptance criterion                        | Result   | Note                                                                          |
+| ------------------------------------------- | -------- | ----------------------------------------------------------------------------- |
+| 10 bindings on every variant, zero failures | **PASS** | `applyBindings.integration.test.ts` — 11 bindings × 2 variants                |
 | Missing variable → audit FAIL with selector | **PASS** | `comp/binding-variable-resolved` in integration + `componentBindings.test.ts` |
-| Missing node → audit FAIL with selector | **PASS** | `comp/binding-node-resolved` |
-| Chip-archetype integration fixture | **PASS** | `button-chip-bindings.v1.json` under `tests/fixtures/components/` |
+| Missing node → audit FAIL with selector     | **PASS** | `comp/binding-node-resolved`                                                  |
+| Chip-archetype integration fixture          | **PASS** | `button-chip-bindings.v1.json` under `tests/fixtures/components/`             |
 
 ### Automated tests
 

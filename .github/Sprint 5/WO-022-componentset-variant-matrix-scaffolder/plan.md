@@ -14,36 +14,36 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 
 ## Acceptance criteria traceability
 
-| Ticket AC / requirement | Plan step(s) | Verification |
-| ----------------------- | ------------ | -------------- |
-| AC: 3 × 2 × 2 axes → 12 children, Figma naming | Steps 3, 10, 19 | `variantMatrix.test.ts` + `scaffold.integration.test.ts` |
-| AC: Each archetype passes integration test | Steps 9, 11–17 | `tests/unit/core/components/scaffold/archetypes/*.test.ts` |
-| AC: Re-run idempotent | Steps 10, 20 | `idempotency.test.ts` |
-| AC: Audit reports cleanly | Step 18 | `auditRows.test.ts`; rows `comp/scaffold-*` all pass (full `runAudit('component')` wired in WO-023) |
-| Req 1: `scaffold()` entry in `index.ts` | Step 10 | typecheck + integration test |
-| Req 2: `variantMatrix.ts` cross-product | Step 3 | unit tests |
-| Req 3: archetypes/ one module per layout + composed | Steps 8–17 | per-archetype tests |
-| Req 4: variant pipeline + combineAsVariants + grid | Step 10 | integration test |
-| Req 5: layer naming contract | Steps 8–17 | grep + archetype tests assert paths |
-| Req 6: idempotency pluginData | Steps 2, 10, 20 | idempotency test |
-| Req 7: hex fallbacks; optional registry read | Steps 5, 17 | composed test + no bind imports |
-| Req 8: WO-014 helpers | Steps 8–17 | `assertNoOnePxMaster` in audit |
+| Ticket AC / requirement                             | Plan step(s)    | Verification                                                                                        |
+| --------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------------------- |
+| AC: 3 × 2 × 2 axes → 12 children, Figma naming      | Steps 3, 10, 19 | `variantMatrix.test.ts` + `scaffold.integration.test.ts`                                            |
+| AC: Each archetype passes integration test          | Steps 9, 11–17  | `tests/unit/core/components/scaffold/archetypes/*.test.ts`                                          |
+| AC: Re-run idempotent                               | Steps 10, 20    | `idempotency.test.ts`                                                                               |
+| AC: Audit reports cleanly                           | Step 18         | `auditRows.test.ts`; rows `comp/scaffold-*` all pass (full `runAudit('component')` wired in WO-023) |
+| Req 1: `scaffold()` entry in `index.ts`             | Step 10         | typecheck + integration test                                                                        |
+| Req 2: `variantMatrix.ts` cross-product             | Step 3          | unit tests                                                                                          |
+| Req 3: archetypes/ one module per layout + composed | Steps 8–17      | per-archetype tests                                                                                 |
+| Req 4: variant pipeline + combineAsVariants + grid  | Step 10         | integration test                                                                                    |
+| Req 5: layer naming contract                        | Steps 8–17      | grep + archetype tests assert paths                                                                 |
+| Req 6: idempotency pluginData                       | Steps 2, 10, 20 | idempotency test                                                                                    |
+| Req 7: hex fallbacks; optional registry read        | Steps 5, 17     | composed test + no bind imports                                                                     |
+| Req 8: WO-014 helpers                               | Steps 8–17      | `assertNoOnePxMaster` in audit                                                                      |
 
 ---
 
 ## Wrong vs correct lift
 
-| Wrong (do not copy) | Why | Correct lift |
-| ------------------- | --- | ------------ |
-| Entire `component-chip.mcp.js` (45+ KB bundle) | Inlined preamble, variable bind, doc sections | `buildVariant` inline L281–536 + `cc-arch-shared.js` → `chip.ts` + `shared.ts` |
-| Five-call Step 6 sequence as internal TS steps | MCP budget artifact only | Single `scaffold()` in `index.ts` |
-| `cc-scaffold` doc frame tree | WO-025 scope | ComponentSet on `target: PageNode` directly |
-| `buildPropertiesTable` / `addComponentProperty` before combine | WO-024 scope | Defer; structure nodes for future wiring |
-| `bindColor` / `bindNum` in builders | WO-023 scope | Hex fallbacks via `context.ts` palette |
-| Eighth `composed` layout enum on contract | Not in `ComponentSpecV1` | `if (spec.composes?.length)` → `composed.ts` |
-| Legacy `variant=${v}, size=${s}` naming | Replaced by `variantMatrix` record | Alphabetical keys → `key=value` comma pairs |
-| `console.debug` in main thread | Project convention | `pluginLog('[scaffold]', …)` from `@/core/pluginLog` |
-| ES2020 syntax (`?.`, `??`, `replaceAll`) | Figma QuickJS ES2017 | Explicit null checks; `indexOf`/`split` |
+| Wrong (do not copy)                                            | Why                                           | Correct lift                                                                   |
+| -------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------ |
+| Entire `component-chip.mcp.js` (45+ KB bundle)                 | Inlined preamble, variable bind, doc sections | `buildVariant` inline L281–536 + `cc-arch-shared.js` → `chip.ts` + `shared.ts` |
+| Five-call Step 6 sequence as internal TS steps                 | MCP budget artifact only                      | Single `scaffold()` in `index.ts`                                              |
+| `cc-scaffold` doc frame tree                                   | WO-025 scope                                  | ComponentSet on `target: PageNode` directly                                    |
+| `buildPropertiesTable` / `addComponentProperty` before combine | WO-024 scope                                  | Defer; structure nodes for future wiring                                       |
+| `bindColor` / `bindNum` in builders                            | WO-023 scope                                  | Hex fallbacks via `context.ts` palette                                         |
+| Eighth `composed` layout enum on contract                      | Not in `ComponentSpecV1`                      | `if (spec.composes?.length)` → `composed.ts`                                   |
+| Legacy `variant=${v}, size=${s}` naming                        | Replaced by `variantMatrix` record            | Alphabetical keys → `key=value` comma pairs                                    |
+| `console.debug` in main thread                                 | Project convention                            | `pluginLog('[scaffold]', …)` from `@/core/pluginLog`                           |
+| ES2020 syntax (`?.`, `??`, `replaceAll`)                       | Figma QuickJS ES2017                          | Explicit null checks; `indexOf`/`split`                                        |
 
 ---
 
@@ -113,13 +113,13 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
   export type VariantCombo = Record<string, string | boolean>;
 
   export interface ExpandedVariant {
-    name: string;           // Figma variant layer name, e.g. "disabled=false, size=sm, variant=primary"
+    name: string; // Figma variant layer name, e.g. "disabled=false, size=sm, variant=primary"
     combo: VariantCombo;
   }
 
   export interface ScaffoldOptions {
     registry?: RegistryV1;
-    displayTitle?: string;  // default spec.name — ComponentSet suffix only
+    displayTitle?: string; // default spec.name — ComponentSet suffix only
   }
 
   export interface ScaffoldBuildContext {
@@ -145,12 +145,10 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
     replacedExisting: boolean;
     scaffoldId: string;
     auditRows: AuditRuleResult[];
-    unresolvedTokens: string[];  // always [] in WO-022
+    unresolvedTokens: string[]; // always [] in WO-022
   }
 
-  export type ArchetypeBuilder = (
-    ctx: ScaffoldBuildContext,
-  ) => Promise<VariantBuildResult>;
+  export type ArchetypeBuilder = (ctx: ScaffoldBuildContext) => Promise<VariantBuildResult>;
 
   export const PLUGIN_DATA_SCAFFOLD_ID = 'fighub.scaffoldId';
   export const PLUGIN_DATA_SPEC_VERSION = 'fighub.specVersion';
@@ -167,7 +165,10 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
   ): ExpandedVariant[];
   export function formatVariantName(combo: VariantCombo): string;
   export function hashVariantMatrix(matrix: Record<string, (string | boolean)[]>): string;
-  export function buildScaffoldId(specName: string, matrix: Record<string, (string | boolean)[]>): string;
+  export function buildScaffoldId(
+    specName: string,
+    matrix: Record<string, (string | boolean)[]>,
+  ): string;
   export function parseVariantName(name: string): VariantCombo | null;
   export function expectedVariantCount(matrix: Record<string, (string | boolean)[]>): number;
   ```
@@ -185,8 +186,13 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 
   ```ts
   export function inferArchetype(spec: ComponentSpecV1): ComponentSpecLayoutArchetype;
-  export function resolveArchetypeRoute(spec: ComponentSpecV1): 'composed' | ComponentSpecLayoutArchetype;
-  export function buildStyleByVariantKey(spec: ComponentSpecV1, ctx: ScaffoldBuildContext): Record<string, { fill: RGB; text: RGB }>;
+  export function resolveArchetypeRoute(
+    spec: ComponentSpecV1,
+  ): 'composed' | ComponentSpecLayoutArchetype;
+  export function buildStyleByVariantKey(
+    spec: ComponentSpecV1,
+    ctx: ScaffoldBuildContext,
+  ): Record<string, { fill: RGB; text: RGB }>;
   export function projectBuildContext(
     spec: ComponentSpecV1,
     combo: VariantCombo,
@@ -291,10 +297,7 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
     displayTitle: string,
   ): ComponentSetNode | null;
 
-  export function removeScaffoldArtifacts(
-    target: PageNode,
-    displayTitle: string,
-  ): void;
+  export function removeScaffoldArtifacts(target: PageNode, displayTitle: string): void;
 
   async function stageVariants(
     target: PageNode,
@@ -361,13 +364,13 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 - [x] **Step 16** — `src/core/components/scaffold/archetypes/control.ts` — `buildControlVariant(ctx)` port `cc-arch-control.js`:
   - Checked-state detection: `/checked=true|pressed=true|on/.test(variantName)` (preserve verbatim in comment).
   - Switch thumb layer `switch/thumb` when `shape === 'switch'`.
-  **Done when:** `control.test.ts` green; checked variant asserts glyph/on state branch.
+    **Done when:** `control.test.ts` green; checked variant asserts glyph/on state branch.
 
 - [x] **Step 17** — `src/core/components/scaffold/archetypes/composed.ts` — `buildComposedVariant(ctx)` port `cc-arch-composed.js`:
   - Requires `options.registry` with child `nodeId`s.
   - Throw `Error('COMPOSED_CHILD_MISSING: {ref}')` when registry lookup fails (beta — see OQ-5).
   - Create `InstanceNode`s per `spec.composes[]` entry.
-  **Done when:** `composed.test.ts` green with mock registry + child component id; documents beta status in thrown error message shape.
+    **Done when:** `composed.test.ts` green with mock registry + child component id; documents beta status in thrown error message shape.
 
 ### Audit, idempotency, CI
 
@@ -438,15 +441,15 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 
 ## Dependencies & Tools
 
-| Dependency | Role in WO-022 |
-| ---------- | -------------- |
-| **WO-003** | `ComponentSpecV1`, `RegistryV1`, `AuditRuleResult` from `@detroitlabs/fighub-contracts` |
-| **WO-008** | Variables exist in file for optional manual smoke — not required for unit tests |
-| **WO-014** | `resizeThenApplySizing`, `createHugFrame`, `assertValidAxisAlign`, `assertNoOnePxMaster` from `@/core/canvas/helpers/autoLayout` |
-| **WO-010** | `AuditRuleResult` shape — full `runAudit('component')` extension deferred |
-| **DesignOps lift** | `cc-arch-*.js`, chip inline `buildVariant`, `02-archetype-routing.md`, `03-auto-layout-invariants.md`, `EXECUTOR.md` §6.2a |
-| **Vitest** | Unit + integration tests |
-| **Figma Plugin Sandbox** | Manual SPK-022-3/4 validation (optional, non-blocking CI) |
+| Dependency               | Role in WO-022                                                                                                                   |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| **WO-003**               | `ComponentSpecV1`, `RegistryV1`, `AuditRuleResult` from `@detroitlabs/fighub-contracts`                                          |
+| **WO-008**               | Variables exist in file for optional manual smoke — not required for unit tests                                                  |
+| **WO-014**               | `resizeThenApplySizing`, `createHugFrame`, `assertValidAxisAlign`, `assertNoOnePxMaster` from `@/core/canvas/helpers/autoLayout` |
+| **WO-010**               | `AuditRuleResult` shape — full `runAudit('component')` extension deferred                                                        |
+| **DesignOps lift**       | `cc-arch-*.js`, chip inline `buildVariant`, `02-archetype-routing.md`, `03-auto-layout-invariants.md`, `EXECUTOR.md` §6.2a       |
+| **Vitest**               | Unit + integration tests                                                                                                         |
+| **Figma Plugin Sandbox** | Manual SPK-022-3/4 validation (optional, non-blocking CI)                                                                        |
 
 **Tools:** npm scripts `lint`, `typecheck`, `test`; no MCP/`use_figma` in CI.
 
@@ -454,13 +457,13 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 
 ## Open Questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
-| OQ-1 | Separate `displayTitle` from `spec.name`? | **RESOLVED** — `ScaffoldOptions.displayTitle` optional; default `spec.name` |
-| OQ-2 | Missing archetype — fail or default chip? | **RESOLVED** — default `chip` + `pluginLog` warn |
-| OQ-3 | Per-variant `style` fills without Mode A extraction? | **OPEN** — `specAdapter.buildStyleByVariantKey` FNV-1a defaults; validate in SPK-022-2 / chip test |
-| OQ-4 | Extend `runAudit('component')` here or WO-023? | **RESOLVED** — WO-022 returns inline `comp/scaffold-*` rows in `ScaffoldResult`; WO-023 extends `runAudit('component')` with `comp/binding-*` rules |
-| OQ-5 | Composed GA vs beta when registry empty? | **OPEN** — beta: throw `COMPOSED_CHILD_MISSING`; document in composed.test.ts |
+| ID   | Question                                             | Status                                                                                                                                              |
+| ---- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OQ-1 | Separate `displayTitle` from `spec.name`?            | **RESOLVED** — `ScaffoldOptions.displayTitle` optional; default `spec.name`                                                                         |
+| OQ-2 | Missing archetype — fail or default chip?            | **RESOLVED** — default `chip` + `pluginLog` warn                                                                                                    |
+| OQ-3 | Per-variant `style` fills without Mode A extraction? | **OPEN** — `specAdapter.buildStyleByVariantKey` FNV-1a defaults; validate in SPK-022-2 / chip test                                                  |
+| OQ-4 | Extend `runAudit('component')` here or WO-023?       | **RESOLVED** — WO-022 returns inline `comp/scaffold-*` rows in `ScaffoldResult`; WO-023 extends `runAudit('component')` with `comp/binding-*` rules |
+| OQ-5 | Composed GA vs beta when registry empty?             | **OPEN** — beta: throw `COMPOSED_CHILD_MISSING`; document in composed.test.ts                                                                       |
 
 ---
 
@@ -474,7 +477,7 @@ Implement the **forward-path scaffold core** as `src/core/components/scaffold/`:
 
 ### Idempotency pluginData contract
 
-- Key `fighub.scaffoldId` — value `` fighub:scaffold:v1:{spec.name}:{hashVariantMatrix} ``.
+- Key `fighub.scaffoldId` — value `fighub:scaffold:v1:{spec.name}:{hashVariantMatrix}`.
 - Key `fighub.specVersion` — value `'1'`.
 - Replace semantics: remove prior ComponentSet + staging frames; no in-place patch (research D4).
 - 100 kB pluginData limit per key — id string well under cap.
@@ -485,12 +488,12 @@ Minimum paths all archetypes must preserve: `text/label`, `icon-slot/leading|tra
 
 ### Pre-plan spikes
 
-| Spike | Plan coverage |
-| ----- | ------------- |
-| SPK-022-1 (3×2×2 combineAsVariants) | Step 19 integration test |
-| SPK-022-2 (chip minimal) | Step 9 chip.test.ts |
-| SPK-022-3 (composed + registry) | Step 17 — sandbox optional |
-| SPK-022-4 (latency 24-variant) | WO-027 VQA |
+| Spike                               | Plan coverage              |
+| ----------------------------------- | -------------------------- |
+| SPK-022-1 (3×2×2 combineAsVariants) | Step 19 integration test   |
+| SPK-022-2 (chip minimal)            | Step 9 chip.test.ts        |
+| SPK-022-3 (composed + registry)     | Step 17 — sandbox optional |
+| SPK-022-4 (latency 24-variant)      | WO-027 VQA                 |
 
 ### Bibliography
 

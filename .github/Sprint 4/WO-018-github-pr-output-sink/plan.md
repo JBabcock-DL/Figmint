@@ -12,13 +12,13 @@ WO-016 delivers **`createPullRequestFlow.ts`**, **`branchName.ts`**, **`prBody.t
 
 ## Acceptance criteria traceability
 
-| Ticket AC | Plan steps |
-| --------- | ---------- |
-| Drift `.v1.json` + `.v1.md` one commit | Steps 4, 9, 11 |
-| PR body with Figma URL + version footer | Steps 3, 6 |
-| Error taxonomy + hints | Steps 5, 6 |
-| Community unavailable / Org enabled | Step 6 `isGithubPREnabled()` |
-| Vitest branch, body, REST sequence | Steps 2–5, 10 |
+| Ticket AC                               | Plan steps                   |
+| --------------------------------------- | ---------------------------- |
+| Drift `.v1.json` + `.v1.md` one commit  | Steps 4, 9, 11               |
+| PR body with Figma URL + version footer | Steps 3, 6                   |
+| Error taxonomy + hints                  | Steps 5, 6                   |
+| Community unavailable / Org enabled     | Step 6 `isGithubPREnabled()` |
+| Vitest branch, body, REST sequence      | Steps 2–5, 10                |
 
 ---
 
@@ -27,12 +27,7 @@ WO-016 delivers **`createPullRequestFlow.ts`**, **`branchName.ts`**, **`prBody.t
 - [x] **Step 1** — Extend `src/io/sinks/types.ts` (coordinate merge with WO-017):
 
 ```ts
-export type SinkId =
-  | 'download'
-  | 'clipboard'
-  | 'output-page'
-  | 'plugin-data'
-  | 'github-pr';
+export type SinkId = 'download' | 'clipboard' | 'output-page' | 'plugin-data' | 'github-pr';
 
 export type SinkFailureCode =
   | 'auth-required'
@@ -64,19 +59,15 @@ export interface GithubPRSinkContext {
 }
 ```
 
-  - Extend `SinkResult` optional `code?: SinkFailureCode` for export sheet display.
-  - **Done when:** typecheck with WO-017 types merged.
+- Extend `SinkResult` optional `code?: SinkFailureCode` for export sheet display.
+- **Done when:** typecheck with WO-017 types merged.
 
 - [x] **Step 2** — Implement `src/io/github/branchName.ts`:
 
 ```ts
 export const DEFAULT_BRANCH_PATTERN = 'fighub/{contractKind}-{date}';
 
-export function formatBranchPattern(
-  pattern: string,
-  contractKind: string,
-  dateUtc: string,
-): string;
+export function formatBranchPattern(pattern: string, contractKind: string, dateUtc: string): string;
 // replace {contractKind}, {date} tokens
 
 export function withCollisionSuffix(branch: string, attempt: number): string;
@@ -85,7 +76,7 @@ export function withCollisionSuffix(branch: string, attempt: number): string;
 export const MAX_BRANCH_ATTEMPTS = 5;
 ```
 
-  - **Done when:** `tests/unit/io/github/branchName.test.ts` — date UTC, suffix `-2`.
+- **Done when:** `tests/unit/io/github/branchName.test.ts` — date UTC, suffix `-2`.
 
 - [x] **Step 3** — Implement `src/io/github/prBody.ts`:
 
@@ -100,9 +91,9 @@ export function buildPrBody(input: {
 }): string;
 ```
 
-  - Template exactly per research §5 (Files table + footer + Figma link).
-  - `pluginVersion` from `import.meta.env.PACKAGE_VERSION`.
-  - **Done when:** snapshot test `tests/unit/io/github/prBody.test.ts`.
+- Template exactly per research §5 (Files table + footer + Figma link).
+- `pluginVersion` from `import.meta.env.PACKAGE_VERSION`.
+- **Done when:** snapshot test `tests/unit/io/github/prBody.test.ts`.
 
 - [x] **Step 4** — Implement `src/io/github/githubErrors.ts`:
 
@@ -121,8 +112,8 @@ export function mapGitHubHttpError(
 ): MappedGitHubError;
 ```
 
-  - Implement full table from research §6 (401→auth-expired+clearToken, 422 branch, 409 empty repo, etc.).
-  - **Done when:** table-driven test with one case per row.
+- Implement full table from research §6 (401→auth-expired+clearToken, 422 branch, 409 empty repo, etc.).
+- **Done when:** table-driven test with one case per row.
 
 - [x] **Step 5** — Finalize `src/io/github/createPullRequestFlow.ts` (if WO-016 landed stub, extend here):
   - Accept `GithubPRSinkContext` + token.
@@ -140,18 +131,16 @@ export function isGithubPREnabled(): boolean {
   return flags.githubOAuth === true && flags.githubPRSink === true;
 }
 
-export async function executeGithubPRSink(
-  ctx: GithubPRSinkContext,
-): Promise<SinkResult>;
+export async function executeGithubPRSink(ctx: GithubPRSinkContext): Promise<SinkResult>;
 ```
 
-  - Load token via `getToken(ctx.repoUrl)` — if missing → `{ ok: false, code: 'auth-required', … }`.
-  - Build head branch via `branchName.ts`.
-  - Build PR body via `prBody.ts`.
-  - Call `createPullRequestFlow`.
-  - On mapped error with `clearToken` → `clearToken(repoUrl)`.
-  - Success → `{ ok: true, message: 'Opened PR #N', artifacts: [{ destination: prUrl }] }`.
-  - **Done when:** mocked flow test passes.
+- Load token via `getToken(ctx.repoUrl)` — if missing → `{ ok: false, code: 'auth-required', … }`.
+- Build head branch via `branchName.ts`.
+- Build PR body via `prBody.ts`.
+- Call `createPullRequestFlow`.
+- On mapped error with `clearToken` → `clearToken(repoUrl)`.
+- Success → `{ ok: true, message: 'Opened PR #N', artifacts: [{ destination: prUrl }] }`.
+- **Done when:** mocked flow test passes.
 
 - [x] **Step 7** — Add to `src/io/messages/export.ts` (owned by WO-020, add github slice here if export.ts exists):
 
@@ -164,7 +153,7 @@ export interface ExportGithubPRPayload {
 }
 ```
 
-  - Main `export/run` handler calls `executeGithubPRSink` when `'github-pr' in sinks`.
+- Main `export/run` handler calls `executeGithubPRSink` when `'github-pr' in sinks`.
 
 - [x] **Step 8** — Wire `src/main.ts`:
   - In `handleExportRun`, for each requested sink `github-pr`:
@@ -193,35 +182,39 @@ export { executeGithubPRSink, isGithubPREnabled } from './githubPR';
 ## Build Agents
 
 ### Phase 1 (after WO-016 relay + storage merged)
+
 - `code-build` — **Steps 1–3**: types, branchName, prBody.
 
 ### Phase 2 (parallel)
+
 - `code-build` — **Steps 4–5**: errors + createPullRequestFlow.
 - `code-build` — **Step 11**: user message constants.
 
 ### Phase 3 (sequential — needs export messages from WO-020 or minimal stub)
+
 - `code-build` — **Steps 6–9**: githubPR sink + main export handler wiring.
 
 ### Phase 4
+
 - `code-build` — **Steps 10–12**: integration tests + CI.
 
 ---
 
 ## Dependencies & Tools
 
-| Dependency | Required for |
-| ---------- | ------------ |
-| WO-016 | relay, token, createPullRequestFlow base |
-| WO-017 | Sink types |
-| WO-019 | file contents shape |
-| WO-020 | export/run orchestration (can stub handler until WO-020) |
+| Dependency | Required for                                             |
+| ---------- | -------------------------------------------------------- |
+| WO-016     | relay, token, createPullRequestFlow base                 |
+| WO-017     | Sink types                                               |
+| WO-019     | file contents shape                                      |
+| WO-020     | export/run orchestration (can stub handler until WO-020) |
 
 ---
 
 ## Open Questions
 
-| # | Question | Resolution |
-| - | -------- | ---------- |
+| #       | Question        | Resolution                                                       |
+| ------- | --------------- | ---------------------------------------------------------------- |
 | OQ-18-1 | export.ts owner | WO-020 owns module; WO-018 adds github-pr branch in main handler |
 
 ---
@@ -230,25 +223,25 @@ export { executeGithubPRSink, isGithubPREnabled } from './githubPR';
 
 ### REST call checklist (relay proxy path)
 
-| # | Method | Path |
-| - | ------ | ---- |
-| 1 | GET | `/repos/{o}/{r}` |
-| 2 | GET | `/repos/{o}/{r}/git/ref/heads/{base}` |
-| 3 | GET | `/repos/{o}/{r}/git/commits/{sha}` |
-| 4 | POST | `/repos/{o}/{r}/git/refs` |
-| 5 | POST | `/repos/{o}/{r}/git/blobs` × N |
-| 6 | POST | `/repos/{o}/{r}/git/trees` |
-| 7 | POST | `/repos/{o}/{r}/git/commits` |
-| 8 | PATCH | `/repos/{o}/{r}/git/refs/heads/{head}` |
-| 9 | POST | `/repos/{o}/{r}/pulls` |
+| #   | Method | Path                                   |
+| --- | ------ | -------------------------------------- |
+| 1   | GET    | `/repos/{o}/{r}`                       |
+| 2   | GET    | `/repos/{o}/{r}/git/ref/heads/{base}`  |
+| 3   | GET    | `/repos/{o}/{r}/git/commits/{sha}`     |
+| 4   | POST   | `/repos/{o}/{r}/git/refs`              |
+| 5   | POST   | `/repos/{o}/{r}/git/blobs` × N         |
+| 6   | POST   | `/repos/{o}/{r}/git/trees`             |
+| 7   | POST   | `/repos/{o}/{r}/git/commits`           |
+| 8   | PATCH  | `/repos/{o}/{r}/git/refs/heads/{head}` |
+| 9   | POST   | `/repos/{o}/{r}/pulls`                 |
 
 ### Wrong vs correct
 
-| Wrong | Correct |
-| ----- | ------- |
-| Contents API PUT per file | Git Data API single commit |
-| Direct fetch api.github.com | relay proxy |
-| Reuse existing PR head | new branch every time |
+| Wrong                       | Correct                    |
+| --------------------------- | -------------------------- |
+| Contents API PUT per file   | Git Data API single commit |
+| Direct fetch api.github.com | relay proxy                |
+| Reuse existing PR head      | new branch every time      |
 
 ### References
 

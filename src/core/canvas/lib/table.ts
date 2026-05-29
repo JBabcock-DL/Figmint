@@ -75,16 +75,13 @@ function rowTokenPath(rowData: unknown): string {
 
 export function resolveTableChrome(variables: Record<string, Variable | null>): BuildTableChrome {
   return {
-    borderVar:
-      variables['doc/table/border'] !== undefined ? variables['doc/table/border'] : null,
-    bgDefault:
-      variables['doc/table/surface'] !== undefined ? variables['doc/table/surface'] : null,
+    borderVar: variables['doc/table/border'] !== undefined ? variables['doc/table/border'] : null,
+    bgDefault: variables['doc/table/surface'] !== undefined ? variables['doc/table/surface'] : null,
     bgVariant:
       variables['doc/table/header-surface'] !== undefined
         ? variables['doc/table/header-surface']
         : null,
-    contentVar:
-      variables['doc/text/primary'] !== undefined ? variables['doc/text/primary'] : null,
+    contentVar: variables['doc/text/primary'] !== undefined ? variables['doc/text/primary'] : null,
     mutedVar: variables['doc/text/muted'] !== undefined ? variables['doc/text/muted'] : null,
   };
 }

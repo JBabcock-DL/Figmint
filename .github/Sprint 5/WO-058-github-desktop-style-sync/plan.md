@@ -16,38 +16,38 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 
 **Wrong vs correct:**
 
-| Wrong | Correct |
-| ----- | ------- |
-| Keep `.fighub-registry.json` as optional fallback | Delete all read/write/reference in `src/` + contracts |
-| Repurpose `comp/registry-envelope` against pluginData | **Delete** envelope + filekey rules outright |
-| User-editable tokensPath in Settings | Paths from `fighub.json` resolved defaults only |
-| `console.debug` in main thread after scaffold | `pluginLog()` only |
-| Direct `fetch('api.github.com')` from UI | OAuth relay via existing `relayClient.ts` |
-| `String.replace(bundle, …)` for PR bodies | `slice`/concat or callback |
+| Wrong                                                 | Correct                                               |
+| ----------------------------------------------------- | ----------------------------------------------------- |
+| Keep `.fighub-registry.json` as optional fallback     | Delete all read/write/reference in `src/` + contracts |
+| Repurpose `comp/registry-envelope` against pluginData | **Delete** envelope + filekey rules outright          |
+| User-editable tokensPath in Settings                  | Paths from `fighub.json` resolved defaults only       |
+| `console.debug` in main thread after scaffold         | `pluginLog()` only                                    |
+| Direct `fetch('api.github.com')` from UI              | OAuth relay via existing `relayClient.ts`             |
+| `String.replace(bundle, …)` for PR bodies             | `slice`/concat or callback                            |
 
 ---
 
 ## AC traceability
 
-| AC / Req | Plan step(s) |
-| -------- | ------------ |
-| Req 1–2 snapshot + store | Steps 1–4 |
-| Req 3 delete registry repo paths | Steps 5–9, 18, 22 |
-| Req 4 delete envelope/filekey audits | Step 6 |
-| Req 5 revert WO-026 production path | Steps 10–11 |
-| Req 6 scaffold + Components snapshot | Steps 12–14 |
-| Req 7–8 fighub.json contract + parser | Steps 15–16 |
-| Req 9 Fetch on connect | Steps 17–19 |
-| Req 10–11 Settings collapse + remove path fields | Steps 20–24 |
-| Req 12 Pull tokens | Steps 25–26 |
-| Req 13 Push PR | Steps 27–29 |
-| Req 14 malformed fighub.json preflight | Step 30 |
-| Req 15 drift badge stub | Step 31 |
-| Req 16 close WO-026 | Step 32 |
-| Req 17–18 no registry file references | Steps 9, 18, 22 |
-| AC CI green | Step 33 |
-| AC Plugin Sandbox scaffold zero envelope FAIL | Step 34 (manual VQA) |
-| AC a11y 44×44 buttons | Step 23 |
+| AC / Req                                         | Plan step(s)         |
+| ------------------------------------------------ | -------------------- |
+| Req 1–2 snapshot + store                         | Steps 1–4            |
+| Req 3 delete registry repo paths                 | Steps 5–9, 18, 22    |
+| Req 4 delete envelope/filekey audits             | Step 6               |
+| Req 5 revert WO-026 production path              | Steps 10–11          |
+| Req 6 scaffold + Components snapshot             | Steps 12–14          |
+| Req 7–8 fighub.json contract + parser            | Steps 15–16          |
+| Req 9 Fetch on connect                           | Steps 17–19          |
+| Req 10–11 Settings collapse + remove path fields | Steps 20–24          |
+| Req 12 Pull tokens                               | Steps 25–26          |
+| Req 13 Push PR                                   | Steps 27–29          |
+| Req 14 malformed fighub.json preflight           | Step 30              |
+| Req 15 drift badge stub                          | Step 31              |
+| Req 16 close WO-026                              | Step 32              |
+| Req 17–18 no registry file references            | Steps 9, 18, 22      |
+| AC CI green                                      | Step 33              |
+| AC Plugin Sandbox scaffold zero envelope FAIL    | Step 34 (manual VQA) |
+| AC a11y 44×44 buttons                            | Step 23              |
 
 ---
 
@@ -56,6 +56,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 ### Phase 1 — Snapshot + registry migration
 
 - [x] **Step 1** — Add `packages/contracts/src/snapshot.v1.ts`:
+
   ```typescript
   export interface SnapshotEntryV1 {
     key: string;
@@ -81,6 +82,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
     registry: { components: Record<string, SnapshotRegistryEntryV1> };
   }
   ```
+
   Export from `packages/contracts/src/index.ts`.
   **Done when:** `npm run typecheck` passes; contract re-export visible.
 
@@ -88,7 +90,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   - `SNAPSHOT_PLUGIN_DATA_KEY = 'fighub:snapshot:v1'`
   - `SNAPSHOT_FRAME_NAME = '_FigHubSnapshotStore'`
   - `SNAPSHOT_MAX_BYTES = 90_000` (guard below Figma 100KB limit)
-  **Done when:** file exists; imported by store module.
+    **Done when:** file exists; imported by store module.
 
 - [x] **Step 3** — Implement `src/core/sync/snapshotStore.ts` (main-thread only):
   - `findOrCreateSnapshotFrame(): FrameNode` — reuse `findOrCreateOutputPage()` from `src/io/sinks/outputPage.ts`; create 1×1 hidden locked frame as first child
@@ -100,80 +102,87 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   - `upsertSnapshotRegistryEntry(input: UpsertRegistryEntryInput): RegistryV1` — call existing `upsertRegistryEntry` from `registry.ts`, write back to snapshot, `persistSnapshot`
   - `updateSnapshotKeys(keys: Array<{ key, value, source }>): void`
   - `clearSnapshot(): void`
-  Use `pluginLog()` for events; no `console.debug`.
-  **Done when:** `tests/unit/core/sync/snapshotStore.test.ts` covers parse empty, round-trip persist, registry upsert, size guard (mock frame pluginData).
+    Use `pluginLog()` for events; no `console.debug`.
+    **Done when:** `tests/unit/core/sync/snapshotStore.test.ts` covers parse empty, round-trip persist, registry upsert, size guard (mock frame pluginData).
 
 - [x] **Step 4** — Add `src/io/messages/snapshot.ts`:
+
   ```typescript
   export type SnapshotReadMessage = { type: 'snapshot/read'; requestId: string };
   export type SnapshotReadResultMessage = {
-    type: 'snapshot/read/result'; requestId: string; ok: boolean;
-    registry?: RegistryV1; error?: string;
+    type: 'snapshot/read/result';
+    requestId: string;
+    ok: boolean;
+    registry?: RegistryV1;
+    error?: string;
   };
   export type SnapshotUpsertRegistryMessage = {
-    type: 'snapshot/upsert-registry'; requestId: string;
+    type: 'snapshot/upsert-registry';
+    requestId: string;
     specName: string; /* + scaffold result ids passed from UI after scaffold */
   };
   ```
+
   Add type guards mirroring `github.ts` pattern.
   **Done when:** guards exported; no main handler yet (Step 13).
 
 - [x] **Step 5** — Delete repo registry **read** path:
   - Replace `src/ui/components/scaffold/loadRegistryFromRepo.ts` with `loadRegistryFromSnapshot.ts` calling `postMessage({ type:'snapshot/read' })` and returning `RegistryV1 | null`
   - Remove `loadRegistryFromGitHub` usage from Components tab
-  **Done when:** `grep -r loadRegistryFromGitHub src/ui/tabs/Components.tsx` returns zero (except Export sandbox if kept).
+    **Done when:** `grep -r loadRegistryFromGitHub src/ui/tabs/Components.tsx` returns zero (except Export sandbox if kept).
 
 - [x] **Step 6** — Trim `src/core/components/registryAuditRows.ts`:
   - Remove rows `comp/registry-envelope` and `comp/registry-filekey`
   - Keep: `comp/registry-entry-present`, `comp/registry-entry-nodeid`, `comp/registry-entry-key`, `comp/registry-entry-version`
-  **Done when:** `tests/unit/audit/componentRules.test.ts` updated; no assertions expect deleted rule IDs.
+    **Done when:** `tests/unit/audit/componentRules.test.ts` updated; no assertions expect deleted rule IDs.
 
 - [x] **Step 7** — Rewrite `src/ui/components/registryExport.ts`:
   - Rename to `src/ui/components/snapshotRegistry.ts` (update all imports)
   - Keep `upsert` logic via main message or direct call from main in scaffold handler
   - **Delete:** `loadRegistryFromGitHub`, `runRegistryExportFlow` GitHub merge, `prepareRegistryExport` for Components production path
   - Export sandbox (`ExportSandbox.tsx`) may keep sample registry document — not GitHub path
-  **Done when:** Components tab does not import `prepareRegistryExport` for post-scaffold PR flow.
+    **Done when:** Components tab does not import `prepareRegistryExport` for post-scaffold PR flow.
 
 - [x] **Step 8** — Update `src/core/components/scaffold/runScaffold.ts` (lines 283–309):
   - Before upsert: `registry = getRegistryFromSnapshot()` via inlined call (main thread) instead of `options.registry` from GitHub
   - After upsert: `persistSnapshot` with updated registry
   - Remove dependency on `options.registry` from GitHub load (keep param for tests with explicit inject)
-  **Done when:** scaffold integration test passes with mock snapshot frame.
+    **Done when:** scaffold integration test passes with mock snapshot frame.
 
 - [x] **Step 9** — Remove `.fighub-registry.json` constants from production paths:
   - Delete `DEFAULT_REGISTRY_PATH` from `src/ui/components/scaffold/constants.ts`
   - Remove `DEFAULT_REGISTRY_PATH` usage from `registry.types.ts` — delete `resolveRegistryReadPath` or make throw "deprecated"
   - Remove `registry` case from `src/ui/export/defaultPaths.ts` OR restrict to Export sandbox-only with comment
-  **Done when:** `rg '\.fighub-registry' src/ packages/contracts/src/ --glob '!**/sample*'` returns zero matches.
+    **Done when:** `rg '\.fighub-registry' src/ packages/contracts/src/ --glob '!**/sample*'` returns zero matches.
 
 - [x] **Step 10** — Update `src/ui/tabs/Components.tsx`:
   - Remove "Load sync registry" button (~line 365)
   - On mount: call `loadRegistryFromSnapshot()` → set `registry` state + `registryKeys`
   - Remove `showRegistryExport` / ExportSheet block for registry PR (~line 503)
   - Remove `registryPath` prop from `ComponentsTabProps`
-  **Done when:** `tests/unit/ui/tabs/Components.scaffold.integration.test.tsx` updated; no "Load sync registry" string in file.
+    **Done when:** `tests/unit/ui/tabs/Components.scaffold.integration.test.tsx` updated; no "Load sync registry" string in file.
 
 - [x] **Step 11** — Update `src/ui/App.tsx`:
   - Stop passing `registryPath` to Components and Settings
   - Remove `registryPath` / `setRegistryPath` from `useGitHubSession` usage where obsolete (Phase 2 completes removal)
-  **Done when:** App.tsx compiles.
+    **Done when:** App.tsx compiles.
 
 - [x] **Step 12** — Wire snapshot handlers in `src/main.ts`:
   - `handleSnapshotRead(requestId)` → post `snapshot/read/result` with `getRegistryFromSnapshot()`
   - Register in message switch alongside github handlers
-  **Done when:** UI `loadRegistryFromSnapshot` returns registry in unit test with mocked postMessage.
+    **Done when:** UI `loadRegistryFromSnapshot` returns registry in unit test with mocked postMessage.
 
 - [x] **Step 13** — Batch-update tests referencing registry path (~25 files):
   - `tests/unit/core/components/registry.test.ts` — remove `resolveRegistryReadPath` default test
   - `tests/unit/ui/scaffold/loadRegistryFromRepo.test.ts` → rename to snapshot loader tests
   - `tests/unit/ui/components/registryExport.test.tsx` → snapshot upsert tests
   - `tests/unit/io/messages/export.test.ts` — remove registry export path assertions from production flows
-  **Done when:** `npm test` passes Phase 1 subset.
+    **Done when:** `npm test` passes Phase 1 subset.
 
 ### Phase 2 — fighub.json + Settings collapse
 
 - [x] **Step 14** — Add `packages/contracts/src/fighubJson.v1.ts`:
+
   ```typescript
   export interface FigHubJsonV1 {
     v: 1;
@@ -190,6 +199,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
     designSystemBranch: string;
   }
   ```
+
   Export from `packages/contracts/src/index.ts`.
   **Done when:** typecheck passes.
 
@@ -199,7 +209,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   - `parseFigHubJson(text: string): { ok: true; value: FigHubJsonV1 } | { ok: false; error: string }`
   - `resolveFigHubConfig(parsed: FigHubJsonV1 | null): ResolvedFigHubConfig`
   - Validate: `v === 1`; if `kind` present must be `'fighub-config'`
-  **Done when:** `tests/unit/io/formats/fighubJson.test.ts` — valid parse, absent→defaults, malformed v2 fails, extra keys OK.
+    **Done when:** `tests/unit/io/formats/fighubJson.test.ts` — valid parse, absent→defaults, malformed v2 fails, extra keys OK.
 
 - [x] **Step 16** — Refactor `src/io/github/storage.ts`:
   - Replace `StoredGitHubConfig` fields `tokensPath`/`registryPath` with:
@@ -214,13 +224,13 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
     ```
   - Migration: on read, if legacy shape with `tokensPath`, ignore paths (Fetch will repopulate)
   - `getSyncState(repoUrl)`, `setSyncState(repoUrl, partial)`
-  **Done when:** unit test legacy config migration.
+    **Done when:** unit test legacy config migration.
 
 - [x] **Step 17** — Extend `src/io/messages/github.ts`:
   - Add `GitHubRepoFetchMessage`, `GitHubRepoFetchResultMessage`, `GitHubRepoPullMessage`, `GitHubRepoPullResultMessage` per research §11
   - Remove `registryPath` from `GitHubSessionLoadedMessage` and `GitHubTokenSaveMessage`
   - Add type guards
-  **Done when:** typecheck passes; old registryPath fields gone.
+    **Done when:** typecheck passes; old registryPath fields gone.
 
 - [x] **Step 18** — Implement `handleGitHubRepoFetch` in `src/main.ts`:
   1. Resolve default branch via relay `GET /repos/{owner}/{repo}` → `default_branch`
@@ -228,12 +238,12 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   3. Parse; malformed → `warning` string + defaults
   4. `setSyncState({ resolvedConfig, lastFetchedAt: ISO, defaultBranch })`
   5. Post `github/repo/fetch-result`
-  **Done when:** unit test with mocked relay — missing file uses defaults; bad JSON sets warning.
+     **Done when:** unit test with mocked relay — missing file uses defaults; bad JSON sets warning.
 
 - [x] **Step 19** — Auto-fetch after OAuth connect:
   - In `handleGitHubTokenSave`, after save, fire internal fetch (same handler)
   - Update `handleGitHubSessionLoad` to return `resolvedConfig` + timestamps, not paths
-  **Done when:** connect flow triggers fetch in integration test mock.
+    **Done when:** connect flow triggers fetch in integration test mock.
 
 - [x] **Step 20** — Implement `handleGitHubRepoPull` in `src/main.ts`:
   1. Require connected token + cached `resolvedConfig` (else error "Fetch first")
@@ -241,13 +251,13 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   3. Cache tokens JSON text in `clientStorage` key `fighub:repo:{hash}:tokens`
   4. Update `lastPulledAt`
   5. Post result with `{ ok, kind, cachedAt }`
-  **Done when:** unit test caches tokens on pull.
+     **Done when:** unit test caches tokens on pull.
 
 - [x] **Step 21** — Add `src/ui/sync/useRepoSync.ts`:
   - State: `{ fetching, pulling, pushing, lastFetchedAt, lastPulledAt, lastPushedAt, configWarning, error }`
   - `fetchRepo()`, `pullDesignSystem()`, `pushUpdates()` — postMessage wrappers
   - Listen for `github/repo/*-result` messages
-  **Done when:** hook test with mocked parent.postMessage.
+    **Done when:** hook test with mocked parent.postMessage.
 
 - [x] **Step 22** — Add `src/ui/components/RepoSyncCard.tsx`:
   - Props: `repoUrl`, `connected`, `displayName` (from `formatRepoDisplay`), sync hook state, OAuth connect/disconnect callbacks
@@ -255,28 +265,28 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   - Warning banner when `configWarning` set (malformed fighub.json)
   - Button styles: `minHeight: 44, minWidth: 44`, `:focus-visible` outline `2px solid #0055FF`
   - Drift stub section (Step 31): collapsible placeholder
-  **Done when:** `tests/unit/ui/components/RepoSyncCard.test.tsx` renders buttons; no path inputs.
+    **Done when:** `tests/unit/ui/components/RepoSyncCard.test.tsx` renders buttons; no path inputs.
 
 - [x] **Step 23** — Rewrite `src/ui/tabs/Settings.tsx`:
   - Keep repo URL input + Connect/Disconnect (OAuth via `useGitHubConnect`)
   - Replace path inputs + smoke tests with `<RepoSyncCard />`
   - Remove `tokensPath`, `registryPath` from `SettingsProps`
-  **Done when:** Settings renders zero `<input>` for tokens/registry paths; visual QA checklist satisfied.
+    **Done when:** Settings renders zero `<input>` for tokens/registry paths; visual QA checklist satisfied.
 
 - [x] **Step 24** — Simplify `src/ui/github/useGitHubSession.ts`:
   - Remove `tokensPath`, `registryPath`, setters
   - Keep `repoUrl`, `sessionReady`
   - Hydrate sync timestamps from session loaded message
-  **Done when:** App.tsx updated; typecheck passes.
+    **Done when:** App.tsx updated; typecheck passes.
 
 - [x] **Step 25** — Update `src/ui/components/scaffold/resolveComponentSpec.ts`:
   - Accept `specsPath` from `ResolvedFigHubConfig` (passed from Components via session) instead of hardcoded paths
   - Build path: `{specsPath}{specName}.json` with trailing slash normalization
-  **Done when:** unit test resolves `components/Button.json`.
+    **Done when:** unit test resolves `components/Button.json`.
 
 - [x] **Step 26** — Update `src/io/github/githubUiBridge.ts` + `handleGitHubTokenSave`:
   - Stop persisting `tokensPath` on token save
-  **Done when:** `grep tokensPath src/io/github/storage.ts` only in migration comment.
+    **Done when:** `grep tokensPath src/io/github/storage.ts` only in migration comment.
 
 ### Phase 3 — Push + gates + close-out
 
@@ -289,34 +299,36 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
      - `headBranch: buildDefaultHeadBranch('push', new Date())`
   4. `pluginLog('push/started')` → on success `pluginLog('push/pr-opened', url)` → on fail `pluginLog('push/error', msg)`
   5. Update `lastPushedAt`
-  **Done when:** unit test mocks PR flow; manual SPK-058-5 optional.
+     **Done when:** unit test mocks PR flow; manual SPK-058-5 optional.
 
 - [x] **Step 28** — Wire Push in `useRepoSync.pushUpdates()` → `github/repo/push` message; display PR URL in RepoSyncCard status line.
-  **Done when:** UI test receives mock PR URL.
+      **Done when:** UI test receives mock PR URL.
 
 - [x] **Step 29** — Remove Settings dev PR smoke test section (lines 235–252 old Settings) — replaced by Push button.
-  **Done when:** no `github/pr/test-open` from Settings except if guarded by `import.meta.env.DEV` flag (optional keep).
+      **Done when:** no `github/pr/test-open` from Settings except if guarded by `import.meta.env.DEV` flag (optional keep).
 
 - [x] **Step 30** — Extend doc preflight for malformed fighub.json:
   - Add optional input to `DocPipelinePreflightRulesInput`: `fighubConfigParseError?: string`
   - New rule `doc-pipeline/fighub-config` — pass when no error; fail when malformed (absent OK)
   - Wire from scaffold preflight when sync state has warning
-  **Done when:** `tests/unit/audit/doc-required-tokens.test.ts` or new file covers malformed vs absent.
+    **Done when:** `tests/unit/audit/doc-required-tokens.test.ts` or new file covers malformed vs absent.
 
 - [x] **Step 31** — Drift badge stub on RepoSyncCard:
   - Collapsed section: "Drift summary — coming soon" with disabled "Refresh drift" button
   - Optional: `DriftSummaryContext` placeholder in `src/ui/sync/DriftSummaryContext.tsx` exporting `{ push:0, pull:0, conflict:0 }`
-  **Done when:** component renders stub; WO-029 can replace without Settings restructure.
+    **Done when:** component renders stub; WO-029 can replace without Settings restructure.
 
 - [x] **Step 32** — Close WO-026 on GitHub:
   - `gh issue close 29 --repo JBabcock-DL/FigHub --reason "not planned"` with comment "Superseded by WO-058"
   - Update local WO-026 ticket note if present
-  **Done when:** issue #29 closed.
+    **Done when:** issue #29 closed.
 
 - [x] **Step 33** — CI gate:
+
   ```bash
   npm run typecheck && npm run lint && npm run format:check && npm run build
   ```
+
   **Done when:** all four legs green.
 
 - [ ] **Step 34** — Manual VQA (Plugin Sandbox `cVdPraIafWFBRZnzMPhtrW`):
@@ -325,7 +337,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   3. Scaffold Button → audit has **no** `comp/registry-envelope` or `comp/registry-filekey` FAIL rows
   4. Push → PR URL surfaces
   5. Components tab: no "Load sync registry"; registry keys from snapshot
-  **Done when:** SPK-058-2 PASS documented in ticket or `research/vqa-report.md` if run.
+     **Done when:** SPK-058-2 PASS documented in ticket or `research/vqa-report.md` if run.
 
 ---
 
@@ -350,39 +362,39 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 
 ## Dependencies & Tools
 
-| Dependency | Role |
-| ---------- | ---- |
-| WO-057 (shipped) | Doc pipeline + preflight extension point |
-| WO-016/017/018 | OAuth relay + PR flow |
-| WO-022..027 | Scaffold pipeline consumers |
-| WO-029–032 | **Blocked on** this WO Phase 1 snapshot API |
+| Dependency       | Role                                        |
+| ---------------- | ------------------------------------------- |
+| WO-057 (shipped) | Doc pipeline + preflight extension point    |
+| WO-016/017/018   | OAuth relay + PR flow                       |
+| WO-022..027      | Scaffold pipeline consumers                 |
+| WO-029–032       | **Blocked on** this WO Phase 1 snapshot API |
 
-| Tool | Usage |
-| ---- | ----- |
-| `src/io/sinks/outputPage.ts` | Output page for snapshot frame |
-| `src/io/github/createPullRequestFlow.ts` | Push PR |
-| `src/io/github/relayClient.ts` | All GitHub HTTP |
-| `src/core/components/registry.ts` | upsertRegistryEntry (unchanged logic) |
-| `pluginLog()` | Main-thread logging |
-| Plugin Sandbox | Manual VQA |
+| Tool                                     | Usage                                 |
+| ---------------------------------------- | ------------------------------------- |
+| `src/io/sinks/outputPage.ts`             | Output page for snapshot frame        |
+| `src/io/github/createPullRequestFlow.ts` | Push PR                               |
+| `src/io/github/relayClient.ts`           | All GitHub HTTP                       |
+| `src/core/components/registry.ts`        | upsertRegistryEntry (unchanged logic) |
+| `pluginLog()`                            | Main-thread logging                   |
+| Plugin Sandbox                           | Manual VQA                            |
 
 **Thread split:**
 
-| Module | Thread |
-| ------ | ------ |
-| `snapshotStore.ts`, fetch/pull/push handlers | Main (`code.js`) |
-| `RepoSyncCard`, `useRepoSync` | UI iframe |
-| Messages | `snapshot.ts`, extended `github.ts` |
+| Module                                       | Thread                              |
+| -------------------------------------------- | ----------------------------------- |
+| `snapshotStore.ts`, fetch/pull/push handlers | Main (`code.js`)                    |
+| `RepoSyncCard`, `useRepoSync`                | UI iframe                           |
+| Messages                                     | `snapshot.ts`, extended `github.ts` |
 
 ---
 
 ## Open Questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
-| OQ-058-4 | Keep dev PR smoke test? | **RESOLVED** — remove; Push replaces (Step 29) |
-| OQ-P1 | Export tab registry sample | **RESOLVED** — keep sandbox-only sample, not GitHub path |
-| OQ-P2 | Pull applies tokens to Figma automatically? | **Deferred** — Phase 2 Pull caches only; variable push on Pull is WO-029 integration |
+| ID       | Question                                    | Status                                                                               |
+| -------- | ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| OQ-058-4 | Keep dev PR smoke test?                     | **RESOLVED** — remove; Push replaces (Step 29)                                       |
+| OQ-P1    | Export tab registry sample                  | **RESOLVED** — keep sandbox-only sample, not GitHub path                             |
+| OQ-P2    | Pull applies tokens to Figma automatically? | **Deferred** — Phase 2 Pull caches only; variable push on Pull is WO-029 integration |
 
 ---
 

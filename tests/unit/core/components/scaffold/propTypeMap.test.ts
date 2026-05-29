@@ -21,10 +21,7 @@ describe('propTypeMap', () => {
   });
 
   it('maps node props to INSTANCE_SWAP when id resolved', () => {
-    const mapped = mapSpecPropToFigma(
-      { name: 'icon', type: 'node' },
-      'component:123',
-    );
+    const mapped = mapSpecPropToFigma({ name: 'icon', type: 'node' }, 'component:123');
     expect(mapped).toEqual({ figmaType: 'INSTANCE_SWAP', defaultValue: 'component:123' });
   });
 

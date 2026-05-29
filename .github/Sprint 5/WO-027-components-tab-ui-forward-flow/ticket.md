@@ -70,13 +70,13 @@ Components tab UI mock lives in the FigHub design file. **VQA execution** uses t
 **Figma evidence (broken):** [Untitled sandbox](https://www.figma.com/design/Dw8NkEiG91NhjYqRPNTOOu/Untitled?node-id=5-193) — `file_key=Dw8NkEiG91NhjYqRPNTOOu`, `node_id=5:193`  
 **DesignOps target:** [v60 Foundations Button](https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/v60-updates-%E2%80%94-Foundations?node-id=433-335)
 
-| Bug ID | Status | Summary |
-| ------ | ------ | ------- |
-| BUG-S5-001 | **Resolved in code (WO-057)** | Doc section STRETCH geometry + 1640px pipeline sections |
-| BUG-S5-002 | **Resolved in code (WO-057)** | `comp/doc-section-width` audit row |
-| BUG-S5-003 | **Resolved in code (WO-057)** | Do/Don't usage via `buildUsageNotes`; gallery removed |
-| BUG-S5-004 | **Resolved in code (WO-057)** | Full 5-section doc pipeline on forward scaffold |
-| BUG-S5-006 | **Open** | Missing `_Header` / page chrome from `/new-project` on `↳ Buttons` |
+| Bug ID     | Status                        | Summary                                                            |
+| ---------- | ----------------------------- | ------------------------------------------------------------------ |
+| BUG-S5-001 | **Resolved in code (WO-057)** | Doc section STRETCH geometry + 1640px pipeline sections            |
+| BUG-S5-002 | **Resolved in code (WO-057)** | `comp/doc-section-width` audit row                                 |
+| BUG-S5-003 | **Resolved in code (WO-057)** | Do/Don't usage via `buildUsageNotes`; gallery removed              |
+| BUG-S5-004 | **Resolved in code (WO-057)** | Full 5-section doc pipeline on forward scaffold                    |
+| BUG-S5-006 | **Open**                      | Missing `_Header` / page chrome from `/new-project` on `↳ Buttons` |
 
 **Next agent:** Run `/vqa WO-057` then `/vqa WO-027` on Plugin Sandbox. **Do not** move cards to Completed until Figma metadata + designer sign-off.
 
@@ -116,10 +116,10 @@ Captured from manual VQA; full UX notes in [registry-ux-intent](research/registr
 
 **Future mapping (roadmap — committed):**
 
-| Designer intent | Roadmap ticket |
-| --------------- | -------------- |
+| Designer intent                                       | Roadmap ticket                                                                                                           |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Discover specs in repo + multiselect + batch scaffold | **WO-056** (Sprint 8, Phase 4a) — [ticket](../../Sprint%208/WO-056-component-catalog-discovery-batch-scaffold/ticket.md) |
-| Import React/source → spec | **WO-044** (UC-4) |
+| Import React/source → spec                            | **WO-044** (UC-4)                                                                                                        |
 
 **UX shipped (2026-05-28):** rename Load → **Load sync registry**; empty-state education; **Settings-only** repo URL + sync file path; paste section first. See [registry-ux-intent](research/registry-ux-intent.md) + [component-catalog-roadmap](../research/component-catalog-roadmap.md).
 
@@ -150,31 +150,31 @@ Captured from manual VQA; full UX notes in [registry-ux-intent](research/registr
 
 **Figma source (filled before `/vqa` runs):**
 
-| Field           | Value                                                                                                      |
-| --------------- | ---------------------------------------------------------------------------------------------------------- |
-| `file_key`      | `cVdPraIafWFBRZnzMPhtrW`                                                                                   |
-| `node_id`       | N/A — panel-only code VQA (design mock not linked)                                                        |
-| Figma deep link | `https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox`                                       |
-| Frame / scope   | FigHub plugin window — **Components** tab (panel chrome; canvas ComponentSet = subsystem spot-check)      |
-| Captured at     | 2026-05-28                                                                                                 |
+| Field           | Value                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------- |
+| `file_key`      | `cVdPraIafWFBRZnzMPhtrW`                                                                             |
+| `node_id`       | N/A — panel-only code VQA (design mock not linked)                                                   |
+| Figma deep link | `https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox`                                 |
+| Frame / scope   | FigHub plugin window — **Components** tab (panel chrome; canvas ComponentSet = subsystem spot-check) |
+| Captured at     | 2026-05-28                                                                                           |
 
 **Precondition:** Bootstrap `bootstrap-complete` fixture run once in same file session so WO-023 bindings resolve.
 
 **Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_
 
-| #   | Category      | Property                         | Design (Figma) | Build (implemented) | Result |
-| --- | ------------- | -------------------------------- | -------------- | ------------------- | ------ |
-| 1   | Layout        | Tab nav includes **Components**  | Expected between Bootstrap and Export | `App.tsx` — Components tab button + `'components'` state | PASS |
-| 2   | Layout        | Entry: registry + paste sections | Registry pick + paste/load | `Components.tsx` — registry + SourcePaste/File sections | PASS |
-| 3   | Layout        | Spec preview panel visible       | Preview before scaffold | `SpecPreviewPanel` with variantMatrix/props/bindings JSON | PASS |
-| 4   | Typography    | Section headings 13px semibold   | 13px semibold | `SECTION_HEADING` fontSize 13, fontWeight 600 | PASS |
-| 5   | Color         | Active tab background `#f0f0f0`  | `#f0f0f0` | `App.tsx` active tab background `#f0f0f0` | PASS |
-| 6   | Interaction   | Scaffold CTA disabled until valid| Disabled until schema OK | `validateComponentSpecDraft` gates button | PASS |
-| 7   | Interaction   | Progress step list on run        | Step list during run | `ScaffoldStepList` + reducer; 7 steps | PASS |
-| 8   | Interaction   | Export sheet after success       | ExportSheet inline | Integration test `getByLabelText('Registry export')` | PASS |
-| 9   | Accessibility | Tab `aria-current`               | Current tab marked | `aria-current={activeTab === 'components' ? 'page' : undefined}` | PASS |
-| 10  | Accessibility | Progress `role="progressbar"`    | Progressbar region | `ProgressBar` role="progressbar" | PASS |
-| 11  | Canvas        | ComponentSet on Components page  | 12-variant Button ≥ 48×32 px; property audit 6/6 | Pre-combine `applyPropertiesToVariants` + `normalizeVariantMastersInSet`; 112 scaffold tests green (2026-05-28 re-VQA) | PASS |
+| #   | Category      | Property                          | Design (Figma)                                   | Build (implemented)                                                                                                    | Result |
+| --- | ------------- | --------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ------ |
+| 1   | Layout        | Tab nav includes **Components**   | Expected between Bootstrap and Export            | `App.tsx` — Components tab button + `'components'` state                                                               | PASS   |
+| 2   | Layout        | Entry: registry + paste sections  | Registry pick + paste/load                       | `Components.tsx` — registry + SourcePaste/File sections                                                                | PASS   |
+| 3   | Layout        | Spec preview panel visible        | Preview before scaffold                          | `SpecPreviewPanel` with variantMatrix/props/bindings JSON                                                              | PASS   |
+| 4   | Typography    | Section headings 13px semibold    | 13px semibold                                    | `SECTION_HEADING` fontSize 13, fontWeight 600                                                                          | PASS   |
+| 5   | Color         | Active tab background `#f0f0f0`   | `#f0f0f0`                                        | `App.tsx` active tab background `#f0f0f0`                                                                              | PASS   |
+| 6   | Interaction   | Scaffold CTA disabled until valid | Disabled until schema OK                         | `validateComponentSpecDraft` gates button                                                                              | PASS   |
+| 7   | Interaction   | Progress step list on run         | Step list during run                             | `ScaffoldStepList` + reducer; 7 steps                                                                                  | PASS   |
+| 8   | Interaction   | Export sheet after success        | ExportSheet inline                               | Integration test `getByLabelText('Registry export')`                                                                   | PASS   |
+| 9   | Accessibility | Tab `aria-current`                | Current tab marked                               | `aria-current={activeTab === 'components' ? 'page' : undefined}`                                                       | PASS   |
+| 10  | Accessibility | Progress `role="progressbar"`     | Progressbar region                               | `ProgressBar` role="progressbar"                                                                                       | PASS   |
+| 11  | Canvas        | ComponentSet on Components page   | 12-variant Button ≥ 48×32 px; property audit 6/6 | Pre-combine `applyPropertiesToVariants` + `normalizeVariantMastersInSet`; 112 scaffold tests green (2026-05-28 re-VQA) | PASS   |
 
 **Per-row deviations:**
 

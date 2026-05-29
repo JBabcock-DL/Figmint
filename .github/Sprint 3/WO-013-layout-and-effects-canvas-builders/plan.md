@@ -183,7 +183,7 @@ Port modular **`layout.js`** (~210 lines) and **`effects.js`** (~293 lines) into
 
 **Lift map:**
 
-| Legacy                                | FigHub                 |
+| Legacy                                | FigHub                  |
 | ------------------------------------- | ----------------------- |
 | `layout.js`                           | `layout.ts`             |
 | `effects.js`                          | `effects.ts`            |

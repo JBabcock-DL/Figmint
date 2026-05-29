@@ -15,12 +15,16 @@ describe('documentationChrome', () => {
 
   it('defines six scoped tokens for style-guide table chrome', () => {
     expect(DOC_CHROME_TOKENS.length).toBe(6);
-    expect(DOC_CHROME_PATHS).toEqual(DOC_CHROME_TOKENS.map(function (token) {
-      return token.name;
-    }));
-    expect(DOC_CHROME_TOKENS.every(function (token) {
-      return token.name.startsWith('doc/');
-    })).toBe(true);
+    expect(DOC_CHROME_PATHS).toEqual(
+      DOC_CHROME_TOKENS.map(function (token) {
+        return token.name;
+      }),
+    );
+    expect(
+      DOC_CHROME_TOKENS.every(function (token) {
+        return token.name.startsWith('doc/');
+      }),
+    ).toBe(true);
   });
 
   it('creates Documentation collection with Default mode on publish', async () => {

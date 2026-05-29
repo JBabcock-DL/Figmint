@@ -106,10 +106,7 @@ describe('createPullRequestFlow', () => {
 
   it('retries GET ref and commit once on transient 5xx', async function () {
     const calls: string[] = [];
-    vi.spyOn(relayClient, 'githubApiViaRelay').mockImplementation(async function (
-      method,
-      path,
-    ) {
+    vi.spyOn(relayClient, 'githubApiViaRelay').mockImplementation(async function (method, path) {
       calls.push(method + ' ' + path);
 
       if (path === '/repos/acme/widgets') {
@@ -164,30 +161,27 @@ describe('createPullRequestFlow', () => {
 
   it('retries head branch creation with collision suffix on 422', async function () {
     const calls: string[] = [];
-    vi.spyOn(relayClient, 'githubApiViaRelay').mockImplementation(async function (
-      method,
-      path,
-      _token,
-      body,
-    ) {
-      calls.push(method + ' ' + path);
+    vi.spyOn(relayClient, 'githubApiViaRelay').mockImplementation(
+      async function (method, path, _token, body) {
+        calls.push(method + ' ' + path);
 
-      if (path === '/repos/acme/widgets/git/refs' && method === 'POST') {
-        const ref = (body as { ref?: string }).ref;
-        if (ref === 'refs/heads/' + BASE_HEAD) {
-          return {
-            ok: false,
-            status: 422,
-            body: { message: 'Reference already exists' },
-          };
+        if (path === '/repos/acme/widgets/git/refs' && method === 'POST') {
+          const ref = (body as { ref?: string }).ref;
+          if (ref === 'refs/heads/' + BASE_HEAD) {
+            return {
+              ok: false,
+              status: 422,
+              body: { message: 'Reference already exists' },
+            };
+          }
+          if (ref === 'refs/heads/' + SUFFIX_HEAD) {
+            return { ok: true, status: 201, body: { ref: ref } };
+          }
         }
-        if (ref === 'refs/heads/' + SUFFIX_HEAD) {
-          return { ok: true, status: 201, body: { ref: ref } };
-        }
-      }
 
-      return buildHappyPathHandler(calls, SUFFIX_HEAD, SUFFIX_HEAD_ENCODED)(method, path);
-    });
+        return buildHappyPathHandler(calls, SUFFIX_HEAD, SUFFIX_HEAD_ENCODED)(method, path);
+      },
+    );
 
     const result = await createPullRequestFlow({
       token: 'gho_testtoken',
@@ -207,16 +201,13 @@ describe('createPullRequestFlow', () => {
         return call === 'POST /repos/acme/widgets/git/refs';
       }).length,
     ).toBe(2);
-    expect(calls.indexOf('PATCH /repos/acme/widgets/git/refs/heads/' + SUFFIX_HEAD_ENCODED)).toBeGreaterThan(
-      -1,
-    );
+    expect(
+      calls.indexOf('PATCH /repos/acme/widgets/git/refs/heads/' + SUFFIX_HEAD_ENCODED),
+    ).toBeGreaterThan(-1);
   });
 
   it('fails with branch-exists after exhausting collision retries', async function () {
-    vi.spyOn(relayClient, 'githubApiViaRelay').mockImplementation(async function (
-      method,
-      path,
-    ) {
+    vi.spyOn(relayClient, 'githubApiViaRelay').mockImplementation(async function (method, path) {
       if (path === '/repos/acme/widgets') {
         return { ok: true, status: 200, body: { full_name: 'acme/widgets' } };
       }

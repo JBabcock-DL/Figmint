@@ -100,11 +100,11 @@ After forward scaffold (WO-022..024), designers need a compact, labeled preview 
 
 **Register:** [designops-canvas-parity-bug-register.md](../research/designops-canvas-parity-bug-register.md)
 
-| Bug ID | Owner | Summary |
-| ------ | ----- | ------- |
+| Bug ID         | Owner                                                                             | Summary |
+| -------------- | --------------------------------------------------------------------------------- | ------- |
 | **BUG-S5-001** | **Resolved in code (WO-057)** — doc section STRETCH geometry + 5-section pipeline |
-| **BUG-S5-003** | **Resolved in code (WO-057)** — `buildUsageNotes` Do/Don't; gallery deleted |
-| **BUG-S5-004** | **Resolved in code (WO-057)** — full doc pipeline in `src/core/canvas/doc/*` |
+| **BUG-S5-003** | **Resolved in code (WO-057)** — `buildUsageNotes` Do/Don't; gallery deleted       |
+| **BUG-S5-004** | **Resolved in code (WO-057)** — full doc pipeline in `src/core/canvas/doc/*`      |
 
 **Evidence:** User file `Dw8NkEiG91NhjYqRPNTOOu` node `5:193` — usage cells `1×98`, instances at negative x inside cells.
 
@@ -116,11 +116,11 @@ After forward scaffold (WO-022..024), designers need a compact, labeled preview 
 
 ## Figma VQA Checklist
 
-| Field | Value |
-| ----- | ----- |
-| file_key | `Dw8NkEiG91NhjYqRPNTOOu` (user repro) · `cVdPraIafWFBRZnzMPhtrW` (Plugin Sandbox) |
-| node_id | `5:193` (`_PageContent` / `doc/component/button`) |
-| Notes | Section frames must be **width ≥ 400** (target 1640), not 1px; 6 usage instances visible without horizontal clip |
+| Field    | Value                                                                                                            |
+| -------- | ---------------------------------------------------------------------------------------------------------------- |
+| file_key | `Dw8NkEiG91NhjYqRPNTOOu` (user repro) · `cVdPraIafWFBRZnzMPhtrW` (Plugin Sandbox)                                |
+| node_id  | `5:193` (`_PageContent` / `doc/component/button`)                                                                |
+| Notes    | Section frames must be **width ≥ 400** (target 1640), not 1px; 6 usage instances visible without horizontal clip |
 
 ---
 

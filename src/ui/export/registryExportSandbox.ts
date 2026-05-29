@@ -7,7 +7,6 @@ import type { ContractDocument } from '@/ui/export/types';
 
 /** Export sandbox helpers — production registry SSOT is canvas snapshot (WO-058). */
 export function defaultRegistryExportSinks(githubConnected?: boolean): SinkId[] {
-   
   if (githubConnected === true && flags.githubOAuth && flags.githubPRSink) {
     return ['download', 'github-pr'];
   }

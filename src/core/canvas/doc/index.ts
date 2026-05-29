@@ -43,10 +43,7 @@ export interface DocPipelineResult {
   sections: DocPipelineSections;
 }
 
-function resolveScaffoldTarget(
-  specName: string,
-  ctx: UsageFrameContext,
-): ComponentScaffoldTarget {
+function resolveScaffoldTarget(specName: string, ctx: UsageFrameContext): ComponentScaffoldTarget {
   if (ctx.scaffoldTarget !== undefined) {
     return ctx.scaffoldTarget;
   }
@@ -195,8 +192,7 @@ export async function buildDocPipeline(
   const docSectionPass = auditRows.some(
     (row) => row.ruleId === 'comp/doc-section-width' && row.pass,
   );
-  const ok =
-    sectionCountRow.pass && hasDoDontCards(usage) && docSectionPass;
+  const ok = sectionCountRow.pass && hasDoDontCards(usage) && docSectionPass;
 
   return {
     ok: ok,

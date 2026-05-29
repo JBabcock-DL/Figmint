@@ -10,7 +10,15 @@ import type { DriftReportV1, VariableDriftEntry } from '@detroitlabs/fighub-cont
 
 vi.mock('@/core/variables', function () {
   return {
-    pushTokens: vi.fn().mockResolvedValue({ created: 1, updated: 0, skipped: 0, errors: [], passes: 1, evc: 0, totalDurationMs: 1 }),
+    pushTokens: vi.fn().mockResolvedValue({
+      created: 1,
+      updated: 0,
+      skipped: 0,
+      errors: [],
+      passes: 1,
+      evc: 0,
+      totalDurationMs: 1,
+    }),
   };
 });
 

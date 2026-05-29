@@ -15,10 +15,7 @@ export function buildScaffoldAuditRows(
     ruleId: 'comp/scaffold-variant-count',
     pass: actualCount === expectedCount,
     diagnostic:
-      'expected ' +
-      String(expectedCount) +
-      ' variant children, found ' +
-      String(actualCount),
+      'expected ' + String(expectedCount) + ' variant children, found ' + String(actualCount),
   });
 
   let namingPass = true;

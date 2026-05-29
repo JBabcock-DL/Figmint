@@ -1,10 +1,6 @@
 import type { ContractKind } from '@/io/sources/types';
 
-import type {
-  FormatOptions,
-  SerializableDocument,
-  SinkResult,
-} from '@/io/sinks/types';
+import type { FormatOptions, SerializableDocument, SinkResult } from '@/io/sinks/types';
 
 export interface SinkOutputPageMessage {
   type: 'sink/output-page';

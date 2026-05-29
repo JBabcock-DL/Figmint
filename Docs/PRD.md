@@ -109,7 +109,7 @@ For everything else, the plugin produces context documents (Markdown + JSON) tha
 | -------------------------------- | ------------------------------------------------------------------------------ | ---------------------------- |
 | **Designer**                     | Primary plugin user; drives all interactions                                   | Yes                          |
 | **Engineer**                     | Owns `tokens.json`, reviews PRs from plugin, updates component implementations | Yes (project-side)           |
-| **FigHub**                      | Deterministic execution engine in Figma sandbox                                | Yes                          |
+| **FigHub**                       | Deterministic execution engine in Figma sandbox                                | Yes                          |
 | **Claude (CLI / Cursor / chat)** | Optional pre/post-processing agent for context                                 | Optional                     |
 | **Figma Agent**                  | Optional on-canvas agent for free-form, translation, a11y                      | Optional                     |
 | **CI (GitHub Actions)**          | Validates contracts; runs `figma connect publish`                              | Yes for Code Connect publish |
@@ -177,7 +177,7 @@ The designer is the **only** human required in every workflow. Every other actor
 
 | ID        | Requirement                                                                                                                        |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| FR-BOOT-1 | Read tokens from any I/O source (§10) supporting W3C DTCG **or** legacy `.fighub-registry.json` shape (hybrid auto-detect)        |
+| FR-BOOT-1 | Read tokens from any I/O source (§10) supporting W3C DTCG **or** legacy `.fighub-registry.json` shape (hybrid auto-detect)         |
 | FR-BOOT-2 | Normalize input to canonical internal token model                                                                                  |
 | FR-BOOT-3 | Create / update 5 variable collections: Primitives, Theme, Typography, Layout, Effects                                             |
 | FR-BOOT-4 | Support modes per collection (Light/Dark on Theme; type-scale modes on Typography per Detroit Labs Foundations)                    |
@@ -196,7 +196,7 @@ The designer is the **only** human required in every workflow. Every other actor
 | FR-SCAF-3 | Apply variable bindings (fill, stroke, radius, padding, gap, text styles) per spec                                                                                                        |
 | FR-SCAF-4 | Generate component property definitions matching spec props (Boolean, Text, Variant, InstanceSwap)                                                                                        |
 | FR-SCAF-5 | Create a usage frame with example instances                                                                                                                                               |
-| FR-SCAF-6 | Append to `.fighub-registry.json` payload; offer registry export via any sink                                                                                                            |
+| FR-SCAF-6 | Append to `.fighub-registry.json` payload; offer registry export via any sink                                                                                                             |
 | FR-SCAF-7 | Encode auto-layout invariants (resize-then-sizing-mode order; counter-axis AUTO for matrix specimens; row counter-axis AUTO; no 1px master heights) as helper functions, not prompt rules |
 
 ### 6.3 Component import — reverse path (FR-IMP)
@@ -217,7 +217,7 @@ The designer is the **only** human required in every workflow. Every other actor
 
 | ID         | Requirement                                                                                                          |
 | ---------- | -------------------------------------------------------------------------------------------------------------------- |
-| FR-DRIFT-1 | Maintain a "last synced" snapshot per key, stored in canvas pluginData on a hidden node in the FigHub Output page   |
+| FR-DRIFT-1 | Maintain a "last synced" snapshot per key, stored in canvas pluginData on a hidden node in the FigHub Output page    |
 | FR-DRIFT-2 | On detect: pull current repo state, compare against last-synced snapshot AND Figma current state — 3-way             |
 | FR-DRIFT-3 | Classify each drift as `push` (Figma moved), `pull` (Repo moved), or `conflict` (both moved, disagree)               |
 | FR-DRIFT-4 | Emit `drift-report.v1.{json,md}` to any chosen sink                                                                  |
@@ -261,7 +261,7 @@ See §10 for full spec. Summary:
 | ID      | Requirement                                                                                                                             |
 | ------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | FR-IO-1 | Four input ports: paste, file picker, clipboard auto-detect on open, GitHub OAuth pull, frame pluginData                                |
-| FR-IO-2 | Four output sinks: download file, copy to clipboard, write to FigHub Output page text node, write to frame pluginData, open GitHub PR  |
+| FR-IO-2 | Four output sinks: download file, copy to clipboard, write to FigHub Output page text node, write to frame pluginData, open GitHub PR   |
 | FR-IO-3 | Every contract document serializes as both `.v1.json` AND `.v1.md` (GFM tables + headings); markdown derived from JSON to prevent drift |
 | FR-IO-4 | Designer picks file path + format at export time via a unified export sheet                                                             |
 
@@ -588,7 +588,7 @@ The ops protocol is the contract between any **shell** (UI, agent, CLI) and the 
 
 | Property                                         | Direct calls                          | Ops JSON                                                      |
 | ------------------------------------------------ | ------------------------------------- | ------------------------------------------------------------- |
-| Replayable / auditable                           | No                                    | Yes — drop a `.fighub.ops.json` next to the file             |
+| Replayable / auditable                           | No                                    | Yes — drop a `.fighub.ops.json` next to the file              |
 | Agent-friendly                                   | Moderate — agents write code OK       | Best fit — JSON emission is well-trained                      |
 | Inter-runtime portable                           | No — TS functions can't cross sandbox | Yes — JSON crosses any boundary                               |
 | Bridges "external agent can't invoke plugin" gap | No                                    | Yes — agent writes to canvas pluginData, plugin reads on open |
@@ -628,13 +628,13 @@ Each op has a typed payload (validated against `@detroitlabs/fighub-contracts`) 
 
 ### 10.2 Sinks (output)
 
-| Sink                          | Use case                                                         | Phase   |
-| ----------------------------- | ---------------------------------------------------------------- | ------- |
-| Download as `.json` / `.md`   | Designer carries file manually                                   | 1       |
-| Copy to clipboard             | Most common — paste to chat/ticket/agent                         | 1       |
+| Sink                         | Use case                                                         | Phase   |
+| ---------------------------- | ---------------------------------------------------------------- | ------- |
+| Download as `.json` / `.md`  | Designer carries file manually                                   | 1       |
+| Copy to clipboard            | Most common — paste to chat/ticket/agent                         | 1       |
 | FigHub Output page text node | Persistent labeled node; agent with file access can read via MCP | 3       |
-| Frame pluginData              | Compact machine-readable handoff for round-trips                 | 3       |
-| GitHub PR (write via OAuth)   | Engineer-reviewable, mergeable change to consumer repo           | 3 (Org) |
+| Frame pluginData             | Compact machine-readable handoff for round-trips                 | 3       |
+| GitHub PR (write via OAuth)  | Engineer-reviewable, mergeable change to consumer repo           | 3 (Org) |
 
 ### 10.3 Dual-format serialization
 
@@ -913,22 +913,22 @@ A single dedicated PR after Plugin Phase 3 ships:
 
 ## 18. Glossary
 
-| Term                    | Definition                                                                                                 |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **Bootstrap**           | Initial design system setup: variables push + style-guide canvas                                           |
-| **Common ancestor**     | The "last synced" snapshot stored in canvas pluginData; baseline for 3-way drift detection                 |
-| **Conflict**            | Drift where both Figma and Repo moved since last sync and now disagree                                     |
-| **Contract document**   | One of the 5 versioned JSON documents the plugin produces or consumes                                      |
-| **Deterministic**       | Same input → same output; no LLM, no randomness; all behavior reproducible                                 |
+| Term                   | Definition                                                                                                 |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Bootstrap**          | Initial design system setup: variables push + style-guide canvas                                           |
+| **Common ancestor**    | The "last synced" snapshot stored in canvas pluginData; baseline for 3-way drift detection                 |
+| **Conflict**           | Drift where both Figma and Repo moved since last sync and now disagree                                     |
+| **Contract document**  | One of the 5 versioned JSON documents the plugin produces or consumes                                      |
+| **Deterministic**      | Same input → same output; no LLM, no randomness; all behavior reproducible                                 |
 | **FigHub Output page** | Hidden-or-named Figma page where plugin writes labeled text-node outputs and snapshot pluginData           |
-| **Forward path**        | Component scaffold direction: spec → Figma component                                                       |
-| **Org build**           | Private Detroit Labs Figma org build with GitHub OAuth + Code Connect + import features gated on           |
-| **Pull**                | Drift resolution direction: Repo → Figma (apply locally)                                                   |
-| **Push**                | Drift resolution direction: Figma → Repo (open PR)                                                         |
-| **Reverse path**        | Component import direction: code source → component-spec → Figma component                                 |
-| **Snapshot**            | Per-key record of last-synced values stored in canvas pluginData                                           |
-| **Token resolver**      | Subsystem that maps CSS class names / CSS variables to Figma variables via project config (Tailwind, etc.) |
-| **W3C DTCG**            | W3C Design Tokens Community Group standard JSON format for tokens                                          |
+| **Forward path**       | Component scaffold direction: spec → Figma component                                                       |
+| **Org build**          | Private Detroit Labs Figma org build with GitHub OAuth + Code Connect + import features gated on           |
+| **Pull**               | Drift resolution direction: Repo → Figma (apply locally)                                                   |
+| **Push**               | Drift resolution direction: Figma → Repo (open PR)                                                         |
+| **Reverse path**       | Component import direction: code source → component-spec → Figma component                                 |
+| **Snapshot**           | Per-key record of last-synced values stored in canvas pluginData                                           |
+| **Token resolver**     | Subsystem that maps CSS class names / CSS variables to Figma variables via project config (Tailwind, etc.) |
+| **W3C DTCG**           | W3C Design Tokens Community Group standard JSON format for tokens                                          |
 
 ---
 

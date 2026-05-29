@@ -8,10 +8,10 @@
 
 ## Summary
 
-| Area | Pass | Fail | N/A |
-|------|------|------|-----|
-| Figma assertions | 0 | 0 | All (subsystem ticket) |
-| Functional QA | 5 | 0 | 0 |
+| Area             | Pass | Fail | N/A                    |
+| ---------------- | ---- | ---- | ---------------------- |
+| Figma assertions | 0    | 0    | All (subsystem ticket) |
+| Functional QA    | 5    | 0    | 0                      |
 
 **Recommendation:** **Ship** (with documented follow-up on typography style ↔ variable binding)
 
@@ -31,19 +31,19 @@ N/A.
 
 ## Functional QA results
 
-| Criterion | Result | Note |
-|-----------|--------|------|
+| Criterion                                                    | Result   | Note                                                          |
+| ------------------------------------------------------------ | -------- | ------------------------------------------------------------- |
 | Typography 27 rows + 5 category headers + codeSyntax columns | **PASS** | Bootstrap `build-typography` done; Vitest row projector green |
-| Token overview platform-mapping + arch + shadow hygiene | **PASS** | Scaffold + builder; bootstrap `build-overview` done |
-| WO-014 helpers only for resize/sizing | **PASS** | Zero inline `.resize(` in builders |
-| `runAudit('canvas')` pass on clean file | **PASS** | Bootstrap `audit-canvas` |
-| Bench each builder p50 < 3000 ms | **PASS** | `research/canvas-bench-result.md` |
+| Token overview platform-mapping + arch + shadow hygiene      | **PASS** | Scaffold + builder; bootstrap `build-overview` done           |
+| WO-014 helpers only for resize/sizing                        | **PASS** | Zero inline `.resize(` in builders                            |
+| `runAudit('canvas')` pass on clean file                      | **PASS** | Bootstrap `audit-canvas`                                      |
+| Bench each builder p50 < 3000 ms                             | **PASS** | `research/canvas-bench-result.md`                             |
 
 ### Testing & verification
 
-| Check | Result | Note |
-|-------|--------|------|
-| Vitest row projectors + audit | **PASS** | |
+| Check                                        | Result   | Note                    |
+| -------------------------------------------- | -------- | ----------------------- |
+| Vitest row projectors + audit                | **PASS** |                         |
 | Manual publishTypographyStyles → build pages | **PASS** | Bootstrap orchestration |
 
 ---

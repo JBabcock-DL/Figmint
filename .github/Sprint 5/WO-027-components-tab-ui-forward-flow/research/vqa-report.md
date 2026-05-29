@@ -8,28 +8,28 @@
 
 ## Summary
 
-| Area | Pass | Fail | N/A |
-| ---- | ---- | ---- | --- |
-| Figma assertions (panel, 11 rows) | 11 | 0 | 0 |
-| Functional QA (acceptance criteria) | 5 | 0 | 0 |
+| Area                                | Pass | Fail | N/A |
+| ----------------------------------- | ---- | ---- | --- |
+| Figma assertions (panel, 11 rows)   | 11   | 0    | 0   |
+| Functional QA (acceptance criteria) | 5    | 0    | 0   |
 
 ---
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
-| Scaffold known Button from registry | **PASS** | Integrated sandbox sign-off post-WO-057 |
-| Paste canonical `component-spec.v1.json` and scaffold | **PASS** | Vitest + integration tests |
-| Canvas: 5-section doc pipeline, 1640px, no collapse | **PASS** | WO-057 designer sign-off on `9:4004` |
-| G2 p50 **<5s** | **PASS** | Designer sign-off on forward-scaffold timing |
-| ExportSheet valid `RegistryV1`; no auto-PR | **PASS** | Integration test |
+| Acceptance criterion                                  | Result   | Note                                         |
+| ----------------------------------------------------- | -------- | -------------------------------------------- |
+| Scaffold known Button from registry                   | **PASS** | Integrated sandbox sign-off post-WO-057      |
+| Paste canonical `component-spec.v1.json` and scaffold | **PASS** | Vitest + integration tests                   |
+| Canvas: 5-section doc pipeline, 1640px, no collapse   | **PASS** | WO-057 designer sign-off on `9:4004`         |
+| G2 p50 **<5s**                                        | **PASS** | Designer sign-off on forward-scaffold timing |
+| ExportSheet valid `RegistryV1`; no auto-PR            | **PASS** | Integration test                             |
 
 ### Canvas-parity bug register
 
-| Bug ID | Status |
-| ------ | ------ |
-| BUG-S5-004 | **Closed** (WO-057) |
+| Bug ID          | Status                                   |
+| --------------- | ---------------------------------------- |
+| BUG-S5-004      | **Closed** (WO-057)                      |
 | BUG-S5-001..003 | **Closed** (geometry + doc-chrome fixes) |
 
 ---

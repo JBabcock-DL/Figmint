@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  mapGitHubHttpError,
-  mapNetworkError,
-} from '@/io/github/githubErrors';
+import { mapGitHubHttpError, mapNetworkError } from '@/io/github/githubErrors';
 
 describe('mapGitHubHttpError', () => {
   const cases = [

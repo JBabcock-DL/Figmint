@@ -118,9 +118,7 @@ export function projectBuildContext(
   options?: ScaffoldOptions,
 ): ScaffoldBuildContext {
   const displayTitle =
-    options !== undefined && options.displayTitle !== undefined
-      ? options.displayTitle
-      : spec.name;
+    options !== undefined && options.displayTitle !== undefined ? options.displayTitle : spec.name;
   const ctx = createScaffoldContext(spec, combo, variantName, options);
   ctx.displayTitle = displayTitle;
   ctx.spacing.gap = parseNumericToken(spec.layout.gap, DEFAULT_SPACING.gap);

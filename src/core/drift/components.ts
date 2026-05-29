@@ -3,11 +3,7 @@ import type { ComponentDriftEntry, ComponentSpecV1 } from '@detroitlabs/fighub-c
 import { hashVariantMatrix } from '@/core/components/scaffold/variantMatrix';
 
 import { classifyThreeWay, isSynced } from './classify';
-import {
-  buildComponentDiff,
-  componentComparableEqual,
-  componentHashEqual,
-} from './componentDiff';
+import { buildComponentDiff, componentComparableEqual, componentHashEqual } from './componentDiff';
 import { toComponentDriftId } from './componentKeys';
 import type {
   ComponentComparable,
@@ -40,7 +36,10 @@ export function buildRepoSpecMap(
   return result;
 }
 
-function wrapPayload(comparable: ComponentComparable | null, diff?: ComponentDiff): ComponentDriftPayload | null {
+function wrapPayload(
+  comparable: ComponentComparable | null,
+  diff?: ComponentDiff,
+): ComponentDriftPayload | null {
   if (comparable === null) {
     return null;
   }
@@ -90,9 +89,7 @@ export function detectComponentDrift(input: ComponentDriftDetectInput): Componen
   }
 
   const equalFn =
-    input.options?.quickDetect === true
-      ? componentHashEqual
-      : componentComparableEqual;
+    input.options?.quickDetect === true ? componentHashEqual : componentComparableEqual;
 
   const drifts: ComponentDriftEntry[] = [];
   let syncedCount = 0;
@@ -114,7 +111,9 @@ export function detectComponentDrift(input: ComponentDriftDetectInput): Componen
       continue;
     }
 
-    drifts.push(buildComponentDriftEntry(specName, direction, figmaValue, repoValue, snapshotValue));
+    drifts.push(
+      buildComponentDriftEntry(specName, direction, figmaValue, repoValue, snapshotValue),
+    );
   }
 
   return {
