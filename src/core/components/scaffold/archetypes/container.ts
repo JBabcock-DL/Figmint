@@ -102,7 +102,7 @@ async function createSampleText(
 
 function createDashedSlot(
   name: string,
-  label: string,
+  _label: string,
   w: number,
   h: number,
   stretch: boolean,

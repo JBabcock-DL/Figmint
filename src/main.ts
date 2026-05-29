@@ -1296,7 +1296,8 @@ async function handleExportRun(message: ExportRunMessage): Promise<void> {
           contractKind: message.githubPR.contractKind,
           repoUrl: message.githubPR.repoUrl,
           options: message.githubPR.githubPROptions,
-          figmaFileKey: figma.fileKey,
+          figmaFileKey:
+            figma.fileKey !== undefined && figma.fileKey !== null ? figma.fileKey : 'unknown',
           figmaFileName: figma.root.name,
         };
         result = await executeGithubPRSink(ctx);

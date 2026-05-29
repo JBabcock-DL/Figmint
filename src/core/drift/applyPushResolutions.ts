@@ -162,12 +162,22 @@ export function variableComparableToToken(
     }
     valuesByMode[modeName] = coerced;
   }
-  return {
-    collection: collection,
-    name: variableName,
-    type: resolvedTypeToTokenType(comparable.resolvedType),
-    valuesByMode: valuesByMode,
-  };
+  const tokenType = resolvedTypeToTokenType(comparable.resolvedType);
+  const base = { collection: collection, name: variableName, valuesByMode: valuesByMode };
+  switch (tokenType) {
+    case 'COLOR':
+      return { ...base, type: 'COLOR' } as Token;
+    case 'FLOAT':
+      return { ...base, type: 'FLOAT' } as Token;
+    case 'STRING':
+      return { ...base, type: 'STRING' } as Token;
+    case 'BOOLEAN':
+      return { ...base, type: 'BOOLEAN' } as Token;
+    default: {
+      const _exhaustive: never = tokenType;
+      return _exhaustive;
+    }
+  }
 }
 
 function tokenKey(token: Token): string {

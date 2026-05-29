@@ -3,6 +3,7 @@ import type { ComponentDriftEntry, ComponentSpecV1 } from '@detroitlabs/fighub-c
 import { hashVariantMatrix } from '@/core/components/scaffold/variantMatrix';
 
 import { classifyThreeWay, isSynced } from './classify';
+import { toUnsyncedDriftDirection } from './types';
 import { buildComponentDiff, componentComparableEqual, componentHashEqual } from './componentDiff';
 import { toComponentDriftId } from './componentKeys';
 import type {
@@ -112,7 +113,13 @@ export function detectComponentDrift(input: ComponentDriftDetectInput): Componen
     }
 
     drifts.push(
-      buildComponentDriftEntry(specName, direction, figmaValue, repoValue, snapshotValue),
+      buildComponentDriftEntry(
+        specName,
+        toUnsyncedDriftDirection(direction),
+        figmaValue,
+        repoValue,
+        snapshotValue,
+      ),
     );
   }
 

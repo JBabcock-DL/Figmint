@@ -49,7 +49,7 @@ export function createDashedIconSlot(name: string, size: number): FrameNode {
 
 export function createStateLayer(
   role: 'hover' | 'pressed' | 'focus',
-  parent: FrameNode,
+  parent: FrameNode | ComponentNode,
 ): FrameNode {
   assertValidAxisAlign(parent);
   const layer = figma.createFrame();
@@ -132,7 +132,7 @@ export function createDashedContentSlot(
   return slot;
 }
 
-export function createFocusRing(parent: FrameNode): FrameNode {
+export function createFocusRing(parent: FrameNode | ComponentNode): FrameNode {
   assertValidAxisAlign(parent);
   const ring = figma.createFrame();
   ring.name = 'focus-ring';

@@ -49,7 +49,7 @@ function resolveScaffoldParent(target: PageNode | ComponentScaffoldTarget): {
   if ('docRoot' in target) {
     return { page: target.page, parent: target.docRoot };
   }
-  return { page: target, parent: target };
+  return { page: target, parent: target as PageNode & ChildrenMixin & SceneNode };
 }
 
 export function findExistingComponentSet(

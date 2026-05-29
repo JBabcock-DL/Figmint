@@ -4,6 +4,7 @@ import type {
   ComponentDriftEntry,
   ComponentSpecV1,
   DriftReportV1,
+  Token,
   TokensV1,
   VariableDriftEntry,
 } from '@detroitlabs/fighub-contracts';

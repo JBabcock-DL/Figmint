@@ -39,7 +39,7 @@ function applyComponentSetChrome(
 ): void {
   componentSet.layoutMode = 'HORIZONTAL';
   componentSet.layoutWrap = 'WRAP';
-  resizeThenApplySizing(componentSet as unknown as FrameNode, DOC_FRAME_WIDTH, 1, {
+  resizeThenApplySizing(componentSet, DOC_FRAME_WIDTH, 1, {
     primaryAxisSizingMode: 'FIXED',
     counterAxisSizingMode: 'AUTO',
   });

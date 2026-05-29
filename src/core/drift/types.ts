@@ -9,6 +9,16 @@ import type {
 
 export type DriftDirection = 'push' | 'pull' | 'conflict' | 'synced';
 
+export type UnsyncedDriftDirection = 'push' | 'pull' | 'conflict';
+
+/** Maps detect-time direction to contract drift entry direction (synced rows are filtered earlier). */
+export function toUnsyncedDriftDirection(direction: DriftDirection): UnsyncedDriftDirection {
+  if (direction === 'synced') {
+    throw new Error('expected non-synced drift direction');
+  }
+  return direction;
+}
+
 export interface VariableComparable {
   valuesByMode: Record<string, VariableValue>;
   codeSyntax: Partial<Record<'WEB' | 'ANDROID' | 'iOS', string>>;

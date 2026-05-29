@@ -2,7 +2,12 @@ import { useCallback, useReducer } from 'react';
 
 import type { SinkId } from '@/io/sinks/types';
 import { availableSinks, canExport, isPathInputVisible } from '@/ui/export/availableSinks';
-import { createInitialExportSheetState, reduceExportSheet } from '@/ui/export/exportSheetReducer';
+import {
+  createInitialExportSheetState,
+  reduceExportSheet,
+  type ExportSheetAction,
+  type ExportSheetState,
+} from '@/ui/export/exportSheetReducer';
 import { runExport } from '@/ui/export/runExport';
 import type { ContractDocument, ExportSheetProps } from '@/ui/export/types';
 
@@ -51,7 +56,9 @@ export function ExportSheet({
   onCancel,
 }: ExportSheetProps) {
   const [state, dispatch] = useReducer(
-    reduceExportSheet,
+    function (prev: ExportSheetState, action: ExportSheetAction) {
+      return reduceExportSheet(prev, action);
+    },
     { document: document, defaultSinks: defaultSinks },
     function (init) {
       return createInitialExportSheetState(init.document, {
