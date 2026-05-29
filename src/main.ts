@@ -508,7 +508,7 @@ async function handleDriftDetectVariables(
 ): Promise<void> {
   try {
     const figmaCollections = await readFigmaVariableState();
-    const figmaTokens = flattenFigmaVariableSnapshots(figmaCollections);
+    const figmaTokens = flattenFigmaVariableSnapshots(figmaCollections, { resolveAliases: true });
     const snapshotTokens = readVariableSnapshotTokens();
     const repoTokenMap = flattenRepoTokens(repoTokens);
     const result = detectVariableDrift({

@@ -31,7 +31,7 @@ export interface RunDetectDriftInput {
 
 export async function runDetectDrift(input: RunDetectDriftInput): Promise<DriftReportV1> {
   const figmaCollections = await readFigmaVariableState();
-  const figmaTokens = flattenFigmaVariableSnapshots(figmaCollections);
+  const figmaTokens = flattenFigmaVariableSnapshots(figmaCollections, { resolveAliases: true });
   const repoTokens = flattenRepoTokens(input.repoTokens);
   reconcilePrematurePushSnapshotKeys(figmaTokens, repoTokens);
   const variableResult = detectVariableDrift({

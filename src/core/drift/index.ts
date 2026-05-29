@@ -30,6 +30,7 @@ export {
 export { readSnapshotComponentComparables } from './snapshotComponents';
 export { readVariableSnapshotTokens } from './snapshotTokens';
 export { detectVariableDrift, flattenFigmaVariableSnapshots, flattenRepoTokens } from './variables';
+export { DRIFT_SYNC_EXCLUDED_COLLECTIONS, resolveFigmaVariableAliases } from './resolveFigmaAliases';
 export { collectFigmaComponentComparablesFromSnapshot } from './detectOrchestration';
 export { buildDriftReport } from './report';
 export { buildDriftReportMeta } from './reportMeta';

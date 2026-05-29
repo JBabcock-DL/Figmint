@@ -7,6 +7,10 @@ import { DISPLAY_NAME } from '@/core/variables/collections';
 import { resolveTokens } from '@/core/variables/resolveTokens';
 
 import { classifyThreeWay, isSynced } from './classify';
+import {
+  DRIFT_SYNC_EXCLUDED_COLLECTIONS,
+  resolveFigmaVariableAliases,
+} from './resolveFigmaAliases';
 import { toUnsyncedDriftDirection } from './types';
 import { resolveSnapshotForClassify } from './snapshotReconcile';
 import type {
@@ -75,12 +79,31 @@ function variableKey(collectionName: string, variableName: string): string {
   return collectionName + '/' + normalizedName;
 }
 
+export interface FlattenFigmaSnapshotsOptions {
+  /** Resolve VARIABLE_ALIAS mode values to literals (matches repo resolveTokens for compare/push). */
+  resolveAliases?: boolean;
+  /** Omit collections from the flattened map (defaults to Documentation when resolving aliases). */
+  excludeCollections?: string[];
+}
+
 export function flattenFigmaVariableSnapshots(
   collections: FigmaCollectionSnapshot[],
+  options?: FlattenFigmaSnapshotsOptions,
 ): Record<string, VariableComparable> {
+  const resolveAliases = options?.resolveAliases === true;
+  const exclude = new Set(
+    options?.excludeCollections !== undefined
+      ? options.excludeCollections
+      : resolveAliases
+        ? DRIFT_SYNC_EXCLUDED_COLLECTIONS
+        : [],
+  );
   const result: Record<string, VariableComparable> = {};
   for (let i = 0; i < collections.length; i++) {
     const collection = collections[i];
+    if (exclude.has(collection.name)) {
+      continue;
+    }
     for (let j = 0; j < collection.variables.length; j++) {
       const variable = collection.variables[j];
       const key = variableKey(collection.name, variable.name);
@@ -90,6 +113,9 @@ export function flattenFigmaVariableSnapshots(
         codeSyntax: Object.assign({}, variable.codeSyntax),
       };
     }
+  }
+  if (resolveAliases) {
+    return resolveFigmaVariableAliases(result, collections);
   }
   return result;
 }
