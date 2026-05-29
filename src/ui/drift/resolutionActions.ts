@@ -1,28 +1,24 @@
 import type { ComponentSpecV1, DriftReportV1, TokensV1 } from '@detroitlabs/fighub-contracts';
+import type { RepoTokensWireFormat } from '@/io/sources/adapters/serializeTokensWire';
 
 import type { ResolutionChoice } from '@/io/messages/drift';
-import type { ResolutionState } from '@/ui/drift/resolutionReducer';
-
-function resolutionsRecord(state: ResolutionState): Record<string, ResolutionChoice> {
-  const record: Record<string, ResolutionChoice> = {};
-  for (const entry of state.resolutions.entries()) {
-    record[entry[0]] = entry[1];
-  }
-  return record;
-}
+import { buildResolutionsForDriftIds } from '@/ui/drift/resolutionSelectors';
 
 export async function requestBulkPush(input: {
   repoUrl: string;
   report: DriftReportV1;
-  state: ResolutionState;
+  driftIds: string[];
+  resolutions: Record<string, ResolutionChoice>;
   repoTokens: TokensV1;
   tokensPath: string;
   specsPath?: string;
   repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
-}): Promise<{ ok: true; prUrl: string } | { ok: false; error: string }> {
+  tokensWireFormat?: RepoTokensWireFormat;
+}): Promise<
+  { ok: true; prUrl: string; warning?: string } | { ok: false; error: string }
+> {
   return new Promise(function (resolve) {
     const requestId = 'resolution-push-' + String(Date.now());
-    const driftIds = Array.from(input.state.selectedIds);
 
     function onMessage(event: MessageEvent) {
       const data = event.data;
@@ -39,7 +35,11 @@ export async function requestBulkPush(input: {
       }
       window.removeEventListener('message', onMessage);
       if (typed.ok === true && typeof typed.prUrl === 'string') {
-        resolve({ ok: true, prUrl: typed.prUrl });
+        resolve({
+          ok: true,
+          prUrl: typed.prUrl,
+          warning: typeof typed.warning === 'string' ? typed.warning : undefined,
+        });
         return;
       }
       resolve({
@@ -56,12 +56,13 @@ export async function requestBulkPush(input: {
           requestId: requestId,
           repoUrl: input.repoUrl,
           report: input.report,
-          resolutions: resolutionsRecord(input.state),
-          driftIds: driftIds,
+          resolutions: input.resolutions,
+          driftIds: input.driftIds,
           repoTokens: input.repoTokens,
           tokensPath: input.tokensPath,
           specsPath: input.specsPath,
           repoSpecs: input.repoSpecs,
+          tokensWireFormat: input.tokensWireFormat ?? 'dtcg',
         },
       },
       '*',
@@ -71,12 +72,12 @@ export async function requestBulkPush(input: {
 
 export async function requestBulkPull(input: {
   report: DriftReportV1;
-  state: ResolutionState;
+  driftIds: string[];
+  resolutions: Record<string, ResolutionChoice>;
   repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
 }): Promise<{ ok: true; appliedCount: number } | { ok: false; error: string; appliedCount?: number }> {
   return new Promise(function (resolve) {
     const requestId = 'resolution-pull-' + String(Date.now());
-    const driftIds = Array.from(input.state.selectedIds);
 
     function onMessage(event: MessageEvent) {
       const data = event.data;
@@ -113,12 +114,31 @@ export async function requestBulkPull(input: {
           type: 'resolution/bulk-pull',
           requestId: requestId,
           report: input.report,
-          resolutions: resolutionsRecord(input.state),
-          driftIds: driftIds,
+          resolutions: input.resolutions,
+          driftIds: input.driftIds,
           repoSpecs: input.repoSpecs,
         },
       },
       '*',
     );
+  });
+}
+
+export async function requestSinglePull(input: {
+  report: DriftReportV1;
+  driftId: string;
+  resolutions: Record<string, ResolutionChoice>;
+  repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
+}): Promise<{ ok: true; appliedCount: number } | { ok: false; error: string }> {
+  return requestBulkPull({
+    report: input.report,
+    driftIds: [input.driftId],
+    resolutions: input.resolutions,
+    repoSpecs: input.repoSpecs,
+  }).then(function (result) {
+    if (result.ok) {
+      return { ok: true, appliedCount: result.appliedCount };
+    }
+    return { ok: false, error: result.error };
   });
 }

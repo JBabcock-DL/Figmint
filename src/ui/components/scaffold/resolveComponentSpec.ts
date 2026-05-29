@@ -11,6 +11,14 @@ export const SPEC_RESOLUTION_PATHS = [
   },
 ] as const;
 
+export function buildSpecFilePath(specsPath: string, componentKey: string): string {
+  let base = specsPath;
+  if (base.length > 0 && base.charAt(base.length - 1) !== '/') {
+    base = base + '/';
+  }
+  return base + componentKey + '.json';
+}
+
 function isComponentSpecPayload(value: unknown): value is ComponentSpecV1 {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) {
     return false;
@@ -22,11 +30,28 @@ function isComponentSpecPayload(value: unknown): value is ComponentSpecV1 {
 export async function resolveComponentSpecFromRepo(
   repoUrl: string,
   componentKey: string,
+  specsPath?: string,
 ): Promise<
   | { ok: true; spec: ComponentSpecV1; path: string }
   | { ok: false; message: string; triedPaths: string[] }
 > {
   const triedPaths: string[] = [];
+
+  if (specsPath !== undefined && specsPath.length > 0) {
+    const configPath = buildSpecFilePath(specsPath, componentKey);
+    triedPaths.push(configPath);
+    const configResult = await loadFromGitHub(repoUrl, configPath);
+    if ('payload' in configResult && configResult.kind === 'component-spec') {
+      if (isComponentSpecPayload(configResult.payload)) {
+        return { ok: true, spec: configResult.payload, path: configPath };
+      }
+      return {
+        ok: false,
+        message: 'Invalid component-spec at ' + configPath,
+        triedPaths: triedPaths,
+      };
+    }
+  }
 
   for (let i = 0; i < SPEC_RESOLUTION_PATHS.length; i++) {
     const path = SPEC_RESOLUTION_PATHS[i](componentKey);

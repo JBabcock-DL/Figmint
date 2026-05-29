@@ -19,6 +19,7 @@ import {
 import { collectFigmaComponentComparablesFromSnapshot } from '@/core/drift/detectOrchestration';
 import {
   buildPushCommitFiles,
+  resolutionsForBulkPush,
   snapshotKeysForPushDrifts,
 } from '@/core/drift/applyPushResolutions';
 import { applyPullResolutions } from '@/core/drift/applyPullResolutions';
@@ -73,6 +74,9 @@ import {
   isGitHubContentsFetchMessage,
   isGitHubOAuthPollMessage,
   isGitHubOAuthStartMessage,
+  isGitHubRepoFetchMessage,
+  isGitHubRepoPullMessage,
+  isGitHubRepoPushMessage,
   isGitHubTokenClearMessage,
   isGitHubTokenProbeMessage,
   isGitHubTokenSaveMessage,
@@ -82,24 +86,37 @@ import {
   type GitHubErrorMessage,
   type GitHubOAuthDeviceCodeMessage,
   type GitHubOAuthPollResultMessage,
+  type GitHubRepoFetchResultMessage,
+  type GitHubRepoPullResultMessage,
+  type GitHubRepoPushResultMessage,
   type GitHubSessionLoadedMessage,
   type GitHubTokenStatusMessage,
 } from '@/io/messages/github';
 import { fetchRepoFileContents, GitHubAuthError, GitHubNotFoundError } from '@/io/github/contents';
 import { createPullRequestFlow } from '@/io/github/createPullRequestFlow';
 import { buildDefaultHeadBranch } from '@/io/github/branchName';
-import { buildDriftReportPrTitle, buildPrBody } from '@/io/github/prBody';
+import { renderDriftChangeTableMarkdown } from '@/core/drift/driftChangeSummary';
+import {
+  buildDriftReportPrTitle,
+  buildDriftResolutionPrBody,
+  buildPrBody,
+} from '@/io/github/prBody';
 import { pollDeviceFlow, startDeviceFlow } from '@/io/github/oauth';
 import { normalizeRepoUrl, parseOwnerRepo } from '@/io/github/repoUrl';
 import {
-  clearConfig,
+  fetchFigHubConfigFromRepo,
+  normalizeExportBasePath,
+  repoTokensCacheKey,
+} from '@/io/github/repoSync';
+import {
   clearLastRepoUrl,
+  clearSyncState,
   clearToken,
-  getConfig,
   getLastRepoUrl,
+  getSyncState,
   getToken,
-  setConfig,
   setLastRepoUrl,
+  setSyncState,
   setToken,
 } from '@/io/github/storage';
 import {
@@ -183,23 +200,231 @@ async function sendGitHubTokenStatus(repoUrl: string): Promise<void> {
   }
 
   const token = await getToken(normalized);
-  const config = await getConfig(normalized);
   const status: GitHubTokenStatusMessage = {
     type: 'github/token/status',
     repoUrl: normalized,
     connected: token !== null,
     scope: token !== null ? token.scope : undefined,
     tokenPreview: token !== null ? tokenPreview(token.accessToken) : undefined,
-    tokensPath: config !== null ? config.tokensPath : undefined,
   };
   figma.ui.postMessage(status);
+}
+
+async function handleGitHubRepoFetch(requestId: string, repoUrl: string): Promise<void> {
+  const normalized = normalizeRepoUrl(repoUrl);
+  const token = await getToken(normalized);
+  if (token === null) {
+    const errResponse: GitHubRepoFetchResultMessage = {
+      type: 'github/repo/fetch-result',
+      requestId: requestId,
+      ok: false,
+      error: 'GitHub is not connected for this repository.',
+    };
+    figma.ui.postMessage(errResponse);
+    return;
+  }
+
+  try {
+    const ownerRepo = parseOwnerRepo(normalized);
+    const fetched = await fetchFigHubConfigFromRepo(
+      token.accessToken,
+      ownerRepo.owner,
+      ownerRepo.repo,
+    );
+    const lastFetchedAt = new Date().toISOString();
+    await setSyncState(normalized, {
+      resolvedConfig: fetched.resolvedConfig,
+      lastFetchedAt: lastFetchedAt,
+      defaultBranch: fetched.defaultBranch,
+      configWarning: fetched.warning !== undefined ? fetched.warning : null,
+    });
+
+    const response: GitHubRepoFetchResultMessage = {
+      type: 'github/repo/fetch-result',
+      requestId: requestId,
+      ok: true,
+      config: fetched.resolvedConfig,
+      lastFetchedAt: lastFetchedAt,
+      warning: fetched.warning,
+    };
+    figma.ui.postMessage(response);
+    pluginLog('[main] github/repo/fetch ok', fetched.resolvedConfig.tokensPath);
+  } catch (error) {
+    const errResponse: GitHubRepoFetchResultMessage = {
+      type: 'github/repo/fetch-result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+    pluginLog('[main] github/repo/fetch failed', errResponse.error !== undefined ? errResponse.error : '');
+  }
+}
+
+async function handleGitHubRepoPull(requestId: string, repoUrl: string): Promise<void> {
+  const normalized = normalizeRepoUrl(repoUrl);
+  const token = await getToken(normalized);
+  if (token === null) {
+    const errResponse: GitHubRepoPullResultMessage = {
+      type: 'github/repo/pull-result',
+      requestId: requestId,
+      ok: false,
+      error: 'GitHub is not connected for this repository.',
+    };
+    figma.ui.postMessage(errResponse);
+    return;
+  }
+
+  const syncState = await getSyncState(normalized);
+  if (
+    syncState === null ||
+    syncState.resolvedConfig === null ||
+    syncState.resolvedConfig.tokensPath.length === 0
+  ) {
+    const errResponse: GitHubRepoPullResultMessage = {
+      type: 'github/repo/pull-result',
+      requestId: requestId,
+      ok: false,
+      error: 'Fetch latest first to resolve repo paths from fighub.json.',
+    };
+    figma.ui.postMessage(errResponse);
+    return;
+  }
+
+  try {
+    const ownerRepo = parseOwnerRepo(normalized);
+    const branch = syncState.resolvedConfig.designSystemBranch;
+    const contents = await fetchRepoFileContents(
+      token.accessToken,
+      ownerRepo.owner,
+      ownerRepo.repo,
+      syncState.resolvedConfig.tokensPath,
+      branch,
+    );
+    const cachedAt = new Date().toISOString();
+    await figma.clientStorage.setAsync(repoTokensCacheKey(normalized), contents.text);
+    await setSyncState(normalized, { lastPulledAt: cachedAt });
+
+    const response: GitHubRepoPullResultMessage = {
+      type: 'github/repo/pull-result',
+      requestId: requestId,
+      ok: true,
+      kind: 'tokens',
+      cachedAt: cachedAt,
+    };
+    figma.ui.postMessage(response);
+    pluginLog('[main] github/repo/pull ok', syncState.resolvedConfig.tokensPath);
+  } catch (error) {
+    let message = extractErrorMessage(error);
+    if (error instanceof GitHubAuthError || error instanceof GitHubNotFoundError) {
+      message = error.message;
+    }
+    const errResponse: GitHubRepoPullResultMessage = {
+      type: 'github/repo/pull-result',
+      requestId: requestId,
+      ok: false,
+      error: message,
+    };
+    figma.ui.postMessage(errResponse);
+    pluginLog('[main] github/repo/pull failed', message);
+  }
+}
+
+async function handleGitHubRepoPush(requestId: string, repoUrl: string): Promise<void> {
+  const normalized = normalizeRepoUrl(repoUrl);
+  const token = await getToken(normalized);
+  if (token === null) {
+    const errResponse: GitHubRepoPushResultMessage = {
+      type: 'github/repo/push-result',
+      requestId: requestId,
+      ok: false,
+      error: 'GitHub is not connected for this repository.',
+    };
+    figma.ui.postMessage(errResponse);
+    return;
+  }
+
+  const syncState = await getSyncState(normalized);
+  if (syncState === null || syncState.resolvedConfig === null) {
+    const errResponse: GitHubRepoPushResultMessage = {
+      type: 'github/repo/push-result',
+      requestId: requestId,
+      ok: false,
+      error: 'Fetch latest first to resolve export paths from fighub.json.',
+    };
+    figma.ui.postMessage(errResponse);
+    return;
+  }
+
+  pluginLog('[main] push/started');
+
+  try {
+    const ownerRepo = parseOwnerRepo(normalized);
+    const exportBase = normalizeExportBasePath(syncState.resolvedConfig.exportBasePath);
+    const stubPath = exportBase + 'sync-stub.v1.json';
+    const stubContent = JSON.stringify(
+      {
+        v: 1,
+        kind: 'ops-program',
+        meta: { generatedAt: new Date().toISOString(), source: 'fighub-push-stub' },
+        steps: [],
+      },
+      null,
+      2,
+    );
+    const headBranch = buildDefaultHeadBranch('push', new Date());
+    const commitMessage = 'fighub: push updates from Figma';
+    const prBody = buildPrBody({
+      commitMessage: commitMessage,
+      files: [{ path: stubPath, format: 'json' }],
+      pluginVersion: '0.0.0',
+      figmaFileUrl: figmaFileUrl(),
+      figmaFileName: figma.root.name,
+      contractKind: 'sync-stub',
+    });
+
+    const prResult = await createPullRequestFlow({
+      token: token.accessToken,
+      owner: ownerRepo.owner,
+      repo: ownerRepo.repo,
+      baseBranch: syncState.resolvedConfig.designSystemBranch,
+      headBranch: headBranch,
+      commitMessage: commitMessage,
+      prTitle: 'fighub: push updates from Figma',
+      prBody: prBody,
+      files: [{ path: stubPath, content: stubContent }],
+    });
+
+    const lastPushedAt = new Date().toISOString();
+    await setSyncState(normalized, { lastPushedAt: lastPushedAt });
+
+    const response: GitHubRepoPushResultMessage = {
+      type: 'github/repo/push-result',
+      requestId: requestId,
+      ok: true,
+      prUrl: prResult.prUrl,
+      prNumber: prResult.prNumber,
+      lastPushedAt: lastPushedAt,
+    };
+    figma.ui.postMessage(response);
+    pluginLog('[main] push/pr-opened', prResult.prUrl);
+  } catch (error) {
+    const message = extractErrorMessage(error);
+    const errResponse: GitHubRepoPushResultMessage = {
+      type: 'github/repo/push-result',
+      requestId: requestId,
+      ok: false,
+      error: message,
+    };
+    figma.ui.postMessage(errResponse);
+    pluginLog('[main] push/error', message);
+  }
 }
 
 async function handleGitHubTokenSave(
   repoUrl: string,
   accessToken: string,
   scope: string,
-  tokensPath?: string,
 ): Promise<void> {
   const normalized = normalizeRepoUrl(repoUrl);
   await setToken(normalized, {
@@ -208,28 +433,16 @@ async function handleGitHubTokenSave(
     createdAt: new Date().toISOString(),
     tokenType: 'bearer',
   });
-  const existingConfig = await getConfig(normalized);
-  const pathValue =
-    tokensPath !== undefined && tokensPath.length > 0
-      ? tokensPath
-      : existingConfig !== null
-        ? existingConfig.tokensPath
-        : 'design/tokens.json';
-  await setConfig(normalized, {
-    tokensPath: pathValue,
-    defaultBranch: existingConfig !== null ? existingConfig.defaultBranch : undefined,
-    exportBasePath: existingConfig !== null ? existingConfig.exportBasePath : undefined,
-    registryPath: existingConfig !== null ? existingConfig.registryPath : undefined,
-  });
   await setLastRepoUrl(normalized);
   await sendGitHubTokenStatus(normalized);
   pluginLog('[main] github/token/save ok', scope);
+  await handleGitHubRepoFetch('token-save-fetch-' + String(Date.now()), normalized);
 }
 
 async function handleGitHubTokenClear(repoUrl: string): Promise<void> {
   const normalized = normalizeRepoUrl(repoUrl);
   await clearToken(normalized);
-  await clearConfig(normalized);
+  await clearSyncState(normalized);
   const lastRepo = await getLastRepoUrl();
   if (lastRepo === normalized) {
     await clearLastRepoUrl();
@@ -246,11 +459,18 @@ async function handleGitHubSessionLoad(): Promise<void> {
 
   if (lastRepo !== null) {
     const token = await getToken(lastRepo);
-    const config = await getConfig(lastRepo);
+    const syncState = await getSyncState(lastRepo);
     response.repoUrl = lastRepo;
-    response.tokensPath =
-      config !== null && config.tokensPath.length > 0 ? config.tokensPath : 'design/tokens.json';
     response.connected = token !== null;
+    if (syncState !== null) {
+      if (syncState.resolvedConfig !== null) {
+        response.resolvedConfig = syncState.resolvedConfig;
+      }
+      response.lastFetchedAt = syncState.lastFetchedAt;
+      response.lastPulledAt = syncState.lastPulledAt;
+      response.lastPushedAt = syncState.lastPushedAt;
+      response.configWarning = syncState.configWarning;
+    }
     await sendGitHubTokenStatus(lastRepo);
   }
 
@@ -513,36 +733,54 @@ function figmaFileUrl(): string {
 async function handleResolutionBulkPush(message: ResolutionBulkPushMessage): Promise<void> {
   const requestId = message.requestId;
   try {
+    const normalized = normalizeRepoUrl(message.repoUrl);
+    const syncState = await getSyncState(normalized);
     const tokensPath =
-      message.tokensPath !== undefined && message.tokensPath.length > 0
-        ? message.tokensPath
-        : DEFAULT_TOKENS_PATH;
+      syncState !== null &&
+      syncState.resolvedConfig !== null &&
+      syncState.resolvedConfig.tokensPath.length > 0
+        ? syncState.resolvedConfig.tokensPath
+        : message.tokensPath !== undefined && message.tokensPath.length > 0
+          ? message.tokensPath
+          : DEFAULT_TOKENS_PATH;
     const specsPath =
-      message.specsPath !== undefined && message.specsPath.length > 0
-        ? message.specsPath
-        : DEFAULT_SPECS_PATH;
+      syncState !== null &&
+      syncState.resolvedConfig !== null &&
+      syncState.resolvedConfig.specsPath.length > 0
+        ? syncState.resolvedConfig.specsPath
+        : message.specsPath !== undefined && message.specsPath.length > 0
+          ? message.specsPath
+          : DEFAULT_SPECS_PATH;
     const repoSpecMap = buildFullSpecMap(message.repoSpecs);
+    const bulkResolutions = resolutionsForBulkPush(
+      message.report,
+      message.resolutions,
+      message.driftIds,
+    );
+    const tokensWireFormat =
+      message.tokensWireFormat === 'canonical' ? 'canonical' : 'dtcg';
     const staged = buildPushCommitFiles({
       report: message.report,
-      resolutions: message.resolutions,
+      resolutions: bulkResolutions,
       driftIds: message.driftIds,
       baseTokens: message.repoTokens,
       tokensPath: tokensPath,
       specsPath: specsPath,
       repoSpecs: repoSpecMap,
+      tokensWireFormat: tokensWireFormat,
     });
     if (staged.length === 0) {
       const emptyResponse: ResolutionBulkResultMessage = {
         type: 'resolution/bulk-result',
         requestId: requestId,
         ok: false,
-        error: 'No push resolutions in selection.',
+        error:
+          'No push items in selection. Choose Push on conflicts, or select push drifts (checked rows with direction push).',
       };
       figma.ui.postMessage(emptyResponse);
       return;
     }
 
-    const normalized = normalizeRepoUrl(message.repoUrl);
     const token = await getToken(normalized);
     if (token === null) {
       const authResponse: ResolutionBulkResultMessage = {
@@ -556,13 +794,18 @@ async function handleResolutionBulkPush(message: ResolutionBulkPushMessage): Pro
     }
 
     const ownerRepo = parseOwnerRepo(normalized);
-    const config = await getConfig(normalized);
     const baseBranch =
-      config !== null && config.defaultBranch !== undefined ? config.defaultBranch : 'main';
+      syncState !== null &&
+      syncState.resolvedConfig !== null &&
+      syncState.resolvedConfig.designSystemBranch.length > 0
+        ? syncState.resolvedConfig.designSystemBranch
+        : syncState !== null && syncState.defaultBranch.length > 0
+          ? syncState.defaultBranch
+          : 'main';
     const headBranch = buildDefaultHeadBranch('drift-resolution', new Date());
     const commitMessage = 'FigHub: resolve design drift (push)';
     const prTitle = buildDriftReportPrTitle(message.report.summary);
-    const prBody = buildPrBody({
+    const prBody = buildDriftResolutionPrBody({
       commitMessage: commitMessage,
       files: staged.map(function (file) {
         return { path: file.path, format: file.format };
@@ -571,6 +814,8 @@ async function handleResolutionBulkPush(message: ResolutionBulkPushMessage): Pro
       figmaFileUrl: figmaFileUrl(),
       figmaFileName: figma.root.name,
       contractKind: 'drift-report',
+      pushedCount: message.driftIds.length,
+      changeTableMarkdown: renderDriftChangeTableMarkdown(message.report, message.driftIds),
     });
 
     const prResult = await createPullRequestFlow({
@@ -587,21 +832,27 @@ async function handleResolutionBulkPush(message: ResolutionBulkPushMessage): Pro
       }),
     });
 
-    const snapshotKeys = snapshotKeysForPushDrifts(
-      message.report,
-      message.resolutions,
-      message.driftIds,
-    );
-    if (snapshotKeys.length > 0) {
-      updateSnapshotKeys(
-        snapshotKeys.map(function (entry) {
-          return {
-            key: entry.key,
-            value: entry.value,
-            source: 'push' as const,
-          };
-        }),
+    let snapshotWarning: string | undefined;
+    try {
+      const snapshotKeys = snapshotKeysForPushDrifts(
+        message.report,
+        bulkResolutions,
+        message.driftIds,
       );
+      if (snapshotKeys.length > 0) {
+        updateSnapshotKeys(
+          snapshotKeys.map(function (entry) {
+            return {
+              key: entry.key,
+              value: entry.value,
+              source: 'push' as const,
+            };
+          }),
+        );
+      }
+    } catch (snapshotError) {
+      snapshotWarning = extractErrorMessage(snapshotError);
+      pluginLog('[main] resolution/bulk-push snapshot update failed', snapshotWarning);
     }
 
     const successResponse: ResolutionBulkResultMessage = {
@@ -609,6 +860,10 @@ async function handleResolutionBulkPush(message: ResolutionBulkPushMessage): Pro
       requestId: requestId,
       ok: true,
       prUrl: prResult.prUrl,
+      warning:
+        snapshotWarning !== undefined && snapshotWarning.length > 0
+          ? 'PR opened, but canvas snapshot was not updated: ' + snapshotWarning
+          : undefined,
     };
     figma.ui.postMessage(successResponse);
     pluginLog('[main] resolution/bulk-push ok', prResult.prUrl);
@@ -772,13 +1027,17 @@ async function handleGitHubPrTestOpen(message: {
       return;
     }
     const ownerRepo = parseOwnerRepo(normalized);
-    const config = await getConfig(normalized);
+    const syncState = await getSyncState(normalized);
     const baseBranch =
       message.baseBranch !== undefined && message.baseBranch.length > 0
         ? message.baseBranch
-        : config !== null && config.defaultBranch !== undefined
-          ? config.defaultBranch
-          : 'main';
+        : syncState !== null &&
+            syncState.resolvedConfig !== null &&
+            syncState.resolvedConfig.designSystemBranch.length > 0
+          ? syncState.resolvedConfig.designSystemBranch
+          : syncState !== null && syncState.defaultBranch.length > 0
+            ? syncState.defaultBranch
+            : 'main';
     const result = await createPullRequestFlow({
       token: token.accessToken,
       owner: ownerRepo.owner,
@@ -1277,18 +1536,15 @@ figma.ui.onmessage = (message: unknown) => {
   }
 
   if (isGitHubTokenSaveMessage(message)) {
-    handleGitHubTokenSave(
-      message.repoUrl,
-      message.accessToken,
-      message.scope,
-      message.tokensPath,
-    ).catch(function (error: unknown) {
-      const errResponse: GitHubErrorMessage = {
-        type: 'github/error',
-        message: extractErrorMessage(error),
-      };
-      figma.ui.postMessage(errResponse);
-    });
+    handleGitHubTokenSave(message.repoUrl, message.accessToken, message.scope).catch(
+      function (error: unknown) {
+        const errResponse: GitHubErrorMessage = {
+          type: 'github/error',
+          message: extractErrorMessage(error),
+        };
+        figma.ui.postMessage(errResponse);
+      },
+    );
     return;
   }
 
@@ -1336,6 +1592,45 @@ figma.ui.onmessage = (message: unknown) => {
         type: 'github/contents/error',
         requestId: message.requestId,
         message: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
+  if (isGitHubRepoFetchMessage(message)) {
+    handleGitHubRepoFetch(message.requestId, message.repoUrl).catch(function (error: unknown) {
+      const errResponse: GitHubRepoFetchResultMessage = {
+        type: 'github/repo/fetch-result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
+  if (isGitHubRepoPullMessage(message)) {
+    handleGitHubRepoPull(message.requestId, message.repoUrl).catch(function (error: unknown) {
+      const errResponse: GitHubRepoPullResultMessage = {
+        type: 'github/repo/pull-result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
+  if (isGitHubRepoPushMessage(message)) {
+    handleGitHubRepoPush(message.requestId, message.repoUrl).catch(function (error: unknown) {
+      const errResponse: GitHubRepoPushResultMessage = {
+        type: 'github/repo/push-result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
       };
       figma.ui.postMessage(errResponse);
     });

@@ -1,3 +1,4 @@
+import { utf8ByteLength } from '@/core/text/utf8ByteLength';
 import type { FormatOptions, OutputFormat, SinkResult } from './types';
 import type { PreparedContent } from './prepareContent';
 
@@ -127,7 +128,7 @@ export async function writeToOutputPage(
 ): Promise<SinkResult> {
   const content = pickContent(prepared, options.format);
   const label = prepared.label;
-  const byteLength = new TextEncoder().encode(content).length;
+  const byteLength = utf8ByteLength(content);
 
   try {
     const page = findOrCreateOutputPage();

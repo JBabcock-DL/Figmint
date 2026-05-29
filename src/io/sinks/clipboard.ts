@@ -1,3 +1,4 @@
+import { utf8ByteLength } from '@/core/text/utf8ByteLength';
 import { prepareSinkContent } from './prepareContent';
 import type { FormatOptions, OutputFormat, Sink, SinkResult } from './types';
 
@@ -35,7 +36,7 @@ export const clipboardSink: Sink = {
     const prepared = prepareSinkContent(doc, options);
     const fmt = pickFormat(options);
     const text = fmt === 'json' ? prepared.json : prepared.markdown;
-    const byteLength = new TextEncoder().encode(text).length;
+    const byteLength = utf8ByteLength(text);
 
     try {
       await copyViaWriteText(text);

@@ -2,35 +2,106 @@ import { useReducer, useState } from 'react';
 
 import type { ComponentSpecV1, TokensV1 } from '@detroitlabs/fighub-contracts';
 
-import { DriftPanel } from '@/ui/components/DriftPanel';
+import { SyncChangesPanel } from '@/ui/components/SyncChangesPanel';
 import { formatRepoDisplay } from '@/ui/github/formatRepoDisplay';
 import { requestDriftReport } from '@/ui/drift/loadDriftReport';
-import { requestBulkPull, requestBulkPush } from '@/ui/drift/resolutionActions';
+import {
+  requestBulkPush,
+  requestSinglePull,
+} from '@/ui/drift/resolutionActions';
 import {
   createInitialResolutionState,
   reduceResolution,
 } from '@/ui/drift/resolutionReducer';
+import {
+  buildResolutionsForDriftIds,
+  driftIdsForStagedPush,
+  pullPendingCount,
+  stagedPushCount,
+} from '@/ui/drift/resolutionSelectors';
+import type { RepoTokensWireFormat } from '@/io/sources/adapters/serializeTokensWire';
+import type { UseRepoSyncResult } from '@/ui/sync/useRepoSync';
 
-const DEFAULT_SPECS_PATH = 'components/';
+const syncButtonStyle = {
+  fontSize: '11px',
+  fontWeight: 600,
+  minHeight: 44,
+  minWidth: 44,
+  padding: '8px 12px',
+  position: 'relative' as const,
+} as const;
+
+function badgeStyle(count: number): { display: string } | { display: 'none' } {
+  if (count <= 0) {
+    return { display: 'none' };
+  }
+  return { display: 'inline-flex' };
+}
+
+function formatRelativeTime(iso: string | null): string {
+  if (iso === null || iso.length === 0) {
+    return 'Never';
+  }
+  const then = Date.parse(iso);
+  if (Number.isNaN(then)) {
+    return 'Unknown';
+  }
+  const diffMs = Date.now() - then;
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) {
+    return 'Just now';
+  }
+  if (diffMin < 60) {
+    return String(diffMin) + ' minute' + (diffMin === 1 ? '' : 's') + ' ago';
+  }
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 48) {
+    return String(diffHr) + ' hour' + (diffHr === 1 ? '' : 's') + ' ago';
+  }
+  const diffDay = Math.floor(diffHr / 24);
+  return String(diffDay) + ' day' + (diffDay === 1 ? '' : 's') + ' ago';
+}
 
 export interface RepoSyncCardProps {
   repoUrl: string;
-  tokensPath: string;
   connected: boolean;
+  sync: UseRepoSyncResult;
   repoTokens?: TokensV1;
-  specsPath?: string;
+  repoTokensWireFormat?: RepoTokensWireFormat;
   repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
+  onConnect?: () => void;
+  onDisconnect?: () => void;
+  /** Reload repo tokens after Fetch (before drift detect). */
+  onAfterFetch?: () => Promise<void>;
 }
 
 export function RepoSyncCard(props: RepoSyncCardProps) {
   const [state, dispatch] = useReducer(reduceResolution, undefined, createInitialResolutionState);
-  const [bulkBusy, setBulkBusy] = useState(false);
+  const [syncBusy, setSyncBusy] = useState(false);
+  const [driftPushPrUrl, setDriftPushPrUrl] = useState<string | null>(null);
+  const [pushNotice, setPushNotice] = useState<string | null>(null);
+
+  const tokensPath =
+    props.sync.resolvedConfig !== null ? props.sync.resolvedConfig.tokensPath : 'design/tokens.json';
   const specsPath =
-    props.specsPath !== undefined && props.specsPath.length > 0 ? props.specsPath : DEFAULT_SPECS_PATH;
+    props.sync.resolvedConfig !== null ? props.sync.resolvedConfig.specsPath : 'components/';
+
+  const lastSynced = props.sync.lastFetchedAt;
+  const stagedCount = stagedPushCount(state);
+  const pullCount = pullPendingCount(state);
+  const repoFetchBusy = props.sync.fetching;
+  const busy = syncBusy || repoFetchBusy;
 
   function runDetect() {
-    if (!props.connected || props.repoTokens === undefined) {
-      dispatch({ type: 'detect/error', message: 'Connect GitHub and load repo tokens first.' });
+    if (!props.connected) {
+      dispatch({ type: 'detect/error', message: 'Connect GitHub first.' });
+      return;
+    }
+    if (props.repoTokens === undefined) {
+      dispatch({
+        type: 'detect/error',
+        message: 'Fetch latest first to load repo tokens for drift detection.',
+      });
       return;
     }
     dispatch({ type: 'detect/start' });
@@ -48,87 +119,240 @@ export function RepoSyncCard(props: RepoSyncCardProps) {
       });
   }
 
+  async function handleFetch() {
+    if (!props.connected) {
+      return;
+    }
+    await props.sync.fetchRepo();
+    if (props.onAfterFetch !== undefined) {
+      await props.onAfterFetch();
+    }
+    runDetect();
+  }
+
+  function handlePush() {
+    if (syncBusy || state.report === null || props.repoTokens === undefined) {
+      return;
+    }
+    const driftIds = driftIdsForStagedPush(state);
+    if (driftIds.length === 0) {
+      dispatch({
+        type: 'detect/error',
+        message: 'Commit changes in the push list first, then Push.',
+      });
+      return;
+    }
+    setSyncBusy(true);
+    setPushNotice(null);
+    void requestBulkPush({
+      repoUrl: props.repoUrl,
+      report: state.report,
+      driftIds: driftIds,
+      resolutions: buildResolutionsForDriftIds(state, driftIds),
+      repoTokens: props.repoTokens,
+      tokensPath: tokensPath,
+      specsPath: specsPath,
+      repoSpecs: props.repoSpecs,
+      tokensWireFormat: props.repoTokensWireFormat ?? 'dtcg',
+    })
+      .then(function (result) {
+        setSyncBusy(false);
+        if (result.ok) {
+          setDriftPushPrUrl(result.prUrl);
+          if (result.warning !== undefined && result.warning.length > 0) {
+            setPushNotice(result.warning);
+          }
+          dispatch({ type: 'staging/clear-after-push', driftIds: driftIds });
+          runDetect();
+          return;
+        }
+        dispatch({ type: 'detect/error', message: result.error });
+      })
+      .catch(function (error: unknown) {
+        setSyncBusy(false);
+        const message = error instanceof Error ? error.message : String(error);
+        dispatch({ type: 'detect/error', message: message });
+      });
+  }
+
+  function handleAcceptPull(driftId: string) {
+    if (syncBusy || state.report === null) {
+      return;
+    }
+    setSyncBusy(true);
+    const resolutions = buildResolutionsForDriftIds(state, [driftId]);
+    void requestSinglePull({
+      report: state.report,
+      driftId: driftId,
+      resolutions: resolutions,
+      repoSpecs: props.repoSpecs,
+    })
+      .then(function (result) {
+        setSyncBusy(false);
+        if (result.ok) {
+          dispatch({ type: 'pull/deny', driftId: driftId });
+          runDetect();
+          return;
+        }
+        dispatch({ type: 'detect/error', message: result.error });
+      })
+      .catch(function (error: unknown) {
+        setSyncBusy(false);
+        const message = error instanceof Error ? error.message : String(error);
+        dispatch({ type: 'detect/error', message: message });
+      });
+  }
+
   return (
     <div style={{ border: '1px solid #ddd', borderRadius: '6px', padding: '10px' }}>
-      <h2 style={{ fontSize: '13px', margin: '0 0 8px' }}>Repository sync</h2>
-      <p style={{ color: '#666', fontSize: '11px', margin: '0 0 8px' }}>
-        {formatRepoDisplay(props.repoUrl)} · tokens at <code>{props.tokensPath}</code>
-      </p>
-      <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' }}>
-        <button type="button" disabled style={{ fontSize: '11px', padding: '4px 10px' }}>
-          Fetch
-        </button>
-        <button type="button" disabled style={{ fontSize: '11px', padding: '4px 10px' }}>
-          Pull
-        </button>
-        <button type="button" disabled style={{ fontSize: '11px', padding: '4px 10px' }}>
-          Push
-        </button>
+      <div
+        style={{
+          alignItems: 'flex-start',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '8px',
+          justifyContent: 'space-between',
+          marginBottom: '8px',
+        }}
+      >
+        <div>
+          <h2 style={{ fontSize: '13px', margin: '0 0 4px' }}>{formatRepoDisplay(props.repoUrl)}</h2>
+          <p style={{ color: '#666', fontSize: '11px', margin: 0 }}>
+            Last synced: {formatRelativeTime(lastSynced)}
+            {state.loading ? ' · Detecting…' : null}
+          </p>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+          <button
+            type="button"
+            disabled={!props.connected || busy}
+            onClick={function () {
+              void handleFetch();
+            }}
+            style={syncButtonStyle}
+          >
+            {repoFetchBusy ? 'Fetching…' : 'Fetch latest'}
+          </button>
+          <button
+            type="button"
+            disabled={!props.connected || busy || stagedCount === 0}
+            onClick={handlePush}
+            style={syncButtonStyle}
+            aria-label={'Push committed changes (' + String(stagedCount) + ')'}
+          >
+            Push
+            <span
+              aria-hidden={stagedCount === 0}
+              style={{
+                alignItems: 'center',
+                background: '#111',
+                borderRadius: '10px',
+                color: '#fff',
+                fontSize: '10px',
+                fontWeight: 700,
+                justifyContent: 'center',
+                marginLeft: '6px',
+                minWidth: '18px',
+                padding: '2px 6px',
+                ...badgeStyle(stagedCount),
+              }}
+            >
+              {String(stagedCount)}
+            </span>
+          </button>
+          <button
+            type="button"
+            disabled={!props.connected || busy || pullCount === 0}
+            onClick={function () {
+              dispatch({ type: 'pull/panel-open' });
+            }}
+            style={syncButtonStyle}
+            aria-label={'Review pulls from repo (' + String(pullCount) + ')'}
+          >
+            Pull
+            <span
+              aria-hidden={pullCount === 0}
+              style={{
+                alignItems: 'center',
+                background: '#111',
+                borderRadius: '10px',
+                color: '#fff',
+                fontSize: '10px',
+                fontWeight: 700,
+                justifyContent: 'center',
+                marginLeft: '6px',
+                minWidth: '18px',
+                padding: '2px 6px',
+                ...badgeStyle(pullCount),
+              }}
+            >
+              {String(pullCount)}
+            </span>
+          </button>
+        </div>
       </div>
-      <p style={{ color: '#888', fontSize: '10px', margin: '0 0 10px' }}>
-        Fetch/Pull/Push ship in WO-058 Phase 2. Drift detection and bulk resolution are available now.
+
+      {props.sync.configWarning !== null && props.sync.configWarning.length > 0 ? (
+        <div
+          role="status"
+          style={{
+            background: '#fff8e6',
+            border: '1px solid #e6c200',
+            borderRadius: '6px',
+            color: '#5c4a00',
+            fontSize: '11px',
+            marginBottom: '8px',
+            padding: '8px 10px',
+          }}
+        >
+          {props.sync.configWarning} — using default paths.
+        </div>
+      ) : null}
+
+      {props.sync.error !== null && props.sync.error.length > 0 ? (
+        <p role="alert" style={{ color: '#8a1f1f', fontSize: '11px', margin: '0 0 8px' }}>
+          {props.sync.error}
+        </p>
+      ) : null}
+
+      {driftPushPrUrl !== null ? (
+        <p role="status" style={{ color: '#333', fontSize: '11px', margin: '0 0 8px' }}>
+          PR opened:{' '}
+          <a href={driftPushPrUrl} target="_blank" rel="noreferrer">
+            {driftPushPrUrl}
+          </a>
+        </p>
+      ) : props.sync.pushPrUrl !== null ? (
+        <p role="status" style={{ color: '#333', fontSize: '11px', margin: '0 0 8px' }}>
+          PR opened:{' '}
+          <a href={props.sync.pushPrUrl} target="_blank" rel="noreferrer">
+            {props.sync.pushPrUrl}
+          </a>
+        </p>
+      ) : null}
+      {pushNotice !== null ? (
+        <p role="status" style={{ color: '#5c4a00', fontSize: '11px', margin: '0 0 8px' }}>
+          {pushNotice}
+        </p>
+      ) : null}
+
+      <p style={{ color: '#767676', fontSize: '10px', margin: '0 0 4px' }}>
+        Fetch loads repo + Figma drift. Check changes to push → <strong>Commit</strong> →{' '}
+        <strong>Push</strong> opens one PR. Tap <strong>Pull</strong> to review repo → Figma changes.
       </p>
-      <DriftPanel
+      <p style={{ color: '#767676', fontSize: '10px', margin: '0 0 10px' }}>
+        Paths: tokens <code>{tokensPath}</code>, specs <code>{specsPath}</code>
+      </p>
+
+      <SyncChangesPanel
         state={state}
         dispatch={dispatch}
-        busy={bulkBusy}
-        onDetect={runDetect}
-        onBulkPush={function () {
-          if (bulkBusy || state.report === null || props.repoTokens === undefined) {
-            return;
-          }
-          setBulkBusy(true);
-          void requestBulkPush({
-            repoUrl: props.repoUrl,
-            report: state.report,
-            state: state,
-            repoTokens: props.repoTokens,
-            tokensPath: props.tokensPath,
-            specsPath: specsPath,
-            repoSpecs: props.repoSpecs,
-          })
-            .then(function (result) {
-              setBulkBusy(false);
-              if (result.ok) {
-                runDetect();
-                return;
-              }
-              dispatch({ type: 'detect/error', message: result.error });
-            })
-            .catch(function (error: unknown) {
-              setBulkBusy(false);
-              const message = error instanceof Error ? error.message : String(error);
-              dispatch({ type: 'detect/error', message: message });
-            });
-        }}
-        onBulkPull={function () {
-          if (bulkBusy || state.report === null) {
-            return;
-          }
-          setBulkBusy(true);
-          void requestBulkPull({
-            report: state.report,
-            state: state,
-            repoSpecs: props.repoSpecs,
-          })
-            .then(function (result) {
-              setBulkBusy(false);
-              if (result.ok) {
-                runDetect();
-                return;
-              }
-              dispatch({ type: 'detect/error', message: result.error });
-            })
-            .catch(function (error: unknown) {
-              setBulkBusy(false);
-              const message = error instanceof Error ? error.message : String(error);
-              dispatch({ type: 'detect/error', message: message });
-            });
-        }}
+        busy={syncBusy}
+        onAcceptPull={handleAcceptPull}
       />
-      {bulkBusy ? (
+      {syncBusy ? (
         <p role="status" style={{ color: '#666', fontSize: '10px', margin: '8px 0 0' }}>
-          Applying resolution…
+          Applying…
         </p>
       ) : null}
     </div>

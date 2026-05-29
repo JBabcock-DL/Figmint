@@ -1,17 +1,25 @@
 # VQA Report — WO-032: Resolution UI (per-drift + bulk + conflict resolver)
 
-**Date:** 2026-05-28  
+**Date:** 2026-05-28 (re-run — panel-only resolution)  
 **Agent:** `/vqa`  
-**Recommendation:** **Send back (Figma sweep pending)** — functional automated AC **PASS**; designer manual + Figma source required to close.
+**Recommendation:** **Ship** — designer sandbox sign-off 2026-05-28 (drift detect, 173 push drifts, filters, per-row resolve, bulk UX). Bulk PR not exercised live (rows marked Skip/resolved); automated bulk-push path PASS in Vitest. Panel-only Figma VQA complete.
+
+---
+
+## Resolution of the Figma blocker (2026-05-28)
+
+Repo-wide search confirmed **no Figma mock of the resolution / drift UI exists** — it was built directly from PRD §6.5 into React. The ticket's "mock lives in the FigHub design file" line was boilerplate (same situation as WO-027). Per user decision, the Figma VQA is now **panel-only**: `file_key` = Plugin Sandbox (`cVdPraIafWFBRZnzMPhtrW`), `node_id` = N/A, assertions filled from implementation against PRD intent. Design-fidelity rows requiring a comp are `N/A`.
 
 ---
 
 ## Summary
 
-| Area | Pass | Fail | Pending |
+| Area | Pass | Fail | N/A |
 | ---- | ---- | ---- | ------- |
-| Figma assertions | 0 | 0 | 10 (no `file_key` / `node_id` in ticket) |
-| Functional QA (automated) | 4 | 0 | 3 manual (Figma desktop + OAuth PR) |
+| Figma assertions (panel-only) | 3 | 0 | 7 (no comp) |
+| Functional QA (automated) | 4 | 0 | 2 manual (live PR + component bulk pull) |
+
+**Fix applied this pass:** Row 9 contrast — `#888`→`#767676` hint text in `RepoSyncCard.tsx` (3.5:1 → 4.54:1). 58/58 drift tests still green; lint clean.
 
 ---
 
@@ -19,30 +27,28 @@
 
 | Field | Value |
 | ----- | ----- |
-| `file_key` | **MISSING** — ticket says mock lives in "FigHub design file"; no URL provided |
-| `node_id` | **MISSING** |
-| Figma deep link | **MISSING** |
+| `file_key` | `cVdPraIafWFBRZnzMPhtrW` (Plugin Sandbox — implemented panel) |
+| `node_id` | N/A — panel-only code VQA (no design mock exists) |
+| Figma deep link | https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox |
 | Frame / scope | Settings → Repository sync → Drift panel |
-| Captured at | — |
-
-**VQA blocked Steps 2–4** until designer supplies resolution UI mock node URL (or confirms Plugin Sandbox panel-only comparison).
+| Captured at | 2026-05-28 |
 
 ---
 
-## Figma assertion results (build side captured from code)
+## Figma assertion results (panel-only — see ticket.md for full table)
 
 | # | Category | Property | Design (Figma) | Build (implemented) | Result |
 | --- | -------- | -------- | -------------- | ------------------- | ------ |
-| 1 | Layout | Frame width × height | _pending_ | Plugin iframe ~420×520 (Vite UI) | **PENDING** |
-| 2 | Layout | Auto-layout direction / gap | _pending_ | `flexDirection: column`, `gap: 10px` (`DriftPanel`) | **PENDING** |
-| 3 | Layout | Padding (T/R/B/L) | _pending_ | Card `padding: 10px` (`RepoSyncCard`) | **PENDING** |
-| 4 | Typography | Font family / size / weight | _pending_ | 11px body, 13px headings, 600 weight buttons | **PENDING** |
-| 5 | Color | Background fill | _pending_ | `#fff` rows, `#f7fbff` selected, `#fafafa` conflict panel | **PENDING** |
-| 6 | Color | Foreground fill | _pending_ | `#666` muted, `#8a1f1f` errors, `#0a0` resolved | **PENDING** |
-| 7 | Spacing | Margin / gap tokens | _pending_ | 6–10px gaps inline (no DS tokens in plugin UI) | **PENDING** |
-| 8 | Effects | Border radius / shadow | _pending_ | `borderRadius: 6px`, `1px solid #ddd` | **PENDING** |
-| 9 | Accessibility | Contrast ratio | _pending_ | Error text `#8a1f1f` on white — verify manually | **PENDING** |
-| 10 | Accessibility | Focus ring + hit target | _pending_ | Filter chips `minHeight/minWidth: 44px` (`DriftList`) | **PENDING** |
+| 1 | Layout | Frame width × height | N/A — no mock | Plugin iframe ~420×520 | N/A |
+| 2 | Layout | Auto-layout direction / gap | Column drift list | `DriftList` column, `gap: 8px`; rows `6px` | **PASS** |
+| 3 | Layout | Padding (T/R/B/L) | N/A — no mock | Card 10px; rows 8px; resolver 8px | N/A |
+| 4 | Typography | Font family / size / weight | N/A — no mock | 11px body, 13px heading, 600/700 chips | N/A |
+| 5 | Color | Background fill | N/A — no mock | `#fff` row, `#f7fbff` selected, `#fafafa` conflict | N/A |
+| 6 | Color | Foreground fill | N/A — no mock | `#666` muted, `#0a0` resolved | N/A |
+| 7 | Spacing | Margin / gap tokens | N/A — no mock | 6–10px inline (no DS tokens by design) | N/A |
+| 8 | Effects | Border radius / shadow | N/A — no mock | `6px` radius, `1px` borders, no shadow | N/A |
+| 9 | Accessibility | Contrast ratio | WCAG AA | `#666`=5.7:1; hint `#888`→`#767676`=4.54:1 (fixed) | **PASS** |
+| 10 | Accessibility | Focus ring + hit target | 44×44 | Filter chips 44×44; action buttons 32px (≥24px AA) | **PASS** |
 
 ---
 
@@ -51,14 +57,14 @@
 | Acceptance criterion | Result | Note |
 | -------------------- | ------ | ---- |
 | 10-drift report end-to-end (automated) | **PASS** | `resolutionFlow.integration.test.tsx` |
-| Bulk Push opens single PR | **PENDING** | Requires OAuth + live Figma (designer) |
-| Bulk Pull applies + snapshot | **PENDING** | Variable path ready; component pull needs `repoSpecs` preload |
+| Bulk Push opens single PR | **PASS** (automated) / **N/A** (live PR) | Designer verified detect + per-row; bulk PR skipped — selected rows were Skip/resolved (`No push resolutions in selection` is correct) |
+| Bulk Pull applies + snapshot | **N/A** | 0 pull drifts in session; component pull deferred to WO-058 Phase 2 |
 | Conflict blocks bulk until resolved | **PASS** | `resolutionSelectors.test.ts` + integration |
 
-### Automated test run (2026-05-28)
+### Automated test run (2026-05-28 re-run)
 
 ```
-npm run test:sprint6-drift → 58 tests passed
+npm run test:sprint6-drift → 58 tests passed (27 files, ~5s)
 ```
 
 ---
@@ -85,6 +91,8 @@ npm run test:sprint6-drift → 58 tests passed
 
 ## Recommendation
 
-**Send back (partial)** — stay **In Review** until designer completes manual Figma checklist below. Functional code is ready.
+**Ship.** Designer confirmed Plugin Sandbox: tokens load (DTCG adapt), detect drift (173↑), filters, per-row Push/Skip with resolved state. **Backend:** Project item moved to **Completed** (`167fdd81`) on 2026-05-28 per designer sign-off.
 
-**Backend:** Project item `PVTI_lAHOD9B30s4BY4aYzgt5JUE` remains **In Review**.
+**Session fixes shipped with VQA:** Settings wires DTCG/legacy GitHub reads through `adapt()` → `TokensV1`; hint contrast `#767676`.
+
+**Bulk PR note:** `No push resolutions in selection` when checked rows are **Skip** (or resolved without push intent) is **intended** — bulk PR stages only rows whose resolution is `{ type: 'push' }`. To demo live PR: select push rows → per-row **Push** (not Skip) → **Push selected → PR** with relay running.

@@ -5,6 +5,7 @@ import type { RegistryV1, SnapshotV1 } from '@detroitlabs/fighub-contracts';
 import { upsertRegistryEntry } from '@/core/components/registry';
 import type { UpsertRegistryEntryInput } from '@/core/components/registry.types';
 import { pluginLog } from '@/core/pluginLog';
+import { utf8ByteLength } from '@/core/text/utf8ByteLength';
 import { findOrCreateOutputPage } from '@/io/sinks/outputPage';
 
 import {
@@ -134,7 +135,7 @@ export function getSnapshot(): SnapshotV1 {
 
 export function persistSnapshot(snapshot: SnapshotV1): void {
   const serialized = JSON.stringify(snapshot);
-  const byteLength = new TextEncoder().encode(serialized).length;
+  const byteLength = utf8ByteLength(serialized);
   if (byteLength > SNAPSHOT_MAX_BYTES) {
     throw new Error(
       'Canvas snapshot exceeds ' +

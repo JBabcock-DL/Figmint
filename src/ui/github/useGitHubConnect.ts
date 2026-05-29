@@ -18,7 +18,6 @@ export type GitHubOAuthPhase = 'idle' | 'code' | 'polling' | 'error';
 
 export interface UseGitHubConnectOptions {
   repoUrl: string;
-  tokensPath: string;
   onStatus?: (status: GitHubTokenStatusMessage) => void;
 }
 
@@ -135,7 +134,6 @@ export function useGitHubConnect(options: UseGitHubConnectOptions): UseGitHubCon
             repoUrl: normalizeRepoUrl(options.repoUrl),
             accessToken: result.accessToken,
             scope: result.scope,
-            tokensPath: options.tokensPath,
           });
           setOauthPhase('idle');
           setStatusMessage('Authorized (scope: ' + (result.scope || 'repo') + ')');
@@ -164,7 +162,7 @@ export function useGitHubConnect(options: UseGitHubConnectOptions): UseGitHubCon
     } finally {
       pollingRef.current = false;
     }
-  }, [options.repoUrl, options.tokensPath, probeConnection, relayOk]);
+  }, [options.repoUrl, probeConnection, relayOk]);
 
   const disconnect = useCallback(function () {
     if (!isValidRepoUrl(options.repoUrl)) {

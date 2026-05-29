@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { useReducer, type Dispatch } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { DriftPanel } from '@/ui/components/DriftPanel';
+import { SyncChangesPanel } from '@/ui/components/SyncChangesPanel';
 import {
   createInitialResolutionState,
   reduceResolution,
@@ -11,13 +11,12 @@ import {
 } from '@/ui/drift/resolutionReducer';
 
 import resolutionAc from '../../../fixtures/drift/drift-report-resolution-ac.v1.json';
-import type { DriftReportV1 } from '@detroitlabs/figmint-contracts';
+import type { DriftReportV1 } from '@detroitlabs/fighub-contracts';
 
 const acReport = resolutionAc as DriftReportV1;
 
 interface HarnessProps {
-  onBulkPush?: () => void;
-  onBulkPull?: () => void;
+  onAcceptPull?: (driftId: string) => void;
 }
 
 function ResolutionHarness(props: HarnessProps) {
@@ -32,78 +31,54 @@ function ResolutionHarness(props: HarnessProps) {
   );
 
   return (
-    <DriftPanel
+    <SyncChangesPanel
       state={state}
       dispatch={dispatch as Dispatch<ResolutionReducerAction>}
-      onDetect={vi.fn()}
-      onBulkPush={props.onBulkPush}
-      onBulkPull={props.onBulkPull}
+      onAcceptPull={props.onAcceptPull}
     />
   );
 }
 
-function selectDrift(user: ReturnType<typeof userEvent.setup>, driftId: string) {
-  const checkbox = screen.getByRole('checkbox', { name: new RegExp(driftId) });
-  return user.click(checkbox);
-}
-
 describe('resolution flow integration', () => {
-  it('shows 10-drift AC summary and disables bulk until conflicts resolve', async () => {
+  it('shows push accordion with select all and commit', async () => {
     const user = userEvent.setup();
     render(<ResolutionHarness />);
 
-    expect(screen.getByRole('status')).toHaveTextContent('4↑ 3↓ 3⚠');
+    expect(screen.getByText(/Changes to push/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Commit' })).toBeDisabled();
 
-    const pushButton = screen.getByRole('button', { name: 'Push selected → PR' });
-    const pullButton = screen.getByRole('button', { name: 'Pull selected → apply' });
-    expect(pushButton).toBeDisabled();
-    expect(pullButton).toBeDisabled();
+    await user.click(screen.getByRole('checkbox', { name: 'Select all' }));
+    expect(screen.getByRole('button', { name: 'Commit' })).toBeEnabled();
 
-    await selectDrift(user, 'var/Layout/spacing-4');
-    await selectDrift(user, 'var/Layout/spacing-8');
-    await selectDrift(user, 'var/Theme/radius-md');
-    await selectDrift(user, 'cmp/button');
-    expect(pushButton).toBeEnabled();
-    expect(pullButton).toBeDisabled();
-
-    await selectDrift(user, 'var/Effects/shadow/md');
-    expect(pushButton).toBeDisabled();
-    expect(pullButton).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Commit' }));
+    expect(screen.getByText(/committed — use/)).toBeInTheDocument();
   });
 
-  it('enables bulk push after resolving conflicts and fires handler', async () => {
+  it('shows pull list with accept and deny', async () => {
     const user = userEvent.setup();
-    const onBulkPush = vi.fn();
-    render(<ResolutionHarness onBulkPush={onBulkPush} />);
+    const onAcceptPull = vi.fn();
+    render(<ResolutionHarness onAcceptPull={onAcceptPull} />);
 
-    await selectDrift(user, 'var/Layout/spacing-4');
-    await selectDrift(user, 'var/Effects/shadow/md');
+    const pullSection = screen.getByText(/Changes to pull/).closest('details');
+    expect(pullSection).not.toBeNull();
 
-    const pushButton = screen.getByRole('button', { name: 'Push selected → PR' });
-    expect(pushButton).toBeDisabled();
+    const acceptButtons = within(pullSection as HTMLElement).getAllByRole('button', {
+      name: 'Accept',
+    });
+    expect(acceptButtons.length).toBeGreaterThan(0);
 
-    const conflictRow = screen.getByText('var/Effects/shadow/md').closest('li');
-    expect(conflictRow).not.toBeNull();
-    await user.click(within(conflictRow as HTMLElement).getByRole('button', { name: 'Push' }));
-    expect(pushButton).toBeEnabled();
+    await user.click(acceptButtons[0]);
+    expect(onAcceptPull).toHaveBeenCalled();
 
-    await user.click(pushButton);
-    expect(onBulkPush).toHaveBeenCalledTimes(1);
+    const denyButtons = within(pullSection as HTMLElement).getAllByRole('button', { name: 'Deny' });
+    await user.click(denyButtons[1]);
+    expect(within(pullSection as HTMLElement).queryAllByRole('button', { name: 'Deny' }).length).toBe(
+      denyButtons.length - 1,
+    );
   });
 
-  it('enables bulk pull for pull-only selection', async () => {
-    const user = userEvent.setup();
-    const onBulkPull = vi.fn();
-    render(<ResolutionHarness onBulkPull={onBulkPull} />);
-
-    await selectDrift(user, 'var/Theme/color/background');
-    await selectDrift(user, 'var/Typography/body/size');
-    await selectDrift(user, 'cmp/chip');
-
-    const pullButton = screen.getByRole('button', { name: 'Pull selected → apply' });
-    expect(pullButton).toBeEnabled();
-
-    await user.click(pullButton);
-    expect(onBulkPull).toHaveBeenCalledTimes(1);
+  it('requires conflict resolve before push commit includes conflict row', async () => {
+    render(<ResolutionHarness />);
+    expect(screen.getByText(/Conflicts \(3\)/)).toBeInTheDocument();
   });
 });

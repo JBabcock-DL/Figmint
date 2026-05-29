@@ -1,3 +1,4 @@
+import { utf8ByteLength } from '@/core/text/utf8ByteLength';
 import type { ContractKind, LoadedDocument } from '@/io/sources/types';
 
 import type { PreparedContent } from './prepareContent';
@@ -36,7 +37,7 @@ export function writeToPluginData(
   }
 
   const value = prepared.json;
-  const byteLength = new TextEncoder().encode(value).length;
+  const byteLength = utf8ByteLength(value);
 
   if (value.length > PLUGIN_DATA_MAX_BYTES) {
     return Promise.resolve({

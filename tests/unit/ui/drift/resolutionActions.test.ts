@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { requestBulkPush } from '@/ui/drift/resolutionActions';
+import { buildResolutionsForDriftIds } from '@/ui/drift/resolutionSelectors';
 import { createInitialResolutionState } from '@/ui/drift/resolutionReducer';
 
 import driftPayload from '../../../fixtures/ui/export/drift-report.json';
@@ -15,14 +16,17 @@ describe('requestBulkPush', () => {
       configurable: true,
     });
 
+    const report = driftPayload as DriftReportV1;
     const state = createInitialResolutionState();
-    state.report = driftPayload as DriftReportV1;
-    state.selectedIds.add('cmp/button/primary');
+    state.report = report;
+    const driftIds = ['cmp/button/primary'];
+    const resolutions = buildResolutionsForDriftIds(state, driftIds);
 
     const resultPromise = requestBulkPush({
       repoUrl: 'https://github.com/detroitlabs/fighub',
-      report: driftPayload as DriftReportV1,
-      state: state,
+      report: report,
+      driftIds: driftIds,
+      resolutions: resolutions,
       repoTokens: tokensPayload as unknown as TokensV1,
       tokensPath: 'design/tokens.json',
       specsPath: 'components/',

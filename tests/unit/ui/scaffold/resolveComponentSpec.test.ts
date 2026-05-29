@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  buildSpecFilePath,
   SPEC_RESOLUTION_PATHS,
   resolveComponentSpecFromRepo,
 } from '@/ui/components/scaffold/resolveComponentSpec';
@@ -9,7 +10,38 @@ import * as githubSources from '@/io/sources/github';
 
 import canonicalFixture from '../../../fixtures/component-spec-button-canonical.json';
 
+describe('buildSpecFilePath', () => {
+  it('resolves components/Button.json from specsPath', () => {
+    expect(buildSpecFilePath('components/', 'Button')).toBe('components/Button.json');
+  });
+});
+
 describe('resolveComponentSpecFromRepo', () => {
+  it('tries config specsPath before legacy paths', async () => {
+    const loadSpy = vi.spyOn(githubSources, 'loadFromGitHub').mockResolvedValue({
+      kind: 'component-spec',
+      payload: canonicalFixture,
+      sourceMeta: {
+        port: 'github',
+        repoUrl: 'https://github.com/acme/design-system',
+        path: 'components/Button.json',
+        receivedAt: '2026-05-28T00:00:00.000Z',
+      },
+      rawSnippet: '',
+    });
+
+    const result = await resolveComponentSpecFromRepo(
+      'https://github.com/acme/design-system',
+      'Button',
+      'components/',
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.path).toBe('components/Button.json');
+    }
+    expect(loadSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('tries design/components path before legacy path', async () => {
     const loadSpy = vi.spyOn(githubSources, 'loadFromGitHub').mockResolvedValue({
       kind: 'unsupported-type',

@@ -96,3 +96,5 @@ export type {
   SnapshotRegistryEntryV1,
   SnapshotV1,
 } from './snapshot.v1';
+
+export type { FigHubJsonV1, ResolvedFigHubConfig } from './fighubJson.v1';

@@ -65,9 +65,11 @@ describe('runDocPipelinePreflightAudit', () => {
     expect(audit.meta.operation).toBe('scaffold-component');
     expect(audit.meta.scope).toBe('component');
     expect(audit.passed).toBe(false);
-    expect(audit.results).toHaveLength(1);
+    expect(audit.results).toHaveLength(2);
 
-    const row = audit.results[0];
+    const row = audit.results.find(function (r) {
+      return r.ruleId === 'doc-pipeline/required-tokens';
+    });
     expect(row?.ruleId).toBe('doc-pipeline/required-tokens');
     expect(row?.pass).toBe(false);
     expect(row?.diagnostic.startsWith('Run design-system bootstrap first.')).toBe(true);
@@ -81,7 +83,9 @@ describe('runDocPipelinePreflightAudit', () => {
     installPreflightFigmaMock({ includeColorTokens: true });
 
     const audit = await runDocPipelinePreflightAudit();
-    const row = audit.results[0];
+    const row = audit.results.find(function (r) {
+      return r.ruleId === 'doc-pipeline/required-tokens';
+    });
 
     expect(audit.passed).toBe(false);
     expect(row?.pass).toBe(false);
@@ -98,14 +102,16 @@ describe('runDocPipelinePreflightAudit', () => {
     });
 
     const audit = await runDocPipelinePreflightAudit();
-    const row = audit.results[0];
+    const row = audit.results.find(function (r) {
+      return r.ruleId === 'doc-pipeline/required-tokens';
+    });
 
     expect(audit.passed).toBe(true);
     expect(row?.pass).toBe(true);
     expect(row?.diagnostic).toBe(
       'All required tokens, text styles, and font-family variables present.',
     );
-    expect(audit.summary.rulesPassed).toBe(1);
+    expect(audit.summary.rulesPassed).toBe(2);
     expect(audit.summary.rulesFailed).toBe(0);
   });
 

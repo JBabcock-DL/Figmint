@@ -1,4 +1,5 @@
 import type { DeviceCodeResponse, DeviceTokenPollResult } from '@/io/github/deviceFlow';
+import type { ResolvedFigHubConfig } from '@detroitlabs/fighub-contracts';
 
 export interface GitHubOAuthStartMessage {
   type: 'github/oauth/start';
@@ -17,7 +18,6 @@ export interface GitHubTokenSaveMessage {
   repoUrl: string;
   accessToken: string;
   scope: string;
-  tokensPath?: string;
 }
 
 export interface GitHubTokenClearMessage {
@@ -37,9 +37,59 @@ export interface GitHubSessionLoadMessage {
 export interface GitHubSessionLoadedMessage {
   type: 'github/session/loaded';
   repoUrl?: string;
-  tokensPath?: string;
-  registryPath?: string;
   connected?: boolean;
+  resolvedConfig?: ResolvedFigHubConfig;
+  lastFetchedAt?: string | null;
+  lastPulledAt?: string | null;
+  lastPushedAt?: string | null;
+  configWarning?: string | null;
+}
+
+export interface GitHubRepoFetchMessage {
+  type: 'github/repo/fetch';
+  requestId: string;
+  repoUrl: string;
+}
+
+export interface GitHubRepoFetchResultMessage {
+  type: 'github/repo/fetch-result';
+  requestId: string;
+  ok: boolean;
+  config?: ResolvedFigHubConfig;
+  lastFetchedAt?: string;
+  warning?: string;
+  error?: string;
+}
+
+export interface GitHubRepoPullMessage {
+  type: 'github/repo/pull';
+  requestId: string;
+  repoUrl: string;
+}
+
+export interface GitHubRepoPullResultMessage {
+  type: 'github/repo/pull-result';
+  requestId: string;
+  ok: boolean;
+  kind?: string;
+  cachedAt?: string;
+  error?: string;
+}
+
+export interface GitHubRepoPushMessage {
+  type: 'github/repo/push';
+  requestId: string;
+  repoUrl: string;
+}
+
+export interface GitHubRepoPushResultMessage {
+  type: 'github/repo/push-result';
+  requestId: string;
+  ok: boolean;
+  prUrl?: string;
+  prNumber?: number;
+  lastPushedAt?: string;
+  error?: string;
 }
 
 export interface GitHubContentsFetchMessage {
@@ -70,7 +120,6 @@ export interface GitHubTokenStatusMessage {
   connected: boolean;
   scope?: string;
   tokenPreview?: string;
-  tokensPath?: string;
 }
 
 export interface GitHubContentsResultMessage {
@@ -98,7 +147,10 @@ export type GitHubMainMessage =
   | GitHubTokenClearMessage
   | GitHubTokenProbeMessage
   | GitHubSessionLoadMessage
-  | GitHubContentsFetchMessage;
+  | GitHubContentsFetchMessage
+  | GitHubRepoFetchMessage
+  | GitHubRepoPullMessage
+  | GitHubRepoPushMessage;
 
 export type GitHubUiMessage =
   | GitHubOAuthDeviceCodeMessage
@@ -107,6 +159,9 @@ export type GitHubUiMessage =
   | GitHubSessionLoadedMessage
   | GitHubContentsResultMessage
   | GitHubContentsErrorMessage
+  | GitHubRepoFetchResultMessage
+  | GitHubRepoPullResultMessage
+  | GitHubRepoPushResultMessage
   | GitHubErrorMessage;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -175,6 +230,68 @@ export function isGitHubSessionLoadedMessage(
     return false;
   }
   return message.type === 'github/session/loaded';
+}
+
+export function isGitHubRepoFetchMessage(message: unknown): message is GitHubRepoFetchMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return (
+    message.type === 'github/repo/fetch' &&
+    typeof message.requestId === 'string' &&
+    typeof message.repoUrl === 'string'
+  );
+}
+
+export function isGitHubRepoFetchResultMessage(
+  message: unknown,
+): message is GitHubRepoFetchResultMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return (
+    message.type === 'github/repo/fetch-result' && typeof message.requestId === 'string'
+  );
+}
+
+export function isGitHubRepoPullMessage(message: unknown): message is GitHubRepoPullMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return (
+    message.type === 'github/repo/pull' &&
+    typeof message.requestId === 'string' &&
+    typeof message.repoUrl === 'string'
+  );
+}
+
+export function isGitHubRepoPullResultMessage(
+  message: unknown,
+): message is GitHubRepoPullResultMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return message.type === 'github/repo/pull-result' && typeof message.requestId === 'string';
+}
+
+export function isGitHubRepoPushMessage(message: unknown): message is GitHubRepoPushMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return (
+    message.type === 'github/repo/push' &&
+    typeof message.requestId === 'string' &&
+    typeof message.repoUrl === 'string'
+  );
+}
+
+export function isGitHubRepoPushResultMessage(
+  message: unknown,
+): message is GitHubRepoPushResultMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return message.type === 'github/repo/push-result' && typeof message.requestId === 'string';
 }
 
 export function isGitHubContentsFetchMessage(

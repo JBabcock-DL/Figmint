@@ -31,6 +31,11 @@ vi.mock('@/core/components/scaffold', () => ({
   scaffold: scaffold,
 }));
 
+vi.mock('@/io/github/storage', () => ({
+  getLastRepoUrl: vi.fn().mockResolvedValue(null),
+  getSyncState: vi.fn().mockResolvedValue(null),
+}));
+
 function makePreflightAudit(passed: boolean, diagnostic: string): AuditReportV1 {
   return {
     v: 1,

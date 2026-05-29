@@ -10,6 +10,7 @@ import {
   makeThemeModeColumn,
   rehugCell,
   resolveDocStyles,
+  setExplicitModeOnNode,
 } from '@/core/canvas/lib/cells';
 import { loadFontsForCanvas } from '@/core/canvas/lib/fonts';
 import {
@@ -30,7 +31,7 @@ import { resolveThemeCollectionIds } from '@/core/canvas/themeTables';
 import type { CanvasBuildContext, CanvasBuildResult } from '@/core/canvas/types';
 
 export interface EffectsCollectionIds {
-  effectsCollectionId: string;
+  effectsCollection: VariableCollection;
   effectsLightModeId: string;
   effectsDarkModeId: string;
 }
@@ -73,17 +74,17 @@ export async function resolveEffectsCollectionIds(): Promise<EffectsCollectionId
   }
 
   return {
-    effectsCollectionId: effectsColl.id,
+    effectsCollection: effectsColl,
     effectsLightModeId: lightModeId,
     effectsDarkModeId: darkModeId,
   };
 }
 
 interface ShadowPreviewDeps {
-  effectsCollectionId: string;
+  effectsCollection: VariableCollection | null;
   effectsLightModeId: string;
   effectsDarkModeId: string;
-  themeCollectionId: string;
+  themeCollection: VariableCollection | null;
   themeLightModeId: string;
   themeDarkModeId: string;
 }
@@ -143,20 +144,8 @@ async function makeShadowPreviewCell(
 
   const effectsModeId = useDark ? deps.effectsDarkModeId : deps.effectsLightModeId;
   const themeModeId = useDark ? deps.themeDarkModeId : deps.themeLightModeId;
-  if (deps.effectsCollectionId !== '' && effectsModeId !== '') {
-    try {
-      card.setExplicitVariableModeForCollection(deps.effectsCollectionId, effectsModeId);
-    } catch {
-      /* foreign files */
-    }
-  }
-  if (deps.themeCollectionId !== '' && themeModeId !== '') {
-    try {
-      card.setExplicitVariableModeForCollection(deps.themeCollectionId, themeModeId);
-    } catch {
-      /* foreign files */
-    }
-  }
+  setExplicitModeOnNode(card, deps.effectsCollection, effectsModeId);
+  setExplicitModeOnNode(card, deps.themeCollection, themeModeId);
 
   cell.appendChild(card);
   rehugCell(cell);
@@ -179,10 +168,16 @@ async function buildShadowTierRow(
   const cellTintVar = variables['doc/table/header-surface'];
 
   const previewDeps: ShadowPreviewDeps = {
-    effectsCollectionId: String(deps.effectsCollectionId || ''),
+    effectsCollection:
+      deps.effectsCollection !== undefined && deps.effectsCollection !== null
+        ? (deps.effectsCollection as VariableCollection)
+        : null,
     effectsLightModeId: String(deps.effectsLightModeId || ''),
     effectsDarkModeId: String(deps.effectsDarkModeId || ''),
-    themeCollectionId: String(deps.themeCollectionId || ''),
+    themeCollection:
+      deps.themeCollection !== undefined && deps.themeCollection !== null
+        ? (deps.themeCollection as VariableCollection)
+        : null,
     themeLightModeId: String(deps.themeLightModeId || ''),
     themeDarkModeId: String(deps.themeDarkModeId || ''),
   };
@@ -275,7 +270,10 @@ async function buildShadowColorRow(
   const mutedVar = deps.mutedVar;
   const variableMap = deps.variableMap;
   const shadowColorVar = variableMap[data.tokenPath];
-  const effectsCollectionId = String(deps.effectsCollectionId || '');
+  const effectsCollection =
+    deps.effectsCollection !== undefined && deps.effectsCollection !== null
+      ? (deps.effectsCollection as VariableCollection)
+      : null;
   const effectsLightModeId = String(deps.effectsLightModeId || '');
   const effectsDarkModeId = String(deps.effectsDarkModeId || '');
 
@@ -290,7 +288,7 @@ async function buildShadowColorRow(
         docStyles: docStyles,
         contentVar: contentVar,
         mutedVar: mutedVar,
-        themeCollectionId: effectsCollectionId,
+        variableCollection: effectsCollection,
         modeId: effectsLightModeId,
       });
       row.appendChild(cell);
@@ -305,7 +303,7 @@ async function buildShadowColorRow(
         docStyles: docStyles,
         contentVar: contentVar,
         mutedVar: mutedVar,
-        themeCollectionId: effectsCollectionId,
+        variableCollection: effectsCollection,
         modeId: effectsDarkModeId,
       });
       row.appendChild(cell);
@@ -402,10 +400,10 @@ export async function buildEffectsPage(ctx: CanvasBuildContext): Promise<CanvasB
   suspendPageContentAutoLayout(content);
 
   const rowDeps = {
-    effectsCollectionId: effectsIds.effectsCollectionId,
+    effectsCollection: effectsIds.effectsCollection,
     effectsLightModeId: effectsIds.effectsLightModeId,
     effectsDarkModeId: effectsIds.effectsDarkModeId,
-    themeCollectionId: themeIds.themeCollectionId,
+    themeCollection: themeIds.themeCollection,
     themeLightModeId: themeIds.themeLightModeId,
     themeDarkModeId: themeIds.themeDarkModeId,
   };

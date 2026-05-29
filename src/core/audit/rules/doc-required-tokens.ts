@@ -26,6 +26,25 @@ export interface DocPipelinePreflightRulesInput {
   themeVariables: readonly Variable[];
   typographyVariables: readonly Variable[];
   textStyles: readonly { name: string }[];
+  /** Set when fighub.json was present but malformed (WO-058). Absent file is OK. */
+  fighubConfigParseError?: string;
+}
+
+export function buildFigHubConfigRow(parseError?: string): AuditRuleResult {
+  if (parseError === undefined || parseError.length === 0) {
+    return {
+      ruleId: 'doc-pipeline/fighub-config',
+      pass: true,
+      diagnostic: 'fighub.json valid or not present (defaults used).',
+      severity: 'error',
+    };
+  }
+  return {
+    ruleId: 'doc-pipeline/fighub-config',
+    pass: false,
+    diagnostic: parseError + ' — using default repo paths.',
+    severity: 'error',
+  };
 }
 
 export function buildDocRequiredTokensRow(missing: {
@@ -83,11 +102,13 @@ export function runDocPipelinePreflightRules(
     input.typographyVariables,
   );
 
-  return [
+  const rows: AuditRuleResult[] = [
     buildDocRequiredTokensRow({
       tokens: missingTokens,
       textStyles: missingTextStyles,
       fontFamilyVars: missingFontFamilyVars,
     }),
+    buildFigHubConfigRow(input.fighubConfigParseError),
   ];
+  return rows;
 }

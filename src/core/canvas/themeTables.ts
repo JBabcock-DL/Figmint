@@ -26,7 +26,7 @@ import {
 } from '@/core/canvas/projectRows/themeRows';
 
 export interface ThemeCollectionIds {
-  themeCollectionId: string;
+  themeCollection: VariableCollection;
   themeLightModeId: string;
   themeDarkModeId: string;
 }
@@ -90,7 +90,7 @@ export async function resolveThemeCollectionIds(): Promise<ThemeCollectionIds> {
   }
 
   return {
-    themeCollectionId: themeColl.id,
+    themeCollection: themeColl,
     themeLightModeId: lightModeId,
     themeDarkModeId: darkModeId,
   };
@@ -107,7 +107,10 @@ async function buildThemeRow(
   const contentVar = deps.contentVar;
   const mutedVar = deps.mutedVar;
   const variableMap = deps.variableMap;
-  const themeCollectionId = String(deps.themeCollectionId || '');
+  const themeCollection =
+    deps.themeCollection !== undefined && deps.themeCollection !== null
+      ? (deps.themeCollection as VariableCollection)
+      : null;
   const themeLightModeId = String(deps.themeLightModeId || '');
   const themeDarkModeId = String(deps.themeDarkModeId || '');
 
@@ -130,7 +133,7 @@ async function buildThemeRow(
         docStyles: docStyles,
         contentVar: contentVar,
         mutedVar: mutedVar,
-        themeCollectionId: themeCollectionId,
+        variableCollection: themeCollection,
         modeId: themeLightModeId,
       });
       row.appendChild(cell);
@@ -146,7 +149,7 @@ async function buildThemeRow(
         docStyles: docStyles,
         contentVar: contentVar,
         mutedVar: mutedVar,
-        themeCollectionId: themeCollectionId,
+        variableCollection: themeCollection,
         modeId: themeDarkModeId,
       });
       row.appendChild(cell);
@@ -263,7 +266,7 @@ export async function buildThemePage(
         rows: tableRows,
         buildRow: buildThemeRow,
         rowDeps: {
-          themeCollectionId: themeIds.themeCollectionId,
+          themeCollection: themeIds.themeCollection,
           themeLightModeId: themeIds.themeLightModeId,
           themeDarkModeId: themeIds.themeDarkModeId,
         },

@@ -61,15 +61,17 @@ describe('buildDocRequiredTokensRow (SPK-AUDIT-1/2/3)', () => {
 });
 
 describe('runDocPipelinePreflightRules', () => {
-  it('returns a single doc-pipeline/required-tokens row', () => {
+  it('returns required-tokens and fighub-config rows', () => {
     const results = runDocPipelinePreflightRules({
       themeVariables: REQUIRED_COLOR_TOKENS.map((name) => ({ name }) as Variable),
       typographyVariables: REQUIRED_FONT_FAMILY_VARS.map((name) => ({ name }) as Variable),
       textStyles: REQUIRED_TEXT_STYLES.map((name) => ({ name })),
     });
 
-    expect(results).toHaveLength(1);
+    expect(results).toHaveLength(2);
     expect(results[0]?.ruleId).toBe('doc-pipeline/required-tokens');
     expect(results[0]?.pass).toBe(true);
+    expect(results[1]?.ruleId).toBe('doc-pipeline/fighub-config');
+    expect(results[1]?.pass).toBe(true);
   });
 });

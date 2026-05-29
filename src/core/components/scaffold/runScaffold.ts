@@ -3,6 +3,7 @@
 import type { AuditReportV1, AuditRuleResult, ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { runAudit, runDocPipelinePreflightAudit } from '@/core/audit/runAudit';
+import { getLastRepoUrl, getSyncState } from '@/io/github/storage';
 import { buildRegistryAuditRows } from '@/core/components/registryAuditRows';
 import { applyBindings } from '@/core/components/scaffold/applyBindings';
 import { applyProperties } from '@/core/components/scaffold/applyProperties';
@@ -189,7 +190,20 @@ export async function runScaffoldComponent(
 
   try {
     postProgress('doc-preflight', 'running');
-    const preflightAudit = await runDocPipelinePreflightAudit();
+    let fighubConfigParseError: string | undefined;
+    const lastRepo = await getLastRepoUrl();
+    if (lastRepo !== null) {
+      const syncState = await getSyncState(lastRepo);
+      if (
+        syncState !== null &&
+        syncState.configWarning !== undefined &&
+        syncState.configWarning !== null &&
+        syncState.configWarning.length > 0
+      ) {
+        fighubConfigParseError = syncState.configWarning;
+      }
+    }
+    const preflightAudit = await runDocPipelinePreflightAudit(fighubConfigParseError);
     audits.push(preflightAudit);
     if (!preflightAudit.passed) {
       const reason = preflightAudit.results[0]?.diagnostic ?? 'Pre-flight failed';

@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildPushCommitFiles, effectiveResolutionDirection } from '@/core/drift/applyPushResolutions';
+import {
+  buildPushCommitFiles,
+  effectiveResolutionDirection,
+  resolutionsForBulkPush,
+} from '@/core/drift/applyPushResolutions';
 import { buildComponentDriftEntry } from '@/core/drift/components';
 import type { ComponentSpecV1, DriftReportV1, TokensV1, VariableDriftEntry } from '@detroitlabs/fighub-contracts';
 
@@ -88,6 +92,7 @@ describe('buildPushCommitFiles', () => {
       tokensPath: 'design/tokens.json',
       specsPath: 'components/',
       repoSpecs: { Button: buttonComponentSpec },
+      tokensWireFormat: 'canonical',
     });
 
     expect(files).toHaveLength(2);
@@ -96,6 +101,7 @@ describe('buildPushCommitFiles', () => {
     });
     expect(tokensFile).toBeDefined();
     const parsedTokens = JSON.parse(tokensFile !== undefined ? tokensFile.content : '{}') as TokensV1;
+    expect(parsedTokens.kind).toBe('tokens');
     const spacingToken = parsedTokens.tokens.find(function (token) {
       return token.collection === 'layout' && token.name === 'spacing-4';
     });
@@ -135,6 +141,60 @@ describe('buildPushCommitFiles', () => {
       report: report,
       resolutions: { 'var/Layout/spacing-8': { type: 'push' } },
       driftIds: ['var/Layout/spacing-8'],
+      baseTokens: repoTokens,
+      tokensPath: 'design/tokens.json',
+      specsPath: 'components/',
+    });
+    expect(files).toHaveLength(1);
+  });
+
+  it('writes DTCG wire JSON when tokensWireFormat is dtcg', () => {
+    const drift = variableDrift('var/Layout/spacing-4', 'push', 16, 12);
+    const report: DriftReportV1 = {
+      v: 1,
+      kind: 'drift-report',
+      meta: {
+        generatedAt: '2026-05-28T00:00:00.000Z',
+        figmaFileKey: 'demo',
+        repoUrl: 'https://github.com/detroitlabs/fighub',
+      },
+      summary: { push: 1, pull: 0, conflict: 0, synced: 0 },
+      drifts: [drift],
+    };
+    const files = buildPushCommitFiles({
+      report: report,
+      resolutions: {},
+      driftIds: ['var/Layout/spacing-4'],
+      baseTokens: repoTokens,
+      tokensPath: 'design/tokens.json',
+      specsPath: 'components/',
+      tokensWireFormat: 'dtcg',
+    });
+    const tokensFile = files[0];
+    const parsed = JSON.parse(tokensFile.content) as Record<string, unknown>;
+    expect(parsed.kind).toBeUndefined();
+    expect(parsed.layout !== undefined || parsed.primitives !== undefined).toBe(true);
+  });
+
+  it('bulk push includes selected push drifts even when marked skip', () => {
+    const drift = variableDrift('var/Layout/spacing-4', 'push', 16, 12);
+    const report: DriftReportV1 = {
+      v: 1,
+      kind: 'drift-report',
+      meta: {
+        generatedAt: '2026-05-28T00:00:00.000Z',
+        figmaFileKey: 'demo',
+        repoUrl: 'https://github.com/detroitlabs/fighub',
+      },
+      summary: { push: 1, pull: 0, conflict: 0, synced: 0 },
+      drifts: [drift],
+    };
+    const resolutions = { 'var/Layout/spacing-4': { type: 'skip' as const } };
+    const bulkResolutions = resolutionsForBulkPush(report, resolutions, ['var/Layout/spacing-4']);
+    const files = buildPushCommitFiles({
+      report: report,
+      resolutions: bulkResolutions,
+      driftIds: ['var/Layout/spacing-4'],
       baseTokens: repoTokens,
       tokensPath: 'design/tokens.json',
       specsPath: 'components/',

@@ -196,6 +196,7 @@ export interface ResolutionBulkPushMessage {
   tokensPath?: string;
   specsPath?: string;
   repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
+  tokensWireFormat?: 'dtcg' | 'canonical';
 }
 
 export interface ResolutionBulkPullMessage {
@@ -214,6 +215,7 @@ export interface ResolutionBulkResultMessage {
   prUrl?: string;
   appliedCount?: number;
   error?: string;
+  warning?: string;
 }
 
 export function isDriftDetectQuickMessage(message: unknown): message is DriftDetectQuickMessage {

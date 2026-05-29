@@ -225,7 +225,9 @@ async function getLocalTextStyles(): Promise<TextStyle[]> {
   return [];
 }
 
-export async function runDocPipelinePreflightAudit(): Promise<AuditReportV1> {
+export async function runDocPipelinePreflightAudit(
+  fighubConfigParseError?: string,
+): Promise<AuditReportV1> {
   const collections = await getLocalVariableCollections();
   const themeCollection = collections.find((collection) => collection.name === 'Theme');
   const typoCollection = collections.find((collection) => collection.name === 'Typography');
@@ -243,6 +245,7 @@ export async function runDocPipelinePreflightAudit(): Promise<AuditReportV1> {
     themeVariables,
     typographyVariables,
     textStyles,
+    fighubConfigParseError: fighubConfigParseError,
   });
   const passed = computePassed(results);
   const fileKey = readFigmaFileKey();

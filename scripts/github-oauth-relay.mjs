@@ -161,7 +161,9 @@ const server = createServer(async (req, res) => {
       return;
     }
     const result = await githubApiRequest(method, path, token, body.body);
-    sendJson(res, result.ok ? 200 : result.status, result);
+    // Always HTTP 200 — GitHub status lives in `status` / `ok` / `body` (plugin checks those).
+    // Forwarding GitHub 404 as HTTP 404 broke Fetch when fighub.json is absent (expected).
+    sendJson(res, 200, result);
     return;
   }
 
@@ -173,7 +175,7 @@ const server = createServer(async (req, res) => {
       return;
     }
     const result = await githubApiGet(path.startsWith('/') ? path : `/${path}`, token);
-    sendJson(res, result.ok ? 200 : result.status, result);
+    sendJson(res, 200, result);
     return;
   }
 

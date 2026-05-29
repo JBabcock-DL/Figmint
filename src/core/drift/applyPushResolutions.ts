@@ -13,6 +13,10 @@ import { kebabCase } from './componentKeys';
 import type { ComponentComparable, VariableComparable } from './types';
 import { parseVariableDriftId } from './variableKeys';
 import type { ResolutionChoice } from '@/io/messages/drift';
+import {
+  serializeTokensForRepo,
+  type RepoTokensWireFormat,
+} from '@/io/sources/adapters/serializeTokensWire';
 
 const COLLECTION_NAME_TO_ID: Record<string, CollectionId> = {
   Primitives: 'primitives',
@@ -36,6 +40,7 @@ export interface BuildPushCommitFilesInput {
   tokensPath: string;
   specsPath: string;
   repoSpecs?: Record<string, ComponentSpecV1>;
+  tokensWireFormat?: RepoTokensWireFormat;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -66,6 +71,32 @@ function extractComponentComparable(payload: unknown): ComponentComparable | nul
     return payload as unknown as ComponentComparable;
   }
   return null;
+}
+
+function findDriftInReport(report: DriftReportV1, driftId: string): DriftEntry | null {
+  for (let i = 0; i < report.drifts.length; i++) {
+    if (report.drifts[i].id === driftId) {
+      return report.drifts[i];
+    }
+  }
+  return null;
+}
+
+/** Bulk "Push selected → PR" treats checked push drifts as push; per-row Skip does not block. */
+export function resolutionsForBulkPush(
+  report: DriftReportV1,
+  resolutions: Record<string, ResolutionChoice>,
+  driftIds: string[],
+): Record<string, ResolutionChoice> {
+  const adjusted: Record<string, ResolutionChoice> = Object.assign({}, resolutions);
+  for (let i = 0; i < driftIds.length; i++) {
+    const driftId = driftIds[i];
+    const drift = findDriftInReport(report, driftId);
+    if (drift !== null && drift.direction === 'push' && adjusted[driftId]?.type === 'skip') {
+      delete adjusted[driftId];
+    }
+  }
+  return adjusted;
 }
 
 export function effectiveResolutionDirection(
@@ -249,9 +280,11 @@ export function buildPushCommitFiles(input: BuildPushCommitFilesInput): PushComm
   const files: PushCommitFile[] = [];
   if (pushTokensList.length > 0) {
     const merged = mergeTokensForPush(input.baseTokens, pushTokensList);
+    const wireFormat =
+      input.tokensWireFormat !== undefined ? input.tokensWireFormat : 'dtcg';
     files.push({
       path: input.tokensPath,
-      content: JSON.stringify(merged, null, 2),
+      content: serializeTokensForRepo(merged, wireFormat),
       format: 'json',
     });
   }

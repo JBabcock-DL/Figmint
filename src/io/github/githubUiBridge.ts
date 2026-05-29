@@ -133,7 +133,6 @@ export function postTokenSave(input: {
   repoUrl: string;
   accessToken: string;
   scope: string;
-  tokensPath?: string;
 }): void {
   parent.postMessage(
     {
@@ -142,7 +141,6 @@ export function postTokenSave(input: {
         repoUrl: input.repoUrl,
         accessToken: input.accessToken,
         scope: input.scope,
-        tokensPath: input.tokensPath,
       },
     },
     '*',
@@ -175,9 +173,12 @@ export function postTokenProbe(repoUrl: string): void {
 
 export interface GitHubSessionSnapshot {
   repoUrl?: string;
-  tokensPath?: string;
-  registryPath?: string;
   connected?: boolean;
+  resolvedConfig?: import('@detroitlabs/fighub-contracts').ResolvedFigHubConfig;
+  lastFetchedAt?: string | null;
+  lastPulledAt?: string | null;
+  lastPushedAt?: string | null;
+  configWarning?: string | null;
 }
 
 export function loadGitHubSession(timeoutMs?: number): Promise<GitHubSessionSnapshot> {
@@ -194,9 +195,12 @@ export function loadGitHubSession(timeoutMs?: number): Promise<GitHubSessionSnap
         window.removeEventListener('message', onMessage);
         resolve({
           repoUrl: message.repoUrl,
-          tokensPath: message.tokensPath,
-          registryPath: message.registryPath,
           connected: message.connected,
+          resolvedConfig: message.resolvedConfig,
+          lastFetchedAt: message.lastFetchedAt,
+          lastPulledAt: message.lastPulledAt,
+          lastPushedAt: message.lastPushedAt,
+          configWarning: message.configWarning,
         });
         return;
       }

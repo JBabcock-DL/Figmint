@@ -68,4 +68,8 @@ All N/A.
 
 - **Backend:** GitHub — issue [#29](https://github.com/JBabcock-DL/FigHub/issues/29)
 - **Project item:** `PVTI_lAHOD9B30s4BY4aYzgt5JOI`
-- **Status:** **In Review** (`594e69fa`) — subsystem Ship; Completed blocked on WO-027 integrated sandbox
+- **Status:** **In Review** (`594e69fa`) — do **not** move to **Completed**; ticket is **superseded by WO-058** (`.fighub-registry.json` deleted in Phase 1). Close issue #29 as **Won't Do** when WO-058 ships (plan Step 32) or on your approval now that registry repo paths are gone from `src/`.
+
+## Supersession note (2026-05-28 re-VQA)
+
+Functional tests still pass for the legacy module, but the product path is retired. No further designer VQA on WO-026 — treat as bookkeeping only.

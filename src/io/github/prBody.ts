@@ -41,6 +41,23 @@ export function buildPrBody(input: BuildPrBodyInput): string {
   return lines.join('\n');
 }
 
+export interface BuildDriftResolutionPrBodyInput extends BuildPrBodyInput {
+  pushedCount: number;
+  changeTableMarkdown: string;
+}
+
+export function buildDriftResolutionPrBody(input: BuildDriftResolutionPrBodyInput): string {
+  const base = buildPrBody(input);
+  return (
+    base +
+    '\n\n## Changes in this push (' +
+    String(input.pushedCount) +
+    ')\n\n' +
+    'Figma values below are what will land in the repo after merge.\n\n' +
+    input.changeTableMarkdown
+  );
+}
+
 export function buildDriftReportPrTitle(
   summary: import('@detroitlabs/fighub-contracts').DriftReportSummary,
   sprintLabel?: string,

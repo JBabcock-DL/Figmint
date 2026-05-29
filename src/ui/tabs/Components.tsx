@@ -53,12 +53,14 @@ function cloneSpec(spec: ComponentSpecV1): ComponentSpecV1 {
 export interface ComponentsTabProps {
   repoUrl: string;
   github: UseGitHubConnectResult;
+  specsPath?: string;
   onOpenSettings?: () => void;
 }
 
 export function Components({
   repoUrl,
   github,
+  specsPath,
   onOpenSettings,
 }: ComponentsTabProps) {
   const [registryKeys, setRegistryKeys] = useState<string[]>([]);
@@ -175,7 +177,7 @@ export function Components({
         return;
       }
       setRegistryStatus('Resolving spec for ' + key + '…');
-      const resolved = await resolveComponentSpecFromRepo(repoUrl, key);
+      const resolved = await resolveComponentSpecFromRepo(repoUrl, key, specsPath);
       if (!resolved.ok) {
         setRegistryStatus(resolved.message + ' Tried: ' + resolved.triedPaths.join(', '));
         return;
@@ -185,7 +187,7 @@ export function Components({
       setRegistryStatus('Spec ready: ' + resolved.path);
       dispatchProgress({ type: 'scaffold/reset' });
     },
-    [github.connected, repoUrl],
+    [github.connected, repoUrl, specsPath],
   );
 
   const updateDraftField = useCallback(function (

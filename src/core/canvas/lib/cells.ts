@@ -123,6 +123,22 @@ export async function makeCaptionText(
   return text;
 }
 
+/** Set preview frame to a specific collection mode (Figma API: pass collection node, not id). */
+export function setExplicitModeOnNode(
+  node: FrameNode,
+  collection: VariableCollection | null | undefined,
+  modeId: string,
+): void {
+  if (collection === null || collection === undefined || modeId === '') {
+    return;
+  }
+  try {
+    node.setExplicitVariableModeForCollection(collection, modeId);
+  } catch {
+    /* mode override may fail on foreign files */
+  }
+}
+
 export interface ThemeModeColumnOptions {
   colWidth: number;
   modeSlug: 'light' | 'dark';
@@ -132,7 +148,8 @@ export interface ThemeModeColumnOptions {
   docStyles: DocStyleIds;
   contentVar: Variable | null;
   mutedVar: Variable | null;
-  themeCollectionId: string;
+  /** Collection that owns the bound preview variable (Theme or Effects). */
+  variableCollection: VariableCollection | null;
   modeId: string;
 }
 
@@ -166,13 +183,7 @@ export async function makeThemeModeColumn(opts: ThemeModeColumnOptions): Promise
   }
   preview.appendChild(rect);
 
-  if (opts.themeCollectionId !== '' && opts.modeId !== '') {
-    try {
-      preview.setExplicitVariableModeForCollection(opts.themeCollectionId, opts.modeId);
-    } catch {
-      /* mode override may fail on foreign files */
-    }
-  }
+  setExplicitModeOnNode(preview, opts.variableCollection, opts.modeId);
 
   const textWidth = Math.max(40, opts.colWidth - 36);
   const hexText = await makeTableText(

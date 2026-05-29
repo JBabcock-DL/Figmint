@@ -173,7 +173,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 
 ### Phase 2 — fighub.json + Settings collapse
 
-- [ ] **Step 14** — Add `packages/contracts/src/fighubJson.v1.ts`:
+- [x] **Step 14** — Add `packages/contracts/src/fighubJson.v1.ts`:
   ```typescript
   export interface FigHubJsonV1 {
     v: 1;
@@ -193,7 +193,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   Export from `packages/contracts/src/index.ts`.
   **Done when:** typecheck passes.
 
-- [ ] **Step 15** — Implement `src/io/formats/fighubJson.ts`:
+- [x] **Step 15** — Implement `src/io/formats/fighubJson.ts`:
   - `FIGHUB_JSON_FILENAME = 'fighub.json'`
   - `FIGHUB_JSON_DEFAULTS` per research (tokens `design/tokens.json`, specs `components/`, export `docs/fighub/`, branch null)
   - `parseFigHubJson(text: string): { ok: true; value: FigHubJsonV1 } | { ok: false; error: string }`
@@ -201,7 +201,7 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   - Validate: `v === 1`; if `kind` present must be `'fighub-config'`
   **Done when:** `tests/unit/io/formats/fighubJson.test.ts` — valid parse, absent→defaults, malformed v2 fails, extra keys OK.
 
-- [ ] **Step 16** — Refactor `src/io/github/storage.ts`:
+- [x] **Step 16** — Refactor `src/io/github/storage.ts`:
   - Replace `StoredGitHubConfig` fields `tokensPath`/`registryPath` with:
     ```typescript
     export interface StoredRepoSyncState {
@@ -216,13 +216,13 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   - `getSyncState(repoUrl)`, `setSyncState(repoUrl, partial)`
   **Done when:** unit test legacy config migration.
 
-- [ ] **Step 17** — Extend `src/io/messages/github.ts`:
+- [x] **Step 17** — Extend `src/io/messages/github.ts`:
   - Add `GitHubRepoFetchMessage`, `GitHubRepoFetchResultMessage`, `GitHubRepoPullMessage`, `GitHubRepoPullResultMessage` per research §11
   - Remove `registryPath` from `GitHubSessionLoadedMessage` and `GitHubTokenSaveMessage`
   - Add type guards
   **Done when:** typecheck passes; old registryPath fields gone.
 
-- [ ] **Step 18** — Implement `handleGitHubRepoFetch` in `src/main.ts`:
+- [x] **Step 18** — Implement `handleGitHubRepoFetch` in `src/main.ts`:
   1. Resolve default branch via relay `GET /repos/{owner}/{repo}` → `default_branch`
   2. Fetch `fighub.json` at repo root; 404 → `resolveFigHubConfig(null)`
   3. Parse; malformed → `warning` string + defaults
@@ -230,12 +230,12 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   5. Post `github/repo/fetch-result`
   **Done when:** unit test with mocked relay — missing file uses defaults; bad JSON sets warning.
 
-- [ ] **Step 19** — Auto-fetch after OAuth connect:
+- [x] **Step 19** — Auto-fetch after OAuth connect:
   - In `handleGitHubTokenSave`, after save, fire internal fetch (same handler)
   - Update `handleGitHubSessionLoad` to return `resolvedConfig` + timestamps, not paths
   **Done when:** connect flow triggers fetch in integration test mock.
 
-- [ ] **Step 20** — Implement `handleGitHubRepoPull` in `src/main.ts`:
+- [x] **Step 20** — Implement `handleGitHubRepoPull` in `src/main.ts`:
   1. Require connected token + cached `resolvedConfig` (else error "Fetch first")
   2. `loadFromGitHub` equivalent for `resolvedConfig.tokensPath`
   3. Cache tokens JSON text in `clientStorage` key `fighub:repo:{hash}:tokens`
@@ -243,13 +243,13 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   5. Post result with `{ ok, kind, cachedAt }`
   **Done when:** unit test caches tokens on pull.
 
-- [ ] **Step 21** — Add `src/ui/sync/useRepoSync.ts`:
+- [x] **Step 21** — Add `src/ui/sync/useRepoSync.ts`:
   - State: `{ fetching, pulling, pushing, lastFetchedAt, lastPulledAt, lastPushedAt, configWarning, error }`
   - `fetchRepo()`, `pullDesignSystem()`, `pushUpdates()` — postMessage wrappers
   - Listen for `github/repo/*-result` messages
   **Done when:** hook test with mocked parent.postMessage.
 
-- [ ] **Step 22** — Add `src/ui/components/RepoSyncCard.tsx`:
+- [x] **Step 22** — Add `src/ui/components/RepoSyncCard.tsx`:
   - Props: `repoUrl`, `connected`, `displayName` (from `formatRepoDisplay`), sync hook state, OAuth connect/disconnect callbacks
   - Layout: repo name top-left; "Last synced: {relative time from lastFetchedAt}"; buttons **Fetch latest**, **Pull design system**, **Push updates** right-aligned
   - Warning banner when `configWarning` set (malformed fighub.json)
@@ -257,30 +257,30 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   - Drift stub section (Step 31): collapsible placeholder
   **Done when:** `tests/unit/ui/components/RepoSyncCard.test.tsx` renders buttons; no path inputs.
 
-- [ ] **Step 23** — Rewrite `src/ui/tabs/Settings.tsx`:
+- [x] **Step 23** — Rewrite `src/ui/tabs/Settings.tsx`:
   - Keep repo URL input + Connect/Disconnect (OAuth via `useGitHubConnect`)
   - Replace path inputs + smoke tests with `<RepoSyncCard />`
   - Remove `tokensPath`, `registryPath` from `SettingsProps`
   **Done when:** Settings renders zero `<input>` for tokens/registry paths; visual QA checklist satisfied.
 
-- [ ] **Step 24** — Simplify `src/ui/github/useGitHubSession.ts`:
+- [x] **Step 24** — Simplify `src/ui/github/useGitHubSession.ts`:
   - Remove `tokensPath`, `registryPath`, setters
   - Keep `repoUrl`, `sessionReady`
   - Hydrate sync timestamps from session loaded message
   **Done when:** App.tsx updated; typecheck passes.
 
-- [ ] **Step 25** — Update `src/ui/components/scaffold/resolveComponentSpec.ts`:
+- [x] **Step 25** — Update `src/ui/components/scaffold/resolveComponentSpec.ts`:
   - Accept `specsPath` from `ResolvedFigHubConfig` (passed from Components via session) instead of hardcoded paths
   - Build path: `{specsPath}{specName}.json` with trailing slash normalization
   **Done when:** unit test resolves `components/Button.json`.
 
-- [ ] **Step 26** — Update `src/io/github/githubUiBridge.ts` + `handleGitHubTokenSave`:
+- [x] **Step 26** — Update `src/io/github/githubUiBridge.ts` + `handleGitHubTokenSave`:
   - Stop persisting `tokensPath` on token save
   **Done when:** `grep tokensPath src/io/github/storage.ts` only in migration comment.
 
 ### Phase 3 — Push + gates + close-out
 
-- [ ] **Step 27** — Implement `handleGitHubRepoPush` in `src/main.ts`:
+- [x] **Step 27** — Implement `handleGitHubRepoPush` in `src/main.ts`:
   1. Require token + `resolvedConfig`
   2. Build staged file: `{ path: exportBasePath + 'sync-stub.v1.json', content: minimal ops-program stub }`
   3. Call `createPullRequestFromContext` / existing PR flow with:
@@ -291,29 +291,29 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
   5. Update `lastPushedAt`
   **Done when:** unit test mocks PR flow; manual SPK-058-5 optional.
 
-- [ ] **Step 28** — Wire Push in `useRepoSync.pushUpdates()` → `github/repo/push` message; display PR URL in RepoSyncCard status line.
+- [x] **Step 28** — Wire Push in `useRepoSync.pushUpdates()` → `github/repo/push` message; display PR URL in RepoSyncCard status line.
   **Done when:** UI test receives mock PR URL.
 
-- [ ] **Step 29** — Remove Settings dev PR smoke test section (lines 235–252 old Settings) — replaced by Push button.
+- [x] **Step 29** — Remove Settings dev PR smoke test section (lines 235–252 old Settings) — replaced by Push button.
   **Done when:** no `github/pr/test-open` from Settings except if guarded by `import.meta.env.DEV` flag (optional keep).
 
-- [ ] **Step 30** — Extend doc preflight for malformed fighub.json:
+- [x] **Step 30** — Extend doc preflight for malformed fighub.json:
   - Add optional input to `DocPipelinePreflightRulesInput`: `fighubConfigParseError?: string`
   - New rule `doc-pipeline/fighub-config` — pass when no error; fail when malformed (absent OK)
   - Wire from scaffold preflight when sync state has warning
   **Done when:** `tests/unit/audit/doc-required-tokens.test.ts` or new file covers malformed vs absent.
 
-- [ ] **Step 31** — Drift badge stub on RepoSyncCard:
+- [x] **Step 31** — Drift badge stub on RepoSyncCard:
   - Collapsed section: "Drift summary — coming soon" with disabled "Refresh drift" button
   - Optional: `DriftSummaryContext` placeholder in `src/ui/sync/DriftSummaryContext.tsx` exporting `{ push:0, pull:0, conflict:0 }`
   **Done when:** component renders stub; WO-029 can replace without Settings restructure.
 
-- [ ] **Step 32** — Close WO-026 on GitHub:
+- [x] **Step 32** — Close WO-026 on GitHub:
   - `gh issue close 29 --repo JBabcock-DL/FigHub --reason "not planned"` with comment "Superseded by WO-058"
   - Update local WO-026 ticket note if present
   **Done when:** issue #29 closed.
 
-- [ ] **Step 33** — CI gate:
+- [x] **Step 33** — CI gate:
   ```bash
   npm run typecheck && npm run lint && npm run format:check && npm run build
   ```
@@ -389,6 +389,8 @@ Replace the designer-hostile three-path Settings model (repo URL + tokens path +
 ## Notes
 
 - **2026-05-28 Phase 1 build complete.** Snapshot SSOT on `_FigHubSnapshotStore` frame (`fighub:snapshot:v1` pluginData). Deleted `registryExport.ts`, `loadRegistryFromRepo.ts`, `constants.ts`. Export sandbox helpers moved to `src/ui/export/registryExportSandbox.ts`. `comp/registry-envelope` + `comp/registry-filekey` audit rows removed. Components tab auto-loads canvas snapshot on mount; post-scaffold registry PR export removed. Settings registry path field removed (Phase 2 adds RepoSyncCard). Tests: 581 passed | 1 skipped. Gate: zero `.fighub-registry` refs in `src/`.
+
+- **2026-05-28 Phase 2–3 build complete.** `fighub.json` contract + parser; `StoredRepoSyncState` with legacy migration; Fetch/Pull/Push main handlers + `useRepoSync` hook; Settings collapsed to repo URL + OAuth + `RepoSyncCard` (44px buttons, drift stub); session messages drop `tokensPath`/`registryPath`; `resolveComponentSpec` uses `specsPath`; `doc-pipeline/fighub-config` preflight rule. Tests: 664 passed | 1 skipped; `npm run build` green. Step 34 manual VQA pending.
 
 - **ES2017:** no `?.`, `??`, `replaceAll` in `src/main.ts` / `src/core/sync/**`
 - **Logging:** `pluginLog()` only on main thread

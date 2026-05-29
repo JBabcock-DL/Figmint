@@ -25,7 +25,6 @@ export function App() {
   const githubSession = useGitHubSession();
   const github = useGitHubConnect({
     repoUrl: githubSession.repoUrl,
-    tokensPath: githubSession.tokensPath,
   });
 
   useEffect(function () {
@@ -156,6 +155,11 @@ export function App() {
         <Components
           repoUrl={githubSession.repoUrl}
           github={github}
+          specsPath={
+            githubSession.resolvedConfig !== null
+              ? githubSession.resolvedConfig.specsPath
+              : undefined
+          }
           onOpenSettings={function () {
             setActiveTab('settings');
           }}
@@ -169,10 +173,13 @@ export function App() {
       <TabPanel id={TAB_PANEL_IDS.settings} active={activeTab === 'settings'}>
         <Settings
           repoUrl={githubSession.repoUrl}
-          tokensPath={githubSession.tokensPath}
           onRepoUrlChange={githubSession.setRepoUrl}
-          onTokensPathChange={githubSession.setTokensPath}
           github={github}
+          sessionResolvedConfig={githubSession.resolvedConfig}
+          sessionLastFetchedAt={githubSession.lastFetchedAt}
+          sessionLastPulledAt={githubSession.lastPulledAt}
+          sessionLastPushedAt={githubSession.lastPushedAt}
+          sessionConfigWarning={githubSession.configWarning}
         />
       </TabPanel>
     </main>

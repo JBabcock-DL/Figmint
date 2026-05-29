@@ -122,6 +122,17 @@ export async function githubApiViaRelay(
   });
 
   const payload = (await response.json()) as Record<string, unknown>;
+
+  // GitHub API status is in the JSON body (`status`, `ok`, `body`). Older relay builds
+  // incorrectly forwarded GitHub 404 as HTTP 404 — still parse when the envelope is present.
+  if (typeof payload.status === 'number' && 'body' in payload) {
+    return {
+      status: payload.status,
+      ok: payload.ok === true,
+      body: payload.body,
+    };
+  }
+
   if (!response.ok) {
     const message =
       typeof payload.error === 'string' ? payload.error : `Relay HTTP ${response.status}`;

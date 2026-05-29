@@ -1,22 +1,29 @@
 import { useEffect, useState } from 'react';
 
-import { loadGitHubSession } from '@/io/github/githubUiBridge';
+import type { ResolvedFigHubConfig } from '@detroitlabs/fighub-contracts';
 
-const DEFAULT_TOKENS_PATH = 'design/tokens.json';
+import { loadGitHubSession } from '@/io/github/githubUiBridge';
 
 export interface GitHubSessionState {
   repoUrl: string;
   setRepoUrl: (value: string) => void;
-  tokensPath: string;
-  setTokensPath: (value: string) => void;
   sessionReady: boolean;
+  resolvedConfig: ResolvedFigHubConfig | null;
+  lastFetchedAt: string | null;
+  lastPulledAt: string | null;
+  lastPushedAt: string | null;
+  configWarning: string | null;
 }
 
 /** Shared GitHub repo settings — survives tab switches; hydrated from main-thread clientStorage. */
 export function useGitHubSession(): GitHubSessionState {
   const [repoUrl, setRepoUrl] = useState('');
-  const [tokensPath, setTokensPath] = useState(DEFAULT_TOKENS_PATH);
   const [sessionReady, setSessionReady] = useState(false);
+  const [resolvedConfig, setResolvedConfig] = useState<ResolvedFigHubConfig | null>(null);
+  const [lastFetchedAt, setLastFetchedAt] = useState<string | null>(null);
+  const [lastPulledAt, setLastPulledAt] = useState<string | null>(null);
+  const [lastPushedAt, setLastPushedAt] = useState<string | null>(null);
+  const [configWarning, setConfigWarning] = useState<string | null>(null);
 
   useEffect(function () {
     let cancelled = false;
@@ -28,8 +35,20 @@ export function useGitHubSession(): GitHubSessionState {
         if (session.repoUrl !== undefined && session.repoUrl.length > 0) {
           setRepoUrl(session.repoUrl);
         }
-        if (session.tokensPath !== undefined && session.tokensPath.length > 0) {
-          setTokensPath(session.tokensPath);
+        if (session.resolvedConfig !== undefined) {
+          setResolvedConfig(session.resolvedConfig);
+        }
+        if (session.lastFetchedAt !== undefined) {
+          setLastFetchedAt(session.lastFetchedAt);
+        }
+        if (session.lastPulledAt !== undefined) {
+          setLastPulledAt(session.lastPulledAt);
+        }
+        if (session.lastPushedAt !== undefined) {
+          setLastPushedAt(session.lastPushedAt);
+        }
+        if (session.configWarning !== undefined) {
+          setConfigWarning(session.configWarning);
         }
         setSessionReady(true);
       })
@@ -47,8 +66,11 @@ export function useGitHubSession(): GitHubSessionState {
   return {
     repoUrl: repoUrl,
     setRepoUrl: setRepoUrl,
-    tokensPath: tokensPath,
-    setTokensPath: setTokensPath,
     sessionReady: sessionReady,
+    resolvedConfig: resolvedConfig,
+    lastFetchedAt: lastFetchedAt,
+    lastPulledAt: lastPulledAt,
+    lastPushedAt: lastPushedAt,
+    configWarning: configWarning,
   };
 }

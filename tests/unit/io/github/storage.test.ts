@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
-  clearConfig,
+  clearSyncState,
   clearLastRepoUrl,
   clearToken,
-  getConfig,
+  getSyncState,
   getLastRepoUrl,
   getToken,
-  setConfig,
+  setSyncState,
   setLastRepoUrl,
   setToken,
 } from '@/io/github/storage';
@@ -37,24 +37,44 @@ describe('storage', () => {
     installClientStorageMock();
   });
 
-  it('round-trips token and config via clientStorage', async function () {
+  it('round-trips token and sync state via clientStorage', async function () {
     await setToken(REPO_URL, {
       accessToken: 'gho_test1234567890',
       scope: 'repo',
       createdAt: '2026-05-27T00:00:00.000Z',
     });
-    await setConfig(REPO_URL, {
-      tokensPath: 'design/tokens.json',
+    await setSyncState(REPO_URL, {
+      resolvedConfig: {
+        tokensPath: 'design/tokens.json',
+        specsPath: 'components/',
+        exportBasePath: 'docs/fighub/',
+        designSystemBranch: 'main',
+      },
+      lastFetchedAt: '2026-05-28T12:00:00.000Z',
       defaultBranch: 'main',
     });
 
     const token = await getToken(REPO_URL);
-    const config = await getConfig(REPO_URL);
+    const syncState = await getSyncState(REPO_URL);
 
     expect(token).not.toBeNull();
     expect(token!.scope).toBe('repo');
-    expect(config).not.toBeNull();
-    expect(config!.tokensPath).toBe('design/tokens.json');
+    expect(syncState).not.toBeNull();
+    expect(syncState!.resolvedConfig!.tokensPath).toBe('design/tokens.json');
+    expect(syncState!.lastFetchedAt).toBe('2026-05-28T12:00:00.000Z');
+  });
+
+  it('migrates legacy config with tokensPath on read', async function () {
+    const store = installClientStorageMock();
+    store.set(
+      'fighub:github:config:https://github.com/acme/widgets',
+      JSON.stringify({ tokensPath: 'legacy/path.json', defaultBranch: 'develop' }),
+    );
+
+    const syncState = await getSyncState(REPO_URL);
+    expect(syncState).not.toBeNull();
+    expect(syncState!.resolvedConfig).toBeNull();
+    expect(syncState!.defaultBranch).toBe('develop');
   });
 
   it('persists and clears last repo URL', async function () {
@@ -64,18 +84,18 @@ describe('storage', () => {
     expect(await getLastRepoUrl()).toBeNull();
   });
 
-  it('clears token and config keys', async function () {
+  it('clears token and sync state keys', async function () {
     await setToken(REPO_URL, {
       accessToken: 'gho_test1234567890',
       scope: 'repo',
       createdAt: '2026-05-27T00:00:00.000Z',
     });
-    await setConfig(REPO_URL, { tokensPath: 'design/tokens.json' });
+    await setSyncState(REPO_URL, { defaultBranch: 'main' });
 
     await clearToken(REPO_URL);
-    await clearConfig(REPO_URL);
+    await clearSyncState(REPO_URL);
 
     expect(await getToken(REPO_URL)).toBeNull();
-    expect(await getConfig(REPO_URL)).toBeNull();
+    expect(await getSyncState(REPO_URL)).toBeNull();
   });
 });

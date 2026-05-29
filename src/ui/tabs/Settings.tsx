@@ -2,13 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 
 import type { TokensV1 } from '@detroitlabs/fighub-contracts';
 
-import { buildDefaultHeadBranch } from '@/io/github/branchName';
-import { buildPrBody } from '@/io/github/prBody';
+import { isAdaptedTokensV1 } from '@/io/messages/push';
+import { adapt } from '@/io/sources/adapters';
 import { loadFromGitHub } from '@/io/sources/github';
+import type { LoadedDocument, ValidationError } from '@/io/sources/types';
+import type { RepoTokensWireFormat } from '@/io/sources/adapters/serializeTokensWire';
 import { RepoSyncCard } from '@/ui/components/RepoSyncCard';
 import type { UseGitHubConnectResult } from '@/ui/github/useGitHubConnect';
-
-const DEFAULT_TOKENS_PATH = 'design/tokens.json';
+import { useRepoSync } from '@/ui/sync/useRepoSync';
 
 const sectionStyle = {
   border: '1px solid #ddd',
@@ -24,114 +25,119 @@ const inputStyle = {
   width: '100%',
 };
 
+const DEFAULT_TOKENS_PATH = 'design/tokens.json';
+
+function isTokenWireDocument(doc: LoadedDocument): boolean {
+  return doc.kind === 'tokens-dtcg' || doc.kind === 'tokens-legacy';
+}
+
+function tokensFromGitHubLoad(
+  result: LoadedDocument | ValidationError,
+):
+  | { ok: true; tokens: TokensV1; wireFormat: RepoTokensWireFormat; message: string }
+  | { ok: false; message: string } {
+  if (!('payload' in result)) {
+    return { ok: false, message: result.message };
+  }
+  if (!isTokenWireDocument(result)) {
+    return { ok: false, message: 'Expected tokens at path; got ' + result.kind };
+  }
+  const adapted = adapt(result.payload);
+  if (!isAdaptedTokensV1(adapted)) {
+    const detail = adapted.kind === 'format-error' ? adapted.message : 'Token adapter failed';
+    return { ok: false, message: detail };
+  }
+  const wireFormat: RepoTokensWireFormat =
+    result.kind === 'tokens-dtcg' ? 'dtcg' : 'canonical';
+  return {
+    ok: true,
+    tokens: adapted,
+    wireFormat: wireFormat,
+    message:
+      'Loaded tokens via github (' + result.kind + ', ' + String(adapted.tokens.length) + ' tokens)',
+  };
+}
+
 export interface SettingsProps {
   repoUrl: string;
-  tokensPath: string;
   onRepoUrlChange: (value: string) => void;
-  onTokensPathChange: (value: string) => void;
   github: UseGitHubConnectResult;
+  sessionResolvedConfig?: import('@detroitlabs/fighub-contracts').ResolvedFigHubConfig | null;
+  sessionLastFetchedAt?: string | null;
+  sessionLastPulledAt?: string | null;
+  sessionLastPushedAt?: string | null;
+  sessionConfigWarning?: string | null;
 }
 
 export function Settings({
   repoUrl,
-  tokensPath,
   onRepoUrlChange,
-  onTokensPathChange,
   github,
+  sessionResolvedConfig,
+  sessionLastFetchedAt,
+  sessionLastPulledAt,
+  sessionLastPushedAt,
+  sessionConfigWarning,
 }: SettingsProps) {
-  const [readResult, setReadResult] = useState('');
-  const [prResult, setPrResult] = useState('');
   const [repoTokens, setRepoTokens] = useState<TokensV1 | null>(null);
+  const [repoTokensWireFormat, setRepoTokensWireFormat] =
+    useState<RepoTokensWireFormat>('dtcg');
+  const [loadStatus, setLoadStatus] = useState('');
+
+  const sync = useRepoSync({
+    repoUrl: repoUrl,
+    connected: github.connected,
+    initialResolvedConfig: sessionResolvedConfig,
+    initialLastFetchedAt: sessionLastFetchedAt,
+    initialLastPulledAt: sessionLastPulledAt,
+    initialLastPushedAt: sessionLastPushedAt,
+    initialConfigWarning: sessionConfigWarning,
+  });
+
+  const tokensPath =
+    sync.resolvedConfig !== null && sync.resolvedConfig.tokensPath.length > 0
+      ? sync.resolvedConfig.tokensPath
+      : DEFAULT_TOKENS_PATH;
+
+  const applyLoadedTokens = useCallback(function (result: Awaited<ReturnType<typeof loadFromGitHub>>) {
+    const applied = tokensFromGitHubLoad(result);
+    if (applied.ok) {
+      setRepoTokens(applied.tokens);
+      setRepoTokensWireFormat(applied.wireFormat);
+      setLoadStatus(applied.message);
+      return applied;
+    }
+    setRepoTokens(null);
+    setRepoTokensWireFormat('dtcg');
+    setLoadStatus(applied.message);
+    return applied;
+  }, []);
+
+  const loadTokensForDrift = useCallback(
+    async function () {
+      if (!github.connected || repoUrl.length === 0) {
+        setRepoTokens(null);
+        return;
+      }
+      const result = await loadFromGitHub(repoUrl, tokensPath);
+      applyLoadedTokens(result);
+    },
+    [github.connected, repoUrl, tokensPath, applyLoadedTokens],
+  );
 
   useEffect(
     function () {
       if (!github.connected) {
         setRepoTokens(null);
+        setLoadStatus('');
         return;
       }
-      void loadFromGitHub(repoUrl, tokensPath).then(function (result) {
-        if ('payload' in result && result.kind === 'tokens') {
-          setRepoTokens(result.payload);
-        }
-      });
-    },
-    [github.connected, repoUrl, tokensPath],
-  );
-
-  const handleTestRead = useCallback(async function () {
-    setReadResult('Reading…');
-    const result = await loadFromGitHub(repoUrl, tokensPath);
-    if ('payload' in result) {
-      setReadResult('Loaded ' + result.kind + ' via github');
-      return;
-    }
-    setReadResult(result.message);
-  }, [repoUrl, tokensPath]);
-
-  const handleOpenTestPr = useCallback(async function () {
-    setPrResult('Opening test PR…');
-    const requestId = 'settings-pr-' + String(Date.now());
-    const headBranch = buildDefaultHeadBranch('test-export', new Date());
-    const testContent = JSON.stringify(
-      {
-        v: 1,
-        kind: 'ops-program',
-        meta: { generatedAt: new Date().toISOString(), source: 'fighub-settings-test' },
-        steps: [],
-      },
-      null,
-      2,
-    );
-    const filePath = 'docs/fighub/test-export.v1.json';
-    const commitMessage = 'fighub: test export (WO-016)';
-    const prBody = buildPrBody({
-      commitMessage: commitMessage,
-      files: [{ path: filePath, format: 'json' }],
-      pluginVersion: import.meta.env.PACKAGE_VERSION,
-      figmaFileUrl: 'https://www.figma.com/design/unknown/Plugin-Sandbox',
-      figmaFileName: 'Plugin Sandbox',
-      contractKind: 'test-export',
-    });
-
-    await new Promise<void>(function (resolve) {
-      function onMessage(event: MessageEvent<unknown>) {
-        const data = event.data;
-        if (typeof data !== 'object' || data === null || !('pluginMessage' in data)) {
-          return;
-        }
-        const message = (data as { pluginMessage: Record<string, unknown> }).pluginMessage;
-        if (message.type === 'github/pr/test-result' && message.requestId === requestId) {
-          window.removeEventListener('message', onMessage);
-          if (message.ok === true && typeof message.prUrl === 'string') {
-            setPrResult('Opened PR: ' + message.prUrl + ' (' + headBranch + ')');
-          } else {
-            setPrResult(
-              typeof message.error === 'string' ? message.error : 'Failed to open test PR.',
-            );
-          }
-          resolve();
-        }
+      if (sync.lastPulledAt !== null || sync.lastFetchedAt !== null) {
+        void loadTokensForDrift();
       }
-
-      window.addEventListener('message', onMessage);
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: 'github/pr/test-open',
-            requestId: requestId,
-            repoUrl: repoUrl,
-            headBranch: headBranch,
-            filePath: filePath,
-            fileContent: testContent,
-            commitMessage: commitMessage,
-            prTitle: commitMessage,
-            prBody: prBody,
-          },
-        },
-        '*',
-      );
-    });
-  }, [repoUrl]);
+    },
+    [github.connected, sync.lastPulledAt, sync.lastFetchedAt, loadTokensForDrift],
+  );
 
   return (
     <section aria-label="GitHub settings" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -165,21 +171,9 @@ export function Settings({
             style={inputStyle}
           />
         </label>
-        <label style={{ color: '#666', display: 'block', fontSize: '11px', marginTop: '8px' }}>
-          Tokens path
-          <input
-            type="text"
-            value={tokensPath}
-            onChange={function (event) {
-              onTokensPathChange(event.target.value);
-            }}
-            placeholder={DEFAULT_TOKENS_PATH}
-            style={inputStyle}
-          />
-        </label>
         <p style={{ color: '#666', fontSize: '10px', lineHeight: 1.45, margin: '6px 0 0' }}>
-          Component registry is stored in the Figma file (canvas snapshot). Repo sync paths ship in
-          WO-058 Phase 2 via <code>fighub.json</code>.
+          Repo paths come from optional root <code>fighub.json</code> after Fetch latest. Component
+          registry lives in the Figma file (canvas snapshot).
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
           <button
@@ -188,7 +182,7 @@ export function Settings({
             onClick={function () {
               void github.connect();
             }}
-            style={{ fontSize: '11px', fontWeight: 600, padding: '4px 10px' }}
+            style={{ fontSize: '11px', fontWeight: 600, minHeight: 44, minWidth: 44, padding: '8px 12px' }}
           >
             {github.oauthPhase === 'polling' ? 'Authorizing…' : 'Connect GitHub'}
           </button>
@@ -196,7 +190,7 @@ export function Settings({
             type="button"
             disabled={!github.connected}
             onClick={github.disconnect}
-            style={{ fontSize: '11px', padding: '4px 10px' }}
+            style={{ fontSize: '11px', minHeight: 44, minWidth: 44, padding: '8px 12px' }}
           >
             Disconnect
           </button>
@@ -216,51 +210,22 @@ export function Settings({
       </div>
 
       {github.connected ? (
-        <RepoSyncCard
-          repoUrl={repoUrl}
-          tokensPath={tokensPath}
-          connected={github.connected}
-          repoTokens={repoTokens !== null ? repoTokens : undefined}
-        />
+        <>
+          <RepoSyncCard
+            repoUrl={repoUrl}
+            connected={github.connected}
+            sync={sync}
+            repoTokens={repoTokens !== null ? repoTokens : undefined}
+            repoTokensWireFormat={repoTokensWireFormat}
+            onAfterFetch={loadTokensForDrift}
+          />
+          {loadStatus ? (
+            <p role="status" style={{ color: '#666', fontSize: '11px', margin: 0 }}>
+              {loadStatus}
+            </p>
+          ) : null}
+        </>
       ) : null}
-
-      <div style={sectionStyle}>
-        <h2 style={{ fontSize: '13px', margin: '0 0 8px' }}>Read smoke test</h2>
-        <button
-          type="button"
-          disabled={!github.connected}
-          onClick={function () {
-            void handleTestRead();
-          }}
-          style={{ fontSize: '11px', padding: '4px 10px' }}
-        >
-          Test read tokens path
-        </button>
-        {readResult ? (
-          <p role="status" style={{ color: '#666', fontSize: '11px', margin: '8px 0 0' }}>
-            {readResult}
-          </p>
-        ) : null}
-      </div>
-
-      <div style={sectionStyle}>
-        <h2 style={{ fontSize: '13px', margin: '0 0 8px' }}>PR smoke test (dev)</h2>
-        <button
-          type="button"
-          disabled={!github.connected}
-          onClick={function () {
-            void handleOpenTestPr();
-          }}
-          style={{ fontSize: '11px', padding: '4px 10px' }}
-        >
-          Open test PR
-        </button>
-        {prResult ? (
-          <p role="status" style={{ color: '#666', fontSize: '11px', margin: '8px 0 0' }}>
-            {prResult}
-          </p>
-        ) : null}
-      </div>
     </section>
   );
 }
