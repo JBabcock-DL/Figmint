@@ -17,6 +17,38 @@ export function withCollisionSuffix(branch: string, attempt: number): string {
   return branch + '-' + String(attempt + 1);
 }
 
+/** Maps a remote branch name back to its collision attempt index, or null if unrelated. */
+export function branchAttemptFromName(baseBranch: string, branchName: string): number | null {
+  if (branchName === baseBranch) {
+    return 0;
+  }
+  const prefix = baseBranch + '-';
+  if (!branchName.startsWith(prefix)) {
+    return null;
+  }
+  const suffix = branchName.slice(prefix.length);
+  if (!/^\d+$/.test(suffix)) {
+    return null;
+  }
+  const num = Number(suffix);
+  if (num < 2) {
+    return null;
+  }
+  return num - 1;
+}
+
+/** Picks the next unused collision attempt given branches already on the remote. */
+export function nextHeadBranchAttempt(baseBranch: string, existingBranchNames: string[]): number {
+  let maxAttempt = -1;
+  for (const name of existingBranchNames) {
+    const attempt = branchAttemptFromName(baseBranch, name);
+    if (attempt !== null && attempt > maxAttempt) {
+      maxAttempt = attempt;
+    }
+  }
+  return maxAttempt + 1;
+}
+
 export function buildDefaultHeadBranch(contractKind: string, dateUtc: Date): string {
   const year = dateUtc.getUTCFullYear();
   const month = String(dateUtc.getUTCMonth() + 1);

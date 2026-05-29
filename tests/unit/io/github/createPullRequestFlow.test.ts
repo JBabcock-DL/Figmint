@@ -12,8 +12,20 @@ const BASE_HEAD = 'fighub/drift-report-2026-05-27';
 const BASE_HEAD_ENCODED = 'fighub%2Fdrift-report-2026-05-27';
 const SUFFIX_HEAD = 'fighub/drift-report-2026-05-27-2';
 const SUFFIX_HEAD_ENCODED = 'fighub%2Fdrift-report-2026-05-27-2';
+const MATCHING_REFS_PATH = '/repos/acme/widgets/git/matching-refs/heads/' + BASE_HEAD;
 
-function buildHappyPathHandler(calls: string[], headBranch: string, headBranchEncoded: string) {
+function matchingRefsBody(branchNames: string[]): { ref: string }[] {
+  return branchNames.map(function (name) {
+    return { ref: 'refs/heads/' + name };
+  });
+}
+
+function buildHappyPathHandler(
+  calls: string[],
+  headBranch: string,
+  headBranchEncoded: string,
+  existingHeadBranches: string[] = [],
+) {
   return async function (method: 'GET' | 'POST' | 'PATCH', path: string) {
     calls.push(method + ' ' + path);
 
@@ -25,6 +37,9 @@ function buildHappyPathHandler(calls: string[], headBranch: string, headBranchEn
     }
     if (path === '/repos/acme/widgets/git/commits/base-sha') {
       return { ok: true, status: 200, body: { tree: { sha: 'tree-sha' } } };
+    }
+    if (path === MATCHING_REFS_PATH) {
+      return { ok: true, status: 200, body: matchingRefsBody(existingHeadBranches) };
     }
     if (path === '/repos/acme/widgets/git/refs') {
       return { ok: true, status: 201, body: { ref: 'refs/heads/' + headBranch } };
@@ -94,6 +109,7 @@ describe('createPullRequestFlow', () => {
       'GET /repos/acme/widgets',
       'GET /repos/acme/widgets/git/ref/heads/main',
       'GET /repos/acme/widgets/git/commits/base-sha',
+      'GET ' + MATCHING_REFS_PATH,
       'POST /repos/acme/widgets/git/refs',
       'POST /repos/acme/widgets/git/blobs',
       'POST /repos/acme/widgets/git/blobs',
@@ -217,6 +233,9 @@ describe('createPullRequestFlow', () => {
       if (path === '/repos/acme/widgets/git/commits/base-sha') {
         return { ok: true, status: 200, body: { tree: { sha: 'tree-sha' } } };
       }
+      if (path === MATCHING_REFS_PATH) {
+        return { ok: true, status: 200, body: [] };
+      }
       if (path === '/repos/acme/widgets/git/refs' && method === 'POST') {
         return {
           ok: false,
@@ -245,6 +264,40 @@ describe('createPullRequestFlow', () => {
         code: 'branch-exists',
       },
     });
+  });
+
+  it('skips to the next incremental suffix when earlier branches already exist', async function () {
+    const calls: string[] = [];
+    const nextHead = BASE_HEAD + '-6';
+    const nextHeadEncoded = 'fighub%2Fdrift-report-2026-05-27-6';
+    vi.spyOn(relayClient, 'githubApiViaRelay').mockImplementation(
+      buildHappyPathHandler(calls, nextHead, nextHeadEncoded, [
+        BASE_HEAD,
+        BASE_HEAD + '-2',
+        BASE_HEAD + '-3',
+        BASE_HEAD + '-4',
+        BASE_HEAD + '-5',
+      ]),
+    );
+
+    const result = await createPullRequestFlow({
+      token: 'gho_testtoken',
+      owner: 'acme',
+      repo: 'widgets',
+      baseBranch: 'main',
+      headBranch: BASE_HEAD,
+      commitMessage: 'fighub: drift report export',
+      prTitle: 'fighub: drift report export',
+      prBody: 'test body',
+      files: [{ path: 'docs/fighub/drift-report-2026-05-27.v1.json', content: '{"v":1}' }],
+    });
+
+    expect(result.headBranch).toBe(nextHead);
+    expect(
+      calls.filter(function (call) {
+        return call === 'POST /repos/acme/widgets/git/refs';
+      }).length,
+    ).toBe(1);
   });
 
   it('accepts GithubPRSinkContext and derives head branch from contract kind', async function () {

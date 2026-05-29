@@ -3,6 +3,7 @@ import {
   MAX_BRANCH_ATTEMPTS,
   buildDefaultHeadBranch,
   formatBranchPattern,
+  nextHeadBranchAttempt,
   withCollisionSuffix,
 } from '@/io/github/branchName';
 import {
@@ -116,13 +117,50 @@ export function resolveBaseHeadBranch(ctx: GithubPRSinkContext, dateUtc: Date): 
   return formatBranchPattern(pattern, ctx.contractKind, formatDateUtc(dateUtc));
 }
 
+function parseBranchNamesFromMatchingRefs(body: unknown): string[] {
+  if (!Array.isArray(body)) {
+    return [];
+  }
+  const names: string[] = [];
+  for (const entry of body) {
+    if (typeof entry !== 'object' || entry === null) {
+      continue;
+    }
+    const ref = (entry as Record<string, unknown>).ref;
+    if (typeof ref !== 'string' || !ref.startsWith('refs/heads/')) {
+      continue;
+    }
+    names.push(ref.slice('refs/heads/'.length));
+  }
+  return names;
+}
+
+async function listMatchingHeadBranches(
+  repoPath: string,
+  token: string,
+  baseHeadBranch: string,
+): Promise<string[]> {
+  const response = await githubGetWithRetry(
+    repoPath + '/git/matching-refs/heads/' + baseHeadBranch,
+    token,
+  );
+  if (!response.ok) {
+    return [];
+  }
+  return parseBranchNamesFromMatchingRefs(response.body);
+}
+
 async function createHeadBranchWithCollision(
   repoPath: string,
   token: string,
   baseSha: string,
   baseHeadBranch: string,
 ): Promise<string> {
-  for (let attempt = 0; attempt < MAX_BRANCH_ATTEMPTS; attempt++) {
+  const existingBranches = await listMatchingHeadBranches(repoPath, token, baseHeadBranch);
+  const startAttempt = nextHeadBranchAttempt(baseHeadBranch, existingBranches);
+
+  for (let offset = 0; offset < MAX_BRANCH_ATTEMPTS; offset++) {
+    const attempt = startAttempt + offset;
     const headBranch = withCollisionSuffix(baseHeadBranch, attempt);
     const response = await githubApiViaRelay('POST', repoPath + '/git/refs', token, {
       ref: 'refs/heads/' + headBranch,
@@ -134,7 +172,7 @@ async function createHeadBranchWithCollision(
     }
 
     if (response.status === 422 && isReferenceAlreadyExists(response.body)) {
-      if (attempt === MAX_BRANCH_ATTEMPTS - 1) {
+      if (offset === MAX_BRANCH_ATTEMPTS - 1) {
         throwMappedHttpError(response, { branch: headBranch });
       }
       continue;
