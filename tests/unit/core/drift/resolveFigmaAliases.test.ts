@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { FigmaCollectionSnapshot } from '@/core/audit/types';
-import {
-  detectVariableDrift,
-  flattenFigmaVariableSnapshots,
-} from '@/core/drift/variables';
+import { detectVariableDrift, flattenFigmaVariableSnapshots } from '@/core/drift/variables';
 import { buildPushCommitFiles } from '@/core/drift/applyPushResolutions';
 import type { DriftReportV1, TokensV1 } from '@detroitlabs/fighub-contracts';
 

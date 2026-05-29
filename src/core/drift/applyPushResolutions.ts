@@ -165,9 +165,7 @@ export function variableComparableToToken(
   const tokenType = resolvedTypeToTokenType(comparable.resolvedType);
   const base = { collection: collection, name: variableName, valuesByMode: valuesByMode };
   const codeSyntax =
-    Object.keys(comparable.codeSyntax).length > 0
-      ? { codeSyntax: comparable.codeSyntax }
-      : {};
+    Object.keys(comparable.codeSyntax).length > 0 ? { codeSyntax: comparable.codeSyntax } : {};
   switch (tokenType) {
     case 'COLOR':
       return { ...base, type: 'COLOR', ...codeSyntax } as Token;
