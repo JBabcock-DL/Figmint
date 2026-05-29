@@ -19,10 +19,7 @@ describe('loadFromGitHub', () => {
     const postMessage = vi.fn();
     vi.stubGlobal('parent', { postMessage: postMessage });
 
-    const promise = loadFromGitHub(
-      'https://github.com/acme/widgets',
-      'design/tokens.json',
-    );
+    const promise = loadFromGitHub('https://github.com/acme/widgets', 'design/tokens.json');
 
     expect(postMessage).toHaveBeenCalled();
     const payload = postMessage.mock.calls[0][0].pluginMessage;

@@ -10,7 +10,12 @@ export { valuesEqual, codeSyntaxEqual, shouldSkipVariable } from './compare';
 export { resolveTokens, sortTokensForPush } from './resolveTokens';
 export { isEnterprise } from './detectPlan';
 export { applyCodeSyntax, mapCodeSyntax } from './codeSyntax';
-export { publishDocumentationChrome, DOC_CHROME_TOKENS, DOC_CHROME_PATHS, DOCUMENTATION_COLLECTION_NAME } from './documentationChrome';
+export {
+  publishDocumentationChrome,
+  DOC_CHROME_TOKENS,
+  DOC_CHROME_PATHS,
+  DOCUMENTATION_COLLECTION_NAME,
+} from './documentationChrome';
 export type {
   PushResult,
   PushError,

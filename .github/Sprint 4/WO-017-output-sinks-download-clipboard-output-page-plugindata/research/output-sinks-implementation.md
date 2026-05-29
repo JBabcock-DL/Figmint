@@ -86,16 +86,13 @@ export interface PreparedContent {
   label: string;
 }
 
-export function prepareSinkContent(
-  doc: LoadedDocument,
-  options: FormatOptions,
-): PreparedContent;
+export function prepareSinkContent(doc: LoadedDocument, options: FormatOptions): PreparedContent;
 ```
 
-| Phase | Implementation |
-| ----- | -------------- |
+| Phase                            | Implementation                                                                                                                                                                                                |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | WO-017 build (WO-019 not merged) | Stub: `json = JSON.stringify(doc.payload, null, 2)`; `markdown = '# ' + doc.kind + '\n\n_(markdown renderer lands in WO-019)_\n\n```json\n' + json + '\n```'`; `baseName` / `label` from options or defaults. |
-| After WO-019 | Replace stub body with `import { format } from '@/io/formats'` — single source for GFM tables + drift glyphs. |
+| After WO-019                     | Replace stub body with `import { format } from '@/io/formats'` — single source for GFM tables + drift glyphs.                                                                                                 |
 
 Each sink's `write()` calls `prepareSinkContent()` once, then picks `json` and/or `markdown` based on `options.format`.
 
@@ -103,11 +100,11 @@ Each sink's `write()` calls `prepareSinkContent()` once, then picks `json` and/o
 
 For sample `DriftReportV1` (`packages/contracts/src/driftReport.v1.ts`):
 
-| Field | Source |
-| ----- | ------ |
-| `baseName` default | `` `${doc.kind}-${meta.generatedAt.slice(0, 10)}` `` → `drift-report-2026-01-01` |
-| `label` default | `` `fighub/${doc.kind}/${meta.generatedAt}` `` → `fighub/drift-report/2026-01-01T00:00:00.000Z` |
-| Extension | `.v1.json` / `.v1.md` per PRD §10.3 |
+| Field              | Source                                                                                          |
+| ------------------ | ----------------------------------------------------------------------------------------------- |
+| `baseName` default | `` `${doc.kind}-${meta.generatedAt.slice(0, 10)}` `` → `drift-report-2026-01-01`                |
+| `label` default    | `` `fighub/${doc.kind}/${meta.generatedAt}` `` → `fighub/drift-report/2026-01-01T00:00:00.000Z` |
+| Extension          | `.v1.json` / `.v1.md` per PRD §10.3                                                             |
 
 Use `doc.kind` from `LoadedDocument`, not re-parse payload. `rawSnippet` is **not** written to sinks — always canonical serialized output from `payload`.
 
@@ -117,8 +114,8 @@ Use `doc.kind` from `LoadedDocument`, not re-parse payload. `rawSnippet` is **no
 export const SINKS: Record<SinkId, Sink> = {
   download: downloadSink,
   clipboard: clipboardSink,
-  'output-page': outputPageSink,      // UI wrapper → postMessage
-  'plugin-data': pluginDataSink,      // UI wrapper → postMessage
+  'output-page': outputPageSink, // UI wrapper → postMessage
+  'plugin-data': pluginDataSink, // UI wrapper → postMessage
 };
 
 export async function runSink(
@@ -154,11 +151,11 @@ function downloadText(filename: string, mimeType: string, text: string): void {
 }
 ```
 
-| `options.format` | Behavior |
-| ---------------- | -------- |
-| `'json'` | One file: `{baseName}.v1.json`, `application/json` |
-| `'md'` | One file: `{baseName}.v1.md`, `text/markdown;charset=utf-8` |
-| `'both'` | Two sequential downloads (JSON first, then MD) — brief `setTimeout(0)` between clicks if browser coalesces |
+| `options.format` | Behavior                                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| `'json'`         | One file: `{baseName}.v1.json`, `application/json`                                                         |
+| `'md'`           | One file: `{baseName}.v1.md`, `text/markdown;charset=utf-8`                                                |
+| `'both'`         | Two sequential downloads (JSON first, then MD) — brief `setTimeout(0)` between clicks if browser coalesces |
 
 ### Edge cases
 
@@ -208,10 +205,10 @@ Try `writeText` first; on failure, `execCommand`. If both fail → `SinkResult {
 
 ### Distinction from sources `clipboard.ts`
 
-| Module | Direction | API |
-| ------ | --------- | --- |
-| `src/io/sources/clipboard.ts` | Input (read) | `readText` / paste event |
-| `src/io/sinks/clipboard.ts` | Output (write) | `writeText` / execCommand copy |
+| Module                        | Direction      | API                            |
+| ----------------------------- | -------------- | ------------------------------ |
+| `src/io/sources/clipboard.ts` | Input (read)   | `readText` / paste event       |
+| `src/io/sinks/clipboard.ts`   | Output (write) | `writeText` / execCommand copy |
 
 Do not merge — opposite directions, opposite fallback strategies.
 
@@ -266,11 +263,11 @@ Call `figma.loadFontAsync({ family: 'Inter', style: 'Regular' })` before setting
 
 ### Format selection
 
-| `options.format` | Text written |
-| ---------------- | ------------ |
-| `'json'` | `prepared.json` |
-| `'md'` | `prepared.markdown` |
-| `'both'` | **Markdown** on canvas (human/agent readable per PRD §10.3); JSON available via download/pluginData |
+| `options.format` | Text written                                                                                        |
+| ---------------- | --------------------------------------------------------------------------------------------------- |
+| `'json'`         | `prepared.json`                                                                                     |
+| `'md'`           | `prepared.markdown`                                                                                 |
+| `'both'`         | **Markdown** on canvas (human/agent readable per PRD §10.3); JSON available via download/pluginData |
 
 ### UI wrapper
 
@@ -410,11 +407,11 @@ if (isSinkPluginDataMessage(message)) {
 
 Canvas sink **implementations** live in `src/io/sinks/outputPage.ts` + `pluginData.ts` (main-bundle imports). UI bundle imports thin wrappers that postMessage — avoid importing `@/io/sinks/outputPage` in React components directly (would pull Figma typings into UI Vite graph incorrectly). **Split:**
 
-| File | Bundle |
-| ---- | ------ |
-| `outputPage.ts`, `pluginData.ts` | Main |
+| File                                         | Bundle                                 |
+| -------------------------------------------- | -------------------------------------- |
+| `outputPage.ts`, `pluginData.ts`             | Main                                   |
 | `outputPageClient.ts`, `pluginDataClient.ts` | UI — implements `Sink` via postMessage |
-| `download.ts`, `clipboard.ts` | UI |
+| `download.ts`, `clipboard.ts`                | UI                                     |
 
 Vite already dual-builds; enforce via import graph review in `/plan`.
 
@@ -458,12 +455,12 @@ Commit **`tests/fixtures/io/sinks/drift-report-sample.v1.json`** with ≥1 push 
 
 ### 7.3 Per-sink mocks
 
-| Sink | Mock strategy |
-| ---- | ------------- |
-| **download** | Spy `URL.createObjectURL`, `URL.revokeObjectURL`, `HTMLAnchorElement.prototype.click`, `document.createElement`. Assert filename, mime, blob size. No real file IO. |
-| **clipboard** | `vi.spyOn(navigator.clipboard, 'writeText')` — resolve/reject. Separate test forces `writeText` reject → assert `execCommand` path (mock `document.execCommand` return `true`). |
+| Sink           | Mock strategy                                                                                                                                                                                                                                   |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **download**   | Spy `URL.createObjectURL`, `URL.revokeObjectURL`, `HTMLAnchorElement.prototype.click`, `document.createElement`. Assert filename, mime, blob size. No real file IO.                                                                             |
+| **clipboard**  | `vi.spyOn(navigator.clipboard, 'writeText')` — resolve/reject. Separate test forces `writeText` reject → assert `execCommand` path (mock `document.execCommand` return `true`).                                                                 |
 | **outputPage** | Extend `installMockFigmaCanvas()` pattern: add `figma.createPage`, `figma.root.children`, `getSharedPluginData` / `setSharedPluginData` on mock pages, `MockTextNode.characters` mutation. Test find/create, update-by-label, legacy page name. |
-| **pluginData** | Mock node `{ setPluginData: vi.fn(), getPluginData: vi.fn() }`; mock `figma.currentPage.selection`. Assert key `fighub:drift-report`, value equals JSON string. Test 0 / 2 selection errors. |
+| **pluginData** | Mock node `{ setPluginData: vi.fn(), getPluginData: vi.fn() }`; mock `figma.currentPage.selection`. Assert key `fighub:drift-report`, value equals JSON string. Test 0 / 2 selection errors.                                                    |
 
 ### 7.4 postMessage / client sinks
 
@@ -496,12 +493,12 @@ Main-thread sink modules must avoid `?.`, `??`, `replaceAll` in shipped code pat
 
 ## 9. Open questions
 
-| # | Question | Recommendation |
-| - | -------- | -------------- |
-| 1 | WO-019 not merged when WO-017 builds — stub OK? | **Yes** — stub `prepareSinkContent`; AC tests use JSON + placeholder MD. |
-| 2 | Output page: switch `figma.currentPage` on write? | **Yes on first create**; no switch on update-only. |
-| 3 | pluginData: JSON only or respect format toggle? | **JSON only** for pluginData; MD goes to clipboard / Output page / download. |
-| 4 | Clipboard write blocked like read? | **Try writeText on click first**; execCommand fallback locked. Spike optional — not blocking. |
+| #   | Question                                          | Recommendation                                                                                |
+| --- | ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 1   | WO-019 not merged when WO-017 builds — stub OK?   | **Yes** — stub `prepareSinkContent`; AC tests use JSON + placeholder MD.                      |
+| 2   | Output page: switch `figma.currentPage` on write? | **Yes on first create**; no switch on update-only.                                            |
+| 3   | pluginData: JSON only or respect format toggle?   | **JSON only** for pluginData; MD goes to clipboard / Output page / download.                  |
+| 4   | Clipboard write blocked like read?                | **Try writeText on click first**; execCommand fallback locked. Spike optional — not blocking. |
 
 ---
 
@@ -511,69 +508,69 @@ Main-thread sink modules must avoid `?.`, `??`, `replaceAll` in shipped code pat
 
 ### Repo inventory (grep-verified 2026-05-27)
 
-| Path | Status | Role |
-| ---- | ------ | ---- |
-| `src/io/sources/file.ts` L12–15 | ✅ | `.md` ingest → `unsupported-type`; hint points to WO-019 |
-| `src/io/sources/types.ts` | ✅ | `LoadedDocument`, `ContractKind` — sink input type |
-| `src/core/canvas/lib/pages.ts` | ✅ | `findStyleGuidePage` pattern for Output page find-or-create |
-| `src/core/canvas/lib/fonts.ts` | ✅ | `loadFontAsync` before text writes |
-| `src/io/messages/bootstrap.ts` | ✅ | Type guards + message union pattern to mirror in `sinks.ts` |
-| `src/ui/tabs/Bootstrap.tsx` | ✅ | `postMessage` + reducer async UX |
-| `src/ui/components/AuditPanel.tsx` | ✅ | execCommand copy fallback precedent |
-| `src/io/sinks/` | ❌ greenfield | All four sinks + types |
-| `tests/unit/io/sinks/` | ❌ greenfield | Vitest layout defined in §7 |
+| Path                               | Status        | Role                                                        |
+| ---------------------------------- | ------------- | ----------------------------------------------------------- |
+| `src/io/sources/file.ts` L12–15    | ✅            | `.md` ingest → `unsupported-type`; hint points to WO-019    |
+| `src/io/sources/types.ts`          | ✅            | `LoadedDocument`, `ContractKind` — sink input type          |
+| `src/core/canvas/lib/pages.ts`     | ✅            | `findStyleGuidePage` pattern for Output page find-or-create |
+| `src/core/canvas/lib/fonts.ts`     | ✅            | `loadFontAsync` before text writes                          |
+| `src/io/messages/bootstrap.ts`     | ✅            | Type guards + message union pattern to mirror in `sinks.ts` |
+| `src/ui/tabs/Bootstrap.tsx`        | ✅            | `postMessage` + reducer async UX                            |
+| `src/ui/components/AuditPanel.tsx` | ✅            | execCommand copy fallback precedent                         |
+| `src/io/sinks/`                    | ❌ greenfield | All four sinks + types                                      |
+| `tests/unit/io/sinks/`             | ❌ greenfield | Vitest layout defined in §7                                 |
 
 ### Platform limits (official)
 
-| Limit | Value | Applies to | Source |
-| ----- | ----- | ---------- | ------ |
-| pluginData entry size | **100 kB** total (`pluginId` + `key` + `value`) | pluginData sink | [setPluginData](https://developers.figma.com/docs/plugins/api/properties/nodes-setplugindata/) |
-| TextNode `characters` | No documented maximum | Output page sink | Figma TextNode API (performance-only risk) |
-| Clipboard read (`readText`) | Blocked without `allow="clipboard-read"` | **Not** this ticket — input | WO-006 §Q1 |
-| Clipboard write (`writeText`) | Requires user gesture; may throw `NotAllowedError` | clipboard sink | WO-006 forum symmetry + Chromium Permissions-Policy |
+| Limit                         | Value                                              | Applies to                  | Source                                                                                         |
+| ----------------------------- | -------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
+| pluginData entry size         | **100 kB** total (`pluginId` + `key` + `value`)    | pluginData sink             | [setPluginData](https://developers.figma.com/docs/plugins/api/properties/nodes-setplugindata/) |
+| TextNode `characters`         | No documented maximum                              | Output page sink            | Figma TextNode API (performance-only risk)                                                     |
+| Clipboard read (`readText`)   | Blocked without `allow="clipboard-read"`           | **Not** this ticket — input | WO-006 §Q1                                                                                     |
+| Clipboard write (`writeText`) | Requires user gesture; may throw `NotAllowedError` | clipboard sink              | WO-006 forum symmetry + Chromium Permissions-Policy                                            |
 
 ### WO-006 cross-validation (clipboard asymmetry)
 
-| Direction | Expected behavior in Figma iframe | WO-017 action |
-| --------- | ----------------------------------- | ------------- |
-| Read on open | `readText()` → `NotAllowedError` | N/A (sources) |
-| Write on Export click | Try `writeText()` first | Primary path |
-| Write fallback | `execCommand('copy')` + off-screen textarea | Locked fallback (Figma forum pattern) |
+| Direction             | Expected behavior in Figma iframe           | WO-017 action                         |
+| --------------------- | ------------------------------------------- | ------------------------------------- |
+| Read on open          | `readText()` → `NotAllowedError`            | N/A (sources)                         |
+| Write on Export click | Try `writeText()` first                     | Primary path                          |
+| Write fallback        | `execCommand('copy')` + off-screen textarea | Locked fallback (Figma forum pattern) |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D-017-1 | `Sink.write()` uniform interface | PRD §10.2 symmetry with sources | Per-sink ad hoc functions |
-| D-017-2 | download + clipboard in **UI iframe** | Browser APIs unavailable on main | postMessage for Blob download |
-| D-017-3 | outputPage + pluginData on **main** | Figma Plugin API | UI-side Figma typings in React bundle |
-| D-017-4 | Stub serializer until WO-019 | Unblocks sink plumbing | Block WO-017 on WO-019 merge |
-| D-017-5 | pluginData value **JSON only** | Machine-readable handoff | Markdown in pluginData |
-| D-017-6 | Output page writes **markdown** when `format: 'both'` | Human/agent readable on canvas | Dual text nodes per export |
+| ID      | Decision                                              | Rationale                        | Alternatives rejected                 |
+| ------- | ----------------------------------------------------- | -------------------------------- | ------------------------------------- |
+| D-017-1 | `Sink.write()` uniform interface                      | PRD §10.2 symmetry with sources  | Per-sink ad hoc functions             |
+| D-017-2 | download + clipboard in **UI iframe**                 | Browser APIs unavailable on main | postMessage for Blob download         |
+| D-017-3 | outputPage + pluginData on **main**                   | Figma Plugin API                 | UI-side Figma typings in React bundle |
+| D-017-4 | Stub serializer until WO-019                          | Unblocks sink plumbing           | Block WO-017 on WO-019 merge          |
+| D-017-5 | pluginData value **JSON only**                        | Machine-readable handoff         | Markdown in pluginData                |
+| D-017-6 | Output page writes **markdown** when `format: 'both'` | Human/agent readable on canvas   | Dual text nodes per export            |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-017-1 | Export button click → `navigator.clipboard.writeText` in sandbox UI | Success OR execCommand fallback copies drift-report MD | ☐ pending |
-| SPK-017-2 | pluginData write with `drift-report-min.json` (>100 kB synthetic) | Sink returns `ok: false` with size hint | ☐ unit test (no Figma) |
-| SPK-017-3 | Output page write 50k char markdown | Text node updates; MCP can read | ☐ pending (manual VQA) |
-| SPK-017-4 | Download dual files (`both`) from click | Two files saved; no browser block | ☐ pending |
+| Spike ID  | Procedure                                                           | Pass criteria                                          | Status                 |
+| --------- | ------------------------------------------------------------------- | ------------------------------------------------------ | ---------------------- |
+| SPK-017-1 | Export button click → `navigator.clipboard.writeText` in sandbox UI | Success OR execCommand fallback copies drift-report MD | ☐ pending              |
+| SPK-017-2 | pluginData write with `drift-report-min.json` (>100 kB synthetic)   | Sink returns `ok: false` with size hint                | ☐ unit test (no Figma) |
+| SPK-017-3 | Output page write 50k char markdown                                 | Text node updates; MCP can read                        | ☐ pending (manual VQA) |
+| SPK-017-4 | Download dual files (`both`) from click                             | Two files saved; no browser block                      | ☐ pending              |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Likelihood | Mitigation |
-| ---- | --- | ---------- | ---------- |
-| Clipboard write blocked like read | Med | Med | execCommand fallback; SPK-017-1 |
-| pluginData overflow on handoff | Med | Med | 100 kB guard; hint download/Output page |
-| UI bundle imports main sink modules | High | Med | Split client wrappers (§6) |
-| WO-019 stub misleads VQA markdown | Low | High | Swap `prepareSinkContent` when WO-019 lands |
+| Risk                                | Sev  | Likelihood | Mitigation                                  |
+| ----------------------------------- | ---- | ---------- | ------------------------------------------- |
+| Clipboard write blocked like read   | Med  | Med        | execCommand fallback; SPK-017-1             |
+| pluginData overflow on handoff      | Med  | Med        | 100 kB guard; hint download/Output page     |
+| UI bundle imports main sink modules | High | Med        | Split client wrappers (§6)                  |
+| WO-019 stub misleads VQA markdown   | Low  | High       | Swap `prepareSinkContent` when WO-019 lands |
 
 ---
 

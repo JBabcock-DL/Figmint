@@ -18,10 +18,7 @@ const driftDoc: ContractDocument = {
   payload: driftFixture as DriftReportV1,
 };
 
-function applyActions(
-  initial: ExportSheetState,
-  actions: ExportSheetAction[],
-): ExportSheetState {
+function applyActions(initial: ExportSheetState, actions: ExportSheetAction[]): ExportSheetState {
   let state = initial;
   for (let i = 0; i < actions.length; i++) {
     state = reduceExportSheet(state, actions[i]);
@@ -139,11 +136,16 @@ describe('runExport', () => {
     });
     const actions: ExportSheetAction[] = [];
 
-    await runExport(driftDoc, initial, function (action) {
-      actions.push(action);
-    }, {
-      postMessage: postMessage,
-    });
+    await runExport(
+      driftDoc,
+      initial,
+      function (action) {
+        actions.push(action);
+      },
+      {
+        postMessage: postMessage,
+      },
+    );
 
     expect(postMessage).not.toHaveBeenCalled();
     const finalState = applyActions(initial, actions);

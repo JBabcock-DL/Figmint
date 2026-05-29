@@ -18,9 +18,11 @@ describe('component-spec-button-chip fixture', () => {
       'link',
     ]);
     expect(spec.variantMatrix.size).toEqual(['sm', 'default', 'lg', 'icon']);
-    expect(spec.props.some(function isLoading(prop) {
-      return prop.name === 'loading' && prop.type === 'boolean';
-    })).toBe(true);
+    expect(
+      spec.props.some(function isLoading(prop) {
+        return prop.name === 'loading' && prop.type === 'boolean';
+      }),
+    ).toBe(true);
     expect(spec.componentProps).toEqual({
       label: true,
       leadingIcon: true,

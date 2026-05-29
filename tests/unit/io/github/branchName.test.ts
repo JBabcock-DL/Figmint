@@ -10,9 +10,9 @@ import {
 
 describe('branchName', () => {
   it('formats branch pattern tokens', () => {
-    expect(
-      formatBranchPattern(DEFAULT_BRANCH_PATTERN, 'drift-report', '2026-05-27'),
-    ).toBe('fighub/drift-report-2026-05-27');
+    expect(formatBranchPattern(DEFAULT_BRANCH_PATTERN, 'drift-report', '2026-05-27')).toBe(
+      'fighub/drift-report-2026-05-27',
+    );
     expect(formatBranchPattern('custom/{contractKind}/{date}', 'tokens-dtcg', '2026-01-02')).toBe(
       'custom/tokens-dtcg/2026-01-02',
     );

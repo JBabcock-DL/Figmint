@@ -22,14 +22,14 @@ The public entry point is `format(doc, 'json' | 'md')`, dispatching on `doc.kind
 
 ### 1. Module layout (matches PRD §7.3)
 
-| File | Responsibility |
-|------|----------------|
-| `src/io/formats/index.ts` | `format()`, `FormatKind`, `FormattableDocument` union, re-exports |
-| `src/io/formats/json.ts` | `serializeJson(doc): string` → `stableStringify(doc, 2)` |
-| `src/io/formats/markdown.ts` | `serializeMarkdown(doc): string` → `switch (doc.kind)` |
-| `src/io/formats/markdown/*.ts` (optional split) | One file per renderer if `markdown.ts` exceeds ~300 lines |
-| `src/io/formats/stableStringify.ts` | Recursive key sort + `JSON.stringify` (no dependency) |
-| `src/io/formats/__fixtures__/` | Canonical JSON inputs + golden `.md` (and optional `.json` goldens) |
+| File                                            | Responsibility                                                      |
+| ----------------------------------------------- | ------------------------------------------------------------------- |
+| `src/io/formats/index.ts`                       | `format()`, `FormatKind`, `FormattableDocument` union, re-exports   |
+| `src/io/formats/json.ts`                        | `serializeJson(doc): string` → `stableStringify(doc, 2)`            |
+| `src/io/formats/markdown.ts`                    | `serializeMarkdown(doc): string` → `switch (doc.kind)`              |
+| `src/io/formats/markdown/*.ts` (optional split) | One file per renderer if `markdown.ts` exceeds ~300 lines           |
+| `src/io/formats/stableStringify.ts`             | Recursive key sort + `JSON.stringify` (no dependency)               |
+| `src/io/formats/__fixtures__/`                  | Canonical JSON inputs + golden `.md` (and optional `.json` goldens) |
 
 No `parseMarkdown` / `mdToJson` anywhere in `src/io/formats/` or `src/io/sources/`.
 
@@ -106,18 +106,18 @@ Structure:
 
 ## Summary
 
-| Direction | Count |
-| --------- | ----- |
-| ↑ Push    | 4     |
-| ↓ Pull    | 2     |
-| ⚠ Conflicts | 1   |
-| Synced    | 410   |
+| Direction   | Count |
+| ----------- | ----- |
+| ↑ Push      | 4     |
+| ↓ Pull      | 2     |
+| ⚠ Conflicts | 1     |
+| Synced      | 410   |
 
 ## ↑ Push (4)
 
-| ID | Kind | Figma | Repo | Last synced |
-| -- | ---- | ----- | ---- | ----------- |
-| …  | …    | …     | …    | …           |
+| ID  | Kind | Figma | Repo | Last synced |
+| --- | ---- | ----- | ---- | ----------- |
+| …   | …    | …     | …    | …           |
 
 ## ↓ Pull (2)
 
@@ -130,11 +130,11 @@ Structure:
 
 **Locked heading pattern (PRD §8.4 + ticket):**
 
-| `direction` | Section heading | Glyph in heading |
-|-------------|-----------------|------------------|
-| `push` | `## ↑ Push ({n})` | `↑` |
-| `pull` | `## ↓ Pull ({n})` | `↓` |
-| `conflict` | `## ⚠ Conflicts ({n})` | `⚠` (plural “Conflicts” per PRD example) |
+| `direction` | Section heading        | Glyph in heading                         |
+| ----------- | ---------------------- | ---------------------------------------- |
+| `push`      | `## ↑ Push ({n})`      | `↑`                                      |
+| `pull`      | `## ↓ Pull ({n})`      | `↓`                                      |
+| `conflict`  | `## ⚠ Conflicts ({n})` | `⚠` (plural “Conflicts” per PRD example) |
 
 `{n}` = `summary.push` / `summary.pull` / `summary.conflict`, not `drifts.filter.length` (they should match; test both for AC fixture).
 
@@ -150,6 +150,7 @@ Structure:
 # handoff-context v1
 
 ## Meta
+
 - capturedAt: …
 - figmaFileKey: …
 - frameUrl: …
@@ -157,13 +158,14 @@ Structure:
 ## Frames
 
 ### {frame.name} (`{nodeId}`)
+
 - Deep link: {deepLink}
 - Screenshot: ![{name}]({screenshot.dataUrl})
 
 ## Components used
 
-| Component | Instances | Code Connect |
-| --------- | --------- | -------------- |
+| Component | Instances | Code Connect     |
+| --------- | --------- | ---------------- |
 | Button    | 4         | [link](url) or — |
 
 ## Tokens used
@@ -173,11 +175,11 @@ Structure:
 
 ## Auto layout
 
-| Property  | Value |
-| --------- | ----- |
-| direction | vertical |
+| Property  | Value            |
+| --------- | ---------------- |
+| direction | vertical         |
 | gap       | Layout/spacing/4 |
-| padding   | … or — |
+| padding   | … or —           |
 ```
 
 - **Screenshot embed:** standard GFM image syntax with `data:image/png;base64,...` URL from contract (works in GitHub, many chat clients; Figma Output text node may truncate — acceptable per PRD sinks).
@@ -224,11 +226,11 @@ Full export for machines remains JSON.
 
 ### 6. Input path — markdown is output-only
 
-| Location | Behavior |
-|----------|----------|
-| `src/io/sources/file.ts` | `.md` → `unsupported-type` (keep) |
-| `src/io/formats/*` | No imports from `sources/` |
-| PRD §10.1 file picker | Lists `.md` for **download** sink, not ingest |
+| Location                 | Behavior                                      |
+| ------------------------ | --------------------------------------------- |
+| `src/io/sources/file.ts` | `.md` → `unsupported-type` (keep)             |
+| `src/io/formats/*`       | No imports from `sources/`                    |
+| PRD §10.1 file picker    | Lists `.md` for **download** sink, not ingest |
 
 **Build follow-up:** change `file.ts` hint from `Markdown parsing lands in WO-019` → `Markdown is export-only. Paste or load JSON.` (WO-019 implements serializers, not parsers).
 
@@ -270,11 +272,11 @@ Extend `vitest.config.ts` `include` if colocating tests under `src/io/formats/*.
 
 ### 8. Dependencies
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| WO-003 `@detroitlabs/fighub-contracts` | Done | All five types exported from `packages/contracts/src/index.ts` |
-| WO-006 I/O sources | Done | Ingest JSON only; hint update optional in WO-019 |
-| WO-020 Export sheet | Downstream | Will call `format()` for download/clipboard |
+| Dependency                             | Status     | Notes                                                          |
+| -------------------------------------- | ---------- | -------------------------------------------------------------- |
+| WO-003 `@detroitlabs/fighub-contracts` | Done       | All five types exported from `packages/contracts/src/index.ts` |
+| WO-006 I/O sources                     | Done       | Ingest JSON only; hint update optional in WO-019               |
+| WO-020 Export sheet                    | Downstream | Will call `format()` for download/clipboard                    |
 
 No new npm packages required for stable JSON.
 
@@ -317,25 +319,25 @@ No new npm packages required for stable JSON.
 
 ### Repo inventory (grep-verified 2026-05-27)
 
-| Path | Status | Role |
-| ---- | ------ | ---- |
-| `packages/contracts/src/*.v1.ts` | ✅ | All five formattable kinds exported |
-| `packages/contracts/src/auditReport.v1.ts` | ✅ | Sixth kind — scope gap (§9) |
-| `packages/contracts/src/registry.v1.ts` | ✅ | Out of WO-019 five renderers |
-| `src/io/sources/file.ts` L12–15 | ✅ | `.md` rejected at ingest — export-only invariant |
-| `src/io/formats/` | ❌ greenfield | WO-019 deliverable |
-| `tests/fixtures/io/sources/` | ✅ | Seed JSON for golden fixtures |
-| `tests/unit/io/sources/ports.test.ts` | ✅ | Fixture load pattern to mirror |
+| Path                                       | Status        | Role                                             |
+| ------------------------------------------ | ------------- | ------------------------------------------------ |
+| `packages/contracts/src/*.v1.ts`           | ✅            | All five formattable kinds exported              |
+| `packages/contracts/src/auditReport.v1.ts` | ✅            | Sixth kind — scope gap (§9)                      |
+| `packages/contracts/src/registry.v1.ts`    | ✅            | Out of WO-019 five renderers                     |
+| `src/io/sources/file.ts` L12–15            | ✅            | `.md` rejected at ingest — export-only invariant |
+| `src/io/formats/`                          | ❌ greenfield | WO-019 deliverable                               |
+| `tests/fixtures/io/sources/`               | ✅            | Seed JSON for golden fixtures                    |
+| `tests/unit/io/sources/ports.test.ts`      | ✅            | Fixture load pattern to mirror                   |
 
 ### Contract field inventory (dispatch validation)
 
-| Kind | `kind` field | Key meta fields for markdown |
-| ---- | ------------ | ---------------------------- |
-| `drift-report` | `'drift-report'` | `meta.generatedAt`, `meta.figmaFileKey`, `meta.repoUrl`; `summary.*`; `drifts[]` |
-| `handoff-context` | `'handoff-context'` | `meta.capturedAt`, `frames[]`, `components[]`, `tokensUsed[]`, `autoLayout` |
-| `component-spec` | `'component-spec'` | `name`, `framework`, `variants`, `props`, `bindings` |
-| `ops-program` | `'ops-program'` | `meta.generatedAt`, `ops[]` |
-| `tokens` (TokensV1) | wire via normalized model | `collections[]`, `tokens[]`, optional `themes[]` |
+| Kind                | `kind` field              | Key meta fields for markdown                                                     |
+| ------------------- | ------------------------- | -------------------------------------------------------------------------------- |
+| `drift-report`      | `'drift-report'`          | `meta.generatedAt`, `meta.figmaFileKey`, `meta.repoUrl`; `summary.*`; `drifts[]` |
+| `handoff-context`   | `'handoff-context'`       | `meta.capturedAt`, `frames[]`, `components[]`, `tokensUsed[]`, `autoLayout`      |
+| `component-spec`    | `'component-spec'`        | `name`, `framework`, `variants`, `props`, `bindings`                             |
+| `ops-program`       | `'ops-program'`           | `meta.generatedAt`, `ops[]`                                                      |
+| `tokens` (TokensV1) | wire via normalized model | `collections[]`, `tokens[]`, optional `themes[]`                                 |
 
 Types imported from `@detroitlabs/fighub-contracts` — **no duplicate TS interfaces** in formats layer.
 
@@ -347,33 +349,33 @@ Types imported from `@detroitlabs/fighub-contracts` — **no duplicate TS interf
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D-019-1 | Write-only formats layer | PRD §10.3 md never parsed back | md→json adapter |
-| D-019-2 | Five renderers in ticket; **recommend sixth** for audit-report | WO-010 deferral closure | Strict five only |
-| D-019-3 | Drift headings exact PRD §8.4 glyphs | Agent/designer scanning | Unicode alternatives |
-| D-019-4 | Tokens preview cap **50** rows | Readable markdown | Full token dump |
-| D-019-5 | Golden fixtures under `src/io/formats/__fixtures__/` | Co-locate with renderers | Only in tests/ |
+| ID      | Decision                                                       | Rationale                      | Alternatives rejected |
+| ------- | -------------------------------------------------------------- | ------------------------------ | --------------------- |
+| D-019-1 | Write-only formats layer                                       | PRD §10.3 md never parsed back | md→json adapter       |
+| D-019-2 | Five renderers in ticket; **recommend sixth** for audit-report | WO-010 deferral closure        | Strict five only      |
+| D-019-3 | Drift headings exact PRD §8.4 glyphs                           | Agent/designer scanning        | Unicode alternatives  |
+| D-019-4 | Tokens preview cap **50** rows                                 | Readable markdown              | Full token dump       |
+| D-019-5 | Golden fixtures under `src/io/formats/__fixtures__/`           | Co-locate with renderers       | Only in tests/        |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
+| Spike ID  | Procedure                                        | Pass criteria                                    | Status                |
+| --------- | ------------------------------------------------ | ------------------------------------------------ | --------------------- |
 | SPK-019-1 | Implement drift AC fixture → review golden `.md` | 4 push / 2 pull / 1 conflict headings match §5.1 | ☐ at build (no Figma) |
-| SPK-019-2 | `stableStringify` key-order test | `key-order-a` === `key-order-b` output | ☐ unit test |
-| SPK-019-3 | Product decision: audit-report renderer in/out | Record in plan Open Questions | ☐ pending owner |
+| SPK-019-2 | `stableStringify` key-order test                 | `key-order-a` === `key-order-b` output           | ☐ unit test           |
+| SPK-019-3 | Product decision: audit-report renderer in/out   | Record in plan Open Questions                    | ☐ pending owner       |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Likelihood | Mitigation |
-| ---- | --- | ---------- | ---------- |
-| Handoff base64 screenshots bloat MD | Med | Med | Optional strip >500KB in plan |
-| WO-010 expects audit MD; ticket lists five | Med | Certain | D-019-2 sixth renderer |
-| Misleading file.ts hint | Low | Certain | Update hint in WO-019 build |
+| Risk                                       | Sev | Likelihood | Mitigation                    |
+| ------------------------------------------ | --- | ---------- | ----------------------------- |
+| Handoff base64 screenshots bloat MD        | Med | Med        | Optional strip >500KB in plan |
+| WO-010 expects audit MD; ticket lists five | Med | Certain    | D-019-2 sixth renderer        |
+| Misleading file.ts hint                    | Low | Certain    | Update hint in WO-019 build   |
 
 ---
 

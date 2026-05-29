@@ -185,7 +185,9 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`FigHub OAuth relay listening on http://localhost:${PORT}`);
   console.log(`  client_id: ${CLIENT_ID ? 'configured' : 'MISSING'}`);
-  console.log('  Endpoints: POST /oauth/device/code, POST /oauth/device/poll, POST /github/api/proxy, GET /github/api');
+  console.log(
+    '  Endpoints: POST /oauth/device/code, POST /oauth/device/poll, POST /github/api/proxy, GET /github/api',
+  );
   console.log('  Add to manifest.json devAllowedDomains: ["http://localhost:8787"]');
 });
 

@@ -12,7 +12,11 @@ import {
   reassertDocSectionStretch,
 } from '@/core/components/scaffold/usageFrame';
 
-import { appendDocAutoHeightText, reassertDocHugFrame, resolveDocPipelineChrome } from './docChrome';
+import {
+  appendDocAutoHeightText,
+  reassertDocHugFrame,
+  resolveDocPipelineChrome,
+} from './docChrome';
 
 interface DocHeaderSpecFields {
   displayTitle?: string;

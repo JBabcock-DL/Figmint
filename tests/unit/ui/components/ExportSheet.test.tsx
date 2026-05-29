@@ -16,9 +16,7 @@ describe('ExportSheet', () => {
   });
 
   it('renders format and sink fieldsets for drift-report fixture', function () {
-    render(
-      <ExportSheet document={loadDriftReportFixture()} defaultSinks={['download']} />,
-    );
+    render(<ExportSheet document={loadDriftReportFixture()} defaultSinks={['download']} />);
 
     expect(screen.getByRole('group', { name: 'Format' })).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Destinations' })).toBeInTheDocument();
@@ -47,41 +45,34 @@ describe('ExportSheet', () => {
       'plugin-data',
     ]);
 
-    render(
-      <ExportSheet document={loadDriftReportFixture()} defaultSinks={['download']} />,
-    );
+    render(<ExportSheet document={loadDriftReportFixture()} defaultSinks={['download']} />);
 
     expect(screen.queryByLabelText('Open GitHub PR')).not.toBeInTheDocument();
   });
 
   it('shows per-sink success and failure in status list after export', async function () {
     const user = userEvent.setup();
-    vi.spyOn(runExportModule, 'runExport').mockImplementation(async function (
-      _doc,
-      _state,
-      dispatch,
-    ) {
-      dispatch({ type: 'start-export', requestId: 'export-test' });
-      dispatch({
-        type: 'sink-result',
-        sink: 'download',
-        ok: true,
-        message: 'Saved drift-report.json',
-      });
-      dispatch({
-        type: 'sink-result',
-        sink: 'clipboard',
-        ok: false,
-        error: 'Clipboard unavailable',
-      });
-      dispatch({ type: 'complete' });
-    });
+    vi.spyOn(runExportModule, 'runExport').mockImplementation(
+      async function (_doc, _state, dispatch) {
+        dispatch({ type: 'start-export', requestId: 'export-test' });
+        dispatch({
+          type: 'sink-result',
+          sink: 'download',
+          ok: true,
+          message: 'Saved drift-report.json',
+        });
+        dispatch({
+          type: 'sink-result',
+          sink: 'clipboard',
+          ok: false,
+          error: 'Clipboard unavailable',
+        });
+        dispatch({ type: 'complete' });
+      },
+    );
 
     render(
-      <ExportSheet
-        document={loadDriftReportFixture()}
-        defaultSinks={['download', 'clipboard']}
-      />,
+      <ExportSheet document={loadDriftReportFixture()} defaultSinks={['download', 'clipboard']} />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Export' }));
@@ -95,9 +86,7 @@ describe('ExportSheet', () => {
 
   it('disables Export when no format is selected', async function () {
     const user = userEvent.setup();
-    render(
-      <ExportSheet document={loadDriftReportFixture()} defaultSinks={['download']} />,
-    );
+    render(<ExportSheet document={loadDriftReportFixture()} defaultSinks={['download']} />);
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
     expect(exportButton).not.toBeDisabled();

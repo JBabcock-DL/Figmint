@@ -6,10 +6,7 @@ import chipFixture from '@/core/components/scaffold/__fixtures__/component-spec-
 import { applyProperties } from '@/core/components/scaffold/applyProperties';
 import { runAudit } from '@/core/audit/runAudit';
 
-import {
-  asComponentSetNode,
-  createMockComponentSetWithVariants,
-} from './mockComponentSet';
+import { asComponentSetNode, createMockComponentSetWithVariants } from './mockComponentSet';
 
 describe('applyProperties integration', () => {
   const chipSpec = chipFixture as ComponentSpecV1;
@@ -103,7 +100,10 @@ interface MockVariantWithRefs {
   componentPropertyReferences?: Record<string, string>;
 }
 
-function findChildByName(node: MockVariantWithRefs, targetName: string): MockVariantWithRefs | null {
+function findChildByName(
+  node: MockVariantWithRefs,
+  targetName: string,
+): MockVariantWithRefs | null {
   if (node.name === targetName) {
     return node;
   }

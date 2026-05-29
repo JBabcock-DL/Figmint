@@ -16,12 +16,12 @@ Implement **`detectComponentDrift(repoSpecs, figmaComponents, snapshot)`** in `s
 
 ### 1. What to compare (granularity)
 
-| Facet | Figma source | Repo source | Drift signal |
-| ----- | ------------ | ----------- | ------------ |
+| Facet          | Figma source                                   | Repo source                     | Drift signal                              |
+| -------------- | ---------------------------------------------- | ------------------------------- | ----------------------------------------- |
 | Variant matrix | `ComponentSetNode` children variant properties | `ComponentSpecV1.variantMatrix` | New/removed variant combos; hash mismatch |
-| Props | `componentPropertyDefinitions` | `ComponentSpecV1.props` | Added/removed/changed prop |
-| Bindings | Layer scan + bound variables (WO-023 patterns) | `ComponentSpecV1.bindings` | Selector/variable mismatch |
-| Registry meta | nodeId, pageName, version | snapshot registry entry | nodeId change = push (Figma moved) |
+| Props          | `componentPropertyDefinitions`                 | `ComponentSpecV1.props`         | Added/removed/changed prop                |
+| Bindings       | Layer scan + bound variables (WO-023 patterns) | `ComponentSpecV1.bindings`      | Selector/variable mismatch                |
+| Registry meta  | nodeId, pageName, version                      | snapshot registry entry         | nodeId change = push (Figma moved)        |
 
 **Ticket AC examples:**
 
@@ -31,12 +31,12 @@ Implement **`detectComponentDrift(repoSpecs, figmaComponents, snapshot)`** in `s
 
 ### 2. Figma introspection (existing code)
 
-| Helper | Path | Use |
-| ------ | ---- | --- |
+| Helper                  | Path                                                    | Use                        |
+| ----------------------- | ------------------------------------------------------- | -------------------------- |
 | `listVariantComponents` | `src/core/components/scaffold/listVariantComponents.ts` | Enumerate variant children |
-| `hashVariantMatrix` | `src/core/components/scaffold/variantMatrix.ts:62-70` | cvaHash |
-| `expandVariantMatrix` | same file:33-59 | Full combo list for delta |
-| `buildRegistryEntry` | `src/core/components/registry.ts` | Entry shape for snapshot |
+| `hashVariantMatrix`     | `src/core/components/scaffold/variantMatrix.ts:62-70`   | cvaHash                    |
+| `expandVariantMatrix`   | same file:33-59                                         | Full combo list for delta  |
+| `buildRegistryEntry`    | `src/core/components/registry.ts`                       | Entry shape for snapshot   |
 
 **New helper needed:** `figmaComponentSetToComparable(set: ComponentSetNode): ComponentComparable` extracting matrix from `componentPropertyDefinitions` VARIANT axes + prop defs + binding scan.
 
@@ -90,58 +90,58 @@ Expected: **<200ms** compare-only for 20 components.
 
 ### Repo inventory
 
-| Exists | Path | Role |
-| ------ | ---- | ---- |
-| ✅ | `packages/contracts/src/componentSpec.v1.ts` | Spec schema |
-| ✅ | `packages/contracts/src/registry.v1.ts` | Registry entry |
-| ✅ | `src/core/components/registry.ts:102-235` | Upsert, cvaHash |
-| ✅ | `src/core/components/scaffold/variantMatrix.ts` | Matrix hash/expand |
-| ✅ | `tests/fixtures/component-spec/*.v1.json` | Test specs |
-| ❌ | `src/core/drift/components.ts` | Greenfield |
-| ❌ | Figma→Comparable extractor | Greenfield |
+| Exists | Path                                            | Role               |
+| ------ | ----------------------------------------------- | ------------------ |
+| ✅     | `packages/contracts/src/componentSpec.v1.ts`    | Spec schema        |
+| ✅     | `packages/contracts/src/registry.v1.ts`         | Registry entry     |
+| ✅     | `src/core/components/registry.ts:102-235`       | Upsert, cvaHash    |
+| ✅     | `src/core/components/scaffold/variantMatrix.ts` | Matrix hash/expand |
+| ✅     | `tests/fixtures/component-spec/*.v1.json`       | Test specs         |
+| ❌     | `src/core/drift/components.ts`                  | Greenfield         |
+| ❌     | Figma→Comparable extractor                      | Greenfield         |
 
 ### Cross-ticket matrix
 
-| Ticket | Relationship |
-| ------ | ------------ |
-| WO-022 | Variant matrix semantics | **depends** |
-| WO-028/WO-058 | snapshot.registry | **depends** |
-| WO-029 | Shared classify.ts | **shares** |
-| WO-031 | ComponentDriftEntry[] | **produces** |
+| Ticket        | Relationship             |
+| ------------- | ------------------------ | ------------ |
+| WO-022        | Variant matrix semantics | **depends**  |
+| WO-028/WO-058 | snapshot.registry        | **depends**  |
+| WO-029        | Shared classify.ts       | **shares**   |
+| WO-031        | ComponentDriftEntry[]    | **produces** |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Rejected |
-| -- | -------- | --------- | -------- |
-| D-030-1 | Registry key = spec.name | Matches scaffold + Components tab | Figma node name (unstable) |
-| D-030-2 | cvaHash as fast path | O(1) matrix compare | Full combo diff always |
-| D-030-3 | Lazy spec fetch per component | Avoid loading 50 specs on badge detect | Bulk fetch all specs upfront |
-| D-030-4 | Bindings compare by selector+variable | Matches WO-023 apply | Visual-only compare |
-| D-030-5 | Skip components not in registry | No baseline → treat repo as snapshot | Drift everything |
+| ID      | Decision                              | Rationale                              | Rejected                     |
+| ------- | ------------------------------------- | -------------------------------------- | ---------------------------- |
+| D-030-1 | Registry key = spec.name              | Matches scaffold + Components tab      | Figma node name (unstable)   |
+| D-030-2 | cvaHash as fast path                  | O(1) matrix compare                    | Full combo diff always       |
+| D-030-3 | Lazy spec fetch per component         | Avoid loading 50 specs on badge detect | Bulk fetch all specs upfront |
+| D-030-4 | Bindings compare by selector+variable | Matches WO-023 apply                   | Visual-only compare          |
+| D-030-5 | Skip components not in registry       | No baseline → treat repo as snapshot   | Drift everything             |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
+| Spike ID  | Procedure                                            | Pass criteria         | Status    |
+| --------- | ---------------------------------------------------- | --------------------- | --------- |
 | SPK-030-1 | Fixture: Button + loading variant in Figma mock tree | push + granular delta | ☐ pending |
-| SPK-030-2 | Fixture: repo spec new prop | pull detected | ☐ pending |
-| SPK-030-3 | Both sides changed | conflict | ☐ pending |
-| SPK-030-4 | 20-component bench | < 200ms | ☐ pending |
+| SPK-030-2 | Fixture: repo spec new prop                          | pull detected         | ☐ pending |
+| SPK-030-3 | Both sides changed                                   | conflict              | ☐ pending |
+| SPK-030-4 | 20-component bench                                   | < 200ms               | ☐ pending |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Lik | Mitigation |
-| ---- | --- | --- | ---------- |
+| Risk                                      | Sev | Lik | Mitigation                                                      |
+| ----------------------------------------- | --- | --- | --------------------------------------------------------------- |
 | ComponentSet not found for registry entry | Med | Med | Classify as pull (spec exists, Figma missing) or push (inverse) |
-| Binding scan expensive | Med | Low | Cache scan per detect; only on hash/props match failure |
-| Spec path convention drift | Med | Med | Centralize in fighub.json parser (WO-058) |
-| Renamed component in Figma | Low | Med | nodeId mismatch → push with meta delta |
+| Binding scan expensive                    | Med | Low | Cache scan per detect; only on hash/props match failure         |
+| Spec path convention drift                | Med | Med | Centralize in fighub.json parser (WO-058)                       |
+| Renamed component in Figma                | Low | Med | nodeId mismatch → push with meta delta                          |
 
 ---
 
@@ -157,7 +157,7 @@ Expected: **<200ms** compare-only for 20 components.
 
 ## Open questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
+| ID       | Question                      | Status                                                                    |
+| -------- | ----------------------------- | ------------------------------------------------------------------------- |
 | OQ-030-1 | Compare layout block in spec? | **RESOLVED:** Phase 3 — variant/props/bindings only; layout drift Phase 4 |
-| OQ-030-2 | Instance swap prop drift? | **RESOLVED:** include in props facet |
+| OQ-030-2 | Instance swap prop drift?     | **RESOLVED:** include in props facet                                      |

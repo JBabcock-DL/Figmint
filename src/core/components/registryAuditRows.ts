@@ -1,4 +1,8 @@
-import type { AuditRuleResult, RegistryComponentEntry, RegistryV1 } from '@detroitlabs/fighub-contracts';
+import type {
+  AuditRuleResult,
+  RegistryComponentEntry,
+  RegistryV1,
+} from '@detroitlabs/fighub-contracts';
 
 export function buildRegistryAuditRows(
   registry: RegistryV1,
@@ -19,8 +23,7 @@ export function buildRegistryAuditRows(
   rows.push({
     ruleId: 'comp/registry-entry-nodeid',
     pass: entry.nodeId.length > 0,
-    diagnostic:
-      entry.nodeId.length > 0 ? 'nodeId populated' : 'nodeId must be non-empty',
+    diagnostic: entry.nodeId.length > 0 ? 'nodeId populated' : 'nodeId must be non-empty',
   });
 
   rows.push({

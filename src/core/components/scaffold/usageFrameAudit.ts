@@ -1,9 +1,6 @@
 import type { AuditRuleResult } from '@detroitlabs/fighub-contracts';
 
-import {
-  assertNoCollapsedAxis,
-  assertNoOnePxMaster,
-} from '@/core/canvas/helpers/autoLayout';
+import { assertNoCollapsedAxis, assertNoOnePxMaster } from '@/core/canvas/helpers/autoLayout';
 
 import type { VariantCombo } from './types';
 

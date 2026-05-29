@@ -57,16 +57,16 @@ else switch (spec.archetype ?? inferArchetype(spec)) → archetypes/{name}.ts
 else → archetypes/chip.ts + pluginLog warn (legacy fallback)
 ```
 
-| Archetype | Legacy builder | Modular lift source | FigHub file |
-| --------- | -------------- | ------------------- | ------------ |
-| `chip` | `buildVariant` | `component-chip.mcp.js` L281–536 (inline; no `cc-arch-chip.js`) | `archetypes/chip.ts` |
-| `surface-stack` | `buildSurfaceStackVariant` | `cc-arch-surface-stack.js` | `archetypes/surfaceStack.ts` |
-| `field` | `buildFieldVariant` | `cc-arch-field.js` | `archetypes/field.ts` |
-| `row-item` | `buildRowItemVariant` | `cc-arch-row-item.js` | `archetypes/rowItem.ts` |
-| `tiny` | `buildTinyVariant` | `cc-arch-tiny.js` | `archetypes/tiny.ts` |
-| `container` | `buildContainerVariant` | `cc-arch-container.js` | `archetypes/container.ts` |
-| `control` | `buildControlVariant` | `cc-arch-control.js` | `archetypes/control.ts` |
-| composed | `buildComposedVariant` | `cc-arch-composed.js` + `cc-arch-shared.js` | `archetypes/composed.ts` |
+| Archetype       | Legacy builder             | Modular lift source                                             | FigHub file                  |
+| --------------- | -------------------------- | --------------------------------------------------------------- | ---------------------------- |
+| `chip`          | `buildVariant`             | `component-chip.mcp.js` L281–536 (inline; no `cc-arch-chip.js`) | `archetypes/chip.ts`         |
+| `surface-stack` | `buildSurfaceStackVariant` | `cc-arch-surface-stack.js`                                      | `archetypes/surfaceStack.ts` |
+| `field`         | `buildFieldVariant`        | `cc-arch-field.js`                                              | `archetypes/field.ts`        |
+| `row-item`      | `buildRowItemVariant`      | `cc-arch-row-item.js`                                           | `archetypes/rowItem.ts`      |
+| `tiny`          | `buildTinyVariant`         | `cc-arch-tiny.js`                                               | `archetypes/tiny.ts`         |
+| `container`     | `buildContainerVariant`    | `cc-arch-container.js`                                          | `archetypes/container.ts`    |
+| `control`       | `buildControlVariant`      | `cc-arch-control.js`                                            | `archetypes/control.ts`      |
+| composed        | `buildComposedVariant`     | `cc-arch-composed.js` + `cc-arch-shared.js`                     | `archetypes/composed.ts`     |
 
 Shared dashed-slot / sample-text helpers → `archetypes/shared.ts` porting `cc-arch-shared.js`.
 
@@ -103,13 +103,13 @@ Shared dashed-slot / sample-text helpers → `archetypes/shared.ts` porting `cc-
 
 **Minimum naming contract (all archetypes):**
 
-| Layer | Node type | Notes |
-| ----- | --------- | ----- |
-| `text/label` | TEXT | Required when label present; legacy chip left unnamed — **FigHub fixes** |
-| `icon-slot/leading` / `trailing` / `center` | FRAME or INSTANCE | When `iconSlots` config present |
-| `state-layer/hover` / `pressed` / `focus` | FRAME | When M3 stateRole configured |
-| `focus-ring` | FRAME | When focus ring configured |
-| `switch/thumb` | FRAME | control shape switch |
+| Layer                                       | Node type         | Notes                                                                    |
+| ------------------------------------------- | ----------------- | ------------------------------------------------------------------------ |
+| `text/label`                                | TEXT              | Required when label present; legacy chip left unnamed — **FigHub fixes** |
+| `icon-slot/leading` / `trailing` / `center` | FRAME or INSTANCE | When `iconSlots` config present                                          |
+| `state-layer/hover` / `pressed` / `focus`   | FRAME             | When M3 stateRole configured                                             |
+| `focus-ring`                                | FRAME             | When focus ring configured                                               |
+| `switch/thumb`                              | FRAME             | control shape switch                                                     |
 
 Port comments from `cc-arch-*` verbatim where they document M3/state-layer behavior.
 
@@ -132,12 +132,12 @@ Port comments from `cc-arch-*` verbatim where they document M3/state-layer behav
 
 **Locked split:**
 
-| Rule ID | Owner | Pass criteria |
-| ------- | ----- | ------------- |
+| Rule ID                       | Owner  | Pass criteria                                                |
+| ----------------------------- | ------ | ------------------------------------------------------------ |
 | `comp/scaffold-variant-count` | WO-022 | `componentSet.children.length === expectedCrossProductCount` |
-| `comp/scaffold-naming` | WO-022 | Every child name matches `key=value` grammar |
-| `comp/scaffold-one-px-master` | WO-022 | `assertNoOnePxMaster` null for each variant |
-| `comp/binding-*` | WO-023 | Bindings applied / missing-variable rows |
+| `comp/scaffold-naming`        | WO-022 | Every child name matches `key=value` grammar                 |
+| `comp/scaffold-one-px-master` | WO-022 | `assertNoOnePxMaster` null for each variant                  |
+| `comp/binding-*`              | WO-023 | Bindings applied / missing-variable rows                     |
 
 WO-022 returns `ScaffoldResult.auditRows: AuditRow[]` (or compatible partial report) so `/plan` can wire `runAudit('component', …)` extension in WO-022 Phase 2 **or** document as follow-on — **recommend WO-022 implements minimal inline validation + exports stats; WO-023 extends `runAudit` scope.**
 
@@ -161,82 +161,82 @@ WO-022 builders should **structure** nodes so WO-024 can attach property referen
 
 ### Repo inventory
 
-| Path | Role | Status |
-| ---- | ---- | ------ |
-| `packages/contracts/src/componentSpec.v1.ts` | `ComponentSpecV1`, archetype enums, `composes[]` | ✅ Exists |
+| Path                                                     | Role                                                 | Status                                   |
+| -------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------- |
+| `packages/contracts/src/componentSpec.v1.ts`             | `ComponentSpecV1`, archetype enums, `composes[]`     | ✅ Exists                                |
 | `src/io/formats/__fixtures__/component-spec-button.json` | Sample spec (drifted selectors — not scaffold input) | ✅ Exists — do not use as golden fixture |
-| `src/core/canvas/helpers/autoLayout.ts` | FR-SCAF-7 helpers | ✅ WO-014 shipped |
-| `src/core/canvas/helpers/matrixSpecimen.ts` | Matrix state cells (WO-025) | ✅ Exists |
-| `src/core/canvas/helpers/bindings.ts` | `bindPaintToVar` / `bindStrokeToVar` | ✅ Exists — WO-023 primary consumer |
-| `src/core/canvas/lib/variables.ts` | `ensureLocalVariableMap`, `resolvePath` | ✅ Exists |
-| `src/core/audit/runAudit.ts` | Audit orchestrator (`variables` \| `canvas`) | ✅ Exists — extend later |
-| `tests/unit/core/canvas/__mocks__/figmaFrames.ts` | Frame/component mock harness | ✅ Reuse for unit tests |
-| `src/core/components/scaffold/**` | Scaffold engine | ❌ Greenfield (WO-022 creates) |
-| `src/core/components/scaffold/archetypes/*.ts` | Eight builder modules | ❌ Greenfield |
+| `src/core/canvas/helpers/autoLayout.ts`                  | FR-SCAF-7 helpers                                    | ✅ WO-014 shipped                        |
+| `src/core/canvas/helpers/matrixSpecimen.ts`              | Matrix state cells (WO-025)                          | ✅ Exists                                |
+| `src/core/canvas/helpers/bindings.ts`                    | `bindPaintToVar` / `bindStrokeToVar`                 | ✅ Exists — WO-023 primary consumer      |
+| `src/core/canvas/lib/variables.ts`                       | `ensureLocalVariableMap`, `resolvePath`              | ✅ Exists                                |
+| `src/core/audit/runAudit.ts`                             | Audit orchestrator (`variables` \| `canvas`)         | ✅ Exists — extend later                 |
+| `tests/unit/core/canvas/__mocks__/figmaFrames.ts`        | Frame/component mock harness                         | ✅ Reuse for unit tests                  |
+| `src/core/components/scaffold/**`                        | Scaffold engine                                      | ❌ Greenfield (WO-022 creates)           |
+| `src/core/components/scaffold/archetypes/*.ts`           | Eight builder modules                                | ❌ Greenfield                            |
 
 ### Patterns to mirror
 
-| Pattern | Source | FigHub target |
-| ------- | ------ | -------------- |
-| Hidden variant staging frame | `component-chip.mcp.js` L594–604 | `stageVariants()` in `index.ts` |
-| `combineAsVariants` + grid layout | `component-chip.mcp.js` L902–969 | `finalizeComponentSet()` |
-| Archetype builder signature | `cc-arch-control.js` `buildControlVariant(name, fillVar, fallbackFill, opts)` | Typed TS ports with `ScaffoldBuildContext` |
-| Enum invariant guard | `autoLayout.ts` `assertValidAxisAlign` | Call on every auto-layout parent frame in builders |
-| Cross-product variant plane | `component-chip.mcp.js` L561–593 | `expandVariantMatrix()` |
+| Pattern                           | Source                                                                        | FigHub target                                      |
+| --------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------- |
+| Hidden variant staging frame      | `component-chip.mcp.js` L594–604                                              | `stageVariants()` in `index.ts`                    |
+| `combineAsVariants` + grid layout | `component-chip.mcp.js` L902–969                                              | `finalizeComponentSet()`                           |
+| Archetype builder signature       | `cc-arch-control.js` `buildControlVariant(name, fillVar, fallbackFill, opts)` | Typed TS ports with `ScaffoldBuildContext`         |
+| Enum invariant guard              | `autoLayout.ts` `assertValidAxisAlign`                                        | Call on every auto-layout parent frame in builders |
+| Cross-product variant plane       | `component-chip.mcp.js` L561–593                                              | `expandVariantMatrix()`                            |
 
 ### Official API / platform facts
 
-| API | Usage in WO-022 | Doc (retrieved 2026-05-28) |
-| --- | --------------- | -------------------------- |
-| `figma.createComponent()` | Each variant master | [ComponentNode](https://developers.figma.com/docs/plugins/api/componentnode/) |
-| `figma.combineAsVariants()` | Merge staging components | [figma.combineAsVariants](https://developers.figma.com/docs/plugins/api/figma/#combineasvariants) |
-| `figma.loadFontAsync()` | Before any `text.characters` | [loadFontAsync](https://developers.figma.com/docs/plugins/api/figma/#loadfontasync) |
-| `node.setPluginData()` | Idempotency key | [setPluginData](https://developers.figma.com/docs/plugins/api/node-properties/#setplugindata) — 100 kB/key limit |
-| `figma.variables.getLocalVariables()` | Optional preflight only | WO-023 owns bind path |
+| API                                   | Usage in WO-022              | Doc (retrieved 2026-05-28)                                                                                       |
+| ------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `figma.createComponent()`             | Each variant master          | [ComponentNode](https://developers.figma.com/docs/plugins/api/componentnode/)                                    |
+| `figma.combineAsVariants()`           | Merge staging components     | [figma.combineAsVariants](https://developers.figma.com/docs/plugins/api/figma/#combineasvariants)                |
+| `figma.loadFontAsync()`               | Before any `text.characters` | [loadFontAsync](https://developers.figma.com/docs/plugins/api/figma/#loadfontasync)                              |
+| `node.setPluginData()`                | Idempotency key              | [setPluginData](https://developers.figma.com/docs/plugins/api/node-properties/#setplugindata) — 100 kB/key limit |
+| `figma.variables.getLocalVariables()` | Optional preflight only      | WO-023 owns bind path                                                                                            |
 
 **ES2017 constraint:** no `?.`, `??`, `replaceAll` in `src/core/components/**` main-thread code (`memory.md` — Figma QuickJS).
 
 ### Cross-ticket matrix
 
-| Ticket | Interface / artifact | WO-022 consumes or produces |
-| ------ | -------------------- | --------------------------- |
-| WO-003 | `ComponentSpecV1` | **Consumes** input contract |
-| WO-008 | Local variable collections in file | **Optional** — smoke only; geometry uses hex fallbacks |
-| WO-014 | `autoLayout.ts`, constants | **Consumes** helpers |
-| WO-010 | `AuditReportV1`, `runAudit` | **Produces** scaffold audit rows; full scope extension shared with WO-023 |
-| WO-023 | Layer naming + tree | **Produces** named variant trees for `applyBindings()` |
-| WO-024 | `addComponentProperty` | **Produces** ComponentSet ready for property wiring |
-| WO-025 | Usage frame + matrix doc | **Produces** ComponentSet instance source |
-| WO-026 | `RegistryV1` | **Consumes** (read) for composed; **Produces** node ids for registry write |
-| WO-027 | Components tab UI | **Consumes** `scaffold()` via ops program |
+| Ticket | Interface / artifact               | WO-022 consumes or produces                                                |
+| ------ | ---------------------------------- | -------------------------------------------------------------------------- |
+| WO-003 | `ComponentSpecV1`                  | **Consumes** input contract                                                |
+| WO-008 | Local variable collections in file | **Optional** — smoke only; geometry uses hex fallbacks                     |
+| WO-014 | `autoLayout.ts`, constants         | **Consumes** helpers                                                       |
+| WO-010 | `AuditReportV1`, `runAudit`        | **Produces** scaffold audit rows; full scope extension shared with WO-023  |
+| WO-023 | Layer naming + tree                | **Produces** named variant trees for `applyBindings()`                     |
+| WO-024 | `addComponentProperty`             | **Produces** ComponentSet ready for property wiring                        |
+| WO-025 | Usage frame + matrix doc           | **Produces** ComponentSet instance source                                  |
+| WO-026 | `RegistryV1`                       | **Consumes** (read) for composed; **Produces** node ids for registry write |
+| WO-027 | Components tab UI                  | **Consumes** `scaffold()` via ops program                                  |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D1 | Single `scaffold()` entry — no five internal "steps" | MCP sequence was transport-only (`lift-sources.md`) | Preserve cc-scaffold/cc-matrix split in TS |
-| D2 | Alphabetical axis sort for cross-product | Deterministic idempotency hash + stable variant names | Preserve JSON key insertion order (fragile across serializers) |
-| D3 | `composed` = `composes[]` path, not layout enum | Matches `ComponentSpecV1` + legacy routing | Add eighth `composed` enum to contract (requires v2) |
-| D4 | Replace-on-rescaffold idempotency via `pluginData` | Clear semantics; avoids partial mutation bugs | In-place diff/update of variant nodes |
-| D5 | Hex fallbacks in WO-022; no `bindColor` in builders | FR-SCAF-3 owned by WO-023; avoids double-bind | Port full legacy bind helpers into WO-022 |
-| D6 | ComponentSet parent = target page (or `{name}/scaffold` wrapper) | Ticket API `target: PageNode`; doc frame deferred | Full `doc/component/{name}` tree (WO-025) |
-| D7 | Port from `cc-arch-*.js` + chip bundle inline | Modular sources smaller than 45–65 KB `.mcp.js` bundles | Load entire `component-control.mcp.js` into repo |
-| D8 | `ScaffoldResult` includes `variantByKey`, `auditRows`, `replacedExisting` | Downstream tickets need lookup without re-walking tree | Return only `ComponentSetNode` |
-| D9 | Vitest unit tests for matrix + dispatch; Figma integration per archetype | AC requires archetype integration tests | Unit-only without sandbox spikes |
-| D10 | `RegistryV1` optional param for composed | Composed cannot run without child node ids | Block composed entirely until WO-026 (delays Button Group) |
+| ID  | Decision                                                                  | Rationale                                               | Alternatives rejected                                          |
+| --- | ------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------- |
+| D1  | Single `scaffold()` entry — no five internal "steps"                      | MCP sequence was transport-only (`lift-sources.md`)     | Preserve cc-scaffold/cc-matrix split in TS                     |
+| D2  | Alphabetical axis sort for cross-product                                  | Deterministic idempotency hash + stable variant names   | Preserve JSON key insertion order (fragile across serializers) |
+| D3  | `composed` = `composes[]` path, not layout enum                           | Matches `ComponentSpecV1` + legacy routing              | Add eighth `composed` enum to contract (requires v2)           |
+| D4  | Replace-on-rescaffold idempotency via `pluginData`                        | Clear semantics; avoids partial mutation bugs           | In-place diff/update of variant nodes                          |
+| D5  | Hex fallbacks in WO-022; no `bindColor` in builders                       | FR-SCAF-3 owned by WO-023; avoids double-bind           | Port full legacy bind helpers into WO-022                      |
+| D6  | ComponentSet parent = target page (or `{name}/scaffold` wrapper)          | Ticket API `target: PageNode`; doc frame deferred       | Full `doc/component/{name}` tree (WO-025)                      |
+| D7  | Port from `cc-arch-*.js` + chip bundle inline                             | Modular sources smaller than 45–65 KB `.mcp.js` bundles | Load entire `component-control.mcp.js` into repo               |
+| D8  | `ScaffoldResult` includes `variantByKey`, `auditRows`, `replacedExisting` | Downstream tickets need lookup without re-walking tree  | Return only `ComponentSetNode`                                 |
+| D9  | Vitest unit tests for matrix + dispatch; Figma integration per archetype  | AC requires archetype integration tests                 | Unit-only without sandbox spikes                               |
+| D10 | `RegistryV1` optional param for composed                                  | Composed cannot run without child node ids              | Block composed entirely until WO-026 (delays Button Group)     |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-022-1 | Plugin Sandbox: push bootstrap tokens (WO-008), call prototype `expandVariantMatrix` + `combineAsVariants` with 3×2×2 spec, no archetype geometry | ComponentSet with 12 children; names parseable | ☐ pending — run during `/plan` or Phase 0 build |
-| SPK-022-2 | Sandbox: scaffold `chip` archetype minimal spec (1 variant, 1 size) | ComponentSet 1 child; `text/label` present; no 1px master | ☐ pending |
-| SPK-022-3 | Sandbox: composed spec with pre-scaffolded child in registry | Instances resolve; no throw from missing registry | ☐ deferred — requires child ComponentSet + registry fixture; track in Open Questions |
-| SPK-022-4 | Desktop plugin: measure `scaffold()` wall time for 24-variant Button-like spec | p50 < 5s on Pro sandbox (PRD G2 forward path) | ☐ pending — VQA / WO-027; not blocking `/plan` |
+| Spike ID  | Procedure                                                                                                                                         | Pass criteria                                             | Status                                                                               |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| SPK-022-1 | Plugin Sandbox: push bootstrap tokens (WO-008), call prototype `expandVariantMatrix` + `combineAsVariants` with 3×2×2 spec, no archetype geometry | ComponentSet with 12 children; names parseable            | ☐ pending — run during `/plan` or Phase 0 build                                      |
+| SPK-022-2 | Sandbox: scaffold `chip` archetype minimal spec (1 variant, 1 size)                                                                               | ComponentSet 1 child; `text/label` present; no 1px master | ☐ pending                                                                            |
+| SPK-022-3 | Sandbox: composed spec with pre-scaffolded child in registry                                                                                      | Instances resolve; no throw from missing registry         | ☐ deferred — requires child ComponentSet + registry fixture; track in Open Questions |
+| SPK-022-4 | Desktop plugin: measure `scaffold()` wall time for 24-variant Button-like spec                                                                    | p50 < 5s on Pro sandbox (PRD G2 forward path)             | ☐ pending — VQA / WO-027; not blocking `/plan`                                       |
 
 **Research-complete gate:** SPK-022-1 and SPK-022-2 must pass before `/build` VQA; SPK-022-3 may defer with composed archetype marked beta in plan.
 
@@ -244,16 +244,16 @@ WO-022 builders should **structure** nodes so WO-024 can attach property referen
 
 ## Risk register
 
-| Risk | Severity | Likelihood | Mitigation |
-| ---- | -------- | ---------- | ---------- |
-| Archetype port drift (1px sliver, STRETCH on parent axis) | High | Medium | WO-014 helpers + `assertValidAxisAlign` in builders; port `03-auto-layout-invariants.md` comments |
-| `ComponentSpecV1` lacks legacy `CONFIG.style` per variant | High | High | `ScaffoldBuildContext` adapter synthesizes `style` from `surface`/`control`/defaults; document in plan with Button fixture |
-| Composed blocked without registry read | Medium | High | Optional `registry` param; clear error `COMPOSED_CHILD_MISSING` |
-| Chip port size (1,064 lines inline in bundle) | Medium | Medium | Port only `buildVariant` + helpers (~250 lines); shared.ts for dashed slots |
-| Idempotent replace deletes designer edits on ComponentSet | Medium | Low | Document replace semantics; future WO may add merge mode |
-| ES2017 downlevel gaps in ported JS | Low | Medium | CI lint + esbuild target es2017 |
-| PRD §8.3 example paths (`Theme/Primary`) confuse agents | Low | High | Cross-link WO-023 normalization; golden fixtures under `tests/fixtures/component-spec/` |
-| Audit scope creep into WO-022 | Low | Medium | Inline scaffold stats only; defer `runAudit('component')` wiring to plan Phase 2 |
+| Risk                                                      | Severity | Likelihood | Mitigation                                                                                                                 |
+| --------------------------------------------------------- | -------- | ---------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Archetype port drift (1px sliver, STRETCH on parent axis) | High     | Medium     | WO-014 helpers + `assertValidAxisAlign` in builders; port `03-auto-layout-invariants.md` comments                          |
+| `ComponentSpecV1` lacks legacy `CONFIG.style` per variant | High     | High       | `ScaffoldBuildContext` adapter synthesizes `style` from `surface`/`control`/defaults; document in plan with Button fixture |
+| Composed blocked without registry read                    | Medium   | High       | Optional `registry` param; clear error `COMPOSED_CHILD_MISSING`                                                            |
+| Chip port size (1,064 lines inline in bundle)             | Medium   | Medium     | Port only `buildVariant` + helpers (~250 lines); shared.ts for dashed slots                                                |
+| Idempotent replace deletes designer edits on ComponentSet | Medium   | Low        | Document replace semantics; future WO may add merge mode                                                                   |
+| ES2017 downlevel gaps in ported JS                        | Low      | Medium     | CI lint + esbuild target es2017                                                                                            |
+| PRD §8.3 example paths (`Theme/Primary`) confuse agents   | Low      | High       | Cross-link WO-023 normalization; golden fixtures under `tests/fixtures/component-spec/`                                    |
+| Audit scope creep into WO-022                             | Low      | Medium     | Inline scaffold stats only; defer `runAudit('component')` wiring to plan Phase 2                                           |
 
 ---
 
@@ -271,13 +271,13 @@ WO-022 builders should **structure** nodes so WO-024 can attach property referen
 
 ## Open questions
 
-| # | Question | Owner | Status |
-| - | -------- | ----- | ------ |
-| OQ-1 | Should `scaffold()` accept `displayTitle` separate from `spec.name` (legacy `CONFIG.title`)? | `/plan` | **RESOLVED** — use `spec.name` for ComponentSet name; add optional `title?: string` on spec adapter context only if shadcn display name differs (default: `spec.name`) |
-| OQ-2 | Infer `archetype` when omitted — fail closed or default `chip`? | `/plan` | **RESOLVED** — default `chip` + `pluginLog` warn (legacy fallback rule) |
-| OQ-3 | Where do per-variant `style` fills come from in v1 specs without Mode A extraction? | Design + `/plan` | **OPEN** — plan must define `specAdapter` defaults from archetype config blobs; spike SPK-022-2 validates |
-| OQ-4 | Extend `runAudit('component')` in WO-022 or WO-023? | WO-022 + WO-023 plans | **OPEN** — lean WO-022 inline stats; WO-023 adds binding rules to shared scope |
-| OQ-5 | Composed archetype GA vs beta when registry empty? | Product | **OPEN** — recommend beta with explicit error until WO-026 read path exists |
+| #    | Question                                                                                     | Owner                 | Status                                                                                                                                                                 |
+| ---- | -------------------------------------------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OQ-1 | Should `scaffold()` accept `displayTitle` separate from `spec.name` (legacy `CONFIG.title`)? | `/plan`               | **RESOLVED** — use `spec.name` for ComponentSet name; add optional `title?: string` on spec adapter context only if shadcn display name differs (default: `spec.name`) |
+| OQ-2 | Infer `archetype` when omitted — fail closed or default `chip`?                              | `/plan`               | **RESOLVED** — default `chip` + `pluginLog` warn (legacy fallback rule)                                                                                                |
+| OQ-3 | Where do per-variant `style` fills come from in v1 specs without Mode A extraction?          | Design + `/plan`      | **OPEN** — plan must define `specAdapter` defaults from archetype config blobs; spike SPK-022-2 validates                                                              |
+| OQ-4 | Extend `runAudit('component')` in WO-022 or WO-023?                                          | WO-022 + WO-023 plans | **OPEN** — lean WO-022 inline stats; WO-023 adds binding rules to shared scope                                                                                         |
+| OQ-5 | Composed archetype GA vs beta when registry empty?                                           | Product               | **OPEN** — recommend beta with explicit error until WO-026 read path exists                                                                                            |
 
 ---
 

@@ -87,13 +87,13 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 **Figma source (filled before `/vqa` runs):**
 
-| Field           | Value                                                 |
-| --------------- | ----------------------------------------------------- |
-| `file_key`      | `<!-- filled during /plan or /vqa -->`                |
-| `node_id`       | `<!-- filled during /plan or /vqa -->`                |
-| Figma deep link | `<!-- filled -->`                                     |
+| Field           | Value                                                |
+| --------------- | ---------------------------------------------------- |
+| `file_key`      | `<!-- filled during /plan or /vqa -->`               |
+| `node_id`       | `<!-- filled during /plan or /vqa -->`               |
+| Figma deep link | `<!-- filled -->`                                    |
 | Frame / scope   | `<!-- e.g. FigHub plugin window — Bootstrap tab -->` |
-| Captured at     | `<!-- ISO date -->`                                   |
+| Captured at     | `<!-- ISO date -->`                                  |
 
 **Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_
 

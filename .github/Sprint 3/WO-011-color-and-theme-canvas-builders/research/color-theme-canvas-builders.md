@@ -35,7 +35,7 @@ WO-011 ports **Step 15a (Primitives page)** and **Step 15b (Theme page)** canvas
 
 Bundle size reference (`Docs/lift-sources.md` §3):
 
-| Legacy bundle | Lines | Bytes  | FigHub target                   |
+| Legacy bundle | Lines | Bytes  | FigHub target                    |
 | ------------- | ----- | ------ | -------------------------------- |
 | step-15a      | 1,314 | 57,033 | `colorTables.ts` + shared `lib/` |
 | step-15b      | 1,163 | 49,916 | `themeTables.ts` + shared `lib/` |
@@ -44,12 +44,12 @@ Bundle size reference (`Docs/lift-sources.md` §3):
 
 **Port (from `_lib.js`):**
 
-| Helper                                                    | Role                                                                                       | FigHub target                                                                           |
+| Helper                                                    | Role                                                                                       | FigHub target                                                                            |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
 | `ensureLocalVariableMapOnCtx`                             | Rebuild `path → variableId` from `getLocalVariablesAsync()` — ignores host-injected maps   | `lib/variables.ts` → `ensureLocalVariableMap()`                                          |
 | `bindPaintToVar` / `bindStrokeToVar`                      | §0.7: clone paint → `setBoundVariableForPaint` → reassign fills/strokes                    | `lib/variables.ts`                                                                       |
 | `buildPageContent`                                        | Delete non-header nodes; create `_PageContent` frame at y=320                              | `lib/pages.ts`                                                                           |
-| `findDesignOpsPage`                                       | Resolve page by shared slug `primitives` / `theme`, then legacy names                      | `lib/pages.ts` (FigHub namespace TBD — see Open Questions)                              |
+| `findDesignOpsPage`                                       | Resolve page by shared slug `primitives` / `theme`, then legacy names                      | `lib/pages.ts` (FigHub namespace TBD — see Open Questions)                               |
 | `buildTable`                                              | Detached-build table (C1): group → table → header/body → single append                     | `lib/table.ts`                                                                           |
 | `makeThemeModeColumn`                                     | Light/Dark swatch + hex (+ optional HSL stack) with `setExplicitVariableModeForCollection` | `lib/themeCells.ts` or inline in `themeTables.ts`                                        |
 | `makeBodyCell`, `makeHeaderCell`, `rehugCell`, `rehugRow` | Cell recipes + §0.1 hug rules                                                              | `lib/cells.ts` — **delegate sizing to WO-014** where applicable                          |
@@ -70,7 +70,7 @@ Bundle size reference (`Docs/lift-sources.md` §3):
 
 **Re-home from runner fragments (NOT port as files):**
 
-| Runner logic                                 | Purpose                                                 | FigHub target                                                                         |
+| Runner logic                                 | Purpose                                                 | FigHub target                                                                          |
 | -------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `_step15a-runner` collection finder          | Fuzzy match Primitives collection                       | Use WO-008 canonical names first; fuzzy fallback for foreign files                     |
 | `_step15a-runner` ramp discovery             | COLOR vars with numeric last segment → ramp key         | `projectColorRampsFromTokens()` + optional `discoverColorRampsFromFigma()`             |

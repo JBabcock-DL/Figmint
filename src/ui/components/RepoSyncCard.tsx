@@ -5,14 +5,8 @@ import type { ComponentSpecV1, TokensV1 } from '@detroitlabs/fighub-contracts';
 import { SyncChangesPanel } from '@/ui/components/SyncChangesPanel';
 import { formatRepoDisplay } from '@/ui/github/formatRepoDisplay';
 import { requestDriftReport } from '@/ui/drift/loadDriftReport';
-import {
-  requestBulkPush,
-  requestSinglePull,
-} from '@/ui/drift/resolutionActions';
-import {
-  createInitialResolutionState,
-  reduceResolution,
-} from '@/ui/drift/resolutionReducer';
+import { requestBulkPush, requestSinglePull } from '@/ui/drift/resolutionActions';
+import { createInitialResolutionState, reduceResolution } from '@/ui/drift/resolutionReducer';
 import {
   buildResolutionsForDriftIds,
   driftIdsForStagedPush,
@@ -82,7 +76,9 @@ export function RepoSyncCard(props: RepoSyncCardProps) {
   const [pushNotice, setPushNotice] = useState<string | null>(null);
 
   const tokensPath =
-    props.sync.resolvedConfig !== null ? props.sync.resolvedConfig.tokensPath : 'design/tokens.json';
+    props.sync.resolvedConfig !== null
+      ? props.sync.resolvedConfig.tokensPath
+      : 'design/tokens.json';
   const specsPath =
     props.sync.resolvedConfig !== null ? props.sync.resolvedConfig.specsPath : 'components/';
 
@@ -97,8 +93,7 @@ export function RepoSyncCard(props: RepoSyncCardProps) {
       dispatch({ type: 'detect/error', message: 'Connect GitHub first.' });
       return;
     }
-    const repoTokens =
-      repoTokensOverride !== undefined ? repoTokensOverride : props.repoTokens;
+    const repoTokens = repoTokensOverride !== undefined ? repoTokensOverride : props.repoTokens;
     if (repoTokens === undefined) {
       dispatch({
         type: 'detect/error',
@@ -219,7 +214,9 @@ export function RepoSyncCard(props: RepoSyncCardProps) {
         }}
       >
         <div>
-          <h2 style={{ fontSize: '13px', margin: '0 0 4px' }}>{formatRepoDisplay(props.repoUrl)}</h2>
+          <h2 style={{ fontSize: '13px', margin: '0 0 4px' }}>
+            {formatRepoDisplay(props.repoUrl)}
+          </h2>
           <p style={{ color: '#666', fontSize: '11px', margin: 0 }}>
             Last synced: {formatRelativeTime(lastSynced)}
             {state.loading ? ' · Detecting…' : null}
@@ -341,7 +338,8 @@ export function RepoSyncCard(props: RepoSyncCardProps) {
 
       <p style={{ color: '#767676', fontSize: '10px', margin: '0 0 4px' }}>
         Fetch loads repo + Figma drift. Check changes to push → <strong>Commit</strong> →{' '}
-        <strong>Push</strong> opens one PR. Tap <strong>Pull</strong> to review repo → Figma changes.
+        <strong>Push</strong> opens one PR. Tap <strong>Pull</strong> to review repo → Figma
+        changes.
       </p>
       <p style={{ color: '#767676', fontSize: '10px', margin: '0 0 10px' }}>
         Paths: tokens <code>{tokensPath}</code>, specs <code>{specsPath}</code>

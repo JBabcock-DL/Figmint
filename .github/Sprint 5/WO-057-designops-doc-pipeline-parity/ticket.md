@@ -42,15 +42,15 @@ We'll know we're right when **a designer compares the scaffolded `doc/component/
 
 ## Design reference
 
-|                   |                                                                                            |
-| ----------------- | ------------------------------------------------------------------------------------------ |
-| **Figma (target)**| https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/Foundations?node-id=433-335            |
-| **File key (target)** | `uCpQaRsW4oiXW3DsC6cLZm`                                                               |
-| **Node ID (target)**  | `433:335`                                                                              |
-| **Figma (current)**| https://www.figma.com/design/Dw8NkEiG91NhjYqRPNTOOu/Plugin-Sandbox?node-id=5-321          |
-| **File key (current)** | `Dw8NkEiG91NhjYqRPNTOOu`                                                              |
-| **Node ID (current)**  | `5:321`                                                                               |
-| **Frame / scope** | `doc/component/button` — full 5-section pipeline                                           |
+|                        |                                                                                  |
+| ---------------------- | -------------------------------------------------------------------------------- |
+| **Figma (target)**     | https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/Foundations?node-id=433-335  |
+| **File key (target)**  | `uCpQaRsW4oiXW3DsC6cLZm`                                                         |
+| **Node ID (target)**   | `433:335`                                                                        |
+| **Figma (current)**    | https://www.figma.com/design/Dw8NkEiG91NhjYqRPNTOOu/Plugin-Sandbox?node-id=5-321 |
+| **File key (current)** | `Dw8NkEiG91NhjYqRPNTOOu`                                                         |
+| **Node ID (current)**  | `5:321`                                                                          |
+| **Frame / scope**      | `doc/component/button` — full 5-section pipeline                                 |
 
 **Screenshot / preview:** Pull via MCP `get_screenshot` against both nodes during `/research` and `/vqa`.
 
@@ -80,7 +80,7 @@ We'll know we're right when **a designer compares the scaffolded `doc/component/
 - **Set group (§3):** dashed outline = 1px dashed `color/border/subtle`; wrap-grid gap from layout tokens.
 - **Matrix (§4):** cell padding + axis labels per §6.7; opacity tokens applied via `instance.opacity` not via fill alpha.
 - **Do/Don't (§5):** two-column auto-layout; "Do" column header in `color/background/content`, "Don't" header in `color/background/content-muted`; example instances rendered at 1:1 scale.
-- All text styles must resolve to the new Doc/* and Label/* text styles pushed by bootstrap (Requirement 7), not raw font properties.
+- All text styles must resolve to the new Doc/_ and Label/_ text styles pushed by bootstrap (Requirement 7), not raw font properties.
 
 ### Technical / architectural
 
@@ -160,46 +160,46 @@ We'll know we're right when **a designer compares the scaffolded `doc/component/
 
 **Figma source (must be filled before `/vqa` runs):**
 
-| Field           | Value                                                                                            |
-| --------------- | ------------------------------------------------------------------------------------------------ |
-| `file_key`      | `uCpQaRsW4oiXW3DsC6cLZm`                                                                         |
-| `node_id`       | `433:335`                                                                                        |
-| Figma deep link | `https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/Foundations?node-id=433-335`                |
-| Frame / scope   | `doc/component/button` — full 5-section pipeline (Foundations target)                            |
-| Captured at     | 2026-05-28 (designer sign-off after doc-chrome + fill fixes)                                      |
+| Field           | Value                                                                             |
+| --------------- | --------------------------------------------------------------------------------- |
+| `file_key`      | `uCpQaRsW4oiXW3DsC6cLZm`                                                          |
+| `node_id`       | `433:335`                                                                         |
+| Figma deep link | `https://www.figma.com/design/uCpQaRsW4oiXW3DsC6cLZm/Foundations?node-id=433-335` |
+| Frame / scope   | `doc/component/button` — full 5-section pipeline (Foundations target)             |
+| Captured at     | 2026-05-28 (designer sign-off after doc-chrome + fill fixes)                      |
 
 **Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns, then marks Result):_
 
-| #   | Category      | Property                                         | Design (Figma) | Build (implemented) | Result |
-| --- | ------------- | ------------------------------------------------ | -------------- | ------------------- | ------ |
-| 1   | Layout        | Frame width × height                             | `doc/component/button` 1640×2821 (metadata `433:336`) | `DOC_FRAME_WIDTH=1640`; `docPipeline.integration` 5 sections | PASS |
-| 2   | Layout        | Auto-layout direction / gap                      | VERTICAL sections; ~48px between header→table (y 60→108) | `docRoot` VERTICAL; `SECTION_ITEM_SPACING=48` | PASS |
-| 3   | Layout        | Padding (T/R/B/L)                                | Section/cell padding per Foundations metadata | Table/matrix/cell padding in emitters; designer verified on `Dw8NkEiG91NhjYqRPNTOOu` `9:4004` | PASS |
-| 4   | Layout        | Alignment / distribution                         | Centered matrix cells; STRETCH section widths | `createDocSectionFrame` + `reassertDocSectionStretch`; no 1px collapse on sandbox | PASS |
-| 5   | Typography    | Font family                                      | Inter (Foundations file styles) | `_Doc/*` + `Label/*` via `resolveDocStyles`; designer verified on sandbox | PASS |
-| 6   | Typography    | Font weight                                      | Per text style in Foundations | Bound via text style IDs in emitters; designer verified on sandbox | PASS |
-| 7   | Typography    | Font size                                        | 24px section titles; 13px captions (metadata text heights) | Style-bound via `_Doc/*`; designer verified on sandbox | PASS |
-| 8   | Typography    | Line height                                      | Per `_Doc/*` style definitions | Style-bound in code; designer verified on sandbox | PASS |
-| 9   | Typography    | Letter spacing                                   | Per `_Doc/*` style definitions | Style-bound in code; designer verified on sandbox | PASS |
-| 10  | Typography    | Text token (Doc/Section, Doc/Caption, etc.)      | `_Doc/Section`, `_Doc/TokenName`, `_Doc/Code`, `_Doc/Caption` | Same style names in doc emitters | PASS |
-| 11  | Color         | Background fill (hex / token)                    | `doc/table/surface` on matrix-group; `doc/table/header-surface` on table header/cards/set-group | `resolveDocPipelineChrome` + `bindDocFrameFill`; structural rows/cells transparent | PASS |
-| 12  | Color         | Foreground / text fill (hex / token)             | `doc/text/primary` / `doc/text/muted` | Documentation collection text tokens in doc emitters | PASS |
-| 13  | Color         | Border / stroke (hex / token)                    | `doc/table/border` dashed 6,4 on matrix/set-group | `DASH_PATTERN=[6,4]` + `applyDocStrokeSides`; designer verified on sandbox | PASS |
-| 14  | Color         | State variants (hover / pressed / disabled)      | Matrix visual states (opacity-driven) | `STATE_OPACITY` + `applyStateOverride.test.ts` + `matrix.test.ts` | PASS |
-| 15  | Spacing       | Margin / gap tokens                              | 48px inter-section; 24px set-group itemSpacing | `SECTION_ITEM_SPACING=48`; set-group `itemSpacing=24` | PASS |
-| 16  | Effects       | Border radius                                    | 16px on matrix + usage cards (metadata) | `MATRIX_CORNER_RADIUS=16`; `matrix.test` | PASS |
-| 17  | Effects       | Shadow / elevation token                         | None on doc pipeline target | No shadow emitters in `src/core/canvas/doc/*` | N/A |
-| 18  | Effects       | Opacity (cell overrides for matrix states)       | hover/pressed/disabled via instance opacity | `0.92` / `0.85` / `0.5` per §13.1.a | PASS |
-| 19  | Iconography   | Icon set / size                                  | N/A (Button doc page) | N/A | N/A |
-| 20  | Components    | Code Connect target / shadcn primitive used      | Foundations reference only | Forward scaffold emits canvas; CC out of scope | N/A |
-| 21  | Components    | Component variants present (size, intent, state) | 96 matrix instances; 24 ComponentSet symbols (metadata) | `matrix.test` 96 instances; 6×4×4 states | PASS |
-| 22  | Content       | Copy matches Figma exactly                       | Summary/caption strings differ from §13 code spec | §13 shadcn copy intentional; designer signed off | PASS |
-| 23  | Content       | Localization placeholders honored                | English only | English only per ticket | N/A |
-| 24  | Responsive    | Breakpoint behavior matches Figma variants       | Single doc layout | Fixed 1640 doc width | N/A |
-| 25  | Accessibility | Contrast ratio (WCAG AA / AAA)                   | Bootstrap token layer | Canvas emit N/A per ticket | N/A |
-| 26  | Accessibility | Hit target ≥ 44×44 pt                            | Matrix shows 32px-tall instances | Canvas emit N/A | N/A |
-| 27  | Accessibility | Focus ring visible & token-based                 | N/A on static doc frames | Canvas emit N/A | N/A |
-| 28  | Screenshot    | Side-by-side overlay diff (path)                 | `research/figma-source.png` | No sandbox build screenshot — overlay not produced | N/A |
+| #   | Category      | Property                                         | Design (Figma)                                                                                  | Build (implemented)                                                                           | Result |
+| --- | ------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------ |
+| 1   | Layout        | Frame width × height                             | `doc/component/button` 1640×2821 (metadata `433:336`)                                           | `DOC_FRAME_WIDTH=1640`; `docPipeline.integration` 5 sections                                  | PASS   |
+| 2   | Layout        | Auto-layout direction / gap                      | VERTICAL sections; ~48px between header→table (y 60→108)                                        | `docRoot` VERTICAL; `SECTION_ITEM_SPACING=48`                                                 | PASS   |
+| 3   | Layout        | Padding (T/R/B/L)                                | Section/cell padding per Foundations metadata                                                   | Table/matrix/cell padding in emitters; designer verified on `Dw8NkEiG91NhjYqRPNTOOu` `9:4004` | PASS   |
+| 4   | Layout        | Alignment / distribution                         | Centered matrix cells; STRETCH section widths                                                   | `createDocSectionFrame` + `reassertDocSectionStretch`; no 1px collapse on sandbox             | PASS   |
+| 5   | Typography    | Font family                                      | Inter (Foundations file styles)                                                                 | `_Doc/*` + `Label/*` via `resolveDocStyles`; designer verified on sandbox                     | PASS   |
+| 6   | Typography    | Font weight                                      | Per text style in Foundations                                                                   | Bound via text style IDs in emitters; designer verified on sandbox                            | PASS   |
+| 7   | Typography    | Font size                                        | 24px section titles; 13px captions (metadata text heights)                                      | Style-bound via `_Doc/*`; designer verified on sandbox                                        | PASS   |
+| 8   | Typography    | Line height                                      | Per `_Doc/*` style definitions                                                                  | Style-bound in code; designer verified on sandbox                                             | PASS   |
+| 9   | Typography    | Letter spacing                                   | Per `_Doc/*` style definitions                                                                  | Style-bound in code; designer verified on sandbox                                             | PASS   |
+| 10  | Typography    | Text token (Doc/Section, Doc/Caption, etc.)      | `_Doc/Section`, `_Doc/TokenName`, `_Doc/Code`, `_Doc/Caption`                                   | Same style names in doc emitters                                                              | PASS   |
+| 11  | Color         | Background fill (hex / token)                    | `doc/table/surface` on matrix-group; `doc/table/header-surface` on table header/cards/set-group | `resolveDocPipelineChrome` + `bindDocFrameFill`; structural rows/cells transparent            | PASS   |
+| 12  | Color         | Foreground / text fill (hex / token)             | `doc/text/primary` / `doc/text/muted`                                                           | Documentation collection text tokens in doc emitters                                          | PASS   |
+| 13  | Color         | Border / stroke (hex / token)                    | `doc/table/border` dashed 6,4 on matrix/set-group                                               | `DASH_PATTERN=[6,4]` + `applyDocStrokeSides`; designer verified on sandbox                    | PASS   |
+| 14  | Color         | State variants (hover / pressed / disabled)      | Matrix visual states (opacity-driven)                                                           | `STATE_OPACITY` + `applyStateOverride.test.ts` + `matrix.test.ts`                             | PASS   |
+| 15  | Spacing       | Margin / gap tokens                              | 48px inter-section; 24px set-group itemSpacing                                                  | `SECTION_ITEM_SPACING=48`; set-group `itemSpacing=24`                                         | PASS   |
+| 16  | Effects       | Border radius                                    | 16px on matrix + usage cards (metadata)                                                         | `MATRIX_CORNER_RADIUS=16`; `matrix.test`                                                      | PASS   |
+| 17  | Effects       | Shadow / elevation token                         | None on doc pipeline target                                                                     | No shadow emitters in `src/core/canvas/doc/*`                                                 | N/A    |
+| 18  | Effects       | Opacity (cell overrides for matrix states)       | hover/pressed/disabled via instance opacity                                                     | `0.92` / `0.85` / `0.5` per §13.1.a                                                           | PASS   |
+| 19  | Iconography   | Icon set / size                                  | N/A (Button doc page)                                                                           | N/A                                                                                           | N/A    |
+| 20  | Components    | Code Connect target / shadcn primitive used      | Foundations reference only                                                                      | Forward scaffold emits canvas; CC out of scope                                                | N/A    |
+| 21  | Components    | Component variants present (size, intent, state) | 96 matrix instances; 24 ComponentSet symbols (metadata)                                         | `matrix.test` 96 instances; 6×4×4 states                                                      | PASS   |
+| 22  | Content       | Copy matches Figma exactly                       | Summary/caption strings differ from §13 code spec                                               | §13 shadcn copy intentional; designer signed off                                              | PASS   |
+| 23  | Content       | Localization placeholders honored                | English only                                                                                    | English only per ticket                                                                       | N/A    |
+| 24  | Responsive    | Breakpoint behavior matches Figma variants       | Single doc layout                                                                               | Fixed 1640 doc width                                                                          | N/A    |
+| 25  | Accessibility | Contrast ratio (WCAG AA / AAA)                   | Bootstrap token layer                                                                           | Canvas emit N/A per ticket                                                                    | N/A    |
+| 26  | Accessibility | Hit target ≥ 44×44 pt                            | Matrix shows 32px-tall instances                                                                | Canvas emit N/A                                                                               | N/A    |
+| 27  | Accessibility | Focus ring visible & token-based                 | N/A on static doc frames                                                                        | Canvas emit N/A                                                                               | N/A    |
+| 28  | Screenshot    | Side-by-side overlay diff (path)                 | `research/figma-source.png`                                                                     | No sandbox build screenshot — overlay not produced                                            | N/A    |
 
 **Per-row deviations:** _(none — designer sign-off 2026-05-28)_
 
@@ -244,7 +244,7 @@ Build agents: prerequisites before implementation
 - **Single WO, not split** per locked decision (2026-05-28): the full 5-section pipeline lands in this one ticket. Do not propose splitting into per-section WOs at planning time.
 - **Lift fidelity:** the `draw-engine.figma.js` builders are the canonical source. Port the **logic** to TS, but the **canvas output shape** (node tree, auto-layout settings, text style references) must match section-for-section.
 - **§13.1.a verbatim:** the Button spec is **shadcn** — `{default, destructive, outline, secondary, ghost, link} × {sm, default, lg, icon}` with per-cell `instance.opacity` for hover/pressed/disabled. Do not invent additional variants or use the legacy DesignOps Button spec.
-- **No silent fallbacks:** if a required Doc/* text style or required color token is missing at scaffold time, the pre-flight audit row must surface — do not auto-create placeholder styles, do not skip sections.
+- **No silent fallbacks:** if a required Doc/\* text style or required color token is missing at scaffold time, the pre-flight audit row must surface — do not auto-create placeholder styles, do not skip sections.
 - **Width-collapse guard:** ensure every emitted `doc/component/*` section frame uses `layoutMode = "VERTICAL"` + `primaryAxisSizingMode = "AUTO"` + `counterAxisSizingMode = "FIXED"` (or `"AUTO"` with explicit width) — never `resize(1,1)` (the regression listed in `memory.md` "Do not repeat").
 - **Routing:** emit to `↳ Buttons` → `_PageContent` → `doc/component/button` per the 2026-05-28 routing fix. Do not regress to the flat `Components` page.
 

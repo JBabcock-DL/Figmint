@@ -19,9 +19,9 @@ export interface ExportSandboxProps {
 }
 
 export function ExportSandbox({ exportDemo, onExportDemoChange }: ExportSandboxProps) {
-  const [liveDriftProps, setLiveDriftProps] = useState<ReturnType<typeof prepareDriftExport> | null>(
-    null,
-  );
+  const [liveDriftProps, setLiveDriftProps] = useState<ReturnType<
+    typeof prepareDriftExport
+  > | null>(null);
   const [liveError, setLiveError] = useState('');
 
   return (
@@ -53,11 +53,11 @@ export function ExportSandbox({ exportDemo, onExportDemoChange }: ExportSandboxP
               setLiveError('');
               void requestDriftReport({
                 repoUrl: 'https://github.com/detroitlabs/fighub',
-                repoTokens: tokensFixture as TokensV1,
+                repoTokens: tokensFixture as unknown as TokensV1,
                 repoSpecs: [
                   {
                     name: 'Button',
-                    spec: componentSpecFixture as ComponentSpecV1,
+                    spec: componentSpecFixture as unknown as ComponentSpecV1,
                   },
                 ],
               })

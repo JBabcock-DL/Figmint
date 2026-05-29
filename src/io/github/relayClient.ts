@@ -15,9 +15,7 @@ function relayBase(): string {
   return DEFAULT_RELAY;
 }
 
-export async function requestDeviceCodeViaRelay(
-  scope: string,
-): Promise<DeviceCodeResponse> {
+export async function requestDeviceCodeViaRelay(scope: string): Promise<DeviceCodeResponse> {
   const response = await fetch(`${relayBase()}/oauth/device/code`, {
     method: 'POST',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -25,8 +23,7 @@ export async function requestDeviceCodeViaRelay(
   });
   const body = (await response.json()) as Record<string, unknown>;
   if (!response.ok) {
-    const message =
-      typeof body.error === 'string' ? body.error : `Relay HTTP ${response.status}`;
+    const message = typeof body.error === 'string' ? body.error : `Relay HTTP ${response.status}`;
     throw new Error(message);
   }
   if (
@@ -45,9 +42,7 @@ export async function requestDeviceCodeViaRelay(
   };
 }
 
-export async function pollDeviceTokenViaRelay(
-  deviceCode: string,
-): Promise<DeviceTokenPollResult> {
+export async function pollDeviceTokenViaRelay(deviceCode: string): Promise<DeviceTokenPollResult> {
   const response = await fetch(`${relayBase()}/oauth/device/poll`, {
     method: 'POST',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -79,8 +74,7 @@ export async function pollDeviceTokenViaRelay(
   return {
     status: 'error',
     error,
-    description:
-      typeof body.error_description === 'string' ? body.error_description : undefined,
+    description: typeof body.error_description === 'string' ? body.error_description : undefined,
   };
 }
 

@@ -47,16 +47,13 @@ describe('defaultExportBasename', () => {
     ['component-spec', 'docs/fighub/components/primary-button'],
     ['registry', 'docs/fighub/registry-export'],
     ['tokens', 'docs/fighub/tokens-2026-05-27'],
-  ] as const)(
-    'returns default basename for %s',
-    function (kind, expected) {
-      const doc = minimalDocs.find(function (entry) {
-        return entry.kind === kind;
-      });
-      expect(doc).toBeDefined();
-      expect(defaultExportBasename(doc!, fixedNow)).toBe(expected);
-    },
-  );
+  ] as const)('returns default basename for %s', function (kind, expected) {
+    const doc = minimalDocs.find(function (entry) {
+      return entry.kind === kind;
+    });
+    expect(doc).toBeDefined();
+    expect(defaultExportBasename(doc!, fixedNow)).toBe(expected);
+  });
 
   it('kebab-cases component-spec payload name', () => {
     expect(kebabCase('Primary Button')).toBe('primary-button');

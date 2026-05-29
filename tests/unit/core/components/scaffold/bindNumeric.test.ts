@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { bindGapToVar, bindPaddingToVar, bindRadiusToVar } from '@/core/components/scaffold/bindNumeric';
+import {
+  bindGapToVar,
+  bindPaddingToVar,
+  bindRadiusToVar,
+} from '@/core/components/scaffold/bindNumeric';
 
 import { createMockFrame } from '../../canvas/__mocks__/figmaFrames';
 

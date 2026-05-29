@@ -49,7 +49,10 @@ describe('resolveComponentSpecFromRepo', () => {
       location: { source: 'paste' },
     });
 
-    const result = await resolveComponentSpecFromRepo('https://github.com/acme/design-system', 'Button');
+    const result = await resolveComponentSpecFromRepo(
+      'https://github.com/acme/design-system',
+      'Button',
+    );
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.triedPaths[0]).toBe(SPEC_RESOLUTION_PATHS[0]('Button'));
@@ -71,7 +74,10 @@ describe('resolveComponentSpecFromRepo', () => {
       rawSnippet: '',
     });
 
-    const result = await resolveComponentSpecFromRepo('https://github.com/acme/design-system', 'Button');
+    const result = await resolveComponentSpecFromRepo(
+      'https://github.com/acme/design-system',
+      'Button',
+    );
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.spec.name).toBe('Button');

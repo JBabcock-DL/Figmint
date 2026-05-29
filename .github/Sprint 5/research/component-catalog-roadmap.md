@@ -9,25 +9,25 @@ Designers expect **Browse repo → multiselect → batch scaffold**. Phase 2 shi
 
 ## Terminology (locked)
 
-| UI label | File / concept | Purpose |
-| -------- | -------------- | ------- |
-| **Figma sync file** | `.fighub-registry.json` | Already scaffolded in Figma (nodeId, version) |
-| **Browse repo components** | WO-056 catalog | All discoverable specs in GitHub repo |
-| **Import from repo** | WO-044 | Parse React/source → new spec |
+| UI label                   | File / concept          | Purpose                                       |
+| -------------------------- | ----------------------- | --------------------------------------------- |
+| **Figma sync file**        | `.fighub-registry.json` | Already scaffolded in Figma (nodeId, version) |
+| **Browse repo components** | WO-056 catalog          | All discoverable specs in GitHub repo         |
+| **Import from repo**       | WO-044                  | Parse React/source → new spec                 |
 
 ## Roadmap tickets
 
-| WO | Title | Swimlane note |
-| -- | ----- | ------------- |
-| WO-022 | ComponentSet scaffolder | **In Build** — geometry remediation |
-| WO-024 | Property definitions | **In Build** — pre-combine properties |
-| WO-025 | Usage frame | **In Build** — after geometry |
-| WO-027 | Components tab | **In Build** — UX 1/2/4 shipped; canvas remediation pending |
-| **WO-056** | Component catalog + batch scaffold | **Backlog** — Phase 4a committed |
-| WO-044 | Import + Code Connect UI | **Backlog** — pairs with WO-056 |
+| WO         | Title                              | Swimlane note                                               |
+| ---------- | ---------------------------------- | ----------------------------------------------------------- |
+| WO-022     | ComponentSet scaffolder            | **In Build** — geometry remediation                         |
+| WO-024     | Property definitions               | **In Build** — pre-combine properties                       |
+| WO-025     | Usage frame                        | **In Build** — after geometry                               |
+| WO-027     | Components tab                     | **In Build** — UX 1/2/4 shipped; canvas remediation pending |
+| **WO-056** | Component catalog + batch scaffold | **Backlog** — Phase 4a committed                            |
+| WO-044     | Import + Code Connect UI           | **Backlog** — pairs with WO-056                             |
 
 ## WO-027 UX shipped (2026-05-28)
 
-1. Rename **Load registry** → **Load sync registry** + education copy  
-2. Empty-state explains sync file vs codebase catalog → points to WO-056  
-4. Repo URL + sync file path → **Settings only**
+1. Rename **Load registry** → **Load sync registry** + education copy
+2. Empty-state explains sync file vs codebase catalog → points to WO-056
+3. Repo URL + sync file path → **Settings only**

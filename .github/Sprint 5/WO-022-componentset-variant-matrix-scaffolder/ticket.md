@@ -102,11 +102,11 @@ _See ticket-level scope. Most subsystem tickets surface UI in a separate tab-UI 
 
 **Register:** [designops-canvas-parity-bug-register.md](../research/designops-canvas-parity-bug-register.md)
 
-| Bug ID | Summary |
-| ------ | ------- |
+| Bug ID         | Summary                                                                            |
+| -------------- | ---------------------------------------------------------------------------------- |
 | **BUG-S5-002** | **Resolved in code (WO-057)** — `assertNoCollapsedAxis` + `comp/doc-section-width` |
-| **BUG-S5-007** | ComponentSet `finalizeComponentSet` default width 320 vs DesignOps 1640 WRAP grid |
-| **BUG-S5-008** | Hidden staging `holder.resize(1,1)` — verify no leak |
+| **BUG-S5-007** | ComponentSet `finalizeComponentSet` default width 320 vs DesignOps 1640 WRAP grid  |
+| **BUG-S5-008** | Hidden staging `holder.resize(1,1)` — verify no leak                               |
 
 Subsystem Figma VQA remains N/A, but **integrated forward-scaffold VQA fails** until geometry + audit fixes land (WO-025 / WO-027).
 

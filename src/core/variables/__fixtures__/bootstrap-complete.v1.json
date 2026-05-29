@@ -5,42 +5,23 @@
   "collections": [
     {
       "id": "primitives",
-      "modes": [
-        "Default"
-      ]
+      "modes": ["Default"]
     },
     {
       "id": "theme",
-      "modes": [
-        "Light",
-        "Dark"
-      ]
+      "modes": ["Light", "Dark"]
     },
     {
       "id": "typography",
-      "modes": [
-        "85",
-        "100",
-        "110",
-        "120",
-        "130",
-        "150",
-        "175",
-        "200"
-      ]
+      "modes": ["85", "100", "110", "120", "130", "150", "175", "200"]
     },
     {
       "id": "layout",
-      "modes": [
-        "Default"
-      ]
+      "modes": ["Default"]
     },
     {
       "id": "effects",
-      "modes": [
-        "Light",
-        "Dark"
-      ]
+      "modes": ["Light", "Dark"]
     }
   ],
   "tokens": [

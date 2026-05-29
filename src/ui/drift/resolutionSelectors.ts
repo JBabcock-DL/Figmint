@@ -1,6 +1,9 @@
 import type { DriftEntry } from '@detroitlabs/fighub-contracts';
 
-import { effectiveResolutionDirection, resolutionsForBulkPush } from '@/core/drift/applyPushResolutions';
+import {
+  effectiveResolutionDirection,
+  resolutionsForBulkPush,
+} from '@/core/drift/applyPushResolutions';
 import type { ResolutionChoice } from '@/io/messages/drift';
 
 import type { ResolutionState } from './resolutionReducer';
@@ -23,11 +26,17 @@ function pushResolutions(state: ResolutionState): Record<string, ResolutionChoic
   return resolutionsForBulkPush(state.report, resolutionsRecord(state), allIds);
 }
 
-export function isPushDrift(drift: DriftEntry, resolutions: Record<string, ResolutionChoice>): boolean {
+export function isPushDrift(
+  drift: DriftEntry,
+  resolutions: Record<string, ResolutionChoice>,
+): boolean {
   return effectiveResolutionDirection(drift, resolutions) === 'push';
 }
 
-export function isPullDrift(drift: DriftEntry, resolutions: Record<string, ResolutionChoice>): boolean {
+export function isPullDrift(
+  drift: DriftEntry,
+  resolutions: Record<string, ResolutionChoice>,
+): boolean {
   return effectiveResolutionDirection(drift, resolutions) === 'pull';
 }
 

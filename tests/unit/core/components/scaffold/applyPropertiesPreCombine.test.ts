@@ -20,7 +20,11 @@ type MockComponentWithAdd = ReturnType<typeof createMockComponent> & {
 };
 
 function attachAddProp(variant: ReturnType<typeof createMockComponent>): ReturnType<typeof vi.fn> {
-  const addSpy = vi.fn(function mockAdd(name: string, _type: string, _defaultValue: string | boolean) {
+  const addSpy = vi.fn(function mockAdd(
+    name: string,
+    _type: string,
+    _defaultValue: string | boolean,
+  ) {
     return name + '#mock:' + String(addSpy.mock.calls.length - 1);
   });
   Object.defineProperty(variant, 'addComponentProperty', { value: addSpy });

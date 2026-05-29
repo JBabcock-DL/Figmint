@@ -14,14 +14,14 @@ If research is a stub, `/plan` will re-open the same external docs, re-read the 
 
 Before writing findings, read the **parent** `.github/Sprint {N}/{TICKET-ID}-*/ticket.md` in full:
 
-| Ticket section | Must appear in research as |
-| -------------- | --------------------------- |
-| **Goal / Problem story** | Summary — same scope boundaries |
-| **Requirements** (all subsections) | Key findings mapped to requirement IDs or bullets |
-| **Acceptance criteria** | **Pre-plan spike checklist** + test/VQA matrix where AC depends on runtime proof |
-| **Out of scope** | Explicit "will not research / will not implement" |
-| **Dependencies** | Cross-ticket matrix + upstream research links |
-| **Lift reference / References** | Lift map when port work; official doc URLs with retrieved date |
+| Ticket section                     | Must appear in research as                                                       |
+| ---------------------------------- | -------------------------------------------------------------------------------- |
+| **Goal / Problem story**           | Summary — same scope boundaries                                                  |
+| **Requirements** (all subsections) | Key findings mapped to requirement IDs or bullets                                |
+| **Acceptance criteria**            | **Pre-plan spike checklist** + test/VQA matrix where AC depends on runtime proof |
+| **Out of scope**                   | Explicit "will not research / will not implement"                                |
+| **Dependencies**                   | Cross-ticket matrix + upstream research links                                    |
+| **Lift reference / References**    | Lift map when port work; official doc URLs with retrieved date                   |
 
 **Traceability rule:** every requirement bullet on the ticket should map to **at least one** validated finding (repo citation, official API quote, or spike result).
 
@@ -48,21 +48,21 @@ Each research doc must include **all** that apply:
 
 ### Repo inventory
 
-| Category | Required |
-| -------- | -------- |
-| **Exists today** | File paths with one-line role (grep-verified) |
-| **Does not exist** | Explicit "greenfield" paths the ticket will create |
+| Category               | Required                                                                |
+| ---------------------- | ----------------------------------------------------------------------- |
+| **Exists today**       | File paths with one-line role (grep-verified)                           |
+| **Does not exist**     | Explicit "greenfield" paths the ticket will create                      |
 | **Patterns to mirror** | Existing module + line-range citation (message guards, page find, etc.) |
 
 Use code citations or tables — not "see src/io".
 
 ### Official API / platform facts
 
-| Category | Required |
-| -------- | -------- |
-| **Endpoint / API** | Method, URL, headers, request/response shape (minimal JSON example) |
-| **Limits** | Documented caps (pluginData 100 kB, manifest networkAccess, etc.) with doc URL |
-| **Security** | Token storage thread, scopes, manifest domains |
+| Category           | Required                                                                       |
+| ------------------ | ------------------------------------------------------------------------------ |
+| **Endpoint / API** | Method, URL, headers, request/response shape (minimal JSON example)            |
+| **Limits**         | Documented caps (pluginData 100 kB, manifest networkAccess, etc.) with doc URL |
+| **Security**       | Token storage thread, scopes, manifest domains                                 |
 
 Quote or paraphrase from **retrieved** official docs; include URL + access date in References.
 
@@ -87,8 +87,8 @@ Run spikes **during research** when any of these apply:
 Each spike entry:
 
 ```markdown
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
+| Spike ID  | Procedure                                                         | Pass criteria                                | Status    |
+| --------- | ----------------------------------------------------------------- | -------------------------------------------- | --------- |
 | SPK-016-1 | Org build in Figma desktop: POST device token poll from UI iframe | 200 + access_token or documented error shape | ☐ pending |
 ```
 
@@ -127,14 +127,14 @@ If any box fails, **expand research** — do not move to In Planning with thin a
 
 ## Anti-patterns
 
-| Bad | Why |
-| --- | --- |
-| Summary-only doc (~50 lines) for OAuth + REST + UI | Plan agent re-reads GitHub/Figma docs |
-| "Use Device Flow" without API sequence + Figma doc tension resolved | Wrong build path |
-| "Clipboard should work on click" without WO-006 cross-ref | Repeats invalidated read path assumptions |
-| "100k char limit on text nodes" without doc citation | Conflates pluginData vs TextNode |
-| Parallel tickets each invent conflicting `Sink` shapes | WO-017 vs WO-020 drift |
-| "Validate in VQA" with no spike when AC is platform-dependent | Research pushes risk into build |
+| Bad                                                                 | Why                                       |
+| ------------------------------------------------------------------- | ----------------------------------------- |
+| Summary-only doc (~50 lines) for OAuth + REST + UI                  | Plan agent re-reads GitHub/Figma docs     |
+| "Use Device Flow" without API sequence + Figma doc tension resolved | Wrong build path                          |
+| "Clipboard should work on click" without WO-006 cross-ref           | Repeats invalidated read path assumptions |
+| "100k char limit on text nodes" without doc citation                | Conflates pluginData vs TextNode          |
+| Parallel tickets each invent conflicting `Sink` shapes              | WO-017 vs WO-020 drift                    |
+| "Validate in VQA" with no spike when AC is platform-dependent       | Research pushes risk into build           |
 
 ---
 

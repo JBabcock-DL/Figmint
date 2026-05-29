@@ -1,10 +1,6 @@
 import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
-import {
-  DASH_PATTERN,
-  DOC_FRAME_WIDTH,
-  MATRIX_CORNER_RADIUS,
-} from '@/core/canvas/doc/constants';
+import { DASH_PATTERN, DOC_FRAME_WIDTH, MATRIX_CORNER_RADIUS } from '@/core/canvas/doc/constants';
 import { resizeThenApplySizing } from '@/core/canvas/helpers/autoLayout';
 import { resolveDocStyles } from '@/core/canvas/lib/cells';
 import { ensureLocalVariableMap } from '@/core/canvas/lib/variables';
@@ -43,7 +39,7 @@ function applyComponentSetChrome(
 ): void {
   componentSet.layoutMode = 'HORIZONTAL';
   componentSet.layoutWrap = 'WRAP';
-  resizeThenApplySizing(componentSet as unknown as FrameNode, DOC_FRAME_WIDTH, 1, {
+  resizeThenApplySizing(componentSet, DOC_FRAME_WIDTH, 1, {
     primaryAxisSizingMode: 'FIXED',
     counterAxisSizingMode: 'AUTO',
   });

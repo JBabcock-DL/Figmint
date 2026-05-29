@@ -71,7 +71,12 @@ export function SpecPreviewPanel({
       </p>
       {bindingPreview.length > 0 ? (
         <p style={{ color: '#666', fontSize: 10, margin: 0 }}>
-          Bindings: {bindingPreview.map(function (b) { return b.selector; }).join(', ')}
+          Bindings:{' '}
+          {bindingPreview
+            .map(function (b) {
+              return b.selector;
+            })
+            .join(', ')}
           {bindingExtra}
         </p>
       ) : null}

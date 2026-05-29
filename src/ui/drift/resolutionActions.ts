@@ -13,9 +13,7 @@ export async function requestBulkPush(input: {
   specsPath?: string;
   repoSpecs?: { name: string; spec: ComponentSpecV1 }[];
   tokensWireFormat?: RepoTokensWireFormat;
-}): Promise<
-  { ok: true; prUrl: string; warning?: string } | { ok: false; error: string }
-> {
+}): Promise<{ ok: true; prUrl: string; warning?: string } | { ok: false; error: string }> {
   return new Promise(function (resolve) {
     const requestId = 'resolution-push-' + String(Date.now());
 
@@ -74,7 +72,9 @@ export async function requestBulkPull(input: {
   driftIds: string[];
   resolutions: Record<string, ResolutionChoice>;
   repoSpecs?: { name: string; spec: ComponentSpecV1 }[];
-}): Promise<{ ok: true; appliedCount: number } | { ok: false; error: string; appliedCount?: number }> {
+}): Promise<
+  { ok: true; appliedCount: number } | { ok: false; error: string; appliedCount?: number }
+> {
   return new Promise(function (resolve) {
     const requestId = 'resolution-pull-' + String(Date.now());
 

@@ -1,7 +1,4 @@
-import {
-  isSinkErrorMessage,
-  isSinkResultMessage,
-} from '@/io/messages/sinks';
+import { isSinkErrorMessage, isSinkResultMessage } from '@/io/messages/sinks';
 import type { LoadedDocument } from '@/io/sources/types';
 
 import type { SerializableDocument, SinkResult } from './types';

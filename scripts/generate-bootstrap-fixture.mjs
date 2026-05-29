@@ -53,7 +53,10 @@ function scaleTypo(base, mode) {
 }
 
 function kebabPath(path) {
-  return path.replace(/\//g, '-').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+  return path
+    .replace(/\//g, '-')
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .toLowerCase();
 }
 
 function codeSyntaxTriple(path, collectionHint) {
@@ -88,7 +91,12 @@ function addToken(token) {
 for (const ramp of COLOR_RAMPS) {
   for (const stop of COLOR_STOPS) {
     const name = `color/${ramp}/${stop}`;
-    const hex = ramp === 'neutral' ? `#${String(Math.round((stop / 900) * 255)).padStart(2, '0').repeat(3)}` : hashHex(name);
+    const hex =
+      ramp === 'neutral'
+        ? `#${String(Math.round((stop / 900) * 255))
+            .padStart(2, '0')
+            .repeat(3)}`
+        : hashHex(name);
     addToken({
       collection: 'primitives',
       name,
@@ -124,23 +132,71 @@ addToken({
 
 // --- Theme: semantic colors (platform-mapping minimum + aliases) ---
 const THEME_TOKENS = [
-  { path: 'color/background/default', light: { alias: 'color/neutral/50' }, dark: { alias: 'color/neutral/900' } },
-  { path: 'color/background/content', light: { alias: 'color/neutral/100' }, dark: { alias: 'color/neutral/800' } },
+  {
+    path: 'color/background/default',
+    light: { alias: 'color/neutral/50' },
+    dark: { alias: 'color/neutral/900' },
+  },
+  {
+    path: 'color/background/content',
+    light: { alias: 'color/neutral/100' },
+    dark: { alias: 'color/neutral/800' },
+  },
   {
     path: 'color/background/content-muted',
     light: { alias: 'color/neutral/200' },
     dark: { alias: 'color/neutral/700' },
   },
-  { path: 'color/background/variant', light: { alias: 'color/neutral/100' }, dark: { alias: 'color/neutral/800' } },
-  { path: 'color/border/default', light: { alias: 'color/neutral/300' }, dark: { alias: 'color/neutral/600' } },
-  { path: 'color/border/subtle', light: { alias: 'color/neutral/200' }, dark: { alias: 'color/neutral/700' } },
-  { path: 'color/primary/default', light: { alias: 'color/primary/500' }, dark: { alias: 'color/primary/400' } },
-  { path: 'color/primary/content', light: { rgb: hexToRgb('#ffffff') }, dark: { rgb: hexToRgb('#ffffff') } },
-  { path: 'color/primary/subtle', light: { alias: 'color/primary/100' }, dark: { alias: 'color/primary/900' } },
-  { path: 'color/secondary/default', light: { alias: 'color/secondary/500' }, dark: { alias: 'color/secondary/400' } },
-  { path: 'color/tertiary/default', light: { alias: 'color/tertiary/500' }, dark: { alias: 'color/tertiary/400' } },
-  { path: 'color/error/default', light: { alias: 'color/error/500' }, dark: { alias: 'color/error/400' } },
-  { path: 'color/component/ring', light: { alias: 'color/primary/500' }, dark: { alias: 'color/primary/400' } },
+  {
+    path: 'color/background/variant',
+    light: { alias: 'color/neutral/100' },
+    dark: { alias: 'color/neutral/800' },
+  },
+  {
+    path: 'color/border/default',
+    light: { alias: 'color/neutral/300' },
+    dark: { alias: 'color/neutral/600' },
+  },
+  {
+    path: 'color/border/subtle',
+    light: { alias: 'color/neutral/200' },
+    dark: { alias: 'color/neutral/700' },
+  },
+  {
+    path: 'color/primary/default',
+    light: { alias: 'color/primary/500' },
+    dark: { alias: 'color/primary/400' },
+  },
+  {
+    path: 'color/primary/content',
+    light: { rgb: hexToRgb('#ffffff') },
+    dark: { rgb: hexToRgb('#ffffff') },
+  },
+  {
+    path: 'color/primary/subtle',
+    light: { alias: 'color/primary/100' },
+    dark: { alias: 'color/primary/900' },
+  },
+  {
+    path: 'color/secondary/default',
+    light: { alias: 'color/secondary/500' },
+    dark: { alias: 'color/secondary/400' },
+  },
+  {
+    path: 'color/tertiary/default',
+    light: { alias: 'color/tertiary/500' },
+    dark: { alias: 'color/tertiary/400' },
+  },
+  {
+    path: 'color/error/default',
+    light: { alias: 'color/error/500' },
+    dark: { alias: 'color/error/400' },
+  },
+  {
+    path: 'color/component/ring',
+    light: { alias: 'color/primary/500' },
+    dark: { alias: 'color/primary/400' },
+  },
 ];
 
 function themeModeValue(spec) {

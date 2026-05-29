@@ -8,7 +8,7 @@ project_item_id: PVTI_lAHOD9B30s4BY4aYzguEet4
 
 Deliver the **component catalog** experience designers expect on the Components tab: discover scaffoldable components from the connected GitHub repo, **multiselect**, and run **batch scaffold** without pasting specs one-by-one. Implements the deferred intent from WO-027 manual VQA (2026-05-28).
 
-PRD anchors: `Docs/PRD.md` §5.4 UC-4 (import), §6.3 FR-IMP-*; extends Phase 4a with catalog UX that complements WO-044.
+PRD anchors: `Docs/PRD.md` §5.4 UC-4 (import), §6.3 FR-IMP-\*; extends Phase 4a with catalog UX that complements WO-044.
 
 ---
 
@@ -67,12 +67,12 @@ WO-056 closes the product loop: **repo discovery → multiselect → queued scaf
 
 ## Roadmap placement
 
-| Phase | Ticket | Delivers |
-| ----- | ------ | -------- |
-| Phase 2 (done) | WO-027 | Sync registry pick, paste spec, single scaffold |
-| **Phase 4a** | **WO-056** | **Catalog discovery + multiselect batch scaffold** |
-| Phase 4a | WO-044 | Import-from-repo file browser + CC PR |
-| Phase 4a | WO-041..043 | Parsers + dependency scan |
+| Phase          | Ticket      | Delivers                                           |
+| -------------- | ----------- | -------------------------------------------------- |
+| Phase 2 (done) | WO-027      | Sync registry pick, paste spec, single scaffold    |
+| **Phase 4a**   | **WO-056**  | **Catalog discovery + multiselect batch scaffold** |
+| Phase 4a       | WO-044      | Import-from-repo file browser + CC PR              |
+| Phase 4a       | WO-041..043 | Parsers + dependency scan                          |
 
 **Build order:** WO-027 remediation (WO-022/024/025) → WO-056 (catalog) in parallel with WO-041..043 → WO-044 UI integration.
 

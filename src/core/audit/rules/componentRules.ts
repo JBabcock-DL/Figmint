@@ -45,7 +45,9 @@ function hasPropertyDefinition(
   return false;
 }
 
-function requirePropsResult(input: ComponentAuditInput): NonNullable<ComponentAuditInput['applyPropertiesResult']> | null {
+function requirePropsResult(
+  input: ComponentAuditInput,
+): NonNullable<ComponentAuditInput['applyPropertiesResult']> | null {
   if (input.applyPropertiesResult === undefined) {
     return null;
   }
@@ -165,7 +167,8 @@ function checkPropAddZeroFailures(input: ComponentAuditInput): AuditRuleResult {
     pass,
     pass
       ? 'Some variants failed but at least one variant succeeded per property'
-      : String(failures.length) + ' property add failure(s); all variants failed for at least one prop',
+      : String(failures.length) +
+          ' property add failure(s); all variants failed for at least one prop',
   );
 }
 

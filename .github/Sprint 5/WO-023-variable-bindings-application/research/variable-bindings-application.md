@@ -38,9 +38,9 @@ There is **no separate `kind` or `property` field**. The selector string must en
 
 **PRD drift:** `Docs/PRD.md` §8.3 example uses `{ "selector": "root.fill", "variable": "Theme/Primary" }` and `{ "selector": "label.text", "variable": "Typography/Body/medium" }`. Those paths **violate** `07-token-paths.md` (collection prefixes + non-canonical Theme tiers). Canonical examples:
 
-| Stale PRD example | Locked FigHub path |
-| ----------------- | ------------------- |
-| `Theme/Primary` | `color/primary/default` |
+| Stale PRD example        | Locked FigHub path                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `Theme/Primary`          | `color/primary/default`                                                                                |
 | `Typography/Body/medium` | TextStyle name `Body/MD` for `.text-style` kind, or `Body/MD/font-size` only if future sub-kinds added |
 
 **Fixture drift:** `src/io/formats/__fixtures__/component-spec-button.json` uses CSS-like selectors (`.button`) and collection-prefixed variables — treat as **markdown export sample only**, not scaffold input. Integration tests must use locked selector grammar.
@@ -64,14 +64,14 @@ There is **no separate `kind` or `property` field**. The selector string must en
 
 **Lift source:** `component-composed.mcp.js` §5 (`bindColor`, `bindNum`) + comment at L95: **Do NOT use `setBoundVariable` for color** — use paint binding.
 
-| Kind | Plugin API | Helper to reuse | Variable type |
-| ---- | ---------- | --------------- | ------------- |
-| `fill` | `figma.variables.setBoundVariableForPaint` → assign `fills[]` | `bindPaintToVar` (`src/core/canvas/helpers/bindings.ts`) | COLOR |
-| `stroke` | same on `strokes[]` | `bindStrokeToVar` | COLOR |
-| `padding` | `node.setBoundVariable('paddingLeft' \| …, variable)` ×4 | new `bindPaddingToVar` in `applyBindings.ts` or `helpers/bindings.ts` | FLOAT |
-| `gap` | `node.setBoundVariable('itemSpacing', variable)` | new `bindGapToVar` | FLOAT |
-| `radius` | `setBoundVariable` on `topLeftRadius`, `topRightRadius`, `bottomLeftRadius`, `bottomRightRadius` | new `bindRadiusToVar` (mirrors DesignOps `bindNum` loop) | FLOAT |
-| `text-style` | `textNode.textStyleId = style.id` when `variable` matches a **published TextStyle name** | new `applyTextStyleByName` (async font load pattern from `typographyStyleBinding.ts`) | N/A (style reference) |
+| Kind         | Plugin API                                                                                       | Helper to reuse                                                                       | Variable type         |
+| ------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- | --------------------- |
+| `fill`       | `figma.variables.setBoundVariableForPaint` → assign `fills[]`                                    | `bindPaintToVar` (`src/core/canvas/helpers/bindings.ts`)                              | COLOR                 |
+| `stroke`     | same on `strokes[]`                                                                              | `bindStrokeToVar`                                                                     | COLOR                 |
+| `padding`    | `node.setBoundVariable('paddingLeft' \| …, variable)` ×4                                         | new `bindPaddingToVar` in `applyBindings.ts` or `helpers/bindings.ts`                 | FLOAT                 |
+| `gap`        | `node.setBoundVariable('itemSpacing', variable)`                                                 | new `bindGapToVar`                                                                    | FLOAT                 |
+| `radius`     | `setBoundVariable` on `topLeftRadius`, `topRightRadius`, `bottomLeftRadius`, `bottomRightRadius` | new `bindRadiusToVar` (mirrors DesignOps `bindNum` loop)                              | FLOAT                 |
+| `text-style` | `textNode.textStyleId = style.id` when `variable` matches a **published TextStyle name**         | new `applyTextStyleByName` (async font load pattern from `typographyStyleBinding.ts`) | N/A (style reference) |
 
 **Official API (retrieved 2026-05-28):**
 
@@ -122,11 +122,11 @@ kind     ::= "fill" | "stroke" | "radius" | "padding" | "gap" | "text-style"
 
 **Kind validation by node type:**
 
-| Node type | Allowed kinds |
-| --------- | ------------- |
+| Node type                                               | Allowed kinds                      |
+| ------------------------------------------------------- | ---------------------------------- |
 | `FrameNode`, `ComponentNode`, `InstanceNode` (geometry) | fill, stroke, radius, padding, gap |
-| `TextNode` | fill, text-style |
-| Other | `type-mismatch` FAIL |
+| `TextNode`                                              | fill, text-style                   |
+| Other                                                   | `type-mismatch` FAIL               |
 
 ### 5. Execution scope — all variants in the matrix
 
@@ -140,12 +140,12 @@ kind     ::= "fill" | "stroke" | "radius" | "padding" | "gap" | "text-style"
 
 **Locked component-scope rules** (new `src/core/audit/rules/componentBindings.ts` or under `src/core/components/scaffold/auditBindings.ts` — `/plan` picks one module; WO-023 owns rule bodies):
 
-| ruleId | Pass condition | Diagnostic template |
-| ------ | -------------- | ------------------- |
-| `comp/bindings-all-applied` | `ApplyBindingsResult.failed.length === 0` | `{n} binding(s) failed` |
-| `comp/binding-variable-resolved` | For each failed with `missing-variable` | `Missing variable: {variable} (selector {selector})` |
-| `comp/binding-node-resolved` | For each failed with `missing-node` | `Missing node: {nodePath} (selector {selector})` |
-| `comp/binding-verified` | Post-apply spot-check: boundVariables or textStyleId present | `{selector}: expected bind on {nodeName}, found none` |
+| ruleId                           | Pass condition                                               | Diagnostic template                                   |
+| -------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------- |
+| `comp/bindings-all-applied`      | `ApplyBindingsResult.failed.length === 0`                    | `{n} binding(s) failed`                               |
+| `comp/binding-variable-resolved` | For each failed with `missing-variable`                      | `Missing variable: {variable} (selector {selector})`  |
+| `comp/binding-node-resolved`     | For each failed with `missing-node`                          | `Missing node: {nodePath} (selector {selector})`      |
+| `comp/binding-verified`          | Post-apply spot-check: boundVariables or textStyleId present | `{selector}: expected bind on {nodeName}, found none` |
 
 **Audit input extension:**
 
@@ -167,15 +167,15 @@ export interface ComponentAuditInput {
 
 **Repo inventory (grep 2026-05-28):**
 
-| Path | Status |
-| ---- | ------ |
-| `src/core/components/scaffold/` | **Does not exist** — WO-022 creates tree |
-| `src/core/components/scaffold/applyBindings.ts` | **Greenfield** — this ticket |
-| `src/core/canvas/helpers/bindings.ts` | **Exists** — paint binds only |
-| `src/core/canvas/lib/variables.ts` | **Exists** — map + resolvePath |
-| `src/core/canvas/typographyStyleBinding.ts` | **Exists** — TextStyle + variable bind patterns |
-| `packages/contracts/src/componentSpec.v1.ts` | **Exists** — binding contract |
-| `tests/fixtures/components/` | **Does not exist** — create `button-chip-bindings.v1.json` in `/plan` |
+| Path                                            | Status                                                                |
+| ----------------------------------------------- | --------------------------------------------------------------------- |
+| `src/core/components/scaffold/`                 | **Does not exist** — WO-022 creates tree                              |
+| `src/core/components/scaffold/applyBindings.ts` | **Greenfield** — this ticket                                          |
+| `src/core/canvas/helpers/bindings.ts`           | **Exists** — paint binds only                                         |
+| `src/core/canvas/lib/variables.ts`              | **Exists** — map + resolvePath                                        |
+| `src/core/canvas/typographyStyleBinding.ts`     | **Exists** — TextStyle + variable bind patterns                       |
+| `packages/contracts/src/componentSpec.v1.ts`    | **Exists** — binding contract                                         |
+| `tests/fixtures/components/`                    | **Does not exist** — create `button-chip-bindings.v1.json` in `/plan` |
 
 ### 8. Testing strategy
 
@@ -195,11 +195,11 @@ tests/
 
 **AC mapping:**
 
-| AC | Test |
-| -- | ---- |
-| 10 bindings → all bound | fixture with 10 entries, assert `failed.length === 0` + spy `setBoundVariableForPaint` / `setBoundVariable` counts |
-| Missing variable → audit FAIL | drop one variable from map, assert `comp/binding-variable-resolved` diagnostic contains selector |
-| Sample shadcn spec | extend `component-spec-button.json` → canonical selectors or new fixture aligned with chip archetype |
+| AC                            | Test                                                                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 10 bindings → all bound       | fixture with 10 entries, assert `failed.length === 0` + spy `setBoundVariableForPaint` / `setBoundVariable` counts |
+| Missing variable → audit FAIL | drop one variable from map, assert `comp/binding-variable-resolved` diagnostic contains selector                   |
+| Sample shadcn spec            | extend `component-spec-button.json` → canonical selectors or new fixture aligned with chip archetype               |
 
 **No live Figma in CI** — mock at `ensureLocalVariableMap` boundary and node tree factory (same pattern as `tests/unit/core/canvas/bindings.test.ts`).
 
@@ -209,66 +209,66 @@ tests/
 
 ### Repo inventory
 
-| File | Role |
-| ---- | ---- |
-| `packages/contracts/src/componentSpec.v1.ts` | `ComponentSpecBinding` + `ComponentSpecV1.bindings[]` |
-| `src/core/canvas/helpers/bindings.ts` | `bindPaintToVar`, `bindStrokeToVar` |
-| `src/core/canvas/lib/variables.ts` | `ensureLocalVariableMap`, `resolvePath`, `VariablePathMap` |
-| `src/core/canvas/typographyStyleBinding.ts` | `tryBind`, `loadFontForStyle`, TextStyle patterns |
-| `src/core/audit/runAudit.ts` | Extensible scope dispatch — add `'component'` branch |
-| `packages/contracts/src/auditReport.v1.ts` | `AuditScope` includes `'component'` |
-| `tests/unit/core/canvas/bindings.test.ts` | Mock pattern for paint binds |
-| `DesignOps-plugin/.../07-token-paths.md` | Authoritative token path rules |
-| `DesignOps-plugin/.../component-chip.mcp.js` §5 | `bindColor` / `bindNum` reference implementation |
+| File                                            | Role                                                       |
+| ----------------------------------------------- | ---------------------------------------------------------- |
+| `packages/contracts/src/componentSpec.v1.ts`    | `ComponentSpecBinding` + `ComponentSpecV1.bindings[]`      |
+| `src/core/canvas/helpers/bindings.ts`           | `bindPaintToVar`, `bindStrokeToVar`                        |
+| `src/core/canvas/lib/variables.ts`              | `ensureLocalVariableMap`, `resolvePath`, `VariablePathMap` |
+| `src/core/canvas/typographyStyleBinding.ts`     | `tryBind`, `loadFontForStyle`, TextStyle patterns          |
+| `src/core/audit/runAudit.ts`                    | Extensible scope dispatch — add `'component'` branch       |
+| `packages/contracts/src/auditReport.v1.ts`      | `AuditScope` includes `'component'`                        |
+| `tests/unit/core/canvas/bindings.test.ts`       | Mock pattern for paint binds                               |
+| `DesignOps-plugin/.../07-token-paths.md`        | Authoritative token path rules                             |
+| `DesignOps-plugin/.../component-chip.mcp.js` §5 | `bindColor` / `bindNum` reference implementation           |
 
 ### Official API / platform facts
 
-| Fact | Source |
-| ---- | ------ |
-| Color binds use paint `boundVariables`, not `setBoundVariable` on node fill | Figma Variables guide + DesignOps draw-engine comment |
+| Fact                                                                                                      | Source                                                                                                                      |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Color binds use paint `boundVariables`, not `setBoundVariable` on node fill                               | Figma Variables guide + DesignOps draw-engine comment                                                                       |
 | `setBoundVariable(field, variable \| null)` for FLOAT fields (`paddingLeft`, `itemSpacing`, corner radii) | [setBoundVariable](https://developers.figma.com/docs/plugins/api/properties/nodes-setboundvariable/) — retrieved 2026-05-28 |
-| `figma.variables.setBoundVariableForPaint(paint, 'color', variable)` | Used in `bindings.ts` L37–38 |
-| `getLocalVariablesAsync()` returns all local variables; `.name` is slash path | [Working with Variables](https://developers.figma.com/docs/plugins/working-with-variables/) — retrieved 2026-05-28 |
-| Main thread: no `console.debug` — use `pluginLog()` | `memory.md` do-not-repeat |
+| `figma.variables.setBoundVariableForPaint(paint, 'color', variable)`                                      | Used in `bindings.ts` L37–38                                                                                                |
+| `getLocalVariablesAsync()` returns all local variables; `.name` is slash path                             | [Working with Variables](https://developers.figma.com/docs/plugins/working-with-variables/) — retrieved 2026-05-28          |
+| Main thread: no `console.debug` — use `pluginLog()`                                                       | `memory.md` do-not-repeat                                                                                                   |
 
 ### Cross-ticket matrix
 
-| Ticket | Interface / artifact | WO-023 consumes or produces |
-| ------ | -------------------- | --------------------------- |
-| WO-022 | `scaffold()` → `ComponentSetNode` + named layer tree | **Consumes** tree; **requires** `text/label` naming contract |
-| WO-008 | Pushed Theme/Layout/Typography variables | **Consumes** variables via `ensureLocalVariableMap` |
-| WO-014 | `bindPaintToVar` / canvas helpers | **Consumes** paint helpers |
-| WO-010 | `runAudit`, `AuditReportV1` | **Produces** component-scope rules + `ApplyBindingsResult` input |
-| WO-024 | `applyProperties.ts` | **Blocks on** WO-023 ordering (bindings before props) |
-| WO-025–027 | Usage frame, registry, UI | Downstream; no direct API |
-| Sprint 8 | Token class resolver | Out of scope |
+| Ticket     | Interface / artifact                                 | WO-023 consumes or produces                                      |
+| ---------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
+| WO-022     | `scaffold()` → `ComponentSetNode` + named layer tree | **Consumes** tree; **requires** `text/label` naming contract     |
+| WO-008     | Pushed Theme/Layout/Typography variables             | **Consumes** variables via `ensureLocalVariableMap`              |
+| WO-014     | `bindPaintToVar` / canvas helpers                    | **Consumes** paint helpers                                       |
+| WO-010     | `runAudit`, `AuditReportV1`                          | **Produces** component-scope rules + `ApplyBindingsResult` input |
+| WO-024     | `applyProperties.ts`                                 | **Blocks on** WO-023 ordering (bindings before props)            |
+| WO-025–027 | Usage frame, registry, UI                            | Downstream; no direct API                                        |
+| Sprint 8   | Token class resolver                                 | Out of scope                                                     |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | ---------------------- |
-| D1 | Selector format `{nodePath}.{kind}` | Fits minimal contract; mirrors PRD `root.fill` intent | Separate `property` field (needs v2 contract); CSS selectors (fixture-only) |
-| D2 | Variable key = Figma `variable.name` with optional collection-prefix strip | Matches `07-token-paths.md` §7.1 | CSS var names; Tailwind classes |
-| D3 | Reuse `bindPaintToVar` / `bindStrokeToVar` | WO-014 locked helpers + tests exist | Inline duplicate bind logic in scaffold |
-| D4 | No hex fallback on miss | PRD §11.4 + DesignOps §7.6 | Silent fallback (legacy draw-engine) |
-| D5 | `text-style` kind uses TextStyle **name** in `variable` | Matches DesignOps `textStyleId` pattern | Single Typography variable path (ambiguous) |
-| D6 | Apply bindings to **every** variant component | AC + FR-SCAF-3 global spec | Per-variant binding table (contract change) |
-| D7 | `ApplyBindingsResult` + component audit rules | WO-010 pattern for push audit | Throw on first miss (no aggregate report) |
-| D8 | Run after scaffold, before WO-024 properties | Bindings target raw nodes; props reference text nodes | After properties (works but harder to debug) |
-| D9 | Generic slash-path walker | One resolver for all archetypes | Per-archetype binding hardcode (unmaintainable) |
+| ID  | Decision                                                                   | Rationale                                             | Alternatives rejected                                                       |
+| --- | -------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------- |
+| D1  | Selector format `{nodePath}.{kind}`                                        | Fits minimal contract; mirrors PRD `root.fill` intent | Separate `property` field (needs v2 contract); CSS selectors (fixture-only) |
+| D2  | Variable key = Figma `variable.name` with optional collection-prefix strip | Matches `07-token-paths.md` §7.1                      | CSS var names; Tailwind classes                                             |
+| D3  | Reuse `bindPaintToVar` / `bindStrokeToVar`                                 | WO-014 locked helpers + tests exist                   | Inline duplicate bind logic in scaffold                                     |
+| D4  | No hex fallback on miss                                                    | PRD §11.4 + DesignOps §7.6                            | Silent fallback (legacy draw-engine)                                        |
+| D5  | `text-style` kind uses TextStyle **name** in `variable`                    | Matches DesignOps `textStyleId` pattern               | Single Typography variable path (ambiguous)                                 |
+| D6  | Apply bindings to **every** variant component                              | AC + FR-SCAF-3 global spec                            | Per-variant binding table (contract change)                                 |
+| D7  | `ApplyBindingsResult` + component audit rules                              | WO-010 pattern for push audit                         | Throw on first miss (no aggregate report)                                   |
+| D8  | Run after scaffold, before WO-024 properties                               | Bindings target raw nodes; props reference text nodes | After properties (works but harder to debug)                                |
+| D9  | Generic slash-path walker                                                  | One resolver for all archetypes                       | Per-archetype binding hardcode (unmaintainable)                             |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-023-0 | Repo grep: confirm no existing `applyBindings` / `src/core/components/scaffold/` | Zero hits; greenfield confirmed | ✅ PASS (2026-05-28) |
-| SPK-023-1 | Read DesignOps `bindColor`/`bindNum` + Figma Variables docs | Color=paint bind; numeric=setBoundVariable | ✅ PASS (2026-05-28) |
-| SPK-023-2 | Validate `runAudit` scope extension point | `'component'` in contract; branch throws today | ✅ PASS — extend in WO-023 build |
-| SPK-023-3 | Live sandbox bind 10 paths on scaffolded chip | All 10 selectors bound; audit clean | ☐ **Deferred to `/build` VQA** — requires WO-022 scaffold landed first |
+| Spike ID  | Procedure                                                                        | Pass criteria                                  | Status                                                                 |
+| --------- | -------------------------------------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------- |
+| SPK-023-0 | Repo grep: confirm no existing `applyBindings` / `src/core/components/scaffold/` | Zero hits; greenfield confirmed                | ✅ PASS (2026-05-28)                                                   |
+| SPK-023-1 | Read DesignOps `bindColor`/`bindNum` + Figma Variables docs                      | Color=paint bind; numeric=setBoundVariable     | ✅ PASS (2026-05-28)                                                   |
+| SPK-023-2 | Validate `runAudit` scope extension point                                        | `'component'` in contract; branch throws today | ✅ PASS — extend in WO-023 build                                       |
+| SPK-023-3 | Live sandbox bind 10 paths on scaffolded chip                                    | All 10 selectors bound; audit clean            | ☐ **Deferred to `/build` VQA** — requires WO-022 scaffold landed first |
 
 **Research-complete gate:** SPK-023-3 deferred with WO-022 dependency (documented in Open Questions). Planning may proceed.
 
@@ -276,14 +276,14 @@ tests/
 
 ## Risk register
 
-| Risk | Severity | Likelihood | Mitigation |
-| ---- | -------- | ---------- | ---------- |
-| WO-022 ships unnamed text nodes (legacy chip) | High | Med | Lock `text/label` in WO-022 plan; integration test fails fast |
-| PRD/fixture paths use collection prefixes | Med | High | Normalization shim in D2; document canonical paths |
-| `setBoundVariable` throws on type mismatch | Med | Low | Pre-check `variable.resolvedType` vs kind; `type-mismatch` audit row |
-| Component audit scope not wired in UI | Low | Med | WO-027 Components tab reads `audit.passed` when scaffold op completes |
-| Archetype-specific nodes not in generic map | Med | Med | WO-022 appendix per archetype; open question for surface-stack paths |
-| ES2017 main thread (`?.`, `??`) | Med | Low | Match WO-014 style — no optional chaining in `applyBindings.ts` |
+| Risk                                          | Severity | Likelihood | Mitigation                                                            |
+| --------------------------------------------- | -------- | ---------- | --------------------------------------------------------------------- |
+| WO-022 ships unnamed text nodes (legacy chip) | High     | Med        | Lock `text/label` in WO-022 plan; integration test fails fast         |
+| PRD/fixture paths use collection prefixes     | Med      | High       | Normalization shim in D2; document canonical paths                    |
+| `setBoundVariable` throws on type mismatch    | Med      | Low        | Pre-check `variable.resolvedType` vs kind; `type-mismatch` audit row  |
+| Component audit scope not wired in UI         | Low      | Med        | WO-027 Components tab reads `audit.passed` when scaffold op completes |
+| Archetype-specific nodes not in generic map   | Med      | Med        | WO-022 appendix per archetype; open question for surface-stack paths  |
+| ES2017 main thread (`?.`, `??`)               | Med      | Low        | Match WO-014 style — no optional chaining in `applyBindings.ts`       |
 
 ---
 
@@ -313,13 +313,7 @@ import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 import type { VariablePathMap } from '@/core/canvas/lib/variables';
 
 /** Parsed binding kind — suffix of selector after final '.' */
-export type BindingKind =
-  | 'fill'
-  | 'stroke'
-  | 'radius'
-  | 'padding'
-  | 'gap'
-  | 'text-style';
+export type BindingKind = 'fill' | 'stroke' | 'radius' | 'padding' | 'gap' | 'text-style';
 
 export type BindingFailureReason =
   | 'missing-variable'
@@ -367,11 +361,7 @@ export function normalizeVariablePath(raw: string): string;
 **Internal dispatch (not exported):**
 
 ```ts
-function applyBindingToNode(
-  node: SceneNode,
-  kind: BindingKind,
-  variable: Variable,
-): void;
+function applyBindingToNode(node: SceneNode, kind: BindingKind, variable: Variable): void;
 ```
 
 **Call sequence for `/plan` steps:**

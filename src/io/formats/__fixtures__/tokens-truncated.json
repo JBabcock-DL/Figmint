@@ -4,9 +4,7 @@
   "collections": [
     {
       "id": "layout",
-      "modes": [
-        "Default"
-      ]
+      "modes": ["Default"]
     }
   ],
   "tokens": [

@@ -18,12 +18,10 @@ function comparable(value: number): VariableComparable {
 
 describe('snapshotReconcile', () => {
   it('detects premature push snapshot when figma matches snapshot but not repo', () => {
-    expect(
-      isPrematurePushSnapshot(comparable(1), comparable(0), comparable(1), 'push'),
-    ).toBe(true);
-    expect(
-      isPrematurePushSnapshot(comparable(0), comparable(1), comparable(0), 'pull'),
-    ).toBe(false);
+    expect(isPrematurePushSnapshot(comparable(1), comparable(0), comparable(1), 'push')).toBe(true);
+    expect(isPrematurePushSnapshot(comparable(0), comparable(1), comparable(0), 'pull')).toBe(
+      false,
+    );
   });
 
   it('classifies pending push as push after ignoring premature push snapshot', () => {

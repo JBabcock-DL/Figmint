@@ -29,11 +29,7 @@ export {
 } from './components';
 export { readSnapshotComponentComparables } from './snapshotComponents';
 export { readVariableSnapshotTokens } from './snapshotTokens';
-export {
-  detectVariableDrift,
-  flattenFigmaVariableSnapshots,
-  flattenRepoTokens,
-} from './variables';
+export { detectVariableDrift, flattenFigmaVariableSnapshots, flattenRepoTokens } from './variables';
 export { collectFigmaComponentComparablesFromSnapshot } from './detectOrchestration';
 export { buildDriftReport } from './report';
 export { buildDriftReportMeta } from './reportMeta';

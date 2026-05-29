@@ -14,7 +14,7 @@ function copyViaExecCommand(text: string): boolean {
   textarea.style.left = '-9999px';
   document.body.appendChild(textarea);
   textarea.select();
-   
+
   const ok = document.execCommand('copy');
   document.body.removeChild(textarea);
   return ok;
@@ -72,8 +72,7 @@ export const clipboardSink: Sink = {
         ok: false,
         sink: 'clipboard',
         message: 'Clipboard copy blocked',
-        error:
-          writeError instanceof Error ? writeError.message : 'Clipboard copy blocked',
+        error: writeError instanceof Error ? writeError.message : 'Clipboard copy blocked',
       };
     }
   },

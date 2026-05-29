@@ -66,12 +66,7 @@ describe('buildComposedVariant', () => {
     registerMockRegistryNode('component-999', childSet);
 
     const spec = composedSpec as ComponentSpecV1;
-    const ctx = projectBuildContext(
-      spec,
-      { variant: 'default' },
-      'variant=default',
-      { registry },
-    );
+    const ctx = projectBuildContext(spec, { variant: 'default' }, 'variant=default', { registry });
     const result = await buildComposedVariant(ctx);
     const component = result.component as unknown as MockFrame;
 
@@ -107,12 +102,9 @@ describe('buildComposedVariant', () => {
     };
 
     const spec = composedSpec as ComponentSpecV1;
-    const ctx = projectBuildContext(
-      spec,
-      { variant: 'default' },
-      'variant=default',
-      { registry: badRegistry },
-    );
+    const ctx = projectBuildContext(spec, { variant: 'default' }, 'variant=default', {
+      registry: badRegistry,
+    });
 
     await expect(buildComposedVariant(ctx)).rejects.toThrow('COMPOSED_CHILD_INVALID');
   });

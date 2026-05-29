@@ -7,3 +7,5 @@ manifest.*.json
 packages/*/dist
 packages/contracts/dist/*.schema.json
 tests/fixtures/io/sources/invalid.json
+src/io/formats/__fixtures__/*.md
+src/io/formats/__fixtures__/json/key-order-expected.json

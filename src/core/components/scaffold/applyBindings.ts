@@ -160,7 +160,13 @@ export async function applyBindings(
           binding.selector,
           binding.variable,
           mismatch,
-          'Type mismatch for ' + parsed.kind + ' on ' + target.type + ' (selector ' + binding.selector + ')',
+          'Type mismatch for ' +
+            parsed.kind +
+            ' on ' +
+            target.type +
+            ' (selector ' +
+            binding.selector +
+            ')',
         );
         continue;
       }

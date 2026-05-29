@@ -20,7 +20,14 @@ function formatLabel(format: 'json' | 'md'): string {
 }
 
 export function buildPrBody(input: BuildPrBodyInput): string {
-  const lines: string[] = [input.commitMessage, '', '## Files', '', '| Path | Format |', '| ---- | ------ |'];
+  const lines: string[] = [
+    input.commitMessage,
+    '',
+    '## Files',
+    '',
+    '| Path | Format |',
+    '| ---- | ------ |',
+  ];
 
   for (let i = 0; i < input.files.length; i++) {
     const file = input.files[i];
@@ -63,7 +70,7 @@ export function buildDriftReportPrTitle(
   sprintLabel?: string,
 ): string {
   let title =
-    'DesignOps drift: ' +
+    'FigHub updates: ' +
     String(summary.push) +
     ' push, ' +
     String(summary.pull) +

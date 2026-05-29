@@ -21,12 +21,18 @@ describe('applyProperties', () => {
       variantMatrix: { variant: ['default'] },
       props: [],
       bindings: [],
-      layout: { direction: 'horizontal', gap: 'space/md', sizing: { horizontal: 'hug', vertical: 'hug' } },
+      layout: {
+        direction: 'horizontal',
+        gap: 'space/md',
+        sizing: { horizontal: 'hug', vertical: 'hug' },
+      },
     };
     const variant = createMockComponent();
     attachAddProp(variant);
     set.appendChild(variant as unknown as SceneNode);
-    Object.defineProperty(set, 'componentPropertyDefinitions', { value: { variant: { type: 'VARIANT', variantOptions: ['default'] } } });
+    Object.defineProperty(set, 'componentPropertyDefinitions', {
+      value: { variant: { type: 'VARIANT', variantOptions: ['default'] } },
+    });
 
     const result = applyProperties(spec, asComponentSetNode(set));
     expect(result.ok).toBe(true);
@@ -49,7 +55,11 @@ describe('applyProperties', () => {
       variantMatrix: { variant: ['default'] },
       props: [{ name: 'loading', type: 'boolean', default: false }],
       bindings: [],
-      layout: { direction: 'horizontal', gap: 'space/md', sizing: { horizontal: 'hug', vertical: 'hug' } },
+      layout: {
+        direction: 'horizontal',
+        gap: 'space/md',
+        sizing: { horizontal: 'hug', vertical: 'hug' },
+      },
     };
 
     const result = applyProperties(spec, asComponentSetNode(set));
@@ -78,7 +88,11 @@ describe('applyProperties', () => {
       variantMatrix: { variant: ['default'] },
       props: [{ name: 'loading', type: 'boolean', default: false }],
       bindings: [],
-      layout: { direction: 'horizontal', gap: 'space/md', sizing: { horizontal: 'hug', vertical: 'hug' } },
+      layout: {
+        direction: 'horizontal',
+        gap: 'space/md',
+        sizing: { horizontal: 'hug', vertical: 'hug' },
+      },
     };
 
     const result = applyProperties(spec, asComponentSetNode(set));
@@ -109,7 +123,11 @@ describe('applyProperties', () => {
       variantMatrix: { variant: ['default'] },
       props: [{ name: 'loading', type: 'boolean', default: false }],
       bindings: [],
-      layout: { direction: 'horizontal', gap: 'space/md', sizing: { horizontal: 'hug', vertical: 'hug' } },
+      layout: {
+        direction: 'horizontal',
+        gap: 'space/md',
+        sizing: { horizontal: 'hug', vertical: 'hug' },
+      },
     };
 
     const result = applyProperties(spec, asComponentSetNode(set));

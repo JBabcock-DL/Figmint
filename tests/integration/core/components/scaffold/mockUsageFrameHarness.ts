@@ -27,12 +27,17 @@ export type MockComponentSet = MockFrame & {
 };
 export type MockPage = MockFrame;
 
-function tagNodeType<T extends string>(frame: MockFrame, nodeType: T): MockFrame & { readonly type: T } {
+function tagNodeType<T extends string>(
+  frame: MockFrame,
+  nodeType: T,
+): MockFrame & { readonly type: T } {
   Object.defineProperty(frame, 'type', { value: nodeType });
   return frame as MockFrame & { readonly type: T };
 }
 
-export function createMockComponent(overrides?: Parameters<typeof createMockFrame>[0]): MockComponent {
+export function createMockComponent(
+  overrides?: Parameters<typeof createMockFrame>[0],
+): MockComponent {
   const frame = createMockFrame(overrides, false);
   frame.id = 'component-' + String(nextComponentId++);
   return tagNodeType(frame, 'COMPONENT');
@@ -43,7 +48,9 @@ export function createMockInstance(): MockInstance {
   frame.id = 'instance-' + String(nextInstanceId++);
   const inst = frame as unknown as MockInstance;
   Object.defineProperty(inst, 'type', { value: 'INSTANCE' });
-  inst.setProperties = function setProperties(props: Record<string, string | number | boolean>): void {
+  inst.setProperties = function setProperties(
+    props: Record<string, string | number | boolean>,
+  ): void {
     setPropertiesCalls.push(Object.assign({}, props));
   };
   return inst;
@@ -62,7 +69,8 @@ export function createMockComponentSet(overrides?: {
   variantNames?: string[];
 }): MockComponentSet {
   const frame = createMockFrame(undefined, false);
-  frame.id = overrides?.id !== undefined ? overrides.id : 'component-set-' + String(nextComponentSetId++);
+  frame.id =
+    overrides?.id !== undefined ? overrides.id : 'component-set-' + String(nextComponentSetId++);
   Object.defineProperty(frame, 'type', { value: 'COMPONENT_SET' });
   const pluginData: Record<string, string> = {};
   const set = frame as unknown as MockComponentSet;
@@ -83,9 +91,7 @@ export function createMockComponentSet(overrides?: {
   };
 
   const names =
-    overrides?.variantNames !== undefined
-      ? overrides.variantNames
-      : ['variant=default'];
+    overrides?.variantNames !== undefined ? overrides.variantNames : ['variant=default'];
   for (let i = 0; i < names.length; i++) {
     const variant = createMockComponent({ name: names[i] });
     attachCreateInstanceToComponent(variant);

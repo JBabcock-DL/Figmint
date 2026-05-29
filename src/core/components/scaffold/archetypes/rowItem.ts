@@ -147,13 +147,17 @@ export async function buildRowItemVariant(ctx: ScaffoldBuildContext): Promise<Va
   textStack.appendChild(createSampleText(ctx, title, 14, HEX_CONTENT, 'row/title'));
 
   if (descText !== undefined && descText !== '') {
-    textStack.appendChild(createSampleText(ctx, descText, 12, HEX_CONTENT_MUTED, 'row/description'));
+    textStack.appendChild(
+      createSampleText(ctx, descText, 12, HEX_CONTENT_MUTED, 'row/description'),
+    );
   }
 
   component.appendChild(textStack);
 
   if (showShortcut) {
-    component.appendChild(createSampleText(ctx, shortcutText, 12, HEX_CONTENT_MUTED, 'row/shortcut'));
+    component.appendChild(
+      createSampleText(ctx, shortcutText, 12, HEX_CONTENT_MUTED, 'row/shortcut'),
+    );
   }
 
   if (showTrailing) {

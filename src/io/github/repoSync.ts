@@ -1,6 +1,10 @@
 import type { ResolvedFigHubConfig } from '@detroitlabs/fighub-contracts';
 
-import { FIGHUB_JSON_FILENAME, parseFigHubJson, resolveFigHubConfig } from '@/io/formats/fighubJson';
+import {
+  FIGHUB_JSON_FILENAME,
+  parseFigHubJson,
+  resolveFigHubConfig,
+} from '@/io/formats/fighubJson';
 import { fetchRepoFileContents, GitHubNotFoundError } from '@/io/github/contents';
 import { githubApiViaRelay } from '@/io/github/relayClient';
 import { normalizeRepoUrl } from '@/io/github/repoUrl';

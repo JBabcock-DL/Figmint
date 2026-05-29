@@ -213,7 +213,10 @@ export function upsertRegistryEntry(input: UpsertRegistryEntryInput): RegistryV1
   });
   let merged = mergeRegistryEntry(base, input.spec.name, entry);
 
-  if (readKey !== input.spec.name && Object.prototype.hasOwnProperty.call(merged.components, readKey)) {
+  if (
+    readKey !== input.spec.name &&
+    Object.prototype.hasOwnProperty.call(merged.components, readKey)
+  ) {
     merged = {
       v: merged.v,
       kind: merged.kind,

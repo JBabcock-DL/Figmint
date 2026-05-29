@@ -58,7 +58,9 @@ export function registerGitHubMessageListener(): void {
             entry.resolveDevice(message.device);
           }
         } else if (entry.rejectDevice !== undefined) {
-          entry.rejectDevice(new Error(message.error !== undefined ? message.error : 'Device code failed'));
+          entry.rejectDevice(
+            new Error(message.error !== undefined ? message.error : 'Device code failed'),
+          );
         }
         pending.delete(message.requestId);
       }

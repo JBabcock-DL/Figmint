@@ -46,7 +46,7 @@ Per `Docs/lift-sources.md` §0 and §3:
 
 Bundles inline `_lib.js` (~724 lines) + page template + runner. FigHub splits `_lib.js` into:
 
-| Legacy `_lib.js` concern                                 | FigHub target                                               |
+| Legacy `_lib.js` concern                                 | FigHub target                                                |
 | -------------------------------------------------------- | ------------------------------------------------------------ |
 | Font loading                                             | `src/core/canvas/lib/fonts.ts`                               |
 | Variable map + canonical alias map                       | `src/core/canvas/lib/variableMap.ts`                         |
@@ -119,12 +119,12 @@ Legacy Step 17 is an **update pass** on the `/new-project` 05d scaffold, not a f
 
 **Page sections** (existing node names — builder finds or skips):
 
-| Section shell                     | Purpose                                                                        |
-| --------------------------------- | ------------------------------------------------------------------------------ |
-| `token-overview/architecture`     | Five `arch-box/{Primitives,Theme,Typography,Layout,Effects}` — rebind fills    |
-| `token-overview/platform-mapping` | Cross-collection platform-mapping table                                        |
-| `token-overview/mode-row`         | Dark-mode + font-scale panels                                                  |
-| `token-overview/how-to-bind`      | Static doc                                                                     |
+| Section shell                     | Purpose                                                                       |
+| --------------------------------- | ----------------------------------------------------------------------------- |
+| `token-overview/architecture`     | Five `arch-box/{Primitives,Theme,Typography,Layout,Effects}` — rebind fills   |
+| `token-overview/platform-mapping` | Cross-collection platform-mapping table                                       |
+| `token-overview/mode-row`         | Dark-mode + font-scale panels                                                 |
+| `token-overview/how-to-bind`      | Static doc                                                                    |
 | `token-overview/claude-commands`  | Static doc (sunsets in FigHub — replace with plugin Output pointer or delete) |
 
 **Platform-mapping table** (`doc/table/token-overview/platform-mapping`):

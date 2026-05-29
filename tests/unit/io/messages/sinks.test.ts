@@ -228,9 +228,7 @@ describe('sink message guards', () => {
     it('rejects invalid sink/error payloads', () => {
       expect(isSinkErrorMessage({})).toBe(false);
       expect(isSinkErrorMessage({ type: 'sink/error' })).toBe(false);
-      expect(
-        isSinkErrorMessage({ type: 'sink/error', requestId: 'x', message: 1 }),
-      ).toBe(false);
+      expect(isSinkErrorMessage({ type: 'sink/error', requestId: 'x', message: 1 })).toBe(false);
       expect(
         isSinkErrorMessage({ type: 'sink/result', requestId: 'x', message: 'wrong type' }),
       ).toBe(false);

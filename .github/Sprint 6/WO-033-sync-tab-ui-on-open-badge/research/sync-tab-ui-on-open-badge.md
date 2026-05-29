@@ -27,14 +27,14 @@ Memory.md (2026-05-28): "Settings tab collapses to GitHub-Desktop-style repo car
 
 ### 2. FR-DRIFT-5 requirements preserved
 
-| Requirement | Absorbed implementation |
-| ----------- | ------------------------ |
-| Lightweight compare on open | `useEffect` in Settings or App-level hook after session restore |
-| Badge `N↑ M↓` | Repo card subtitle: `4 pushes · 2 pulls` |
-| `·K⚠` conflicts | Red conflict segment + Settings nav dot |
-| <2s detect | Cache repo tokens on Fetch; detect is in-memory (WO-029 bench <100ms) |
-| Re-detect button | "Refresh drift" on repo card (replaces "Detect drift" on Sync tab) |
-| Resolution UI | WO-032 DriftPanel under card |
+| Requirement                 | Absorbed implementation                                               |
+| --------------------------- | --------------------------------------------------------------------- |
+| Lightweight compare on open | `useEffect` in Settings or App-level hook after session restore       |
+| Badge `N↑ M↓`               | Repo card subtitle: `4 pushes · 2 pulls`                              |
+| `·K⚠` conflicts             | Red conflict segment + Settings nav dot                               |
+| <2s detect                  | Cache repo tokens on Fetch; detect is in-memory (WO-029 bench <100ms) |
+| Re-detect button            | "Refresh drift" on repo card (replaces "Detect drift" on Sync tab)    |
+| Resolution UI               | WO-032 DriftPanel under card                                          |
 
 ### 3. On-open detect flow
 
@@ -83,53 +83,53 @@ Ticket cites "Sync tab + badge design lives in FigHub design file" — **transla
 
 ### Repo inventory
 
-| Exists | Path | Role |
-| ------ | ---- | ---- |
-| ✅ | `src/ui/App.tsx:13-20` | Tab enum — no sync |
-| ✅ | `src/ui/tabs/Settings.tsx` | Host for absorbed UX |
-| ✅ | `src/ui/github/useGitHubSession.ts` | Session restore hook point |
-| ❌ | `src/ui/tabs/Sync.tsx` | **Do not create** |
-| ❌ | On-open detect hook | Greenfield in Settings |
+| Exists | Path                                | Role                       |
+| ------ | ----------------------------------- | -------------------------- |
+| ✅     | `src/ui/App.tsx:13-20`              | Tab enum — no sync         |
+| ✅     | `src/ui/tabs/Settings.tsx`          | Host for absorbed UX       |
+| ✅     | `src/ui/github/useGitHubSession.ts` | Session restore hook point |
+| ❌     | `src/ui/tabs/Sync.tsx`              | **Do not create**          |
+| ❌     | On-open detect hook                 | Greenfield in Settings     |
 
 ### Cross-ticket matrix
 
-| Ticket | Role |
-| ------ | ---- |
-| WO-058 | Repo card + Fetch/Pull/Push owner |
-| WO-029/030 | Detectors |
-| WO-032 | Resolution panel content |
-| WO-031 | Full report for expand view |
+| Ticket     | Role                              |
+| ---------- | --------------------------------- |
+| WO-058     | Repo card + Fetch/Pull/Push owner |
+| WO-029/030 | Detectors                         |
+| WO-032     | Resolution panel content          |
+| WO-031     | Full report for expand view       |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Rejected |
-| -- | -------- | --------- | -------- |
-| D-033-1 | No Sync tab | WO-058 lock | Fifth tab |
-| D-033-2 | Quick detect uses hashes for components | <2s budget | Full spec fetch on open |
-| D-033-3 | Badge on Settings tab for conflicts | Visibility | Global app header badge |
-| D-033-4 | Defer detect if no GitHub session | Avoid error noise | Detect with empty repo |
+| ID      | Decision                                | Rationale         | Rejected                |
+| ------- | --------------------------------------- | ----------------- | ----------------------- |
+| D-033-1 | No Sync tab                             | WO-058 lock       | Fifth tab               |
+| D-033-2 | Quick detect uses hashes for components | <2s budget        | Full spec fetch on open |
+| D-033-3 | Badge on Settings tab for conflicts     | Visibility        | Global app header badge |
+| D-033-4 | Defer detect if no GitHub session       | Avoid error noise | Detect with empty repo  |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
+| Spike ID  | Procedure                                | Pass criteria   | Status                   |
+| --------- | ---------------------------------------- | --------------- | ------------------------ |
 | SPK-033-1 | Open plugin with 4 push + 2 pull fixture | Badge within 2s | ☐ deferred to WO-058 VQA |
-| SPK-033-2 | Manual edit → refresh | Counts update | ☐ deferred |
-| SPK-033-3 | Expand panel → full WO-032 UI | Populated list | ☐ WO-032 |
+| SPK-033-2 | Manual edit → refresh                    | Counts update   | ☐ deferred               |
+| SPK-033-3 | Expand panel → full WO-032 UI            | Populated list  | ☐ WO-032                 |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Lik | Mitigation |
-| ---- | --- | --- | ---------- |
-| On-open detect blocks UI | Med | Med | Async + loading skeleton |
-| Stale counts mislead | Low | Med | Show `last detected` timestamp |
-| No GitHub connected | Low | High | Hide badge; show connect CTA |
+| Risk                     | Sev | Lik  | Mitigation                     |
+| ------------------------ | --- | ---- | ------------------------------ |
+| On-open detect blocks UI | Med | Med  | Async + loading skeleton       |
+| Stale counts mislead     | Low | Med  | Show `last detected` timestamp |
+| No GitHub connected      | Low | High | Hide badge; show connect CTA   |
 
 ---
 
@@ -144,6 +144,6 @@ Ticket cites "Sync tab + badge design lives in FigHub design file" — **transla
 
 ## Open questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
+| ID       | Question                                              | Status                                                                    |
+| -------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
 | OQ-033-1 | Detect on every App mount vs Settings tab focus only? | **RESOLVED:** Settings mount + after Fetch/Pull (avoid slowing Bootstrap) |

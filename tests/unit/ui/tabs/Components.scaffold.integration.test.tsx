@@ -109,12 +109,7 @@ describe('Components scaffold integration', () => {
       configurable: true,
     });
 
-    render(
-      <Components
-        repoUrl=""
-        github={createMockGitHubConnect()}
-      />,
-    );
+    render(<Components repoUrl="" github={createMockGitHubConnect()} />);
 
     window.dispatchEvent(
       new MessageEvent('message', {

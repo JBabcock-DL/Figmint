@@ -91,10 +91,6 @@ export type {
 
 export type { RegistryComponentEntry, RegistryV1 } from './registry.v1';
 
-export type {
-  SnapshotEntryV1,
-  SnapshotRegistryEntryV1,
-  SnapshotV1,
-} from './snapshot.v1';
+export type { SnapshotEntryV1, SnapshotRegistryEntryV1, SnapshotV1 } from './snapshot.v1';
 
 export type { FigHubJsonV1, ResolvedFigHubConfig } from './fighubJson.v1';

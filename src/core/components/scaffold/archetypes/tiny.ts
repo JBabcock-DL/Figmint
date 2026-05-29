@@ -68,10 +68,7 @@ function resolveShape(tiny: Record<string, unknown>): TinyShape {
   return 'skeleton';
 }
 
-function buildSeparator(
-  ctx: ScaffoldBuildContext,
-  tiny: Record<string, unknown>,
-): ComponentNode {
+function buildSeparator(ctx: ScaffoldBuildContext, tiny: Record<string, unknown>): ComponentNode {
   const orientation = readTinyString(tiny, 'orientation');
   const isVertical = orientation === 'vertical';
   const widthRaw = readTinyNumber(tiny, 'width');
@@ -87,10 +84,7 @@ function buildSeparator(
   return component;
 }
 
-function buildSkeleton(
-  ctx: ScaffoldBuildContext,
-  tiny: Record<string, unknown>,
-): ComponentNode {
+function buildSkeleton(ctx: ScaffoldBuildContext, tiny: Record<string, unknown>): ComponentNode {
   const widthRaw = readTinyNumber(tiny, 'width');
   const heightRaw = readTinyNumber(tiny, 'height');
   const width = widthRaw !== undefined ? widthRaw : 200;
@@ -105,10 +99,7 @@ function buildSkeleton(
   return component;
 }
 
-function buildSpinner(
-  ctx: ScaffoldBuildContext,
-  tiny: Record<string, unknown>,
-): ComponentNode {
+function buildSpinner(ctx: ScaffoldBuildContext, tiny: Record<string, unknown>): ComponentNode {
   const sizeRaw = readTinyNumber(tiny, 'size');
   const size = sizeRaw !== undefined ? sizeRaw : 24;
 
@@ -129,10 +120,7 @@ function buildSpinner(
   return component;
 }
 
-function buildProgress(
-  ctx: ScaffoldBuildContext,
-  tiny: Record<string, unknown>,
-): ComponentNode {
+function buildProgress(ctx: ScaffoldBuildContext, tiny: Record<string, unknown>): ComponentNode {
   const widthRaw = readTinyNumber(tiny, 'width');
   const heightRaw = readTinyNumber(tiny, 'height');
   const filledRaw = readTinyNumber(tiny, 'filled');

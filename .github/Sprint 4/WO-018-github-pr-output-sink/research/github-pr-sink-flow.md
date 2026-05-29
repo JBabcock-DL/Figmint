@@ -39,16 +39,16 @@ Accept: application/vnd.github+json
 X-GitHub-Api-Version: 2022-11-28
 ```
 
-| Step | Method | Endpoint | Purpose |
-| :--- | :----- | :------- | :------ |
-| 0 | `GET` | `/repos/{owner}/{repo}` | Validate token + repo access; read `default_branch` if base not configured |
-| 1 | `GET` | `/repos/{owner}/{repo}/git/ref/heads/{baseBranch}` | Base commit SHA (`object.sha`) |
-| 2 | `POST` | `/repos/{owner}/{repo}/git/refs` | Create head branch: `{ "ref": "refs/heads/fighub/drift-report-2026-05-27", "sha": "<baseSha>" }` |
-| 3a | `POST` | `/repos/{owner}/{repo}/git/blobs` | One blob per file (`encoding: "utf-8"`, `content: "<string>"`) |
-| 3b | `POST` | `/repos/{owner}/{repo}/git/trees` | `{ "base_tree": "<baseCommitTreeSha>", "tree": [{ "path", "mode": "100644", "type": "blob", "sha" }] }` |
-| 3c | `POST` | `/repos/{owner}/{repo}/git/commits` | `{ "message", "tree": "<treeSha>", "parents": ["<baseSha>"] }` |
-| 3d | `PATCH` | `/repos/{owner}/{repo}/git/refs/heads/{headBranch}` | Point head branch at new commit SHA |
-| 4 | `POST` | `/repos/{owner}/{repo}/pulls` | `{ "title", "head": "<headBranch>", "base": "<baseBranch>", "body": "<markdown>" }` |
+| Step | Method  | Endpoint                                            | Purpose                                                                                                 |
+| :--- | :------ | :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| 0    | `GET`   | `/repos/{owner}/{repo}`                             | Validate token + repo access; read `default_branch` if base not configured                              |
+| 1    | `GET`   | `/repos/{owner}/{repo}/git/ref/heads/{baseBranch}`  | Base commit SHA (`object.sha`)                                                                          |
+| 2    | `POST`  | `/repos/{owner}/{repo}/git/refs`                    | Create head branch: `{ "ref": "refs/heads/fighub/drift-report-2026-05-27", "sha": "<baseSha>" }`        |
+| 3a   | `POST`  | `/repos/{owner}/{repo}/git/blobs`                   | One blob per file (`encoding: "utf-8"`, `content: "<string>"`)                                          |
+| 3b   | `POST`  | `/repos/{owner}/{repo}/git/trees`                   | `{ "base_tree": "<baseCommitTreeSha>", "tree": [{ "path", "mode": "100644", "type": "blob", "sha" }] }` |
+| 3c   | `POST`  | `/repos/{owner}/{repo}/git/commits`                 | `{ "message", "tree": "<treeSha>", "parents": ["<baseSha>"] }`                                          |
+| 3d   | `PATCH` | `/repos/{owner}/{repo}/git/refs/heads/{headBranch}` | Point head branch at new commit SHA                                                                     |
+| 4    | `POST`  | `/repos/{owner}/{repo}/pulls`                       | `{ "title", "head": "<headBranch>", "base": "<baseBranch>", "body": "<markdown>" }`                     |
 
 **Empty repo edge case:** Git Database endpoints return **409 Conflict** when the repository has no commits yet. Mitigation: initialize with a single Contents API `PUT` (out of MVP scope — document in Settings copy: "connect a repo with at least one commit").
 
@@ -56,10 +56,10 @@ X-GitHub-Api-Version: 2022-11-28
 
 ### 2. Contents API vs Git Data API
 
-| Approach | Multi-file atomic commit | Complexity | WO-018 verdict |
-| :------- | :----------------------- | :--------- | :------------- |
-| **Git Data API** (blobs/trees/commits/refs) | ✅ Single commit for N files | Medium | **Primary path** |
-| **Contents API** (`PUT /contents/{path}`) | ❌ One commit per file | Low | WO-016 smoke test only |
+| Approach                                    | Multi-file atomic commit     | Complexity | WO-018 verdict         |
+| :------------------------------------------ | :--------------------------- | :--------- | :--------------------- |
+| **Git Data API** (blobs/trees/commits/refs) | ✅ Single commit for N files | Medium     | **Primary path**       |
+| **Contents API** (`PUT /contents/{path}`)   | ❌ One commit per file       | Low        | WO-016 smoke test only |
 
 Contents API **409** occurs when updating an existing path without the current file `sha`. WO-018 is create-only on a fresh head branch, so 409 is rare unless a partial failure retries the same branch — handle by surfacing conflict + optional branch suffix retry.
 
@@ -73,11 +73,11 @@ fighub/{contractKind}-{yyyy-MM-dd}
 
 Examples:
 
-| `ContractKind` | Branch |
-| :------------- | :----- |
-| `drift-report` | `fighub/drift-report-2026-05-27` |
+| `ContractKind`    | Branch                              |
+| :---------------- | :---------------------------------- |
+| `drift-report`    | `fighub/drift-report-2026-05-27`    |
 | `handoff-context` | `fighub/handoff-context-2026-05-27` |
-| `tokens-dtcg` | `fighub/tokens-dtcg-2026-05-27` |
+| `tokens-dtcg`     | `fighub/tokens-dtcg-2026-05-27`     |
 
 Rules:
 
@@ -115,10 +115,10 @@ WO-019 + WO-020 own the exact filename derivation; WO-018 accepts `files: { path
 
 ## Files
 
-| Path | Format |
-| ---- | ------ |
-| `docs/fighub/drift-report-2026-05-27.v1.json` | JSON (machine) |
-| `docs/fighub/drift-report-2026-05-27.v1.md` | Markdown (human) |
+| Path                                          | Format           |
+| --------------------------------------------- | ---------------- |
+| `docs/fighub/drift-report-2026-05-27.v1.json` | JSON (machine)   |
+| `docs/fighub/drift-report-2026-05-27.v1.md`   | Markdown (human) |
 
 ---
 
@@ -137,19 +137,19 @@ _Generated by FigHub v{pluginVersion}_
 
 Map GitHub / network failures to **`SinkFailure`** codes for the export sheet (WO-020 reports per-sink success/failure).
 
-| Condition | HTTP / signal | `SinkErrorCode` | Designer message (example) | Recovery hint |
-| :-------- | :------------ | :-------------- | :------------------------- | :------------ |
-| No token / not connected | — | `auth-required` | GitHub is not connected for this repo. | Open Settings → Connect GitHub. |
-| Token expired / revoked | **401** | `auth-expired` | GitHub authorization expired. | Reconnect GitHub in Settings. |
-| Insufficient scope | **403** | `forbidden` | GitHub token cannot write to this repository. | Re-authorize with repo scope. |
-| Repo or base branch missing | **404** | `not-found` | Repository or base branch not found. | Check connected repo URL and base branch. |
-| Branch already exists (exhausted suffix retries) | **422** | `branch-exists` | A branch named `{branch}` already exists. | Change branch pattern or delete the remote branch. |
-| File SHA mismatch (Contents fallback / partial retry) | **409** | `conflict` | GitHub rejected the commit (content changed on the branch). | Retry export; plugin will use a new branch name. |
-| Empty repo / git DB unavailable | **409** | `conflict` | This repository has no commits yet; cannot open a PR. | Push an initial commit to the repo first. |
-| Rate limit | **403** + `X-RateLimit-Remaining: 0` | `network` | GitHub rate limit reached. Try again in a few minutes. | Wait and retry. |
-| Server error | **5xx** | `network` | GitHub is temporarily unavailable. | Retry once (single backoff); then fail. |
-| Offline / DNS / CORS | `TypeError`, `Failed to fetch` | `network` | Network error reaching GitHub. | Check connection and try again. |
-| Community build | — | `unavailable` | GitHub PR export requires the Org build. | Use download or clipboard instead. |
+| Condition                                             | HTTP / signal                        | `SinkErrorCode` | Designer message (example)                                  | Recovery hint                                      |
+| :---------------------------------------------------- | :----------------------------------- | :-------------- | :---------------------------------------------------------- | :------------------------------------------------- |
+| No token / not connected                              | —                                    | `auth-required` | GitHub is not connected for this repo.                      | Open Settings → Connect GitHub.                    |
+| Token expired / revoked                               | **401**                              | `auth-expired`  | GitHub authorization expired.                               | Reconnect GitHub in Settings.                      |
+| Insufficient scope                                    | **403**                              | `forbidden`     | GitHub token cannot write to this repository.               | Re-authorize with repo scope.                      |
+| Repo or base branch missing                           | **404**                              | `not-found`     | Repository or base branch not found.                        | Check connected repo URL and base branch.          |
+| Branch already exists (exhausted suffix retries)      | **422**                              | `branch-exists` | A branch named `{branch}` already exists.                   | Change branch pattern or delete the remote branch. |
+| File SHA mismatch (Contents fallback / partial retry) | **409**                              | `conflict`      | GitHub rejected the commit (content changed on the branch). | Retry export; plugin will use a new branch name.   |
+| Empty repo / git DB unavailable                       | **409**                              | `conflict`      | This repository has no commits yet; cannot open a PR.       | Push an initial commit to the repo first.          |
+| Rate limit                                            | **403** + `X-RateLimit-Remaining: 0` | `network`       | GitHub rate limit reached. Try again in a few minutes.      | Wait and retry.                                    |
+| Server error                                          | **5xx**                              | `network`       | GitHub is temporarily unavailable.                          | Retry once (single backoff); then fail.            |
+| Offline / DNS / CORS                                  | `TypeError`, `Failed to fetch`       | `network`       | Network error reaching GitHub.                              | Check connection and try again.                    |
+| Community build                                       | —                                    | `unavailable`   | GitHub PR export requires the Org build.                    | Use download or clipboard instead.                 |
 
 **401 handling (WO-016 integration):** On `auth-expired`, call WO-016 helper to **clear** `clientStorage` token for that repo URL and emit a UI event so Settings shows "Reconnect". Never log the token.
 
@@ -164,12 +164,7 @@ Map GitHub / network failures to **`SinkFailure`** codes for the export sheet (W
 WO-017 has not landed code yet; WO-018 should implement against this **locked shape** (WO-017 `/plan` should adopt verbatim from `src/io/sinks/types.ts`):
 
 ```ts
-export type SinkId =
-  | 'download'
-  | 'clipboard'
-  | 'output-page'
-  | 'plugin-data'
-  | 'github-pr';
+export type SinkId = 'download' | 'clipboard' | 'output-page' | 'plugin-data' | 'github-pr';
 
 export interface SinkFile {
   path: string;
@@ -248,10 +243,10 @@ export interface GithubPRSinkOptions {
 
 Per PRD §13.1–§13.2 and existing `src/config/flags.*.ts`:
 
-| Build | `flags.githubOAuth` | GitHub PR sink |
-| :---- | :------------------ | :------------- |
-| Community (`flags.community.ts`) | `false` | Hidden + `isEnabled() === false` |
-| Org (`flags.org.ts`) | `true` | Available when token present |
+| Build                            | `flags.githubOAuth` | GitHub PR sink                   |
+| :------------------------------- | :------------------ | :------------------------------- |
+| Community (`flags.community.ts`) | `false`             | Hidden + `isEnabled() === false` |
+| Org (`flags.org.ts`)             | `true`              | Available when token present     |
 
 Gating layers (all required):
 
@@ -296,12 +291,12 @@ Network calls run on the **plugin main thread** (WO-016 decision: token passed f
 
 ## Open questions
 
-| # | Question | Recommendation |
-| :- | :------- | :------------- |
-| 1 | WO-016 research complete — see [github-oauth-plugin-flow.md](../WO-016-github-oauth-integration-read-and-write-pr/research/github-oauth-plugin-flow.md) | WO-018 integration test after SPK-016-1 |
-| 2 | Exact default output path prefix (`docs/fighub/` vs repo-specific) | Defer to FR-CONF-5 Settings defaults; export sheet path field overrides per run |
-| 3 | PR labels / reviewers / draft PR | Out of scope per ticket — add in v1.x if needed |
-| 4 | Commit author name/email | Use OAuth user's GitHub noreply email from `/user` API or static `FigHub Plugin <noreply@detroitlabs.com>` — lock in `/plan` |
+| #   | Question                                                                                                                                                | Recommendation                                                                                                               |
+| :-- | :------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
+| 1   | WO-016 research complete — see [github-oauth-plugin-flow.md](../WO-016-github-oauth-integration-read-and-write-pr/research/github-oauth-plugin-flow.md) | WO-018 integration test after SPK-016-1                                                                                      |
+| 2   | Exact default output path prefix (`docs/fighub/` vs repo-specific)                                                                                      | Defer to FR-CONF-5 Settings defaults; export sheet path field overrides per run                                              |
+| 3   | PR labels / reviewers / draft PR                                                                                                                        | Out of scope per ticket — add in v1.x if needed                                                                              |
+| 4   | Commit author name/email                                                                                                                                | Use OAuth user's GitHub noreply email from `/user` API or static `FigHub Plugin <noreply@detroitlabs.com>` — lock in `/plan` |
 
 None blocking WO-018 `/plan` after WO-016 OAuth spikes pass.
 
@@ -311,13 +306,13 @@ None blocking WO-018 `/plan` after WO-016 OAuth spikes pass.
 
 ### Repo inventory (grep-verified 2026-05-27)
 
-| Path | Status | Role |
-| ---- | ------ | ---- |
-| `manifest.org.json` L8–10 | ✅ | GitHub API domains whitelisted |
-| `src/config/flags.*.ts` | ✅ | `githubOAuth` — PR sink also needs `githubPRSink` (WO-021) |
-| `src/io/sinks/` | ❌ greenfield | `githubPR.ts` owned here |
-| `src/io/github/` | ❌ greenfield | WO-016 delivers client + token |
-| `packages/contracts/src/driftReport.v1.ts` | ✅ | `meta.figmaFileKey`, `meta.repoUrl` for PR body |
+| Path                                       | Status        | Role                                                       |
+| ------------------------------------------ | ------------- | ---------------------------------------------------------- |
+| `manifest.org.json` L8–10                  | ✅            | GitHub API domains whitelisted                             |
+| `src/config/flags.*.ts`                    | ✅            | `githubOAuth` — PR sink also needs `githubPRSink` (WO-021) |
+| `src/io/sinks/`                            | ❌ greenfield | `githubPR.ts` owned here                                   |
+| `src/io/github/`                           | ❌ greenfield | WO-016 delivers client + token                             |
+| `packages/contracts/src/driftReport.v1.ts` | ✅            | `meta.figmaFileKey`, `meta.repoUrl` for PR body            |
 
 ### Git Data API — example multi-file tree (validated contract)
 
@@ -350,42 +345,42 @@ POST /repos/{owner}/{repo}/git/trees
 
 ### Contents API rejection rationale (validated)
 
-| API | Multi-file atomic | WO-018 |
-| --- | ----------------- | ------ |
-| Git Data (blobs/trees/commits) | ✅ single commit | Primary |
-| Contents `PUT` per path | ❌ one commit per file | WO-016 smoke only |
+| API                            | Multi-file atomic      | WO-018            |
+| ------------------------------ | ---------------------- | ----------------- |
+| Git Data (blobs/trees/commits) | ✅ single commit       | Primary           |
+| Contents `PUT` per path        | ❌ one commit per file | WO-016 smoke only |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Alternatives rejected |
-| -- | -------- | --------- | --------------------- |
-| D-018-1 | Git Data API primary path | PRD §10.3 sibling files in one PR | Contents API multi-PUT |
-| D-018-2 | Branch `fighub/{contractKind}-{date}` + suffix retry | Ticket + deterministic naming | Reuse branch / update PR |
-| D-018-3 | Pre-serialized files from orchestrator | WO-019 owns format; sink is transport | Serialize inside sink |
-| D-018-4 | `githubPR.ts` in WO-018 | Single Sink module | Duplicate in WO-016 |
+| ID      | Decision                                             | Rationale                             | Alternatives rejected    |
+| ------- | ---------------------------------------------------- | ------------------------------------- | ------------------------ |
+| D-018-1 | Git Data API primary path                            | PRD §10.3 sibling files in one PR     | Contents API multi-PUT   |
+| D-018-2 | Branch `fighub/{contractKind}-{date}` + suffix retry | Ticket + deterministic naming         | Reuse branch / update PR |
+| D-018-3 | Pre-serialized files from orchestrator               | WO-019 owns format; sink is transport | Serialize inside sink    |
+| D-018-4 | `githubPR.ts` in WO-018                              | Single Sink module                    | Duplicate in WO-016      |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
-| SPK-018-1 | Vitest mock: ordered fetch calls blobs→tree→commit→ref→pulls | Single test asserts call sequence + PR URL parse | ☐ pending (unit) |
-| SPK-018-2 | Live test repo + token (env `FIGHUB_GITHUB_TEST_TOKEN`) | PR with json+md siblings; footer has Figma URL | ☐ pending (after SPK-016-1) |
-| SPK-018-3 | Branch collision: create same branch twice | Suffix `-2` branch succeeds | ☐ pending |
+| Spike ID  | Procedure                                                    | Pass criteria                                    | Status                      |
+| --------- | ------------------------------------------------------------ | ------------------------------------------------ | --------------------------- |
+| SPK-018-1 | Vitest mock: ordered fetch calls blobs→tree→commit→ref→pulls | Single test asserts call sequence + PR URL parse | ☐ pending (unit)            |
+| SPK-018-2 | Live test repo + token (env `FIGHUB_GITHUB_TEST_TOKEN`)      | PR with json+md siblings; footer has Figma URL   | ☐ pending (after SPK-016-1) |
+| SPK-018-3 | Branch collision: create same branch twice                   | Suffix `-2` branch succeeds                      | ☐ pending                   |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Likelihood | Mitigation |
-| ---- | --- | ---------- | ---------- |
-| Partial failure after branch create | Med | Med | Orphan branch acceptable; user message + retry |
-| Large file blob API limits | Med | Low | Monitor size; split out of MVP |
-| Token lacks `repo` scope | High | Low | Map 401 → reconnect UX |
-| WO-017 Sink type drift | Med | Med | Shared `types.ts` in WO-017 first |
+| Risk                                | Sev  | Likelihood | Mitigation                                     |
+| ----------------------------------- | ---- | ---------- | ---------------------------------------------- |
+| Partial failure after branch create | Med  | Med        | Orphan branch acceptable; user message + retry |
+| Large file blob API limits          | Med  | Low        | Monitor size; split out of MVP                 |
+| Token lacks `repo` scope            | High | Low        | Map 401 → reconnect UX                         |
+| WO-017 Sink type drift              | Med  | Med        | Shared `types.ts` in WO-017 first              |
 
 ---
 

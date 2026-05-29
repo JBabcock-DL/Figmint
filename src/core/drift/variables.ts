@@ -7,6 +7,7 @@ import { DISPLAY_NAME } from '@/core/variables/collections';
 import { resolveTokens } from '@/core/variables/resolveTokens';
 
 import { classifyThreeWay, isSynced } from './classify';
+import { toUnsyncedDriftDirection } from './types';
 import { resolveSnapshotForClassify } from './snapshotReconcile';
 import type {
   VariableComparable,
@@ -43,7 +44,7 @@ function coerceVariableValue(value: unknown): VariableValue | null {
       };
     }
     if (record.type === 'VARIABLE_ALIAS' && typeof record.id === 'string') {
-      return record as VariableAlias;
+      return record as unknown as VariableAlias;
     }
   }
   return null;
@@ -146,8 +147,7 @@ export function detectVariableDrift(input: VariableDriftDetectInput): VariableDr
   let syncedCount = 0;
 
   for (const key of Object.keys(keySet)) {
-    const figmaValue =
-      input.figmaTokens[key] !== undefined ? input.figmaTokens[key] : null;
+    const figmaValue = input.figmaTokens[key] !== undefined ? input.figmaTokens[key] : null;
     const repoValue = input.repoTokens[key] !== undefined ? input.repoTokens[key] : null;
     const snapshotValue =
       input.snapshotTokens[key] !== undefined ? input.snapshotTokens[key] : null;
@@ -175,7 +175,7 @@ export function detectVariableDrift(input: VariableDriftDetectInput): VariableDr
     drifts.push({
       id: toVariableDriftId(parts.collectionName, parts.variableName),
       kind: 'variable',
-      direction: direction,
+      direction: toUnsyncedDriftDirection(direction),
       figma: figmaValue,
       repo: repoValue,
       lastSynced: snapshotValue,

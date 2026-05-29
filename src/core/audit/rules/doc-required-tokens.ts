@@ -53,9 +53,7 @@ export function buildDocRequiredTokensRow(missing: {
   fontFamilyVars: string[];
 }): AuditRuleResult {
   const hasMisses =
-    missing.tokens.length > 0 ||
-    missing.textStyles.length > 0 ||
-    missing.fontFamilyVars.length > 0;
+    missing.tokens.length > 0 || missing.textStyles.length > 0 || missing.fontFamilyVars.length > 0;
 
   if (!hasMisses) {
     return {

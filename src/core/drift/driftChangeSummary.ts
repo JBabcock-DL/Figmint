@@ -37,7 +37,9 @@ function firstModeValue(payload: unknown): unknown {
   return undefined;
 }
 
-function normalizeCodeSyntax(raw: Record<string, unknown>): Partial<Record<CodeSyntaxPlatform, string>> {
+function normalizeCodeSyntax(
+  raw: Record<string, unknown>,
+): Partial<Record<CodeSyntaxPlatform, string>> {
   const result: Partial<Record<CodeSyntaxPlatform, string>> = {};
   if (typeof raw.WEB === 'string' && raw.WEB.length > 0) {
     result.WEB = raw.WEB;
@@ -192,7 +194,10 @@ export function renderDriftChangeTableMarkdown(report: DriftReportV1, driftIds: 
   }
 
   if (rows.length > MAX_PR_ROWS) {
-    lines.push('', '_…and ' + String(rows.length - MAX_PR_ROWS) + ' more changes (see file diff)._');
+    lines.push(
+      '',
+      '_…and ' + String(rows.length - MAX_PR_ROWS) + ' more changes (see file diff)._',
+    );
   }
 
   return lines.join('\n');

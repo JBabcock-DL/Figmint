@@ -58,7 +58,11 @@ describe('export message guards', () => {
           requestId: 'export-3',
           sinks: ['output-page'],
           doc: { kind: 'registry', payload: { v: 1, kind: 'registry' } },
-          formatOptions: { format: 'json', baseName: 'docs/fighub/registry-export', label: 'fighub/registry' },
+          formatOptions: {
+            format: 'json',
+            baseName: 'docs/fighub/registry-export',
+            label: 'fighub/registry',
+          },
           files: [{ path: 'docs/fighub/registry-export.json', content: '{}', format: 'json' }],
         }),
       ).toBe(true);

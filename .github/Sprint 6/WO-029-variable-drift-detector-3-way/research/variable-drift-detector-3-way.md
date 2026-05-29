@@ -18,13 +18,13 @@ Depends on **WO-058 Phase 1** snapshot store (absorbed WO-028) and **WO-008** pu
 
 For each key `K`:
 
-| Figma (F) | Repo (R) | Snapshot (S) | Direction |
-| --------- | -------- | ------------ | --------- |
-| F ≠ S | R = S | * | **push** |
-| F = S | R ≠ S | * | **pull** |
-| F ≠ S | R ≠ S | F ≠ R | **conflict** |
-| F = S | R = S | * | **synced** |
-| F ≠ S | R ≠ S | F = R | **synced** (both moved same way) |
+| Figma (F) | Repo (R) | Snapshot (S) | Direction                        |
+| --------- | -------- | ------------ | -------------------------------- |
+| F ≠ S     | R = S    | \*           | **push**                         |
+| F = S     | R ≠ S    | \*           | **pull**                         |
+| F ≠ S     | R ≠ S    | F ≠ R        | **conflict**                     |
+| F = S     | R = S    | \*           | **synced**                       |
+| F ≠ S     | R ≠ S    | F = R        | **synced** (both moved same way) |
 
 Where `≠` and `=` use canonical equality (values + codeSyntax per mode).
 
@@ -32,10 +32,10 @@ Where `≠` and `=` use canonical equality (values + codeSyntax per mode).
 
 **Edge — key only on one side:**
 
-| Present in | Classification |
-| ---------- | -------------- |
-| Figma only, not repo | push (if S missing) or compare F vs S |
-| Repo only, not Figma | pull |
+| Present in                         | Classification                                                                                                                                |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Figma only, not repo               | push (if S missing) or compare F vs S                                                                                                         |
+| Repo only, not Figma               | pull                                                                                                                                          |
 | Snapshot only (deleted both sides) | conflict or push/pull depending on which side deleted — **recommend: push if Figma null, pull if repo null, conflict if both claim deletion** |
 
 ### 2. Canonical value shape for compare
@@ -91,12 +91,12 @@ Only emit rows where `direction !== 'synced'` **or** include synced in summary c
 
 ### 6. Integration points
 
-| Consumer | Usage |
-| -------- | ----- |
-| WO-031 | Passes `VariableDrift[]` to report aggregator |
-| WO-032 | Pull resolution invokes WO-008 push with repo canonical values |
-| WO-033/WO-058 | On-open lightweight detect calls detector with cached repo fetch |
-| `opsProgram.v1` | Future `detect-drift` op handler in `main.ts` |
+| Consumer        | Usage                                                            |
+| --------------- | ---------------------------------------------------------------- |
+| WO-031          | Passes `VariableDrift[]` to report aggregator                    |
+| WO-032          | Pull resolution invokes WO-008 push with repo canonical values   |
+| WO-033/WO-058   | On-open lightweight detect calls detector with cached repo fetch |
+| `opsProgram.v1` | Future `detect-drift` op handler in `main.ts`                    |
 
 ---
 
@@ -104,58 +104,58 @@ Only emit rows where `direction !== 'synced'` **or** include synced in summary c
 
 ### Repo inventory
 
-| Exists | Path | Role |
-| ------ | ---- | ---- |
-| ✅ | `src/core/audit/readFigmaVariableState.ts:68-116` | Async Figma variable snapshot |
-| ✅ | `src/core/variables/compare.ts` | Equality primitives |
-| ✅ | `src/core/variables/push.ts:392+` | Push engine — post-push snapshot hook |
-| ✅ | `src/io/sources/adapters/index.ts:30-59` | Wire → TokensV1 |
-| ✅ | `packages/contracts/src/tokens.v1.ts` | Canonical token model |
-| ✅ | `packages/contracts/src/driftReport.v1.ts:14-21` | VariableDriftEntry |
-| ❌ | `src/core/drift/variables.ts` | Greenfield |
-| ❌ | `src/core/drift/classify.ts` | Greenfield shared classifier |
+| Exists | Path                                              | Role                                  |
+| ------ | ------------------------------------------------- | ------------------------------------- |
+| ✅     | `src/core/audit/readFigmaVariableState.ts:68-116` | Async Figma variable snapshot         |
+| ✅     | `src/core/variables/compare.ts`                   | Equality primitives                   |
+| ✅     | `src/core/variables/push.ts:392+`                 | Push engine — post-push snapshot hook |
+| ✅     | `src/io/sources/adapters/index.ts:30-59`          | Wire → TokensV1                       |
+| ✅     | `packages/contracts/src/tokens.v1.ts`             | Canonical token model                 |
+| ✅     | `packages/contracts/src/driftReport.v1.ts:14-21`  | VariableDriftEntry                    |
+| ❌     | `src/core/drift/variables.ts`                     | Greenfield                            |
+| ❌     | `src/core/drift/classify.ts`                      | Greenfield shared classifier          |
 
 ### Cross-ticket matrix
 
-| Ticket | Produces / Consumes |
-| ------ | ------------------- |
-| WO-058 | Snapshot read API | **consumes** |
-| WO-008 | Push engine | pull-apply **consumes** |
-| WO-031 | DriftReport | **produces** VariableDrift[] |
-| WO-030 | Parallel component detector | independent |
+| Ticket | Produces / Consumes         |
+| ------ | --------------------------- | ---------------------------- |
+| WO-058 | Snapshot read API           | **consumes**                 |
+| WO-008 | Push engine                 | pull-apply **consumes**      |
+| WO-031 | DriftReport                 | **produces** VariableDrift[] |
+| WO-030 | Parallel component detector | independent                  |
 
 ---
 
 ## Decision log
 
-| ID | Decision | Rationale | Rejected |
-| -- | -------- | --------- | -------- |
-| D-029-1 | Flat slash keys | Matches Figma variable.name | Dot paths (invalid in Figma API) |
-| D-029-2 | Reuse compare.ts | Single equality definition | Duplicate compare in drift |
-| D-029-3 | Missing snapshot → S:=R | PRD risk mitigation | Empty snapshot → all conflict |
-| D-029-4 | Omit synced from drifts[] | Smaller reports; summary.synced count | List all 410 synced rows |
-| D-029-5 | Pure function detector | Testable without Plugin API | Async detector mixed with fetch |
+| ID      | Decision                  | Rationale                             | Rejected                         |
+| ------- | ------------------------- | ------------------------------------- | -------------------------------- |
+| D-029-1 | Flat slash keys           | Matches Figma variable.name           | Dot paths (invalid in Figma API) |
+| D-029-2 | Reuse compare.ts          | Single equality definition            | Duplicate compare in drift       |
+| D-029-3 | Missing snapshot → S:=R   | PRD risk mitigation                   | Empty snapshot → all conflict    |
+| D-029-4 | Omit synced from drifts[] | Smaller reports; summary.synced count | List all 410 synced rows         |
+| D-029-5 | Pure function detector    | Testable without Plugin API           | Async detector mixed with fetch  |
 
 ---
 
 ## Pre-plan spikes
 
-| Spike ID | Procedure | Pass criteria | Status |
-| -------- | --------- | ------------- | ------ |
+| Spike ID  | Procedure                                                     | Pass criteria                  | Status                |
+| --------- | ------------------------------------------------------------- | ------------------------------ | --------------------- |
 | SPK-029-1 | Vitest: 10-var fixture (3 push, 2 pull, 1 conflict, 4 synced) | All directions match ticket AC | ☐ pending in `/build` |
-| SPK-029-2 | Bench 400-var synthetic compare loop | < 100ms detect-only | ☐ pending |
-| SPK-029-3 | Integration: sandbox readFigma + fixture repo JSON | End-to-end classify | ☐ pending post WO-058 |
+| SPK-029-2 | Bench 400-var synthetic compare loop                          | < 100ms detect-only            | ☐ pending             |
+| SPK-029-3 | Integration: sandbox readFigma + fixture repo JSON            | End-to-end classify            | ☐ pending post WO-058 |
 
 ---
 
 ## Risk register
 
-| Risk | Sev | Lik | Mitigation |
-| ---- | --- | --- | ---------- |
-| Mode name mismatch repo vs Figma | Med | Med | Normalize via collection mode map from push engine |
-| Alias compare false conflicts | Med | Low | Use `resolveTokenValueForCompare` both sides |
-| Extended collections (EVC) | Low | Low | Out of scope Phase 3; skip extended modes or Enterprise gate |
-| Large token files exceed fetch timeout | Med | Low | Cache repo tokens in session after Fetch (WO-058) |
+| Risk                                   | Sev | Lik | Mitigation                                                   |
+| -------------------------------------- | --- | --- | ------------------------------------------------------------ |
+| Mode name mismatch repo vs Figma       | Med | Med | Normalize via collection mode map from push engine           |
+| Alias compare false conflicts          | Med | Low | Use `resolveTokenValueForCompare` both sides                 |
+| Extended collections (EVC)             | Low | Low | Out of scope Phase 3; skip extended modes or Enterprise gate |
+| Large token files exceed fetch timeout | Med | Low | Cache repo tokens in session after Fetch (WO-058)            |
 
 ---
 
@@ -171,27 +171,27 @@ Only emit rows where `direction !== 'synced'` **or** include synced in summary c
 
 ## Open questions
 
-| ID | Question | Status |
-| -- | -------- | ------ |
-| OQ-029-1 | Include codeSyntax in drift or values only? | **RESOLVED:** both — matches push skip logic |
+| ID       | Question                                             | Status                                                         |
+| -------- | ---------------------------------------------------- | -------------------------------------------------------------- |
+| OQ-029-1 | Include codeSyntax in drift or values only?          | **RESOLVED:** both — matches push skip logic                   |
 | OQ-029-2 | Detect remote-only tokens not in 5-collection model? | **RESOLVED:** yes, any local Figma variable + repo token union |
 
 ---
 
 ## Appendix A — 10-variable AC fixture spec
 
-| Key | Figma | Repo | Snapshot | Expected |
-| --- | ----- | ---- | -------- | -------- |
-| `primitives/a` | v1 | v0 | v0 | push |
-| `primitives/b` | v1 | v0 | v0 | push |
-| `primitives/c` | v1 | v0 | v0 | push |
-| `theme/d` | v0 | v1 | v0 | pull |
-| `theme/e` | v0 | v1 | v0 | pull |
-| `layout/f` | v2 | v3 | v1 | conflict |
-| `layout/g` | v5 | v5 | v5 | synced (summary only) |
-| `layout/h` | v5 | v5 | v5 | synced |
-| `layout/i` | v5 | v5 | v5 | synced |
-| `layout/j` | v5 | v5 | v5 | synced |
+| Key            | Figma | Repo | Snapshot | Expected              |
+| -------------- | ----- | ---- | -------- | --------------------- |
+| `primitives/a` | v1    | v0   | v0       | push                  |
+| `primitives/b` | v1    | v0   | v0       | push                  |
+| `primitives/c` | v1    | v0   | v0       | push                  |
+| `theme/d`      | v0    | v1   | v0       | pull                  |
+| `theme/e`      | v0    | v1   | v0       | pull                  |
+| `layout/f`     | v2    | v3   | v1       | conflict              |
+| `layout/g`     | v5    | v5   | v5       | synced (summary only) |
+| `layout/h`     | v5    | v5   | v5       | synced                |
+| `layout/i`     | v5    | v5   | v5       | synced                |
+| `layout/j`     | v5    | v5   | v5       | synced                |
 
 Fixture file: `tests/fixtures/drift/variable-drift-ac-10.v1.json` (to create in `/build`).
 
@@ -217,4 +217,3 @@ function classifyThreeWay<T>(
   return 'synced';
 }
 ```
-

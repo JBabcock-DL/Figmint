@@ -42,13 +42,14 @@ function validateSpec(spec: ComponentSpecV1): void {
   }
 }
 
-function resolveScaffoldParent(
-  target: PageNode | ComponentScaffoldTarget,
-): { page: PageNode; parent: ChildrenMixin & SceneNode } {
+function resolveScaffoldParent(target: PageNode | ComponentScaffoldTarget): {
+  page: PageNode;
+  parent: ChildrenMixin & SceneNode;
+} {
   if ('docRoot' in target) {
     return { page: target.page, parent: target.docRoot };
   }
-  return { page: target, parent: target };
+  return { page: target, parent: target as PageNode & ChildrenMixin & SceneNode };
 }
 
 export function findExistingComponentSet(
@@ -134,10 +135,15 @@ function finalizeComponentSet(
   componentSet.name = displayTitle + ' — ComponentSet';
   componentSet.layoutMode = 'HORIZONTAL';
   componentSet.layoutWrap = 'WRAP';
-  resizeThenApplySizing(componentSet as unknown as FrameNode, componentSet.width > 0 ? componentSet.width : 320, 1, {
-    primaryAxisSizingMode: 'FIXED',
-    counterAxisSizingMode: 'AUTO',
-  });
+  resizeThenApplySizing(
+    componentSet as unknown as FrameNode,
+    componentSet.width > 0 ? componentSet.width : 320,
+    1,
+    {
+      primaryAxisSizingMode: 'FIXED',
+      counterAxisSizingMode: 'AUTO',
+    },
+  );
   componentSet.setPluginData(PLUGIN_DATA_SCAFFOLD_ID, scaffoldId);
   componentSet.setPluginData(PLUGIN_DATA_SPEC_VERSION, '1');
 }
@@ -210,9 +216,7 @@ export async function scaffold(
   validateSpec(spec);
 
   const displayTitle =
-    options !== undefined && options.displayTitle !== undefined
-      ? options.displayTitle
-      : spec.name;
+    options !== undefined && options.displayTitle !== undefined ? options.displayTitle : spec.name;
   const scaffoldId = buildScaffoldId(spec.name, spec.variantMatrix);
   const expectedCount = expectedVariantCount(spec.variantMatrix);
   const resolved = resolveScaffoldParent(target);
@@ -323,11 +327,7 @@ export async function forwardScaffold(
 }
 
 export { buildScaffoldAuditRows } from './auditRows';
-export {
-  applyBindings,
-  normalizeVariablePath,
-  parseBindingSelector,
-} from './applyBindings';
+export { applyBindings, normalizeVariablePath, parseBindingSelector } from './applyBindings';
 export { applyProperties, applyPropertiesToVariants } from './applyProperties';
 export { normalizeVariantMasterGeometry, normalizeVariantMastersInSet } from './variantGeometry';
 export { resolveBindingTarget } from './resolveBindingTarget';
@@ -357,10 +357,7 @@ export {
   PLUGIN_DATA_SPEC_VERSION,
   PLUGIN_DATA_USAGE_FRAME,
 } from './types';
-export {
-  buildUsageFrame,
-  resolveVariantComponent,
-} from './usageFrame';
+export { buildUsageFrame, resolveVariantComponent } from './usageFrame';
 export {
   ensureComponentScaffoldTarget,
   ensureComponentsPage,

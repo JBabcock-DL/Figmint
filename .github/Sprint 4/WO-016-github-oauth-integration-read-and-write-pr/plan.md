@@ -14,14 +14,14 @@ Promote WO-016 **research spike** into durable GitHub integration: **Device Flow
 
 ## Acceptance criteria traceability
 
-| Ticket AC | Plan steps |
-| --------- | ---------- |
-| Device Flow E2E desktop + browser | Steps 5–6, 10–11, 22 |
-| Read `design/tokens.json` → LoadedDocument | Steps 7–9, 14 |
-| Open PR single file | Steps 15–16 |
-| Token persist + Disconnect | Steps 3, 6, 10 |
-| No secrets in bundle | Steps 17–18, 21 |
-| Community gating AC | **N/A** single build — note in VQA |
+| Ticket AC                                  | Plan steps                         |
+| ------------------------------------------ | ---------------------------------- |
+| Device Flow E2E desktop + browser          | Steps 5–6, 10–11, 22               |
+| Read `design/tokens.json` → LoadedDocument | Steps 7–9, 14                      |
+| Open PR single file                        | Steps 15–16                        |
+| Token persist + Disconnect                 | Steps 3, 6, 10                     |
+| No secrets in bundle                       | Steps 17–18, 21                    |
+| Community gating AC                        | **N/A** single build — note in VQA |
 
 ---
 
@@ -48,8 +48,8 @@ export async function githubApiViaRelay(
 // OR extend scripts/github-oauth-relay.mjs with generic proxy route
 ```
 
-  - **Extend `scripts/github-oauth-relay.mjs`** with `POST /github/api/proxy` forwarding to `https://api.github.com{path}` with Authorization header — plugin never calls api.github.com directly.
-  - **Done when:** `tests/unit/io/github/relayClient.test.ts` mocks fetch; no `fetch('https://github.com` in `src/`.
+- **Extend `scripts/github-oauth-relay.mjs`** with `POST /github/api/proxy` forwarding to `https://api.github.com{path}` with Authorization header — plugin never calls api.github.com directly.
+- **Done when:** `tests/unit/io/github/relayClient.test.ts` mocks fetch; no `fetch('https://github.com` in `src/`.
 
 - [x] **Step 2** — Implement `src/io/github/repoUrl.ts`:
 
@@ -68,8 +68,8 @@ export function configStorageKey(repoUrl: string): string;
 // 'fighub:github:config:' + normalizeRepoUrl(repoUrl)
 ```
 
-  - Reject `github.enterprise.com` for MVP.
-  - **Done when:** `tests/unit/io/github/repoUrl.test.ts` — 5 valid + 3 invalid URLs.
+- Reject `github.enterprise.com` for MVP.
+- **Done when:** `tests/unit/io/github/repoUrl.test.ts` — 5 valid + 3 invalid URLs.
 
 - [x] **Step 3** — Implement `src/io/github/storage.ts`:
 
@@ -94,19 +94,38 @@ export async function getConfig(repoUrl: string): Promise<StoredGitHubConfig | n
 export async function setConfig(repoUrl: string, config: StoredGitHubConfig): Promise<void>;
 ```
 
-  - Wrap `figma.clientStorage.getAsync/setAsync/deleteAsync`.
-  - **Done when:** Vitest figma.clientStorage mock round-trip.
+- Wrap `figma.clientStorage.getAsync/setAsync/deleteAsync`.
+- **Done when:** Vitest figma.clientStorage mock round-trip.
 
 - [x] **Step 4** — Create `src/io/messages/github.ts` (replace spike types):
 
 **UI → main:**
 
 ```ts
-export interface GitHubOAuthStartMessage { type: 'github/oauth/start'; requestId: string; scope: string; }
-export interface GitHubOAuthPollMessage { type: 'github/oauth/poll'; requestId: string; deviceCode: string; }
-export interface GitHubTokenSaveMessage { type: 'github/token/save'; repoUrl: string; accessToken: string; scope: string; }
-export interface GitHubTokenClearMessage { type: 'github/token/clear'; repoUrl: string; }
-export interface GitHubTokenProbeMessage { type: 'github/token/probe'; repoUrl: string; }
+export interface GitHubOAuthStartMessage {
+  type: 'github/oauth/start';
+  requestId: string;
+  scope: string;
+}
+export interface GitHubOAuthPollMessage {
+  type: 'github/oauth/poll';
+  requestId: string;
+  deviceCode: string;
+}
+export interface GitHubTokenSaveMessage {
+  type: 'github/token/save';
+  repoUrl: string;
+  accessToken: string;
+  scope: string;
+}
+export interface GitHubTokenClearMessage {
+  type: 'github/token/clear';
+  repoUrl: string;
+}
+export interface GitHubTokenProbeMessage {
+  type: 'github/token/probe';
+  repoUrl: string;
+}
 export interface GitHubContentsFetchMessage {
   type: 'github/contents/fetch';
   requestId: string;
@@ -145,12 +164,19 @@ export interface GitHubContentsResultMessage {
   text: string;
   sha?: string;
 }
-export interface GitHubContentsErrorMessage { type: 'github/contents/error'; requestId: string; message: string; }
-export interface GitHubErrorMessage { type: 'github/error'; message: string; }
+export interface GitHubContentsErrorMessage {
+  type: 'github/contents/error';
+  requestId: string;
+  message: string;
+}
+export interface GitHubErrorMessage {
+  type: 'github/error';
+  message: string;
+}
 ```
 
-  - Export guards for every type — pattern from `src/io/messages/bootstrap.ts`.
-  - **Done when:** `tests/unit/io/messages/github.test.ts` ≥3 valid + 2 invalid per guard.
+- Export guards for every type — pattern from `src/io/messages/bootstrap.ts`.
+- **Done when:** `tests/unit/io/messages/github.test.ts` ≥3 valid + 2 invalid per guard.
 
 - [x] **Step 5** — Implement `src/io/github/oauth.ts`:
 
@@ -159,22 +185,22 @@ export async function startDeviceFlow(scope: string): Promise<DeviceCodeResponse
 export async function pollDeviceFlow(deviceCode: string): Promise<DeviceTokenPollResult>;
 ```
 
-  - Delegate to relayClient only.
-  - **Done when:** unit tests with mocked relay JSON.
+- Delegate to relayClient only.
+- **Done when:** unit tests with mocked relay JSON.
 
 - [x] **Step 6** — Wire `src/main.ts` GitHub handlers (replace `spike/oauth/*` block):
 
-| Message | Handler |
-| ------- | ------- |
-| `github/oauth/start` | relay device code → `github/oauth/device-code` |
-| `github/oauth/poll` | relay poll → `github/oauth/poll-result` |
-| `github/token/save` | `setToken` + `setConfig` + `github/token/status` |
-| `github/token/clear` | `clearToken` + delete config + status disconnected |
-| `github/token/probe` | read storage → status |
-| `github/contents/fetch` | contents API via relay → result/error |
+| Message                 | Handler                                            |
+| ----------------------- | -------------------------------------------------- |
+| `github/oauth/start`    | relay device code → `github/oauth/device-code`     |
+| `github/oauth/poll`     | relay poll → `github/oauth/poll-result`            |
+| `github/token/save`     | `setToken` + `setConfig` + `github/token/status`   |
+| `github/token/clear`    | `clearToken` + delete config + status disconnected |
+| `github/token/probe`    | read storage → status                              |
+| `github/contents/fetch` | contents API via relay → result/error              |
 
-  - `tokenPreview`: first 4 + `…` + last 4 chars only.
-  - **Done when:** SPK-016-1 regression from Settings (Step 11), not spike panel.
+- `tokenPreview`: first 4 + `…` + last 4 chars only.
+- **Done when:** SPK-016-1 regression from Settings (Step 11), not spike panel.
 
 - [x] **Step 7** — Implement `src/io/github/contents.ts`:
 
@@ -188,10 +214,10 @@ export async function fetchRepoFileContents(
 ): Promise<{ text: string; sha: string }>;
 ```
 
-  - Relay GET `/repos/{owner}/{repo}/contents/{path}?ref=`
-  - Decode base64 `content` (handle `\n` in GitHub response)
-  - Map 401 → throw `GitHubAuthError`; 404 → `GitHubNotFoundError`
-  - **Done when:** test with fixture base64 body.
+- Relay GET `/repos/{owner}/{repo}/contents/{path}?ref=`
+- Decode base64 `content` (handle `\n` in GitHub response)
+- Map 401 → throw `GitHubAuthError`; 404 → `GitHubNotFoundError`
+- **Done when:** test with fixture base64 body.
 
 - [x] **Step 8** — Extend `src/io/sources/types.ts`:
 
@@ -206,7 +232,7 @@ export interface GitHubSourceMeta {
 }
 ```
 
-  - Add to `SourceMeta` union; export from `src/io/sources/index.ts`.
+- Add to `SourceMeta` union; export from `src/io/sources/index.ts`.
 
 - [x] **Step 9** — Implement `src/io/sources/github.ts`:
 
@@ -218,15 +244,16 @@ export async function loadFromGitHub(
 ): Promise<LoadedDocument<unknown> | ValidationError>;
 ```
 
-  - UI implementation: post `github/contents/fetch`, await result, call `parseTextToDocument(text, metaFactory)` same as paste.
-  - Validate path: reject `..` segments.
-  - **Done when:** test loads tokens JSON fixture path from mocked contents response.
+- UI implementation: post `github/contents/fetch`, await result, call `parseTextToDocument(text, metaFactory)` same as paste.
+- Validate path: reject `..` segments.
+- **Done when:** test loads tokens JSON fixture path from mocked contents response.
 
 - [x] **Step 10** — Implement `src/ui/tabs/Settings.tsx`:
 
 **State:** `repoUrl`, `tokensPath` (default `design/tokens.json`), `connectionStatus`, `oauthPhase: 'idle'|'code'|'polling'|'error'`.
 
 **UI blocks:**
+
 1. Repo URL text input
 2. Tokens path input
 3. Connect button → starts Device Flow via main
@@ -237,7 +264,7 @@ export async function loadFromGitHub(
 
 **Styles:** match `Bootstrap.tsx` — 11px body, 13px section headers, `#666` muted.
 
-  - **Done when:** renders at 420×520 without overflow on idle state.
+- **Done when:** renders at 420×520 without overflow on idle state.
 
 - [x] **Step 11** — Implement `src/ui/github/useGitHubConnect.ts` hook:
   - Pending request map for `requestId` (copy pattern from spike `OAuthDeviceFlowSpike.tsx` but durable types from `github.ts`).
@@ -286,6 +313,7 @@ export async function createPullRequestFlow(
 ```
 
 **Sequence (all via relay proxy):**
+
 1. GET `/repos/{owner}/{repo}` — validate
 2. GET `/repos/{owner}/{repo}/git/ref/heads/{baseBranch}` → baseSha
 3. GET `/repos/{owner}/{repo}/git/commits/{baseSha}` → treeSha
@@ -296,7 +324,7 @@ export async function createPullRequestFlow(
 8. PATCH `/git/refs/heads/{headBranch}`
 9. POST `/pulls`
 
-  - **Done when:** `tests/unit/io/github/createPullRequestFlow.test.ts` asserts call order with mocked relay.
+- **Done when:** `tests/unit/io/github/createPullRequestFlow.test.ts` asserts call order with mocked relay.
 
 - [x] **Step 15** — Implement `src/io/github/prBody.ts` + `branchName.ts` (shared with WO-018):
   - `buildDefaultHeadBranch(contractKind, dateUtc)` → `fighub/{kind}-{yyyy-MM-dd}`
@@ -316,7 +344,7 @@ export async function createPullRequestFlow(
 }
 ```
 
-  - Remove direct `https://github.com/login/` from allowedDomains if all traffic goes through relay (login happens in user browser, not plugin fetch).
+- Remove direct `https://github.com/login/` from allowedDomains if all traffic goes through relay (login happens in user browser, not plugin fetch).
 
 - [x] **Step 18** — Update `vite.config.ts` `sharedDefine`:
 
@@ -324,8 +352,8 @@ export async function createPullRequestFlow(
 'import.meta.env.FIGHUB_OAUTH_RELAY_URL': JSON.stringify(env.FIGHUB_OAUTH_RELAY_URL ?? ''),
 ```
 
-  - Add to `src/vite-env.d.ts` interface.
-  - Update `.env.example`.
+- Add to `src/vite-env.d.ts` interface.
+- Update `.env.example`.
 
 - [x] **Step 19** — Extend relay script `scripts/github-oauth-relay.mjs`:
   - `POST /github/api/proxy` body `{ method, path, token, body? }`
@@ -345,10 +373,10 @@ export async function createPullRequestFlow(
 
 - [x] **Step 22** — Manual VQA matrix:
 
-| Env | Steps | Record in |
-| --- | ----- | --------- |
+| Env           | Steps             | Record in                                 |
+| ------------- | ----------------- | ----------------------------------------- |
 | Figma desktop | Connect, read, PR | `spike-github-oauth-results.md` SPK-016-2 |
-| Figma browser | Connect only | same |
+| Figma browser | Connect only      | same                                      |
 
 - [x] **Step 23** — CI: `npm run typecheck && npm run lint && npm run test && npm run build`; `rg client_secret src/` empty.
 
@@ -357,33 +385,38 @@ export async function createPullRequestFlow(
 ## Build Agents
 
 ### Phase 1 (sequential)
+
 - `code-build` — **Steps 1–3**: relay + proxy route, repoUrl, storage.
 
 ### Phase 2 (parallel)
+
 - `code-build` — **Steps 4–6**: messages, oauth, main handlers.
 - `code-build` — **Steps 7–9**: contents + github source loader.
 
 ### Phase 3 (parallel)
+
 - `code-build` — **Steps 10–13**: Settings UI + connect hook + App nav.
 - `code-build` — **Steps 14–16**: PR flow + helpers + smoke.
 
 ### Phase 4 (sequential)
+
 - `code-build` — **Steps 17–20**: manifest, vite, relay script, spike removal.
 
 ### Phase 5
+
 - `code-build` — **Steps 21–23**: tests, VQA, CI.
 
 ---
 
 ## Dependencies & Tools
 
-| Tool | Use |
-| ---- | --- |
-| `npm run spike:oauth-relay` | Local dev |
-| `.env.local` GITHUB_OAUTH_CLIENT_ID | Relay reads it |
-| WO-006 parseTextToDocument | Read path |
-| Figma desktop + browser | VQA |
-| Vitest | Mock relay + storage |
+| Tool                                | Use                  |
+| ----------------------------------- | -------------------- |
+| `npm run spike:oauth-relay`         | Local dev            |
+| `.env.local` GITHUB_OAUTH_CLIENT_ID | Relay reads it       |
+| WO-006 parseTextToDocument          | Read path            |
+| Figma desktop + browser             | VQA                  |
+| Vitest                              | Mock relay + storage |
 
 **Production blocker:** deployed HTTPS relay URL before non-dev users connect.
 
@@ -391,11 +424,11 @@ export async function createPullRequestFlow(
 
 ## Open Questions
 
-| # | Question | Resolution |
-| - | -------- | ---------- |
-| OQ-16-1 | Production relay URL | **Open** — use env at build; placeholder in manifest until ops |
-| OQ-16-2 | Bootstrap Pull from GitHub | **Defer** |
-| OQ-16-3 | PR module split | **RESOLVED:** `createPullRequestFlow.ts` here; Sink in WO-018 |
+| #       | Question                   | Resolution                                                     |
+| ------- | -------------------------- | -------------------------------------------------------------- |
+| OQ-16-1 | Production relay URL       | **Open** — use env at build; placeholder in manifest until ops |
+| OQ-16-2 | Bootstrap Pull from GitHub | **Defer**                                                      |
+| OQ-16-3 | PR module split            | **RESOLVED:** `createPullRequestFlow.ts` here; Sink in WO-018  |
 
 ---
 
@@ -403,20 +436,20 @@ export async function createPullRequestFlow(
 
 ### Spike → durable mapping
 
-| Spike file | Durable destination |
-| ---------- | ------------------- |
-| `relayClient.ts` | keep + extend proxy |
-| `githubOAuthSpike.ts` | `messages/github.ts` |
+| Spike file                 | Durable destination   |
+| -------------------------- | --------------------- |
+| `relayClient.ts`           | keep + extend proxy   |
+| `githubOAuthSpike.ts`      | `messages/github.ts`  |
 | `OAuthDeviceFlowSpike.tsx` | `Settings.tsx` + hook |
-| `deviceFlow.ts` | relay/CLI only |
+| `deviceFlow.ts`            | relay/CLI only        |
 
 ### Wrong vs correct
 
-| Wrong | Correct |
-| ----- | ------- |
+| Wrong                                                       | Correct                         |
+| ----------------------------------------------------------- | ------------------------------- |
 | `fetch('https://github.com/login/device/code')` from plugin | relay `POST /oauth/device/code` |
-| Store token in UI localStorage | `figma.clientStorage` on main |
-| `console.debug` in main | `pluginLog` with redaction |
+| Store token in UI localStorage                              | `figma.clientStorage` on main   |
+| `console.debug` in main                                     | `pluginLog` with redaction      |
 
 ### References
 

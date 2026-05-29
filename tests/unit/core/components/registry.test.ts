@@ -14,10 +14,7 @@ import {
   resolveComponentKey,
   upsertRegistryEntry,
 } from '@/core/components/registry';
-import {
-  REGISTRY_FILE_KEY_MISMATCH,
-  RegistryMergeError,
-} from '@/core/components/registry.types';
+import { REGISTRY_FILE_KEY_MISMATCH, RegistryMergeError } from '@/core/components/registry.types';
 import { hashVariantMatrix } from '@/core/components/scaffold/variantMatrix';
 
 import buttonSpec from '../../../fixtures/component-spec/chip-button-minimal.v1.json';
@@ -90,9 +87,7 @@ describe('registry core', () => {
     expect(registry.components.Button.key).toBe('abc123');
     expect(registry.components.Button.pageName).toBe('↳ Buttons');
     expect(registry.components.Button.publishedAt).toBe('2026-05-28T00:00:00.000Z');
-    expect(registry.components.Button.cvaHash).toBe(
-      hashVariantMatrix(spec.variantMatrix),
-    );
+    expect(registry.components.Button.cvaHash).toBe(hashVariantMatrix(spec.variantMatrix));
   });
 
   it('SPK-026-1 second upsert same spec.name bumps version to 2 with single row', () => {
@@ -281,10 +276,7 @@ describe('registry core', () => {
 });
 
 describe('registry schema fixtures', () => {
-  const schemaPath = join(
-    process.cwd(),
-    'packages/contracts/dist/registry.v1.schema.json',
-  );
+  const schemaPath = join(process.cwd(), 'packages/contracts/dist/registry.v1.schema.json');
   const schemaRaw = JSON.parse(readFileSync(schemaPath, 'utf8')) as Record<string, unknown>;
   const schema = Object.assign({}, schemaRaw);
   delete schema.$schema;

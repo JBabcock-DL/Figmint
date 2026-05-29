@@ -22,10 +22,7 @@ import {
   installMockFigmaCanvas,
   MockFrame,
 } from '../__mocks__/figmaFrames';
-import {
-  DOC_PIPELINE_TEXT_STYLES,
-  installDocPipelineVariableMocks,
-} from './docPipelineMocks';
+import { DOC_PIPELINE_TEXT_STYLES, installDocPipelineVariableMocks } from './docPipelineMocks';
 
 const FIXTURE_DIR = join(dirname(fileURLToPath(import.meta.url)), '../../../../fixtures');
 
@@ -45,7 +42,9 @@ function createMockInstanceWithOpacity(): MockInstanceWithOpacity {
   Object.defineProperty(frame, 'type', { value: 'INSTANCE' });
   const inst = frame as unknown as MockInstanceWithOpacity;
   inst.opacity = 1;
-  inst.setProperties = function setProperties(_props: Record<string, string | number | boolean>): void {
+  inst.setProperties = function setProperties(
+    _props: Record<string, string | number | boolean>,
+  ): void {
     /* mock */
   };
   return inst;
@@ -92,15 +91,11 @@ function findMatrixCell(
   if (sizeGroups.length === 0) {
     return null;
   }
-  const rows = sizeGroups[0].findAll(
-    (node) => node.name === `row/${variant}`,
-  ) as MockFrame[];
+  const rows = sizeGroups[0].findAll((node) => node.name === `row/${variant}`) as MockFrame[];
   if (rows.length === 0) {
     return null;
   }
-  const cells = rows[0].findAll(
-    (node) => node.name === `cell/${variant}/${state}`,
-  ) as MockFrame[];
+  const cells = rows[0].findAll((node) => node.name === `cell/${variant}/${state}`) as MockFrame[];
   return cells.length > 0 ? cells[0] : null;
 }
 
@@ -135,12 +130,7 @@ describe('buildMatrix', () => {
     const componentSet = createMockComponentSet();
     const variantByKey = buildButtonVariantByKey(spec);
 
-    const matrixGroup = await buildMatrix(
-      asFrameNode(docRoot),
-      spec,
-      componentSet,
-      variantByKey,
-    );
+    const matrixGroup = await buildMatrix(asFrameNode(docRoot), spec, componentSet, variantByKey);
     const matrixGroupMock = matrixGroup as unknown as MockFrame;
 
     expect(matrixGroupMock.name).toBe('doc/component/button/matrix-group');
@@ -183,12 +173,7 @@ describe('buildMatrix', () => {
     const componentSet = createMockComponentSet();
     const variantByKey = buildButtonVariantByKey(spec);
 
-    const matrixGroup = await buildMatrix(
-      asFrameNode(docRoot),
-      spec,
-      componentSet,
-      variantByKey,
-    );
+    const matrixGroup = await buildMatrix(asFrameNode(docRoot), spec, componentSet, variantByKey);
     const matrixGroupMock = matrixGroup as unknown as MockFrame;
 
     expect(cellInstanceOpacity(matrixGroupMock, 'default', 'default', 'default')).toBe(1);
@@ -209,12 +194,7 @@ describe('buildMatrix', () => {
     const componentSet = createMockComponentSet();
     const variantByKey = buildButtonVariantByKey(spec);
 
-    const matrixGroup = await buildMatrix(
-      asFrameNode(docRoot),
-      spec,
-      componentSet,
-      variantByKey,
-    );
+    const matrixGroup = await buildMatrix(asFrameNode(docRoot), spec, componentSet, variantByKey);
     const matrixGroupMock = matrixGroup as unknown as MockFrame;
 
     const lastSize = 'icon';

@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { validateVariantProperties } from '@/core/components/scaffold/variantPropsValidate';
 
-import { createMockComponentSetWithVariants, asComponentSetNode } from '../../../../integration/core/components/scaffold/mockComponentSet';
+import {
+  createMockComponentSetWithVariants,
+  asComponentSetNode,
+} from '../../../../integration/core/components/scaffold/mockComponentSet';
 
 describe('variantPropsValidate', () => {
   it('passes when VARIANT defs match matrix', () => {

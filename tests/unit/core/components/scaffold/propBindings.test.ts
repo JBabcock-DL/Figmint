@@ -54,7 +54,10 @@ describe('propBindings', () => {
     );
     expect(iconWired.ok).toBe(true);
 
-    const labelNode = resolveBindingTarget(asComponentNode(variant), 'text/label') as MockNodeWithRefs;
+    const labelNode = resolveBindingTarget(
+      asComponentNode(variant),
+      'text/label',
+    ) as MockNodeWithRefs;
     expect(labelNode.componentPropertyReferences).toEqual({ characters: 'Label#mock:0' });
   });
 

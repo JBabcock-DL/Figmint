@@ -26,12 +26,12 @@ When tapping something like "load components from repo," the designer expects:
 
 This is **valid product intent** but **out of scope for Phase 2 GA** (WO-027 explicitly excludes import-from-repo, bulk scaffold, and codebase scan).
 
-| User expectation | Phase 2 reality |
-| ---------------- | --------------- |
-| Catalog of scaffoldable components in repo | Only keys in `.fighub-registry.json` (often empty on first run) |
-| Multiselect + batch run | Single `<select>`, one scaffold per run |
-| Discover from code / file tree | Fixed spec paths after picking a registry key; no repo scan |
-| "Registry" = component library index | "Registry" = **Figma ↔ repo sync record** (nodeId, version, page) |
+| User expectation                           | Phase 2 reality                                                   |
+| ------------------------------------------ | ----------------------------------------------------------------- |
+| Catalog of scaffoldable components in repo | Only keys in `.fighub-registry.json` (often empty on first run)   |
+| Multiselect + batch run                    | Single `<select>`, one scaffold per run                           |
+| Discover from code / file tree             | Fixed spec paths after picking a registry key; no repo scan       |
+| "Registry" = component library index       | "Registry" = **Figma ↔ repo sync record** (nodeId, version, page) |
 
 ---
 
@@ -65,11 +65,11 @@ After scaffold + export
 
 ### A. Rename actions (Components tab)
 
-| Current label | Clearer label | Subtext |
-| ------------- | ------------- | ------- |
+| Current label | Clearer label                                      | Subtext                                                  |
+| ------------- | -------------------------------------------------- | -------------------------------------------------------- |
 | Load registry | **Load sync registry** or **Load Figma sync file** | "Components already linked between this file and GitHub" |
-| (missing) | **Browse component specs** _(future)_ | "All `*.component-spec.v1.json` in repo — not built yet" |
-| (missing) | **Import from code** _(WO-044)_ | "Pick React files — Sprint 8" |
+| (missing)     | **Browse component specs** _(future)_              | "All `*.component-spec.v1.json` in repo — not built yet" |
+| (missing)     | **Import from code** _(WO-044)_                    | "Pick React files — Sprint 8"                            |
 
 ### B. Empty-state education (Components tab)
 
@@ -98,12 +98,12 @@ Puts the mental model "I have a spec" before "I have a sync file."
 
 Move **infrequent / setup** fields out of Components:
 
-| Field | Current | Recommended |
-| ----- | ------- | ----------- |
-| Repo URL | Settings + duplicated on Components | **Settings only** (read-only on Components: "Connected: owner/repo") |
-| Tokens path | Settings | Settings |
-| **Registry path** | Components only | **Settings** — "Figma sync file path" with helper text |
-| GitHub connect | Settings | Settings |
+| Field             | Current                             | Recommended                                                          |
+| ----------------- | ----------------------------------- | -------------------------------------------------------------------- |
+| Repo URL          | Settings + duplicated on Components | **Settings only** (read-only on Components: "Connected: owner/repo") |
+| Tokens path       | Settings                            | Settings                                                             |
+| **Registry path** | Components only                     | **Settings** — "Figma sync file path" with helper text               |
+| GitHub connect    | Settings                            | Settings                                                             |
 
 Components tab keeps **Load sync registry** button + read-only status (`3 components linked`) using paths from Settings session state (already via `useGitHubSession`).
 
@@ -120,31 +120,31 @@ Components tab keeps **Load sync registry** button + read-only status (`3 compon
 
 ### F. Future entry points (document only)
 
-| Intent | Ticket / UC |
-| ------ | ----------- |
+| Intent                                                  | Ticket / UC                                                                                    |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **Browse repo components** + multiselect batch scaffold | **WO-056** (committed) — [component-catalog-roadmap](../research/component-catalog-roadmap.md) |
-| Import React/Vue from repo + dependency tree | **WO-044** UC-4 |
+| Import React/Vue from repo + dependency tree            | **WO-044** UC-4                                                                                |
 
 ---
 
 ## Decision log (UX-only, deferred)
 
-| ID | Decision | Rationale |
-| -- | -------- | --------- |
-| UX-1 | Document intent; do not build discovery/bulk in Sprint 5 remediation | User confirmed deferral |
-| UX-2 | Prefer **Settings** for registry path + repo config | Reduces Components clutter; matches Bootstrap pattern (tokens path in Settings) |
-| UX-3 | Rename **Load registry** → **Load sync registry** when copy pass runs | Aligns language with sync ledger semantics |
-| UX-4 | Empty state must explain first-run behavior | Prevents schema-path / empty-dropdown confusion |
+| ID   | Decision                                                              | Rationale                                                                       |
+| ---- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| UX-1 | Document intent; do not build discovery/bulk in Sprint 5 remediation  | User confirmed deferral                                                         |
+| UX-2 | Prefer **Settings** for registry path + repo config                   | Reduces Components clutter; matches Bootstrap pattern (tokens path in Settings) |
+| UX-3 | Rename **Load registry** → **Load sync registry** when copy pass runs | Aligns language with sync ledger semantics                                      |
+| UX-4 | Empty state must explain first-run behavior                           | Prevents schema-path / empty-dropdown confusion                                 |
 
 ---
 
 ## Open questions
 
-| # | Question | Owner |
-| - | -------- | ----- |
-| OQ-1 | Should Components show read-only repo summary from Settings only? | WO-027 follow-on UX |
-| OQ-2 | Spec-discovery WO before WO-044 as interim multiselect? | Product / backlog |
-| OQ-3 | Auto-create empty `.fighub-registry.json` on first export vs explicit greenfield | WO-026 |
+| #    | Question                                                                         | Owner               |
+| ---- | -------------------------------------------------------------------------------- | ------------------- |
+| OQ-1 | Should Components show read-only repo summary from Settings only?                | WO-027 follow-on UX |
+| OQ-2 | Spec-discovery WO before WO-044 as interim multiselect?                          | Product / backlog   |
+| OQ-3 | Auto-create empty `.fighub-registry.json` on first export vs explicit greenfield | WO-026              |
 
 ---
 

@@ -153,7 +153,7 @@ export async function appendDocAutoHeightText(
 }
 
 export function applyDocStrokeSides(
-  node: FrameNode,
+  node: FrameNode | ComponentSetNode,
   borderVar: Variable | null,
   sides: { top?: number; right?: number; bottom?: number; left?: number },
 ): void {

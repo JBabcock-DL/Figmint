@@ -65,8 +65,7 @@ export function resolveFigHubConfig(
   defaultBranch: string,
 ): ResolvedFigHubConfig {
   const branchFromFile =
-    parsed?.designSystemBranch !== undefined &&
-    parsed.designSystemBranch.length > 0
+    parsed?.designSystemBranch !== undefined && parsed.designSystemBranch.length > 0
       ? parsed.designSystemBranch
       : defaultBranch;
 

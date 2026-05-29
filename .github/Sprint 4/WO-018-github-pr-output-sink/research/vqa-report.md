@@ -8,11 +8,11 @@
 
 ## Summary
 
-| Area             | Pass  | Fail | N/A                     |
-| ---------------- | ----- | ---- | ----------------------- |
-| Figma assertions | 0     | 0    | All (no Figma artifact) |
-| Functional QA    | 4     | 0    | 1                       |
-| **Overall**      | **4** | **0** | —                      |
+| Area             | Pass  | Fail  | N/A                     |
+| ---------------- | ----- | ----- | ----------------------- |
+| Figma assertions | 0     | 0     | All (no Figma artifact) |
+| Functional QA    | 4     | 0     | 1                       |
+| **Overall**      | **4** | **0** | —                       |
 
 All automatable acceptance criteria pass. Community/Org dual-build AC marked N/A (WO-021 deferred; single build with flags enabled).
 
@@ -32,13 +32,13 @@ No assertion table — Figma N/A.
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
-| Drift-report `.v1.json` + `.v1.md` in **one** commit | **PASS** | `tests/unit/io/sinks/githubPR.test.ts` — 2 blobs, 1 tree, 1 pull |
-| PR body links Figma file URL + version footer | **PASS** | `tests/unit/io/github/prBody.test.ts` snapshot |
-| Failure modes surface `SinkFailure` with hints | **PASS** | `tests/unit/io/github/githubErrors.test.ts` — 9 status rows |
-| Community build sink disabled; Org enabled with token | **N/A** | WO-021 deferred; `isGithubPREnabled()` tested via flags in `githubPR.test.ts` |
-| Vitest branch naming, PR body, REST sequence | **PASS** | `branchName.test.ts`, `createPullRequestFlow.test.ts`, `githubPR.test.ts` |
+| Acceptance criterion                                  | Result   | Note                                                                          |
+| ----------------------------------------------------- | -------- | ----------------------------------------------------------------------------- |
+| Drift-report `.v1.json` + `.v1.md` in **one** commit  | **PASS** | `tests/unit/io/sinks/githubPR.test.ts` — 2 blobs, 1 tree, 1 pull              |
+| PR body links Figma file URL + version footer         | **PASS** | `tests/unit/io/github/prBody.test.ts` snapshot                                |
+| Failure modes surface `SinkFailure` with hints        | **PASS** | `tests/unit/io/github/githubErrors.test.ts` — 9 status rows                   |
+| Community build sink disabled; Org enabled with token | **N/A**  | WO-021 deferred; `isGithubPREnabled()` tested via flags in `githubPR.test.ts` |
+| Vitest branch naming, PR body, REST sequence          | **PASS** | `branchName.test.ts`, `createPullRequestFlow.test.ts`, `githubPR.test.ts`     |
 
 ### Automated test output
 
@@ -56,11 +56,11 @@ None.
 
 ## Artifacts
 
-| Artifact | Path | Status |
-| -------- | ---- | ------ |
-| Figma source screenshot | `research/figma-source.png` | N/A |
-| Build screenshot | `research/build-screenshot.png` | N/A |
-| Figma vs build overlay | `research/figma-vs-build.png` | N/A |
+| Artifact                | Path                            | Status |
+| ----------------------- | ------------------------------- | ------ |
+| Figma source screenshot | `research/figma-source.png`     | N/A    |
+| Build screenshot        | `research/build-screenshot.png` | N/A    |
+| Figma vs build overlay  | `research/figma-vs-build.png`   | N/A    |
 
 ---
 

@@ -8,10 +8,10 @@
 
 ## Summary
 
-| Area             | Pass | Fail | N/A |
-| ---------------- | ---- | ---- | --- |
+| Area             | Pass | Fail | N/A                                 |
+| ---------------- | ---- | ---- | ----------------------------------- |
 | Figma assertions | 0    | 0    | All (subsystem — no Figma artifact) |
-| Functional QA    | 4    | 0    | 0   |
+| Functional QA    | 4    | 0    | 0                                   |
 
 **Full suite:** `npm test -- --run` → **574 passed** | 2 skipped (576 total)  
 **WO-022 scoped:** 48 passed | 1 skipped (49 total) — variant matrix, archetypes, integration, idempotency, audit rows
@@ -32,19 +32,19 @@
 
 ## Functional QA results
 
-| Acceptance criterion | Result | Note |
-| -------------------- | ------ | ---- |
+| Acceptance criterion                   | Result   | Note                                                                           |
+| -------------------------------------- | -------- | ------------------------------------------------------------------------------ |
 | 3×2×2 axes → 12 children, Figma naming | **PASS** | `scaffold.integration.test.ts` — 12 variants, alphabetical `key=value` grammar |
-| Each archetype integration test | **PASS** | 8 archetype test files |
-| Idempotent re-run | **PASS** | `idempotency.test.ts` |
-| Audit reports cleanly | **PASS** | `auditRows.test.ts` + scaffold audit rows |
+| Each archetype integration test        | **PASS** | 8 archetype test files                                                         |
+| Idempotent re-run                      | **PASS** | `idempotency.test.ts`                                                          |
+| Audit reports cleanly                  | **PASS** | `auditRows.test.ts` + scaffold audit rows                                      |
 
 ### Remediation verification (SPK-027-3)
 
-| Fix | Result | Evidence |
-| --- | ------ | -------- |
-| Chip `layoutSizingHorizontal/Vertical = 'HUG'` | **PASS** | `archetypes/chip.ts` |
-| Post-combine `normalizeVariantMastersInSet()` | **PASS** | `variantGeometry.ts` + `variantGeometry.test.ts` |
+| Fix                                            | Result   | Evidence                                         |
+| ---------------------------------------------- | -------- | ------------------------------------------------ |
+| Chip `layoutSizingHorizontal/Vertical = 'HUG'` | **PASS** | `archetypes/chip.ts`                             |
+| Post-combine `normalizeVariantMastersInSet()`  | **PASS** | `variantGeometry.ts` + `variantGeometry.test.ts` |
 
 ### Automated tests
 
@@ -68,11 +68,11 @@ None.
 
 ## Artifacts
 
-| Artifact | Path | Status |
-| -------- | ---- | ------ |
-| figma-source.png | — | N/A |
-| build-screenshot.png | — | N/A |
-| figma-vs-build.png | — | N/A |
+| Artifact             | Path | Status |
+| -------------------- | ---- | ------ |
+| figma-source.png     | —    | N/A    |
+| build-screenshot.png | —    | N/A    |
+| figma-vs-build.png   | —    | N/A    |
 
 ---
 

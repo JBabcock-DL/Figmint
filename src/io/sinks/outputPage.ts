@@ -67,11 +67,7 @@ export function findOrCreateOutputPage(): PageNode {
 
   const page = figma.createPage();
   page.name = FIGHUB_OUTPUT_PAGE_NAME;
-  page.setSharedPluginData(
-    FIGHUB_SHARED_NS,
-    FIGHUB_PAGE_ROLE_KEY,
-    FIGHUB_PAGE_ROLE_OUTPUT,
-  );
+  page.setSharedPluginData(FIGHUB_SHARED_NS, FIGHUB_PAGE_ROLE_KEY, FIGHUB_PAGE_ROLE_OUTPUT);
   figma.root.appendChild(page);
   figma.currentPage = page;
   return page;
