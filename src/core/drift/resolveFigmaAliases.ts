@@ -37,8 +37,8 @@ function pickTargetModeValue(
   if (values[sourceModeName] !== undefined) {
     return values[sourceModeName];
   }
-  if (values['Default'] !== undefined) {
-    return values['Default'];
+  if (values.Default !== undefined) {
+    return values.Default;
   }
   const modeNames = Object.keys(values);
   if (modeNames.length > 0) {
