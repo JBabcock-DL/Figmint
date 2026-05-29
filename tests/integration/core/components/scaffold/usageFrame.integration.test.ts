@@ -27,7 +27,7 @@ const buttonLikeSpec: ComponentSpecV1 = {
   name: 'Button',
   framework: 'react',
   archetype: 'chip',
-  variantMatrix: acMatrix as Record<string, (string | boolean)[]>,
+  variantMatrix: acMatrix,
   props: [],
   bindings: [],
   layout: {
@@ -48,7 +48,7 @@ describe('buildUsageFrame integration', () => {
     const componentSet = createMockComponentSet({
       variantNames: ['variant=default, size=sm, disabled=false'],
     });
-    page.appendChild(componentSet as unknown as SceneNode);
+    page.appendChild(componentSet);
 
     await buildUsageFrame(asComponentSetNode(componentSet), buttonLikeSpec, {
       targetPage: asPageNode(page),
@@ -72,7 +72,7 @@ describe('buildUsageFrame integration', () => {
       id: 'set-stable',
       variantNames: ['variant=default, size=sm, disabled=false'],
     });
-    page.appendChild(componentSet as unknown as SceneNode);
+    page.appendChild(componentSet);
 
     const result = await buildUsageFrame(asComponentSetNode(componentSet), buttonLikeSpec, {
       targetPage: asPageNode(page),
@@ -96,7 +96,7 @@ describe('buildUsageFrame integration', () => {
     const componentSet = createMockComponentSet({
       variantNames: ['variant=default, size=sm, disabled=false'],
     });
-    page.appendChild(componentSet as unknown as SceneNode);
+    page.appendChild(componentSet);
 
     const result = await buildUsageFrame(asComponentSetNode(componentSet), buttonLikeSpec, {
       targetPage: asPageNode(page),
@@ -127,7 +127,7 @@ describe('buildUsageFrame integration', () => {
       id: 'set-stable',
       variantNames: ['variant=default, size=sm, disabled=false'],
     });
-    page.appendChild(componentSet as unknown as SceneNode);
+    page.appendChild(componentSet);
 
     await buildUsageFrame(asComponentSetNode(componentSet), buttonLikeSpec, {
       targetPage: asPageNode(page),

@@ -7,8 +7,8 @@ export function buildExportFiles(
   doc: ContractDocument,
   formats: ExportFormatSelection,
   basename: string,
-): Array<{ path: string; content: string; format: 'json' | 'md' }> {
-  const files: Array<{ path: string; content: string; format: 'json' | 'md' }> = [];
+): { path: string; content: string; format: 'json' | 'md' }[] {
+  const files: { path: string; content: string; format: 'json' | 'md' }[] = [];
 
   if (doc.kind === 'registry') {
     if (formats.json) {

@@ -73,7 +73,7 @@ export async function buildComposedVariant(ctx: ScaffoldBuildContext): Promise<V
       if (entry.defaultProps !== undefined && typeof inst.setProperties === 'function') {
         try {
           inst.setProperties(entry.defaultProps);
-        } catch (_err) {
+        } catch {
           // Beta composed scaffold — defaultProps are best-effort only.
         }
       }

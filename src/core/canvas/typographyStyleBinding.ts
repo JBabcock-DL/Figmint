@@ -145,10 +145,10 @@ function tryBind(style: TextStyle, field: VariableBindableTextField, variable: V
 async function loadFontForStyle(family: string, styleName: string): Promise<void> {
   try {
     await figma.loadFontAsync({ family: family, style: styleName });
-  } catch (_first) {
+  } catch {
     try {
       await figma.loadFontAsync({ family: family, style: 'Regular' });
-    } catch (_second) {
+    } catch {
       await figma.loadFontAsync({ family: 'Inter', style: 'Regular' });
     }
   }

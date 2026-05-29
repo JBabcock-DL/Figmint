@@ -6,7 +6,7 @@ import type { SinkId } from '@/io/sinks/types';
 import type { ContractDocument } from '@/ui/export/types';
 
 export function defaultDriftExportSinks(githubConnected?: boolean): SinkId[] {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- dual-build contract
+   
   if (githubConnected === true && flags.githubOAuth && flags.githubPRSink) {
     return ['download', 'github-pr'];
   }

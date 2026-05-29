@@ -3,8 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { classifyComponentsIngest } from '@/ui/components/scaffold/ingestDocument';
 import type { LoadedDocument } from '@/io/sources/types';
 
-import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
-
 import canonicalFixture from '../../../fixtures/component-spec-button-canonical.json';
 
 function doc(kind: LoadedDocument['kind'], payload: unknown): LoadedDocument {
@@ -19,7 +17,7 @@ function doc(kind: LoadedDocument['kind'], payload: unknown): LoadedDocument {
 describe('components ingest kind filter', () => {
   it('accepts component-spec', () => {
     const outcome = classifyComponentsIngest(
-      doc('component-spec', canonicalFixture as ComponentSpecV1),
+      doc('component-spec', canonicalFixture),
     );
     expect(outcome.ok).toBe(true);
     if (outcome.ok) {

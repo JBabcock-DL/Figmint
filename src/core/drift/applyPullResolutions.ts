@@ -74,7 +74,7 @@ export function buildTokensFromVariablePullDrifts(drifts: VariableDriftEntry[]):
     }
   }
 
-  const collections: Array<TokensV1['collections'][number]> = [];
+  const collections: TokensV1['collections'][number][] = [];
   for (const collectionId of Object.keys(collectionModes)) {
     collections.push({
       id: collectionId as TokensV1['collections'][number]['id'],
@@ -144,9 +144,9 @@ export function collectPullDrifts(
         break;
       }
       if (drift.kind === 'variable') {
-        variables.push(drift as VariableDriftEntry);
+        variables.push(drift);
       } else {
-        components.push(drift as ComponentDriftEntry);
+        components.push(drift);
       }
       break;
     }
@@ -158,8 +158,8 @@ export function snapshotKeysForPullDrifts(
   report: DriftReportV1,
   resolutions: Record<string, ResolutionChoice>,
   driftIds: string[],
-): Array<{ key: string; value: unknown }> {
-  const keys: Array<{ key: string; value: unknown }> = [];
+): { key: string; value: unknown }[] {
+  const keys: { key: string; value: unknown }[] = [];
   for (let i = 0; i < driftIds.length; i++) {
     const driftId = driftIds[i];
     for (let j = 0; j < report.drifts.length; j++) {
@@ -171,12 +171,12 @@ export function snapshotKeysForPullDrifts(
         break;
       }
       if (drift.kind === 'variable') {
-        const comparable = extractVariableComparable((drift as VariableDriftEntry).repo);
+        const comparable = extractVariableComparable((drift).repo);
         if (comparable !== null) {
           keys.push({ key: drift.id, value: comparable });
         }
       } else {
-        const comparable = extractComponentComparable((drift as ComponentDriftEntry).repo);
+        const comparable = extractComponentComparable((drift).repo);
         if (comparable !== null) {
           keys.push({ key: drift.id, value: comparable });
         }

@@ -26,7 +26,7 @@ const buttonLikeSpec: ComponentSpecV1 = {
   summary: 'Trigger an action or navigate. Follows shadcn/ui defaults.',
   framework: 'react',
   archetype: 'chip',
-  variantMatrix: acMatrix as Record<string, (string | boolean)[]>,
+  variantMatrix: acMatrix,
   props: [
     { name: 'variant', type: 'enum', default: 'default', required: false, description: 'Visual style' },
     { name: 'size', type: 'enum', default: 'default', required: false, description: 'Control size' },
@@ -51,7 +51,7 @@ describe('buildDocPipeline integration', () => {
       id: 'set-doc-pipeline',
       variantNames: ['variant=default, size=sm'],
     });
-    page.appendChild(componentSet as unknown as SceneNode);
+    page.appendChild(componentSet);
 
     const result = await buildDocPipeline(asComponentSetNode(componentSet), buttonLikeSpec, {
       targetPage: asPageNode(page),

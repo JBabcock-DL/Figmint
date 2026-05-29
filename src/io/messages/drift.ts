@@ -50,7 +50,7 @@ export function isDriftDetectVariablesResultMessage(
 export interface DriftDetectComponentsMessage {
   type: 'drift/detect-components';
   requestId: string;
-  repoSpecs: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs: { name: string; spec: ComponentSpecV1 }[];
   quickDetect?: boolean;
 }
 
@@ -102,7 +102,7 @@ export interface DriftBuildReportMessage {
   requestId: string;
   repoUrl: string;
   repoTokens: TokensV1;
-  repoSpecs: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs: { name: string; spec: ComponentSpecV1 }[];
   quickDetect?: boolean;
 }
 
@@ -156,7 +156,7 @@ export interface DriftDetectQuickMessage {
   requestId: string;
   repoUrl: string;
   repoTokens: TokensV1;
-  repoSpecs: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs: { name: string; spec: ComponentSpecV1 }[];
 }
 
 export interface DriftDetectQuickResultMessage {
@@ -173,7 +173,7 @@ export interface OpsDetectDriftMessage {
   requestId: string;
   repoUrl: string;
   repoTokens: TokensV1;
-  repoSpecs: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs: { name: string; spec: ComponentSpecV1 }[];
   scope?: ('variables' | 'components')[];
 }
 
@@ -195,7 +195,7 @@ export interface ResolutionBulkPushMessage {
   repoTokens: TokensV1;
   tokensPath?: string;
   specsPath?: string;
-  repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs?: { name: string; spec: ComponentSpecV1 }[];
   tokensWireFormat?: 'dtcg' | 'canonical';
 }
 
@@ -205,7 +205,7 @@ export interface ResolutionBulkPullMessage {
   report: DriftReportV1;
   resolutions: Record<string, ResolutionChoice>;
   driftIds: string[];
-  repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs?: { name: string; spec: ComponentSpecV1 }[];
 }
 
 export interface ResolutionBulkResultMessage {

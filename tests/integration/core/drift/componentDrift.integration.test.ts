@@ -30,7 +30,7 @@ describe('component drift integration', () => {
       configurable: true,
     });
 
-    const figma = figmaComponentSetToComparable(tree.componentSet as unknown as ComponentSetNode, 'Button');
+    const figma = figmaComponentSetToComparable(tree.componentSet, 'Button');
 
     const result = detectComponentDrift({
       repoSpecs: { Button: repo },

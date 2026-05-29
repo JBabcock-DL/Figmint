@@ -23,7 +23,7 @@ describe('figmaComponentSetToComparable', () => {
       configurable: true,
     });
 
-    const comparable = figmaComponentSetToComparable(tree.componentSet as unknown as ComponentSetNode, 'Button');
+    const comparable = figmaComponentSetToComparable(tree.componentSet, 'Button');
     expect(comparable.specName).toBe('Button');
     expect(comparable.variantMatrix.variant).toEqual(['0', '1']);
     expect(comparable.variantMatrix.loading).toEqual([false, true]);

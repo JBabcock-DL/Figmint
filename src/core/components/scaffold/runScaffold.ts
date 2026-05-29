@@ -184,7 +184,7 @@ export async function runScaffoldComponent(
   const audits: AuditReportV1[] = [];
   const fileKey = readFileKey();
 
-  let scaffoldResult: ScaffoldResult | null = null;
+  let scaffoldResult: ScaffoldResult;
   let bindingsResult: ApplyBindingsResult | undefined;
   let propertiesResult: ApplyPropertiesResult | undefined;
 

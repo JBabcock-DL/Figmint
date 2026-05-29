@@ -150,7 +150,6 @@ function buildComposedChildVersions(
 
 export function buildRegistryEntry(input: BuildRegistryEntryInput): RegistryComponentEntry {
   // ES2017 main thread — avoid ?? for Figma sandbox compatibility.
-  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- ES2017
   const now = input.now !== undefined ? input.now : new Date();
   const nextVersion = readExistingVersion(input.existingRegistry, input.spec.name) + 1;
 
@@ -200,7 +199,6 @@ function omitComponentKey(
 }
 
 export function upsertRegistryEntry(input: UpsertRegistryEntryInput): RegistryV1 {
-  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- ES2017
   const base = input.registry !== null ? input.registry : createEmptyRegistry(input.fileKey);
   assertRegistryFileKey(base, input.fileKey);
 

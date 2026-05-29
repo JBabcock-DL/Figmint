@@ -1,5 +1,5 @@
 export function toVariableKey(collectionName: string, variableName: string): string {
-  const normalizedName = variableName.charAt(0) === '/' ? variableName.slice(1) : variableName;
+  const normalizedName = variableName.startsWith('/') ? variableName.slice(1) : variableName;
   return collectionName + '/' + normalizedName;
 }
 

@@ -68,11 +68,11 @@ export interface RepoSyncCardProps {
   sync: UseRepoSyncResult;
   repoTokens?: TokensV1;
   repoTokensWireFormat?: RepoTokensWireFormat;
-  repoSpecs?: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs?: { name: string; spec: ComponentSpecV1 }[];
   onConnect?: () => void;
   onDisconnect?: () => void;
-  /** Reload repo tokens after Fetch (before drift detect). */
-  onAfterFetch?: () => Promise<void>;
+  /** Reload repo tokens after Fetch (before drift detect). Returns fresh tokens for detect. */
+  onAfterFetch?: () => Promise<TokensV1 | null>;
 }
 
 export function RepoSyncCard(props: RepoSyncCardProps) {
@@ -92,12 +92,14 @@ export function RepoSyncCard(props: RepoSyncCardProps) {
   const repoFetchBusy = props.sync.fetching;
   const busy = syncBusy || repoFetchBusy;
 
-  function runDetect() {
+  function runDetect(repoTokensOverride?: TokensV1) {
     if (!props.connected) {
       dispatch({ type: 'detect/error', message: 'Connect GitHub first.' });
       return;
     }
-    if (props.repoTokens === undefined) {
+    const repoTokens =
+      repoTokensOverride !== undefined ? repoTokensOverride : props.repoTokens;
+    if (repoTokens === undefined) {
       dispatch({
         type: 'detect/error',
         message: 'Fetch latest first to load repo tokens for drift detection.',
@@ -107,7 +109,7 @@ export function RepoSyncCard(props: RepoSyncCardProps) {
     dispatch({ type: 'detect/start' });
     void requestDriftReport({
       repoUrl: props.repoUrl,
-      repoTokens: props.repoTokens,
+      repoTokens: repoTokens,
       repoSpecs: props.repoSpecs !== undefined ? props.repoSpecs : [],
     })
       .then(function (report) {
@@ -124,10 +126,11 @@ export function RepoSyncCard(props: RepoSyncCardProps) {
       return;
     }
     await props.sync.fetchRepo();
+    let freshTokens: TokensV1 | null = null;
     if (props.onAfterFetch !== undefined) {
-      await props.onAfterFetch();
+      freshTokens = await props.onAfterFetch();
     }
-    runDetect();
+    runDetect(freshTokens !== null ? freshTokens : props.repoTokens);
   }
 
   function handlePush() {

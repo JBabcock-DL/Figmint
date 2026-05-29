@@ -28,7 +28,7 @@ function countComponentSets(page: MockPage): number {
 function countStagingOrphans(page: MockPage): number {
   let count = 0;
   for (let i = 0; i < page.children.length; i++) {
-    if (page.children[i].name.indexOf('_ccVariantBuild/') === 0) {
+    if (page.children[i].name.startsWith('_ccVariantBuild/')) {
       count += 1;
     }
   }

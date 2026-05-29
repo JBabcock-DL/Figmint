@@ -14,23 +14,31 @@ import {
   readSnapshotComponentComparables,
   readVariableSnapshotTokens,
 } from '@/core/drift';
+import {
+  readVariableSnapshotSources,
+  reconcilePrematurePushSnapshotKeys,
+} from '@/core/drift/snapshotReconcile';
 import { collectFigmaComponentComparablesFromSnapshot } from '@/core/drift/detectOrchestration';
 import { buildDriftReport } from './report';
 import { buildDriftReportMeta } from './reportMeta';
 
 export interface RunDetectDriftInput {
   repoTokens: TokensV1;
-  repoSpecs: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs: { name: string; spec: ComponentSpecV1 }[];
   repoUrl: string;
   quickDetect?: boolean;
 }
 
 export async function runDetectDrift(input: RunDetectDriftInput): Promise<DriftReportV1> {
   const figmaCollections = await readFigmaVariableState();
+  const figmaTokens = flattenFigmaVariableSnapshots(figmaCollections);
+  const repoTokens = flattenRepoTokens(input.repoTokens);
+  reconcilePrematurePushSnapshotKeys(figmaTokens, repoTokens);
   const variableResult = detectVariableDrift({
-    repoTokens: flattenRepoTokens(input.repoTokens),
-    figmaTokens: flattenFigmaVariableSnapshots(figmaCollections),
+    repoTokens: repoTokens,
+    figmaTokens: figmaTokens,
     snapshotTokens: readVariableSnapshotTokens(),
+    snapshotSources: readVariableSnapshotSources(),
   });
 
   const repoMap = buildRepoSpecMap(input.repoSpecs);

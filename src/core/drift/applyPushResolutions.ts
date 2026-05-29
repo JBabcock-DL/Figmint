@@ -1,12 +1,10 @@
 import type {
   CollectionId,
-  ComponentDriftEntry,
   ComponentSpecV1,
   DriftEntry,
   DriftReportV1,
   Token,
   TokensV1,
-  VariableDriftEntry,
 } from '@detroitlabs/fighub-contracts';
 
 import { kebabCase } from './componentKeys';
@@ -104,7 +102,7 @@ export function effectiveResolutionDirection(
   resolutions: Record<string, ResolutionChoice>,
 ): 'push' | 'pull' | 'skip' | null {
   const choice = resolutions[drift.id];
-  if (choice !== undefined && choice.type === 'skip') {
+  if (choice?.type === 'skip') {
     return 'skip';
   }
   if (drift.direction === 'conflict') {
@@ -247,7 +245,7 @@ export function buildPushCommitFiles(input: BuildPushCommitFilesInput): PushComm
     }
 
     if (drift.kind === 'variable') {
-      const variableDrift = drift as VariableDriftEntry;
+      const variableDrift = drift;
       const parsed = parseVariableDriftId(variableDrift.id);
       const comparable = extractVariableComparable(variableDrift.figma);
       if (parsed === null || comparable === null) {
@@ -258,7 +256,7 @@ export function buildPushCommitFiles(input: BuildPushCommitFilesInput): PushComm
         pushTokensList.push(token);
       }
     } else {
-      const componentDrift = drift as ComponentDriftEntry;
+      const componentDrift = drift;
       const figmaComparable = extractComponentComparable(componentDrift.figma);
       if (figmaComparable === null) {
         continue;
@@ -298,8 +296,8 @@ export function snapshotKeysForPushDrifts(
   report: DriftReportV1,
   resolutions: Record<string, ResolutionChoice>,
   driftIds: string[],
-): Array<{ key: string; value: unknown }> {
-  const keys: Array<{ key: string; value: unknown }> = [];
+): { key: string; value: unknown }[] {
+  const keys: { key: string; value: unknown }[] = [];
   for (let i = 0; i < driftIds.length; i++) {
     const driftId = driftIds[i];
     for (let j = 0; j < report.drifts.length; j++) {
@@ -311,12 +309,12 @@ export function snapshotKeysForPushDrifts(
         break;
       }
       if (drift.kind === 'variable') {
-        const comparable = extractVariableComparable((drift as VariableDriftEntry).figma);
+        const comparable = extractVariableComparable((drift).figma);
         if (comparable !== null) {
           keys.push({ key: drift.id, value: comparable });
         }
       } else {
-        const comparable = extractComponentComparable((drift as ComponentDriftEntry).figma);
+        const comparable = extractComponentComparable((drift).figma);
         if (comparable !== null) {
           keys.push({ key: drift.id, value: comparable });
         }

@@ -9,14 +9,14 @@ import type {
   ExportSinkSelection,
 } from './types';
 
-export type ExportSheetState = {
+export interface ExportSheetState {
   formats: ExportFormatSelection;
   sinks: ExportSinkSelection;
   path: string;
   exporting: boolean;
   results: ExportResults | null;
   formError: string | null;
-};
+}
 
 export type ExportSheetAction =
   | { type: 'toggle-format'; format: 'json' | 'md' }

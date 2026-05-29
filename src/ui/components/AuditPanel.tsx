@@ -64,7 +64,7 @@ export function AuditPanel({ audits, onDismiss }: AuditPanelProps) {
     textarea.select();
     try {
       // Plan spec: textarea + execCommand for plugin iframe clipboard compatibility.
-      // eslint-disable-next-line @typescript-eslint/no-deprecated -- Clipboard API unavailable in data: iframe
+       
       document.execCommand('copy');
       setCopyStatus('Copied');
     } catch {

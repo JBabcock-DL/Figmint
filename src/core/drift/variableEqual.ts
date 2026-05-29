@@ -4,7 +4,7 @@ import { valuesEqual } from '@/core/variables/compare';
 
 import type { VariableComparable } from './types';
 
-const CODE_SYNTAX_PLATFORMS: Array<'WEB' | 'ANDROID' | 'iOS'> = ['WEB', 'ANDROID', 'iOS'];
+const CODE_SYNTAX_PLATFORMS: ('WEB' | 'ANDROID' | 'iOS')[] = ['WEB', 'ANDROID', 'iOS'];
 
 function codeSyntaxComparableEqual(
   left: Partial<Record<'WEB' | 'ANDROID' | 'iOS', string>>,

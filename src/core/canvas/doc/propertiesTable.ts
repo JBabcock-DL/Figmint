@@ -1,10 +1,6 @@
 import type { ComponentSpecProp, ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
-import {
-  TABLE_HEADER_HEIGHT,
-  TABLE_ROW_MIN_HEIGHT,
-  TABLE_WIDTH,
-} from '@/core/canvas/constants';
+import { TABLE_HEADER_HEIGHT, TABLE_WIDTH } from '@/core/canvas/constants';
 import { DOC_FRAME_WIDTH } from '@/core/canvas/doc/constants';
 import { bindPaintToVar, bindStrokeToVar } from '@/core/canvas/helpers/bindings';
 import {

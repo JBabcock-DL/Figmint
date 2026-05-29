@@ -101,7 +101,7 @@ describe('runExport', () => {
 
     let completedResults: { bySink: Record<string, { ok: boolean }> } | null = null;
     await runExport(driftDoc, initial, dispatch, {
-      runSinkFn: runSinkFn as typeof import('@/io/sinks').runSink,
+      runSinkFn: runSinkFn,
       postMessage: postMessage,
       onComplete: function (results) {
         completedResults = results;

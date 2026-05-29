@@ -55,7 +55,7 @@ export function loadBenchFixture(id: BenchFixtureId): LoadedDocument {
 /** Per-collection token counts after adapt (for preview assertions in tests). */
 export function countBenchFixtureTokens(id: BenchFixtureId): Record<string, number> {
   const payload = BENCH_FIXTURES[id].payload as {
-    tokens: Array<{ collection: string }>;
+    tokens: { collection: string }[];
   };
   const counts: Record<string, number> = {};
   for (const token of payload.tokens) {

@@ -10,8 +10,6 @@ import { applyProperties, applyPropertiesToVariants } from './applyProperties';
 import { normalizeVariantMastersInSet } from './variantGeometry';
 import { buildScaffoldAuditRows } from './auditRows';
 import { buildDocPipeline } from '@/core/canvas/doc';
-import { buildUsageFrame } from './usageFrame';
-
 import { buildChipVariant } from './archetypes/chip';
 import { buildComposedVariant } from './archetypes/composed';
 import { buildContainerVariant } from './archetypes/container';

@@ -29,12 +29,12 @@ const USAGE_ROW_ITEM_SPACING = 30;
 
 const TODO_PLACEHOLDER = 'TODO';
 
-type UsageSpecFields = {
+interface UsageSpecFields {
   usage?: {
     do?: string[];
     dont?: string[];
   };
-};
+}
 
 function normalizeBullets(raw: string[] | undefined): string[] {
   const bullets = raw !== undefined ? raw.slice() : [];

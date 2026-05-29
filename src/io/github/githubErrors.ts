@@ -78,7 +78,7 @@ export function mapGitHubHttpError(
 
   if (status === 409) {
     const normalized = (ghMessage ?? '').toLowerCase();
-    if (normalized.indexOf('empty') !== -1 || normalized.indexOf('no commits') !== -1) {
+    if (normalized.includes('empty') || normalized.includes('no commits')) {
       return {
         code: 'conflict',
         message: 'This repository has no commits yet; cannot open a PR.',
@@ -124,5 +124,5 @@ export function isReferenceAlreadyExists(body: unknown): boolean {
   if (message === undefined) {
     return false;
   }
-  return message.toLowerCase().indexOf('already exists') !== -1;
+  return message.toLowerCase().includes('already exists');
 }

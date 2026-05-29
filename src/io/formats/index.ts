@@ -35,12 +35,12 @@ export function assertFormattableKind(value: unknown): asserts value is Formatta
     typeof value !== 'object' ||
     value === null ||
     !('kind' in value) ||
-    typeof (value as { kind: unknown }).kind !== 'string' ||
+    typeof (value).kind !== 'string' ||
     !FORMATTABLE_KINDS.has((value as { kind: string }).kind)
   ) {
     const kind =
       typeof value === 'object' && value !== null && 'kind' in value
-        ? String((value as { kind: unknown }).kind)
+        ? String((value).kind)
         : 'unknown';
     throw new Error('Unsupported document kind: ' + kind);
   }

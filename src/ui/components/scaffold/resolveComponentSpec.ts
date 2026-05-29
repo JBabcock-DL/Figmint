@@ -13,7 +13,7 @@ export const SPEC_RESOLUTION_PATHS = [
 
 export function buildSpecFilePath(specsPath: string, componentKey: string): string {
   let base = specsPath;
-  if (base.length > 0 && base.charAt(base.length - 1) !== '/') {
+  if (base.length > 0 && !base.endsWith('/')) {
     base = base + '/';
   }
   return base + componentKey + '.json';

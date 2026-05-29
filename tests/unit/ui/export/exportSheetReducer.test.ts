@@ -39,7 +39,7 @@ describe('exportSheetReducer', () => {
       defaultSinks: ['download', 'github-pr', 'not-a-sink' as 'download'],
     });
     expect(state.sinks.download).toBe(true);
-    if (available.indexOf('github-pr') >= 0) {
+    if (available.includes('github-pr')) {
       expect(state.sinks['github-pr']).toBe(true);
     }
     expect(state.sinks.clipboard).toBe(false);

@@ -74,7 +74,7 @@ describe('scaffold integration', () => {
 
     let stagingOrphans = 0;
     for (let i = 0; i < page.children.length; i++) {
-      if (page.children[i].name.indexOf('_ccVariantBuild/') === 0) {
+      if (page.children[i].name.startsWith('_ccVariantBuild/')) {
         stagingOrphans += 1;
       }
     }

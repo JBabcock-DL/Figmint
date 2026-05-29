@@ -3,7 +3,7 @@ import type { ComponentSpecV1, DriftReportV1, TokensV1 } from '@detroitlabs/figh
 export interface RequestDriftReportInput {
   repoUrl: string;
   repoTokens: TokensV1;
-  repoSpecs: Array<{ name: string; spec: ComponentSpecV1 }>;
+  repoSpecs: { name: string; spec: ComponentSpecV1 }[];
   quickDetect?: boolean;
 }
 

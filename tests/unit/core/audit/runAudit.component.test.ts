@@ -16,7 +16,7 @@ describe('runAudit component scope', () => {
     const { componentSet } = buildMockVariantTree(1);
     const audit = await runAudit('component', {
       spec: chipSpec as import('@detroitlabs/fighub-contracts').ComponentSpecV1,
-      componentSet: componentSet as unknown as ComponentSetNode,
+      componentSet: componentSet,
       bindingsResult: { applied: 11, failed: [], passed: true },
     });
 

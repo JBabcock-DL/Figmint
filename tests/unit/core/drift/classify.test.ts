@@ -39,4 +39,9 @@ describe('classifyThreeWay', () => {
   it('classifies repo-only as synced when snapshot is absent until first push', () => {
     expect(classifyThreeWay(null, 1, null, numberEqual)).toBe('synced');
   });
+
+  it('stays push when baseline is repo (no snapshot)', () => {
+    expect(classifyThreeWay(1, 0, 0, numberEqual)).toBe('push');
+    expect(classifyThreeWay(1, 0, null, numberEqual)).toBe('push');
+  });
 });

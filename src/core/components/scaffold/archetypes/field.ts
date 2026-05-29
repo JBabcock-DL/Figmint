@@ -113,9 +113,8 @@ export async function buildFieldVariant(ctx: ScaffoldBuildContext): Promise<Vari
   component.fills = [];
   component.strokes = [];
 
-  let labelNode: TextNode | null = null;
   if (showLabel) {
-    labelNode = createSampleText(labelText, ctx, 14, 'Medium');
+    const labelNode = createSampleText(labelText, ctx, 14, 'Medium');
     labelNode.name = 'Label';
     component.appendChild(labelNode);
   }
@@ -167,7 +166,6 @@ export async function buildFieldVariant(ctx: ScaffoldBuildContext): Promise<Vari
     fieldChrome.appendChild(leadingSlotNode);
   }
 
-  let placeholder: TextNode | null = null;
   if (fieldType === 'otp') {
     const boxCount = readNumber(field, 'otpLength', 6);
     fieldChrome.fills = [];
@@ -196,7 +194,7 @@ export async function buildFieldVariant(ctx: ScaffoldBuildContext): Promise<Vari
       fieldChrome.appendChild(box);
     }
   } else {
-    placeholder = createSampleText(placeholderText, ctx, fontSize, 'Regular', MUTED_TEXT);
+    const placeholder = createSampleText(placeholderText, ctx, fontSize, 'Regular', MUTED_TEXT);
     placeholder.name = fieldType === 'select' ? 'value' : 'placeholder';
     fieldChrome.appendChild(placeholder);
   }
@@ -210,9 +208,8 @@ export async function buildFieldVariant(ctx: ScaffoldBuildContext): Promise<Vari
 
   component.appendChild(fieldChrome);
 
-  let helperNode: TextNode | null = null;
   if (showHelper) {
-    helperNode = createSampleText(helperText, ctx, 12, 'Regular', MUTED_TEXT);
+    const helperNode = createSampleText(helperText, ctx, 12, 'Regular', MUTED_TEXT);
     helperNode.name = 'helper';
     component.appendChild(helperNode);
   }

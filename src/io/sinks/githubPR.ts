@@ -11,7 +11,7 @@ export function isGithubPREnabled(): boolean {
 }
 
 function inferFileFormat(path: string): 'json' | 'md' {
-  if (path.length >= 3 && path.slice(-3) === '.md') {
+  if (path.length >= 3 && path.endsWith('.md')) {
     return 'md';
   }
   return 'json';
