@@ -1,0 +1,923 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Button",
+  "framework": "react",
+  "variantMatrix": {
+    "size": [
+      "sm",
+      "default",
+      "lg",
+      "icon"
+    ],
+    "variant": [
+      "default",
+      "destructive",
+      "outline",
+      "secondary",
+      "ghost",
+      "link"
+    ]
+  },
+  "props": [
+    {
+      "name": "Label",
+      "type": "string",
+      "default": "Button"
+    },
+    {
+      "name": "Leading icon",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "Trailing icon",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "bindings": [
+    {
+      "selector": "Button — ComponentSet/size=default, variant=default",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=destructive",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=ghost",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=link",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=outline",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=secondary",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=default, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=default",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=destructive",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=ghost",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=link",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=outline",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=secondary",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=icon, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=default",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=destructive",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=ghost",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=link",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=outline",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=secondary",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=lg, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=default",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=default",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=default",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=destructive",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=destructive",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=destructive",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=ghost",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=ghost",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=ghost",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=link",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=link",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=link",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=outline",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=outline",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=outline",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=secondary",
+      "variable": "VariableID:1:156"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=secondary",
+      "variable": "VariableID:1:157"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=secondary",
+      "variable": "VariableID:1:166"
+    },
+    {
+      "selector": "Button — ComponentSet/size=sm, variant=secondary",
+      "variable": "VariableID:1:166"
+    }
+  ],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "8",
+    "sizing": {
+      "horizontal": "hug",
+      "vertical": "hug"
+    }
+  }
+}
