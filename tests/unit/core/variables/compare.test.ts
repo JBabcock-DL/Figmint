@@ -16,9 +16,17 @@ function color(r: number, g: number, b: number, a: number): RGBA {
 }
 
 describe('compare.ts', () => {
-  it('valuesEqual compares COLOR channels within epsilon', () => {
+  it('valuesEqual compares COLOR as 8-bit channels (hex round-trip safe)', () => {
     expect(valuesEqual(color(1, 0, 0, 1), color(1, 0.00001, 0, 1))).toBe(true);
     expect(valuesEqual(color(1, 0, 0, 1), color(0.9, 0, 0, 1))).toBe(false);
+    const figmaPrimary50 = {
+      r: 0.050600916147232056,
+      g: 0.47155454754829407,
+      b: 0.028445463627576828,
+      a: 1,
+    };
+    const repoPrimary50 = { r: 13 / 255, g: 120 / 255, b: 7 / 255, a: 1 };
+    expect(valuesEqual(figmaPrimary50, repoPrimary50)).toBe(true);
   });
 
   it('valuesEqual compares alias ids', () => {

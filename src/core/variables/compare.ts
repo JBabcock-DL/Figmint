@@ -2,8 +2,20 @@ import type { CodeSyntaxPlatform, Token as TokenV1 } from '@detroitlabs/fighub-c
 
 import { isTokenAliasRef } from './types';
 
-const COLOR_EPSILON = 1e-4;
 const CODE_SYNTAX_PLATFORMS: CodeSyntaxPlatform[] = ['WEB', 'ANDROID', 'iOS'];
+
+function colorChannel(value: number): number {
+  return Math.round(value * 255);
+}
+
+function colorsEqualByChannel(left: RGBA, right: RGBA): boolean {
+  return (
+    colorChannel(left.r) === colorChannel(right.r) &&
+    colorChannel(left.g) === colorChannel(right.g) &&
+    colorChannel(left.b) === colorChannel(right.b) &&
+    colorChannel(left.a) === colorChannel(right.a)
+  );
+}
 
 export type ResolvedModeValues = Record<string, VariableValue>;
 
@@ -33,19 +45,20 @@ export function valuesEqual(
   desired: VariableValue,
   epsilon?: number,
 ): boolean {
-  const tolerance = epsilon !== undefined ? epsilon : COLOR_EPSILON;
-
   if (isVariableAlias(current) && isVariableAlias(desired)) {
     return current.id === desired.id;
   }
 
   if (isColorValue(current) && isColorValue(desired)) {
-    return (
-      Math.abs(current.r - desired.r) <= tolerance &&
-      Math.abs(current.g - desired.g) <= tolerance &&
-      Math.abs(current.b - desired.b) <= tolerance &&
-      Math.abs(current.a - desired.a) <= tolerance
-    );
+    if (epsilon !== undefined) {
+      return (
+        Math.abs(current.r - desired.r) <= epsilon &&
+        Math.abs(current.g - desired.g) <= epsilon &&
+        Math.abs(current.b - desired.b) <= epsilon &&
+        Math.abs(current.a - desired.a) <= epsilon
+      );
+    }
+    return colorsEqualByChannel(current, desired);
   }
 
   return current === desired;
