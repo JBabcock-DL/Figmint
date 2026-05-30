@@ -30,10 +30,12 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. Extract shared resolver logic into `src/core/import/shared/webTokenResolver.ts`.
-2. Handle Vue `<style scoped>` blocks.
-3. Handle WC Shadow DOM CSS.
-4. Configuration override per-framework if needed.
+1. Add **`src/core/import/shared/webTokenResolver.ts`** facade — delegates class resolution to existing **`createTokenResolver`** (WO-042 unchanged).
+2. Implement **`extractWebBindings`** in shared module (move from React); Vue/WC pass optional **stylesheet text** + CEM **cssProperties**.
+3. Vue: parse **`<style scoped>`** for `var(--*)` → bindings; template classes still use Tailwind resolver.
+4. WC: parse **`:host` / shadow CSS** + CEM `cssProperties` via **`cssVarMap`**; trace vars through **`cssThemeReader`** where possible.
+5. Extend Settings/clientStorage with **`cssVarMap`** override (separate key from WO-042 class map); per-framework hint via `WebTokenResolverOptions.framework`.
+6. **React regression:** all WO-041/042 import tests green after refactor.
 
 ### Visual / UX
 
@@ -101,6 +103,9 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.9 FR-CONF-\*
+- [Shared web token resolver research](research/shared-web-token-resolver-hardening.md)
+- [Sprint 9 research index](../research/sprint-9-research-index.md)
+- WO-042 research: `.github/Sprint 8/WO-042-token-resolver-tailwind-css-vars/research/token-resolver-tailwind-css-vars.md`
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

@@ -30,10 +30,12 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/import/templates/vue.ts` — implements `ImportTemplate` for `.vue` SFCs.
-2. `src/core/codeconnect/templates/vue.ts` — Vue Code Connect stub generator.
-3. Uses Vue compiler (`@vue/compiler-sfc`) for AST.
-4. Extends framework picker in Components tab to enable Vue.
+1. `src/core/import/templates/vue.ts` + `templates/vue/` pipeline — `VueImportTemplate` mirroring React pass order (SFC parse → props → variants → dependencies → class tokens → bindings → layout → confidence).
+2. `src/core/codeconnect/templates/vue.ts` — Vue Code Connect stub via **`@figma/code-connect/html`**, output **`{Component}.figma.ts`** (not `.figma.tsx`).
+3. Add **`@vue/compiler-sfc`** + **`@vue/compiler-dom`**; parse in **UI iframe** only (extend `runImportParseExec` + add **`framework`** to `ImportParseExecMessage`).
+4. Register `vue` in import + mapping registries; enable Vue in **`FrameworkPicker`** (`PHASE_4B_ENABLED`).
+5. Canonical fixture **`tests/fixtures/vue/Button.vue`** (defineProps + tailwind classes) → `ComponentSpecV1` with bindings from shared token resolver.
+6. Generated stub passes **`npx figma connect validate`** in consumer fixture (SPK-045-2); PR body documents `figma.config.json` **`parser: "html"`**.
 
 ### Visual / UX
 
@@ -101,6 +103,9 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §12 Phase 4b
+- [Vue SFC parser + Code Connect research](research/vue-sfc-parser-code-connect-import-template.md)
+- [Sprint 9 research index](../research/sprint-9-research-index.md)
+- Figma Code Connect HTML: https://developers.figma.com/docs/code-connect/html/
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

@@ -30,10 +30,12 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/import/templates/webcomponents.ts` — implements `ImportTemplate` reading CEM data.
-2. `src/core/codeconnect/templates/webcomponents.ts` — WC Code Connect stub generator.
-3. Detects `customElements.define` in source files when no CEM available.
-4. Extends framework picker to enable Web Components.
+1. `src/core/import/templates/webcomponents.ts` + `templates/webcomponents/` — CEM **2.1.0** primary path (`custom-elements.json` / `package.json` `"customElements"` discovery order per research).
+2. `src/core/codeconnect/templates/webcomponents.ts` — WC stub via **`@figma/code-connect/html`** with custom element tag in example; **`{Component}.figma.ts`** output.
+3. **`customElements.define`** fallback scan when CEM missing (best-effort, `confidence: low`; error `cem-not-found` when both fail).
+4. Extend **`ImportTemplateContext`** with optional `cemManifestText` / `cemManifestPath`; reuse **`ImportParseExecMessage.framework`** from WO-045.
+5. Register `wc` in registries; enable Web Components in **`FrameworkPicker`**.
+6. Fixtures: **`tests/fixtures/wc/custom-elements.json`** + Lit-style **`ds-button.ts`** → spec; stub validates with **`figma connect validate`** (SPK-046-2).
 
 ### Visual / UX
 
@@ -101,6 +103,10 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §12 Phase 4b
+- [Web Components + CEM research](research/web-components-parser-cem-code-connect.md)
+- [Sprint 9 research index](../research/sprint-9-research-index.md)
+- CEM spec: https://github.com/webcomponents/custom-elements-manifest (schema 2.1.0)
+- Figma Code Connect HTML: https://developers.figma.com/docs/code-connect/html/
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`
