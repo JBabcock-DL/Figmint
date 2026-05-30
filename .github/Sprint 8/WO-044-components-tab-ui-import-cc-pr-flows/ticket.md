@@ -30,11 +30,11 @@ Components tab Import + CC PR UI mock lives in the FigHub design file.
 
 ### Functional
 
-1. Extend `src/ui/tabs/Components.tsx` with: 'Import from repo' button + repo file browser (filtered to React component files initially).
-2. Dependency tree display (WO-043).
-3. Import preview + edit (per FR-IMP-7 'never silent-apply').
-4. 'Emit Code Connect PR' button when unmapped components exist on canvas.
-5. Framework picker (visible but only React enabled in Phase 4a).
+1. **`ImportFromRepoSection.tsx`** + **`CodeConnectSection.tsx`** — extend `Components.tsx` (section order per sprint index).
+2. GitHub file browser (`*.tsx` under `componentsPath`); messages `import/list-files`, `import/parse`.
+3. Dependency tree display (WO-043) → **`SpecPreviewPanel`** reuse → `scaffold/run` (FR-IMP-7).
+4. **Emit Code Connect PR** → `codeconnect/emit-pr` → WO-040 + WO-018 sink.
+5. Framework picker visible; **React only** enabled in Phase 4a.
 
 ### Visual / UX
 
@@ -142,6 +142,6 @@ Manual VQA surfaced a mental model overlap with **WO-056** (committed roadmap) a
 ## References
 
 - PRD: `Docs/PRD.md` §6.3, §6.7, §12 Phase 4a
-- Lift reference:
-  - _None — new code designed in PRD._
+- Research: [Components tab Import + CC UI](research/components-tab-ui-import-cc-pr-flows.md)
+- [component-catalog-roadmap](../../Sprint%205/research/component-catalog-roadmap.md)
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

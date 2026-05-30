@@ -30,9 +30,11 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/handoff/tokens.ts` — `enumerateTokensAndLayout(node: SceneNode): { tokens: string[], autoLayout: AutoLayoutMeta }`.
-2. Walks the tree collecting unique variable names from `boundVariables`.
-3. Extracts auto-layout metadata from the root frame.
+1. `src/core/handoff/tokens.ts` — `enumerateTokensAndLayout(root: SceneNode)` → `{ tokens: string[], autoLayout: HandoffAutoLayout }`.
+2. Recursive `boundVariables` scan (fills, strokes, typography, layout spacing/padding); resolve IDs via `getVariableByIdAsync` → **`{CollectionDisplayName}/{variable.name}`** using `DISPLAY_NAME` from `collections.ts`.
+3. Dedupe + lexicographic sort of token paths (deterministic output).
+4. Auto-layout on **root frame**: `direction` horizontal|vertical; `gap`/`padding` as bound variable path or px fallback string.
+5. No literal/alias resolution — variable **names only** (ticket out of scope).
 
 ### Visual / UX
 
@@ -100,6 +102,8 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.6 FR-HAND-3..4
+- [Tokens + auto-layout extraction research](research/tokens-used-auto-layout-metadata-extraction.md)
+- Pattern: `src/core/drift/figmaComponent.ts`, `src/core/variables/collections.ts`
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

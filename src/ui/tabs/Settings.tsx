@@ -8,7 +8,9 @@ import { loadFromGitHub } from '@/io/sources/github';
 import type { LoadedDocument, ValidationError } from '@/io/sources/types';
 import type { RepoTokensWireFormat } from '@/io/sources/adapters/serializeTokensWire';
 import { RepoSyncCard } from '@/ui/components/RepoSyncCard';
+import { useFigmaFileKey } from '@/ui/figma/useFigmaFileKey';
 import type { UseGitHubConnectResult } from '@/ui/github/useGitHubConnect';
+import { useTokenResolverSettings } from '@/ui/github/useTokenResolverSettings';
 import { useRepoSync } from '@/ui/sync/useRepoSync';
 
 const sectionStyle = {
@@ -82,9 +84,12 @@ export function Settings({
   sessionLastPushedAt,
   sessionConfigWarning,
 }: SettingsProps) {
+  const figmaFileKey = useFigmaFileKey();
   const [repoTokens, setRepoTokens] = useState<TokensV1 | null>(null);
   const [repoTokensWireFormat, setRepoTokensWireFormat] = useState<RepoTokensWireFormat>('dtcg');
   const [loadStatus, setLoadStatus] = useState('');
+
+  const tokenResolver = useTokenResolverSettings(repoUrl, github.connected);
 
   const sync = useRepoSync({
     repoUrl: repoUrl,
@@ -167,6 +172,50 @@ export function Settings({
       ) : null}
 
       <div style={sectionStyle}>
+        <h2 style={{ fontSize: '13px', margin: '0 0 8px' }}>Figma file key</h2>
+        <label style={{ color: '#666', display: 'block', fontSize: '11px' }}>
+          Design URL or file key
+          <input
+            type="text"
+            value={figmaFileKey.inputValue}
+            onChange={function (event) {
+              figmaFileKey.setInputValue(event.target.value);
+            }}
+            placeholder="https://www.figma.com/design/… or file key"
+            style={inputStyle}
+          />
+        </label>
+        <p style={{ color: '#666', fontSize: '10px', lineHeight: 1.45, margin: '6px 0 0' }}>
+          Required for Community builds. Org/dev builds usually auto-detect when the file is saved
+          to Figma cloud.
+        </p>
+        <p role="status" style={{ color: '#333', fontSize: '11px', margin: '8px 0 0' }}>
+          {figmaFileKey.statusMessage}
+        </p>
+        {figmaFileKey.error.length > 0 ? (
+          <p role="alert" style={{ color: '#b00020', fontSize: '11px', margin: '6px 0 0' }}>
+            {figmaFileKey.error}
+          </p>
+        ) : null}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
+          <button
+            type="button"
+            onClick={figmaFileKey.save}
+            style={{ fontSize: '11px', fontWeight: 600, minHeight: 44, padding: '8px 12px' }}
+          >
+            Save file key
+          </button>
+          <button
+            type="button"
+            onClick={figmaFileKey.clear}
+            style={{ fontSize: '11px', minHeight: 44, padding: '8px 12px' }}
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <div style={sectionStyle}>
         <h2 style={{ fontSize: '13px', margin: '0 0 8px' }}>Connected repository</h2>
         <label style={{ color: '#666', display: 'block', fontSize: '11px' }}>
           Repo URL
@@ -234,6 +283,49 @@ export function Settings({
             repoTokensWireFormat={repoTokensWireFormat}
             onAfterFetch={loadTokensForDrift}
           />
+          <div style={sectionStyle}>
+            <h2 style={{ fontSize: '13px', margin: '0 0 8px' }}>Token resolver</h2>
+            <p role="status" style={{ color: '#333', fontSize: '11px', margin: '0 0 8px' }}>
+              {tokenResolver.detectionLabel}
+            </p>
+            <label style={{ color: '#666', display: 'block', fontSize: '11px' }}>
+              Manual override (JSON)
+              <textarea
+                value={tokenResolver.overrideText}
+                onChange={function (event) {
+                  tokenResolver.setOverrideText(event.target.value);
+                }}
+                rows={5}
+                placeholder='{ "bg-primary": "color/primary/default" }'
+                style={{ ...inputStyle, fontFamily: 'monospace', minHeight: '72px' }}
+              />
+            </label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
+              <button
+                type="button"
+                onClick={function () {
+                  void tokenResolver.saveOverride();
+                }}
+                style={{ fontSize: '11px', fontWeight: 600, minHeight: 44, padding: '8px 12px' }}
+              >
+                Save override
+              </button>
+              <button
+                type="button"
+                onClick={function () {
+                  void tokenResolver.clearOverride();
+                }}
+                style={{ fontSize: '11px', minHeight: 44, padding: '8px 12px' }}
+              >
+                Clear override
+              </button>
+            </div>
+            {tokenResolver.statusMessage ? (
+              <p role="status" style={{ color: '#666', fontSize: '11px', margin: '8px 0 0' }}>
+                {tokenResolver.statusMessage}
+              </p>
+            ) : null}
+          </div>
           {loadStatus ? (
             <p role="status" style={{ color: '#666', fontSize: '11px', margin: 0 }}>
               {loadStatus}

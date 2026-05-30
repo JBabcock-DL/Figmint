@@ -3,18 +3,22 @@ import { useEffect, useState } from 'react';
 import { registerSinkMessageListener } from '@/io/sinks';
 import { TabPanel } from '@/ui/components/TabPanel';
 import { registerExportMessageListener } from '@/ui/export/exportMessageListener';
+import { registerFigmaFileKeyMessageListener } from '@/ui/figma/figmaFileKeyMessageListener';
+import { registerHandoffMessageListener } from '@/ui/handoff/handoffMessageListener';
 import { useGitHubConnect } from '@/ui/github/useGitHubConnect';
 import { useGitHubSession } from '@/ui/github/useGitHubSession';
 import { Bootstrap } from '@/ui/tabs/Bootstrap';
 import { Components } from '@/ui/tabs/Components';
 import { ExportSandbox, type ExportDemo } from '@/ui/tabs/ExportSandbox';
+import { Handoff } from '@/ui/tabs/Handoff';
 import { Settings } from '@/ui/tabs/Settings';
 
-type AppTab = 'bootstrap' | 'components' | 'export' | 'settings';
+type AppTab = 'bootstrap' | 'components' | 'handoff' | 'export' | 'settings';
 
 const TAB_PANEL_IDS: Record<AppTab, string> = {
   bootstrap: 'fighub-tabpanel-bootstrap',
   components: 'fighub-tabpanel-components',
+  handoff: 'fighub-tabpanel-handoff',
   export: 'fighub-tabpanel-export',
   settings: 'fighub-tabpanel-settings',
 };
@@ -30,6 +34,8 @@ export function App() {
   useEffect(function () {
     registerSinkMessageListener();
     registerExportMessageListener();
+    registerHandoffMessageListener();
+    registerFigmaFileKeyMessageListener();
   }, []);
 
   return (
@@ -103,6 +109,28 @@ export function App() {
         <button
           type="button"
           role="tab"
+          id="fighub-tab-handoff"
+          aria-controls={TAB_PANEL_IDS.handoff}
+          aria-selected={activeTab === 'handoff'}
+          aria-current={activeTab === 'handoff' ? 'page' : undefined}
+          onClick={function () {
+            setActiveTab('handoff');
+          }}
+          style={{
+            background: activeTab === 'handoff' ? '#f0f0f0' : 'transparent',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            fontSize: '11px',
+            fontWeight: 600,
+            marginLeft: '6px',
+            padding: '4px 10px',
+          }}
+        >
+          Handoff
+        </button>
+        <button
+          type="button"
+          role="tab"
           id="fighub-tab-export"
           aria-controls={TAB_PANEL_IDS.export}
           aria-selected={activeTab === 'export'}
@@ -160,10 +188,19 @@ export function App() {
               ? githubSession.resolvedConfig.specsPath
               : undefined
           }
+          designSystemBranch={
+            githubSession.resolvedConfig !== null
+              ? githubSession.resolvedConfig.designSystemBranch
+              : undefined
+          }
           onOpenSettings={function () {
             setActiveTab('settings');
           }}
         />
+      </TabPanel>
+
+      <TabPanel id={TAB_PANEL_IDS.handoff} active={activeTab === 'handoff'}>
+        <Handoff repoUrl={githubSession.repoUrl} github={github} />
       </TabPanel>
 
       <TabPanel id={TAB_PANEL_IDS.export} active={activeTab === 'export'}>

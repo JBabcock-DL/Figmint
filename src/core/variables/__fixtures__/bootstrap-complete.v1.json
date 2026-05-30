@@ -5,23 +5,42 @@
   "collections": [
     {
       "id": "primitives",
-      "modes": ["Default"]
+      "modes": [
+        "Default"
+      ]
     },
     {
       "id": "theme",
-      "modes": ["Light", "Dark"]
+      "modes": [
+        "Light",
+        "Dark"
+      ]
     },
     {
       "id": "typography",
-      "modes": ["85", "100", "110", "120", "130", "150", "175", "200"]
+      "modes": [
+        "85",
+        "100",
+        "110",
+        "120",
+        "130",
+        "150",
+        "175",
+        "200"
+      ]
     },
     {
       "id": "layout",
-      "modes": ["Default"]
+      "modes": [
+        "Default"
+      ]
     },
     {
       "id": "effects",
-      "modes": ["Light", "Dark"]
+      "modes": [
+        "Light",
+        "Dark"
+      ]
     }
   ],
   "tokens": [
@@ -31,9 +50,9 @@
       "type": "COLOR",
       "valuesByMode": {
         "Default": {
-          "r": 0.8117647058823529,
-          "g": 0.8235294117647058,
-          "b": 0.30980392156862746,
+          "r": 0.050980392156862744,
+          "g": 0.47058823529411764,
+          "b": 0.027450980392156862,
           "a": 1
         }
       },

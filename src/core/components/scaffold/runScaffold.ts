@@ -4,6 +4,7 @@ import type {
   AuditReportV1,
   AuditRuleResult,
   ComponentSpecV1,
+  RegistryV1,
 } from '@detroitlabs/fighub-contracts';
 
 import { runAudit, runDocPipelinePreflightAudit } from '@/core/audit/runAudit';
@@ -27,9 +28,12 @@ import {
   type ScaffoldProgressMessage,
   type ScaffoldResultMessage,
   type ScaffoldRunMessage,
+  type ScaffoldRunOutcome,
   type ScaffoldStepId,
   type ScaffoldStepStatus,
 } from '@/io/messages/scaffold';
+
+export type { ScaffoldRunOutcome };
 
 function extractErrorMessage(error: unknown): string {
   if (typeof error === 'object' && error !== null && 'message' in error) {
@@ -182,17 +186,54 @@ async function buildPropertiesAudit(
 export async function runScaffoldComponent(
   spec: ComponentSpecV1,
   options?: ScaffoldRunMessage['options'],
-): Promise<void> {
+): Promise<ScaffoldRunOutcome | void> {
   const startedAt = Date.now();
   const audits: AuditReportV1[] = [];
   const fileKey = readFileKey();
+  const suppressUi = options !== undefined && options.suppressUiMessages === true;
 
   let scaffoldResult: ScaffoldResult;
   let bindingsResult: ApplyBindingsResult | undefined;
   let propertiesResult: ApplyPropertiesResult | undefined;
 
+  function finishBatchOutcome(
+    ok: boolean,
+    registry: RegistryV1,
+    error?: string,
+    componentSetName?: string,
+  ): ScaffoldRunOutcome {
+    return {
+      ok: ok,
+      registry: registry,
+      error: error,
+      componentSetName: componentSetName,
+    };
+  }
+
+  function postProgressUi(
+    step: ScaffoldStepId,
+    status: ScaffoldStepStatus,
+    extras?: {
+      detail?: string;
+      elapsedMs?: number;
+      audit?: AuditReportV1;
+    },
+  ): void {
+    if (suppressUi) {
+      return;
+    }
+    postProgress(step, status, extras);
+  }
+
+  function postErrorUi(message: string, failedStep?: ScaffoldStepId): void {
+    if (suppressUi) {
+      return;
+    }
+    postScaffoldError(message, failedStep);
+  }
+
   try {
-    postProgress('doc-preflight', 'running');
+    postProgressUi('doc-preflight', 'running');
     let fighubConfigParseError: string | undefined;
     const lastRepo = await getLastRepoUrl();
     if (lastRepo !== null) {
@@ -209,17 +250,23 @@ export async function runScaffoldComponent(
     const preflightAudit = await runDocPipelinePreflightAudit(fighubConfigParseError);
     audits.push(preflightAudit);
     if (!preflightAudit.passed) {
-      const reason = preflightAudit.results[0]?.diagnostic ?? 'Pre-flight failed';
-      postProgress('doc-preflight', 'error', { detail: reason, audit: preflightAudit });
-      postScaffoldError(reason, 'doc-preflight');
+      const reason =
+        preflightAudit.results[0] !== undefined && preflightAudit.results[0].diagnostic !== undefined
+          ? preflightAudit.results[0].diagnostic
+          : 'Pre-flight failed';
+      postProgressUi('doc-preflight', 'error', { detail: reason, audit: preflightAudit });
+      postErrorUi(reason, 'doc-preflight');
+      if (suppressUi) {
+        return finishBatchOutcome(false, getRegistryFromSnapshot(), reason);
+      }
       return;
     }
-    postProgress('doc-preflight', 'done');
+    postProgressUi('doc-preflight', 'done');
 
     const scaffoldTarget = ensureComponentScaffoldTarget(spec.name);
     const targetPage = scaffoldTarget.page;
 
-    postProgress('scaffold-geometry', 'running');
+    postProgressUi('scaffold-geometry', 'running');
     pluginLog('[main] scaffold-geometry start', spec.name);
 
     const scaffoldOptions =
@@ -232,12 +279,12 @@ export async function runScaffoldComponent(
       audits.push(buildAuditReportFromRows(scaffoldResult.auditRows, 'scaffold-component'));
     }
 
-    postProgress('scaffold-geometry', 'done', {
+    postProgressUi('scaffold-geometry', 'done', {
       detail: String(scaffoldResult.variantCount) + ' variants',
     });
     pluginLog('[main] scaffold-geometry done', String(scaffoldResult.variantCount));
 
-    postProgress('apply-bindings', 'running');
+    postProgressUi('apply-bindings', 'running');
     bindingsResult = await applyBindings(spec, scaffoldResult.componentSet);
     const bindingsAudit = await buildBindingsAudit(
       spec,
@@ -247,7 +294,7 @@ export async function runScaffoldComponent(
     if (bindingsAudit !== null) {
       audits.push(bindingsAudit);
     }
-    postProgress('apply-bindings', 'done', {
+    postProgressUi('apply-bindings', 'done', {
       detail:
         String(bindingsResult.applied) +
         ' applied' +
@@ -257,7 +304,7 @@ export async function runScaffoldComponent(
       audit: bindingsAudit !== null ? bindingsAudit : undefined,
     });
 
-    postProgress('apply-properties', 'running');
+    postProgressUi('apply-properties', 'running');
     propertiesResult = applyProperties(spec, scaffoldResult.componentSet);
     const propertiesAudit = await buildPropertiesAudit(
       spec,
@@ -267,15 +314,15 @@ export async function runScaffoldComponent(
     if (propertiesAudit !== null) {
       audits.push(propertiesAudit);
     }
-    postProgress('apply-properties', 'done', {
+    postProgressUi('apply-properties', 'done', {
       detail: propertiesResult.ok ? 'Properties applied' : 'Properties applied with warnings',
       audit: propertiesAudit !== null ? propertiesAudit : undefined,
     });
 
     if (options !== undefined && options.skipUsageFrame === true) {
-      postProgress('build-doc-pipeline', 'skipped', { detail: 'Skipped (dev flag)' });
+      postProgressUi('build-doc-pipeline', 'skipped', { detail: 'Skipped (dev flag)' });
     } else {
-      postProgress('build-doc-pipeline', 'running');
+      postProgressUi('build-doc-pipeline', 'running');
       try {
         const pipelineResult = await buildDocPipeline(scaffoldResult.componentSet, spec, {
           scaffoldTarget: scaffoldTarget,
@@ -288,14 +335,17 @@ export async function runScaffoldComponent(
         if (pipelineResult.auditRows.length > 0) {
           audits.push(buildAuditReportFromRows(pipelineResult.auditRows, 'scaffold-component'));
         }
-        postProgress('build-doc-pipeline', 'done', {
+        postProgressUi('build-doc-pipeline', 'done', {
           detail: '5 doc sections',
         });
       } catch (pipelineError) {
         const pipelineMessage = extractErrorMessage(pipelineError);
         pluginLog('[main] build-doc-pipeline failed', pipelineMessage);
-        postProgress('build-doc-pipeline', 'error', { detail: pipelineMessage });
-        postScaffoldError(pipelineMessage, 'build-doc-pipeline');
+        postProgressUi('build-doc-pipeline', 'error', { detail: pipelineMessage });
+        postErrorUi(pipelineMessage, 'build-doc-pipeline');
+        if (suppressUi) {
+          return finishBatchOutcome(false, getRegistryFromSnapshot(), pipelineMessage);
+        }
         return;
       }
     }
@@ -306,7 +356,7 @@ export async function runScaffoldComponent(
         : getRegistryFromSnapshot();
 
     if (options === undefined || options.skipRegistry !== true) {
-      postProgress('update-registry', 'running');
+      postProgressUi('update-registry', 'running');
       registry = upsertSnapshotRegistryEntry({
         registry: registry,
         spec: spec,
@@ -314,12 +364,12 @@ export async function runScaffoldComponent(
         targetPage: targetPage,
         fileKey: fileKey,
       });
-      postProgress('update-registry', 'done', { detail: 'Registry entry updated' });
+      postProgressUi('update-registry', 'done', { detail: 'Registry entry updated' });
     } else {
-      postProgress('update-registry', 'skipped', { detail: 'Registry update skipped' });
+      postProgressUi('update-registry', 'skipped', { detail: 'Registry update skipped' });
     }
 
-    postProgress('audit-component', 'running');
+    postProgressUi('audit-component', 'running');
     const entry = registry.components[spec.name];
     if (entry !== undefined) {
       const registryRows = buildRegistryAuditRows(registry, spec.name, entry);
@@ -327,9 +377,9 @@ export async function runScaffoldComponent(
         audits.push(buildAuditReportFromRows(registryRows, 'scaffold-component'));
       }
     }
-    postProgress('audit-component', 'done');
+    postProgressUi('audit-component', 'done');
 
-    postProgress('complete', 'done');
+    postProgressUi('complete', 'done');
 
     let allPassed = true;
     for (let i = 0; i < audits.length; i++) {
@@ -337,6 +387,15 @@ export async function runScaffoldComponent(
         allPassed = false;
         break;
       }
+    }
+
+    if (suppressUi) {
+      return finishBatchOutcome(
+        allPassed,
+        registry,
+        allPassed ? undefined : 'Component audit failed.',
+        scaffoldResult.componentSet.name,
+      );
     }
 
     const resultMessage: ScaffoldResultMessage = {
@@ -360,6 +419,9 @@ export async function runScaffoldComponent(
   } catch (error) {
     const message = extractErrorMessage(error);
     pluginLog('[main] scaffold/run unhandled', message);
-    postScaffoldError(message);
+    if (suppressUi) {
+      return finishBatchOutcome(false, getRegistryFromSnapshot(), message);
+    }
+    postErrorUi(message);
   }
 }

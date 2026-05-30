@@ -119,8 +119,8 @@ describe('bootstrap message guards', () => {
 });
 
 describe('BOOTSTRAP_STEPS manifest', () => {
-  it('defines 12 ordered steps ending with complete', () => {
-    expect(BOOTSTRAP_STEPS.length).toBe(12);
+  it('defines 11 ordered steps ending with complete', () => {
+    expect(BOOTSTRAP_STEPS.length).toBe(11);
     expect(BOOTSTRAP_STEPS[0].id).toBe('adapt');
     expect(BOOTSTRAP_STEPS[BOOTSTRAP_STEPS.length - 1].id).toBe('complete');
   });

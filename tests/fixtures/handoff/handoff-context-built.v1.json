@@ -1,0 +1,33 @@
+{
+  "v": 1,
+  "kind": "handoff-context",
+  "meta": {
+    "capturedAt": "2026-05-29T12:00:00.000Z",
+    "figmaFileKey": "abc123",
+    "frameUrl": "https://www.figma.com/design/abc123/My%20Design%20File?node-id=1-2"
+  },
+  "frames": [
+    {
+      "nodeId": "1:2",
+      "name": "Checkout",
+      "deepLink": "https://www.figma.com/design/abc123/My%20Design%20File?node-id=1-2",
+      "screenshot": {
+        "format": "png",
+        "dataUrl": "[PNG]"
+      }
+    }
+  ],
+  "components": [
+    {
+      "name": "Button",
+      "instances": 4,
+      "codeConnectUrl": "https://github.com/a/Button.tsx"
+    }
+  ],
+  "tokensUsed": ["Theme/Primary"],
+  "autoLayout": {
+    "direction": "vertical",
+    "gap": "16px",
+    "padding": "8px"
+  }
+}

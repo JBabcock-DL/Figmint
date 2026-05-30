@@ -9,12 +9,11 @@ const EXPECTED_SLUGS: StyleGuidePageSlug[] = [
   'layout',
   'text-styles',
   'effects',
-  'token-overview',
 ];
 
 describe('styleGuideManifest', () => {
-  it('lists all six style-guide pages in build order', () => {
-    expect(STYLE_GUIDE_PAGES.length).toBe(6);
+  it('lists all five style-guide pages in build order', () => {
+    expect(STYLE_GUIDE_PAGES.length).toBe(5);
     const slugs = STYLE_GUIDE_PAGES.map(function (entry) {
       return entry.pageSlug;
     });

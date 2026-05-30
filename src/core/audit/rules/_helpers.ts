@@ -2,7 +2,9 @@
 
 import type { CollectionId, ColorValue, Token, TokensV1 } from '@detroitlabs/fighub-contracts';
 
-import { CODE_SYNTAX_PLATFORMS, COLLECTION_DISPLAY_NAMES, COLOR_EPSILON } from '../constants';
+import { valuesEqual as compareVariableValues } from '@/core/variables/compare';
+
+import { CODE_SYNTAX_PLATFORMS, COLLECTION_DISPLAY_NAMES } from '../constants';
 import type { FigmaCollectionSnapshot, FigmaVariableSnapshot } from '../types';
 
 export function tokenKey(collection: CollectionId, name: string): string {
@@ -125,12 +127,7 @@ export function resolveFigmaValue(
 }
 
 export function colorsEqual(a: ColorValue, b: ColorValue): boolean {
-  return (
-    Math.abs(a.r - b.r) <= COLOR_EPSILON &&
-    Math.abs(a.g - b.g) <= COLOR_EPSILON &&
-    Math.abs(a.b - b.b) <= COLOR_EPSILON &&
-    Math.abs(a.a - b.a) <= COLOR_EPSILON
-  );
+  return compareVariableValues(a, b);
 }
 
 export function isColorValue(value: unknown): value is ColorValue {
@@ -151,7 +148,7 @@ export function valuesEqual(expected: unknown, actual: VariableValue | null): bo
     return false;
   }
   if (isColorValue(expected) && isColorValue(actual)) {
-    return colorsEqual(expected, actual);
+    return compareVariableValues(actual, expected);
   }
   return expected === actual;
 }

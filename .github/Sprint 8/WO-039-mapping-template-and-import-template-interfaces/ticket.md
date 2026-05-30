@@ -30,10 +30,11 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/codeconnect/MappingTemplate.ts` — interface for stub generators.
-2. `src/core/import/ImportTemplate.ts` — interface for code parsers.
-3. Shared utilities: `propTypeMapper`, `layoutInferrer`, `dependencyScanner` skeletons in `src/core/import/shared/`.
-4. Registry-driven framework dispatch.
+1. **`src/core/codeconnect/types.ts`** — `MappingTemplate`, `MappingTemplateContext`, `UnmappedComponentRef`, `MappingStubFile`.
+2. **`src/core/import/types.ts`** — `ImportTemplate`, `ImportTemplateContext`, `ImportTemplateResult`.
+3. **`src/core/import/shared/`** — `TokenResolver` interface (impl WO-042), `dependencyScanner.ts` + `DependencyTree` types (impl WO-043), `propTypeMapper.ts` + `layoutInferrer.ts` skeletons with Vitest contracts.
+4. **`getMappingTemplate(framework)`** / **`getImportTemplate(framework)`** registries — React stub implementations referenced in AC (no-op OK until WO-040/041).
+5. Barrel exports: `src/core/codeconnect/index.ts`, `src/core/import/index.ts`.
 
 ### Visual / UX
 
@@ -101,6 +102,7 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.3, §6.7, §12 Phase 4a
-- Lift reference:
-  - _None — new code designed in PRD._
+- Research: [MappingTemplate + ImportTemplate interfaces](research/mapping-template-and-import-template-interfaces.md)
+- Sprint index: [Sprint 8 research](../research/sprint-8-research-index.md)
+- WO-018 [github-pr-sink-flow.md](../../Sprint%204/WO-018-github-pr-output-sink/research/github-pr-sink-flow.md)
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

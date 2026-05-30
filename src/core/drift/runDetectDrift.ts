@@ -78,5 +78,12 @@ export async function runDetectDrift(input: RunDetectDriftInput): Promise<DriftR
     String(report.summary.synced) + ' synced',
   );
 
+  const primaryDrift = report.drifts.find(function (entry) {
+    return entry.id === 'var/Primitives/color/primary/50';
+  });
+  if (primaryDrift !== undefined) {
+    pluginLog('[drift] primary/50 still drifts', primaryDrift.direction);
+  }
+
   return report;
 }

@@ -11,10 +11,10 @@ import { findStyleGuidePage } from '@/core/canvas/lib/pages';
 import { publishTypographyStyles } from '@/core/canvas/publishTypographyStyles';
 import { buildThemePage } from '@/core/canvas/themeTables';
 import { buildTextStylesPage } from '@/core/canvas/textStyles';
-import { buildTokenOverviewPage } from '@/core/canvas/tokenOverview';
 import type { CanvasBuildContext } from '@/core/canvas/types';
 import { pluginLog } from '@/core/pluginLog';
 import { pushTokens } from '@/core/variables';
+import { seedVariableSnapshotFromTokens } from '@/core/drift/seedSnapshotAfterPush';
 import { publishDocumentationChrome } from '@/core/variables/documentationChrome';
 import type { PushResult } from '@/core/variables/types';
 import {
@@ -90,15 +90,13 @@ function toPushResult(outcome: PushResult & { audit: AuditReportV1 }): PushResul
 
 async function runCanvasAudit(audits: AuditReportV1[]): Promise<boolean> {
   let allPassed = true;
-  const builders: Array<'text-styles' | 'token-overview' | 'layout' | 'effects'> = [
+  const builders: Array<'text-styles' | 'layout' | 'effects'> = [
     'text-styles',
-    'token-overview',
     'layout',
     'effects',
   ];
-  const slugs: Array<'text-styles' | 'token-overview' | 'layout' | 'effects'> = [
+  const slugs: Array<'text-styles' | 'layout' | 'effects'> = [
     'text-styles',
-    'token-overview',
     'layout',
     'effects',
   ];
@@ -149,7 +147,6 @@ function skipCanvasSteps(skipDetail: string): void {
     'build-typography',
     'build-layout',
     'build-effects',
-    'build-overview',
     'audit-canvas',
   ];
   for (let i = 0; i < canvasStepIds.length; i++) {
@@ -197,6 +194,12 @@ export async function runBootstrap(
         pushResult: pushResult,
         audits: audits,
       };
+    }
+
+    try {
+      await seedVariableSnapshotFromTokens(tokens);
+    } catch (seedError) {
+      pluginLog('[bootstrap] snapshot seed failed', extractErrorMessage(seedError));
     }
   } catch (error) {
     const message = extractErrorMessage(error);
@@ -313,14 +316,6 @@ export async function runBootstrap(
       'build-effects',
       function () {
         return buildEffectsPage(ctx);
-      },
-      canvasErrors,
-    );
-
-    await runCanvasStep(
-      'build-overview',
-      function () {
-        return buildTokenOverviewPage(ctx);
       },
       canvasErrors,
     );

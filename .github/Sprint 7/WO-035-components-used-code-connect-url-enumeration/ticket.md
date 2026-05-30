@@ -30,9 +30,11 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/handoff/components.ts` — `enumerateComponents(node: SceneNode): ComponentUsage[]`.
-2. Each usage: `{ name: string, instances: number, codeConnectUrl: string | null }`.
-3. Walks Component / Instance nodes; aggregates by Component name.
+1. `src/core/handoff/components.ts` — `enumerateComponents(root: SceneNode): HandoffComponentUsage[]`.
+2. Depth-first walk; count **`INSTANCE`** nodes; aggregate by **component set name** (fallback: main component name).
+3. Resolve `codeConnectUrl` via **`mainComponent.getDevResourcesAsync()`** — first HTTPS/GitHub dev resource URL; omit field when unmapped (no Plugin API for MCP `get_code_connect_map`).
+4. Handle remote/detached instances: skip detached with warning; use `getMainComponentAsync` when needed.
+5. Share tree-walk helper with WO-036 (`src/core/handoff/walk.ts`) where practical.
 
 ### Visual / UX
 
@@ -100,6 +102,8 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.6 FR-HAND-2
+- [Components + Code Connect enumeration research](research/components-used-code-connect-url-enumeration.md)
+- Pattern: `src/core/drift/figmaComponent.ts` (`scanBindings`)
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

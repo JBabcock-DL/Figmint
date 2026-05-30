@@ -26,7 +26,16 @@ export interface ScaffoldRunMessage {
     registry?: RegistryV1;
     skipUsageFrame?: boolean;
     skipRegistry?: boolean;
+    /** When true, skip UI progress/result posts and return a batch outcome instead. */
+    suppressUiMessages?: boolean;
   };
+}
+
+export interface ScaffoldRunOutcome {
+  ok: boolean;
+  registry: RegistryV1;
+  componentSetName?: string;
+  error?: string;
 }
 
 export interface ScaffoldProgressMessage {

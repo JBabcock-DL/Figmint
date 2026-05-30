@@ -4,9 +4,11 @@ import type { Token, TokensV1 } from '@detroitlabs/fighub-contracts';
 
 import type { FigmaCollectionSnapshot } from '@/core/audit/types';
 import { DISPLAY_NAME } from '@/core/variables/collections';
+import { mapCodeSyntax } from '@/core/variables/codeSyntax';
 import { resolveTokens } from '@/core/variables/resolveTokens';
 
 import { classifyThreeWay, isSynced } from './classify';
+import { normalizeVariableComparable } from './normalizeComparable';
 import {
   DRIFT_SYNC_EXCLUDED_COLLECTIONS,
   resolveFigmaVariableAliases,
@@ -114,10 +116,16 @@ export function flattenFigmaVariableSnapshots(
       };
     }
   }
-  if (resolveAliases) {
-    return resolveFigmaVariableAliases(result, collections);
+  const resolved = resolveAliases ? resolveFigmaVariableAliases(result, collections) : result;
+  const normalized: Record<string, VariableComparable> = {};
+  for (const key of Object.keys(resolved)) {
+    const slashIndex = key.indexOf('/');
+    normalized[key] = normalizeVariableComparable(resolved[key], {
+      collectionName: key.slice(0, slashIndex),
+      variableName: key.slice(slashIndex + 1),
+    });
   }
-  return result;
+  return normalized;
 }
 
 export function flattenRepoTokens(tokens: TokensV1): Record<string, VariableComparable> {
@@ -140,10 +148,10 @@ export function flattenRepoTokens(tokens: TokensV1): Record<string, VariableComp
     const comparable = buildComparableFromResolved(
       tokenTypeToResolvedType(entry.type),
       entry.resolvedValuesByMode,
-      token.codeSyntax !== undefined ? token.codeSyntax : {},
+      mapCodeSyntax(token),
     );
     if (comparable !== null) {
-      result[key] = comparable;
+      result[key] = normalizeVariableComparable(comparable, { token: token });
     }
   }
   return result;

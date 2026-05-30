@@ -30,10 +30,10 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/import/shared/tokenResolver.ts` — `resolve(className: string): { variable: string } | { unresolved: true }`.
-2. Detection priority (PRD FR-CONF-2): Tailwind config → tokens.css → Style Dictionary config → Tokens Studio.
-3. Settings panel for manual override (PRD FR-CONF-3).
-4. Per-project cache in clientStorage scoped per repo URL.
+1. **`src/core/import/shared/tokenResolver.ts`** — `createTokenResolver(repoUrl, options)` implementing WO-039 interface.
+2. **Detection** (FR-CONF-2): Tailwind v3/v4 config → `tokens.css` / `@theme` → Style Dictionary → Tokens Studio (latter two: detect + unresolved OK in MVP).
+3. **Settings panel** — manual override JSON merged per repo URL (FR-CONF-3/4).
+4. **clientStorage cache** keyed by normalized repo URL; invalidate on config SHA change.
 
 ### Visual / UX
 
@@ -103,6 +103,5 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.9 FR-CONF-\*, §6.3 FR-IMP-5
-- Lift reference:
-  - _None — new code designed in PRD._
+- Research: [Token resolver Tailwind + CSS vars](research/token-resolver-tailwind-css-vars.md)
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

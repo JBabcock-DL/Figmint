@@ -30,11 +30,10 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/import/shared/dependencyScanner.ts` — `scanDependencies(file: string): DependencyTree`.
-2. Pre-scan via regex / lightweight AST (don't full-parse if not needed).
-3. Check `.fighub-registry.json` from connected repo for each ref.
-4. Returns a tree: each node = { name, status: 'registered' | 'unknown' | 'circular' }.
-5. UI integration: dependency tree preview before import (WO-044).
+1. **`scanDependencies(sourceText, registryKeys)`** — TS AST light pass (imports + JSX tags).
+2. Output **`DependencyTree`** per WO-039 types; statuses `registered` | `unknown` | `circular`.
+3. Registry keys from canvas snapshot + `.fighub-registry.json` (WO-026).
+4. Wire into import pipeline before WO-041 full parse; WO-044 renders tree UI.
 
 ### Visual / UX
 
@@ -103,6 +102,5 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.3 FR-IMP-3
-- Lift reference:
-  - _None — new code designed in PRD._
+- Research: [Dependency scanner](research/dependency-scanner-subcomponent-handling.md)
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

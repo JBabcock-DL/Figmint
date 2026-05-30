@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useState, type CSSProperties } from 'react';
 
-import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
+import type { ComponentSpecV1, RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 import {
   isScaffoldErrorMessage,
@@ -9,6 +9,9 @@ import {
 } from '@/io/messages/scaffold';
 import type { LoadedDocument } from '@/io/sources/types';
 import { AuditPanel } from '@/ui/components/AuditPanel';
+import { CodeConnectSection } from '@/ui/components/codeconnect/CodeConnectSection';
+import { ImportFromRepoSection } from '@/ui/components/import/ImportFromRepoSection';
+import { CatalogPanel } from '@/ui/components/catalog/CatalogPanel';
 import { classifyComponentsIngest } from '@/ui/components/scaffold/ingestDocument';
 import { loadRegistryForComponentsTab } from '@/ui/components/scaffold/loadRegistryFromSnapshot';
 import { syncRegistryLoadedMessage } from '@/ui/components/scaffold/registryLoadMessages';
@@ -30,6 +33,7 @@ import {
 } from '@/ui/components/variantMatrixPreview';
 import { formatRepoDisplay } from '@/ui/github/formatRepoDisplay';
 import type { UseGitHubConnectResult } from '@/ui/github/useGitHubConnect';
+import { useCodeConnectEmitPr } from '@/ui/hooks/useCodeConnectEmitPr';
 import { ClipboardBanner, useClipboardSources } from '@/ui/sources/ClipboardBanner';
 import { SourceDropZone, SourceFilePicker } from '@/ui/sources/SourceFilePicker';
 import { SourcePasteTextarea } from '@/ui/sources/SourcePasteTextarea';
@@ -54,16 +58,26 @@ export interface ComponentsTabProps {
   repoUrl: string;
   github: UseGitHubConnectResult;
   specsPath?: string;
+  designSystemBranch?: string;
   onOpenSettings?: () => void;
 }
 
-export function Components({ repoUrl, github, specsPath, onOpenSettings }: ComponentsTabProps) {
+export function Components({
+  repoUrl,
+  github,
+  specsPath,
+  designSystemBranch,
+  onOpenSettings,
+}: ComponentsTabProps) {
   const [registryKeys, setRegistryKeys] = useState<string[]>([]);
   const [selectedKey, setSelectedKey] = useState('');
   const [registryStatus, setRegistryStatus] = useState('');
   const [draft, setDraft] = useState<ComponentSpecV1 | null>(null);
   const [ingestError, setIngestError] = useState<string | null>(null);
   const [sourceLabel, setSourceLabel] = useState<string | null>(null);
+  const [importSourcePath, setImportSourcePath] = useState<string | null>(null);
+  const [offerPostScaffoldCc, setOfferPostScaffoldCc] = useState(false);
+  const [lastScaffoldComponentSetId, setLastScaffoldComponentSetId] = useState<string | null>(null);
   const [validation, setValidation] = useState<Awaited<
     ReturnType<typeof validateComponentSpecDraft>
   > | null>(null);
@@ -74,6 +88,8 @@ export function Components({ repoUrl, github, specsPath, onOpenSettings }: Compo
     undefined,
     createInitialScaffoldProgressState,
   );
+
+  const { state: ccEmitState, emitPr: emitCodeConnectPr } = useCodeConnectEmitPr();
 
   const variantCount = useMemo(
     function () {
@@ -256,6 +272,9 @@ export function Components({ repoUrl, github, specsPath, onOpenSettings }: Compo
         dispatchProgress(msg);
         setRegistryKeys(Object.keys(msg.registry.components).sort());
         setShowAudit(true);
+        if (msg.componentSetId !== undefined && msg.componentSetId.length > 0) {
+          setLastScaffoldComponentSetId(msg.componentSetId);
+        }
         console.debug('[ui] scaffold/result', String(msg.totalDurationMs) + 'ms');
         return;
       }
@@ -270,6 +289,39 @@ export function Components({ repoUrl, github, specsPath, onOpenSettings }: Compo
     };
   }, []);
 
+  const handleBatchComplete = useCallback(function (registry: RegistryV1) {
+    setRegistryKeys(Object.keys(registry.components).sort());
+  }, []);
+
+  const handleImportSpecReady = useCallback(function (
+    spec: ComponentSpecV1,
+    meta: { sourcePath: string },
+  ) {
+    setDraft(cloneSpec(spec));
+    setSourceLabel('Imported from ' + meta.sourcePath);
+    setImportSourcePath(meta.sourcePath);
+    setOfferPostScaffoldCc(false);
+    dispatchProgress({ type: 'scaffold/reset' });
+  }, []);
+
+  const handlePostScaffoldCcChange = useCallback(
+    function (checked: boolean) {
+      setOfferPostScaffoldCc(checked);
+      if (
+        checked &&
+        lastScaffoldComponentSetId !== null &&
+        lastScaffoldComponentSetId.length > 0 &&
+        repoUrl.length > 0
+      ) {
+        emitCodeConnectPr({
+          repoUrl: repoUrl,
+          componentIds: [lastScaffoldComponentSetId],
+        });
+      }
+    },
+    [emitCodeConnectPr, lastScaffoldComponentSetId, repoUrl],
+  );
+
   const { bannerDoc, dismissBanner, acceptBanner } = useClipboardSources(applyLoadedDocument);
 
   const completedSteps = countCompletedSteps(progressState.steps);
@@ -282,8 +334,7 @@ export function Components({ repoUrl, github, specsPath, onOpenSettings }: Compo
       <section style={SECTION_BORDER} aria-label="Paste or load spec">
         <h2 style={SECTION_HEADING}>Paste or load spec</h2>
         <p style={{ color: '#666', fontSize: 10, lineHeight: 1.45, margin: '0 0 8px' }}>
-          Fastest way to scaffold your first component. Browse all repo components (multiselect)
-          ships in WO-056.
+          Fastest way to scaffold your first component — paste JSON or load a file from disk.
         </p>
         {bannerDoc !== null ? (
           <ClipboardBanner doc={bannerDoc} onLoad={acceptBanner} onDismiss={dismissBanner} />
@@ -298,6 +349,36 @@ export function Components({ repoUrl, github, specsPath, onOpenSettings }: Compo
           <p style={{ color: '#666', fontSize: 10, margin: '8px 0 0' }}>{sourceLabel}</p>
         ) : null}
       </section>
+
+      <section style={SECTION_BORDER} aria-label="Browse repo components">
+        <h2 style={SECTION_HEADING}>Browse repo components</h2>
+        <CatalogPanel
+          repoUrl={repoUrl}
+          specsPath={specsPath}
+          designSystemBranch={designSystemBranch}
+          githubConnected={github.connected}
+          onOpenSettings={onOpenSettings}
+          onBatchComplete={handleBatchComplete}
+        />
+      </section>
+
+      <ImportFromRepoSection
+        repoUrl={repoUrl}
+        github={github}
+        specsPath={specsPath}
+        onOpenSettings={onOpenSettings}
+        onSpecReady={handleImportSpecReady}
+        sectionBorder={SECTION_BORDER}
+        sectionHeading={SECTION_HEADING}
+      />
+
+      <CodeConnectSection
+        repoUrl={repoUrl}
+        github={github}
+        onOpenSettings={onOpenSettings}
+        sectionBorder={SECTION_BORDER}
+        sectionHeading={SECTION_HEADING}
+      />
 
       <section style={SECTION_BORDER} aria-label="Re-scaffold from linked components">
         <h2 style={SECTION_HEADING}>Re-scaffold from linked components</h2>
@@ -458,6 +539,36 @@ export function Components({ repoUrl, github, specsPath, onOpenSettings }: Compo
           <p style={{ color: '#666', fontSize: 10, margin: '6px 0 0' }}>
             {String(completedSteps)} / {String(progressState.steps.length)} steps
           </p>
+        </section>
+      ) : null}
+
+      {progressState.result !== null &&
+      importSourcePath !== null &&
+      progressState.result.ok === true ? (
+        <section style={SECTION_BORDER} aria-label="Post-scaffold Code Connect offer">
+          <label style={{ display: 'flex', alignItems: 'center', fontSize: 11, gap: 6 }}>
+            <input
+              type="checkbox"
+              checked={offerPostScaffoldCc}
+              onChange={function (event) {
+                handlePostScaffoldCcChange(event.target.checked);
+              }}
+            />
+            Offer Code Connect stub PR for this component
+          </label>
+          {ccEmitState.error.length > 0 ? (
+            <p role="alert" style={{ color: '#b00020', fontSize: 10, margin: '6px 0 0' }}>
+              {ccEmitState.error}
+            </p>
+          ) : null}
+          {ccEmitState.prUrl.length > 0 ? (
+            <p role="status" style={{ color: '#333', fontSize: 10, margin: '6px 0 0' }}>
+              PR opened:{' '}
+              <a href={ccEmitState.prUrl} target="_blank" rel="noopener noreferrer">
+                {ccEmitState.prUrl}
+              </a>
+            </p>
+          ) : null}
         </section>
       ) : null}
 

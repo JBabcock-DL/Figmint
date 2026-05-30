@@ -32,6 +32,18 @@ import { buildTokenOverviewPage } from '@/core/canvas/tokenOverview';
 import type { CanvasBuildContext } from '@/core/canvas/types';
 import { pluginLog } from '@/core/pluginLog';
 import {
+  broadcastHandoffSelection,
+  handleHandoffCapture,
+} from '@/main/handoffHandlers';
+import { handleCodeConnectDetect, handleCodeConnectEmitPR, handleCodeConnectEmitPr } from '@/main/codeconnectHandlers';
+import { handleCatalogDiscover, handleCatalogScaffoldBatch } from '@/main/catalogHandlers';
+import { handleImportListFiles, handleImportParse } from '@/main/importHandlers';
+import {
+  handleFigmaFileKeyClear,
+  handleFigmaFileKeyLoad,
+  handleFigmaFileKeySave,
+} from '@/main/figmaFileKeyHandlers';
+import {
   isCanvasBenchMessage,
   isCanvasBuildPageMessage,
   type CanvasBenchResultMessage,
@@ -39,6 +51,12 @@ import {
   type CanvasBuildResultMessage,
 } from '@/io/messages/canvas';
 import { isBootstrapRunMessage } from '@/io/messages/bootstrap';
+import {
+  isCatalogDiscoverMessage,
+  isCatalogScaffoldBatchMessage,
+  type CatalogDiscoverResultMessage,
+  type CatalogScaffoldBatchResultMessage,
+} from '@/io/messages/catalog';
 import { isScaffoldRunMessage } from '@/io/messages/scaffold';
 import {
   isDriftBuildReportMessage,
@@ -119,6 +137,18 @@ import {
   type ExportRunMessage,
   type ExportSinkResultMessage,
 } from '@/io/messages/export';
+import { isHandoffCaptureMessage } from '@/io/messages/handoff';
+import {
+  isCodeConnectDetectMessage,
+  isCodeConnectEmitPRRequest,
+  isCodeConnectEmitPrMessage,
+} from '@/io/messages/codeconnect';
+import { isImportListFilesMessage, isImportParseMessage } from '@/io/messages/import';
+import {
+  isFigmaFileKeyClearMessage,
+  isFigmaFileKeyLoadMessage,
+  isFigmaFileKeySaveMessage,
+} from '@/io/messages/figmaFileKey';
 import {
   isSinkOutputPageMessage,
   isSinkPluginDataMessage,
@@ -139,6 +169,9 @@ import type {
 } from '@/io/sinks/types';
 
 figma.showUI(__html__, { width: 420, height: 520 });
+
+broadcastHandoffSelection();
+figma.on('selectionchange', broadcastHandoffSelection);
 
 function tokenPreview(token: string): string {
   if (token.length < 8) {
@@ -1406,6 +1439,98 @@ async function handleCanvasBench(
 }
 
 figma.ui.onmessage = (message: unknown) => {
+  if (isFigmaFileKeyLoadMessage(message)) {
+    handleFigmaFileKeyLoad(message);
+    return;
+  }
+
+  if (isFigmaFileKeySaveMessage(message)) {
+    handleFigmaFileKeySave(message);
+    return;
+  }
+
+  if (isFigmaFileKeyClearMessage(message)) {
+    handleFigmaFileKeyClear(message);
+    return;
+  }
+
+  if (isHandoffCaptureMessage(message)) {
+    handleHandoffCapture(message).catch(function (error: unknown) {
+      pluginLog('[main] handoff/capture unhandled', extractErrorMessage(error));
+    });
+    return;
+  }
+
+  if (isImportListFilesMessage(message)) {
+    handleImportListFiles(message).catch(function (error: unknown) {
+      pluginLog('[main] import/list-files unhandled', extractErrorMessage(error));
+      figma.ui.postMessage({
+        type: 'import/list-files/result',
+        requestId: message.requestId,
+        ok: false,
+        files: [],
+        error: extractErrorMessage(error),
+      });
+    });
+    return;
+  }
+
+  if (isImportParseMessage(message)) {
+    handleImportParse(message).catch(function (error: unknown) {
+      pluginLog('[main] import/parse unhandled', extractErrorMessage(error));
+      figma.ui.postMessage({
+        type: 'import/parse/result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      });
+    });
+    return;
+  }
+
+  if (isCodeConnectDetectMessage(message)) {
+    handleCodeConnectDetect(message).catch(function (error: unknown) {
+      pluginLog('[main] codeconnect/detect unhandled', extractErrorMessage(error));
+      figma.ui.postMessage({
+        type: 'codeconnect/detect/result',
+        requestId: message.requestId,
+        ok: false,
+        unmapped: [],
+        error: extractErrorMessage(error),
+      });
+    });
+    return;
+  }
+
+  if (isCodeConnectEmitPrMessage(message)) {
+    handleCodeConnectEmitPr(message).catch(function (error: unknown) {
+      pluginLog('[main] codeconnect/emit-pr unhandled', extractErrorMessage(error));
+      figma.ui.postMessage({
+        type: 'codeconnect/emit-pr/result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      });
+    });
+    return;
+  }
+
+  if (isCodeConnectEmitPRRequest(message)) {
+    handleCodeConnectEmitPR(message)
+      .then(function (result) {
+        figma.ui.postMessage(result);
+      })
+      .catch(function (error: unknown) {
+        pluginLog('[main] codeconnect/emit-pr unhandled', extractErrorMessage(error));
+        figma.ui.postMessage({
+          type: 'codeconnect/emit-pr-result',
+          ok: false,
+          message: extractErrorMessage(error),
+        });
+      });
+    return;
+  }
+
   if (isSnapshotReadMessage(message)) {
     handleSnapshotRead(message.requestId);
     return;
@@ -1661,6 +1786,37 @@ figma.ui.onmessage = (message: unknown) => {
         message: extractErrorMessage(error),
       });
       pluginLog('[main] bootstrap/run unhandled', extractErrorMessage(error));
+    });
+    return;
+  }
+
+  if (isCatalogDiscoverMessage(message)) {
+    handleCatalogDiscover(message).catch(function (error: unknown) {
+      const errResponse: CatalogDiscoverResultMessage = {
+        type: 'catalog/discover-result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+      pluginLog('[main] catalog/discover unhandled', extractErrorMessage(error));
+    });
+    return;
+  }
+
+  if (isCatalogScaffoldBatchMessage(message)) {
+    handleCatalogScaffoldBatch(message).catch(function (error: unknown) {
+      const errResponse: CatalogScaffoldBatchResultMessage = {
+        type: 'catalog/scaffold-batch/result',
+        requestId: message.requestId,
+        ok: false,
+        completed: 0,
+        failed: message.specPaths.length,
+        registry: getRegistryFromSnapshot(),
+        errors: [{ specPath: '', message: extractErrorMessage(error) }],
+      };
+      figma.ui.postMessage(errResponse);
+      pluginLog('[main] catalog/scaffold-batch unhandled', extractErrorMessage(error));
     });
     return;
   }

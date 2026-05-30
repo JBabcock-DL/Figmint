@@ -30,12 +30,11 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/import/templates/react.ts` — implements `ImportTemplate`.
-2. Uses `typescript` compiler API to parse `.tsx` source.
-3. Extracts: prop interface, default values, variant-typed props, layout hints from JSX, className-derived bindings.
-4. Reads existing `.figma.tsx` mapping if present for higher-fidelity prop mapping.
-5. Token resolution via WO-042 token resolver.
-6. Confidence flags on uncertain layout inferences (per PRD FR-IMP-7 'never silent-apply').
+1. **`src/core/import/templates/react.ts`** — `ImportTemplate` using `typescript` compiler API (bundled dep).
+2. Parse exported component + props → `ComponentSpecV1` with shadcn **variant × size** matrix (see `tests/fixtures/component-spec-button-canonical.json`).
+3. **`mergeFigmaMapping.ts`** — enrich from sibling `.figma.tsx` when present (FR-IMP-6).
+4. **`parseJsxLayout.ts`** + **`propTypeMapper.ts`** — layout/bindings with `confidence` flags (FR-IMP-7).
+5. Integrate WO-042 `TokenResolver` + WO-043 `scanDependencies` in parse pipeline.
 
 ### Visual / UX
 
@@ -104,6 +103,6 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.3 FR-IMP-\*
-- Lift reference:
-  - _None — new code designed in PRD._
+- Research: [React ImportTemplate TS AST parser](research/react-importfromcode-parser-ts-ast.md)
+- AC fixture: `tests/fixtures/component-spec-button-canonical.json`
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

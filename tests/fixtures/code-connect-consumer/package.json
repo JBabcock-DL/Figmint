@@ -1,0 +1,9 @@
+{
+  "name": "fighub-code-connect-consumer-fixture",
+  "private": true,
+  "devDependencies": {
+    "@figma/code-connect": "^1.0.0",
+    "react": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

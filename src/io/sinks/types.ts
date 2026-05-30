@@ -30,6 +30,7 @@ export interface GithubPRSinkContext {
   options: GithubPRSinkOptions;
   figmaFileKey: string;
   figmaFileName: string;
+  prBodyOverride?: string;
 }
 
 export interface FormatOptions {

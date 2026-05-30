@@ -1,0 +1,17 @@
+export { createTsxSourceFile } from './createSource';
+export { findExportedComponent } from './findExportedComponent';
+export type { ExportedComponentMatch, ExportedComponentKind } from './findExportedComponent';
+export { findCvaVariantMap, splitClassString } from './parseCvaVariants';
+export type { CvaVariantMap } from './types';
+export { mapTsTypeToSpecProp, mapPropsInterface } from './propTypeMapper';
+export { parsePropsFromComponent } from './parseProps';
+export { buildVariantMatrix } from './buildVariantMatrix';
+export { parseFigmaMappingText, mergeFigmaMappingIntoSpec } from './mergeFigmaMapping';
+export type { FigmaEnumMapping } from './mergeFigmaMapping';
+export { inferLayoutFromRootJsx } from './parseJsxLayout';
+export { collectClassTokensFromComponent } from './collectClassTokens';
+export { mapTokenToBindingSelector } from './tokenToSelector';
+export { extractBindings } from './extractBindings';
+export { attachConfidence } from './attachConfidence';
+export { buildSubComponents } from './buildSubComponents';
+export { parseReactComponent } from './parseReactComponent';

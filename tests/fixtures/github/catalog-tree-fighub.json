@@ -1,0 +1,56 @@
+{
+  "sha": "abc123tree",
+  "url": "https://api.github.com/repos/acme/widgets/git/trees/abc123tree",
+  "tree": [
+    {
+      "path": "design/components/button.component-spec.v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "blob1",
+      "size": 1200
+    },
+    {
+      "path": "design/components/input.component-spec.v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "blob2",
+      "size": 980
+    },
+    {
+      "path": "design/component-specs/card.v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "blob3",
+      "size": 800
+    },
+    {
+      "path": "components/alert.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "blob4",
+      "size": 640
+    },
+    {
+      "path": "node_modules/pkg/spec.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "blob5",
+      "size": 100
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "blob6",
+      "size": 50
+    },
+    {
+      "path": "design/components/button.component-spec.v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "blob7",
+      "size": 1200
+    }
+  ],
+  "truncated": false
+}

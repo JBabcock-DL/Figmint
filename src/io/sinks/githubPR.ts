@@ -57,19 +57,24 @@ export async function executeGithubPRSink(ctx: GithubPRSinkContext): Promise<Sin
     };
   }
 
-  const prBody = buildPrBody({
-    commitMessage: ctx.options.commitMessage,
-    files: ctx.files.map(function (file) {
-      return {
-        path: file.path,
-        format: inferFileFormat(file.path),
-      };
-    }),
-    pluginVersion: import.meta.env.PACKAGE_VERSION,
-    figmaFileUrl: buildFigmaFileUrl(ctx.figmaFileKey, ctx.figmaFileName),
-    figmaFileName: ctx.figmaFileName,
-    contractKind: ctx.contractKind,
-  });
+  let prBody: string;
+  if (ctx.prBodyOverride !== undefined && ctx.prBodyOverride.length > 0) {
+    prBody = ctx.prBodyOverride;
+  } else {
+    prBody = buildPrBody({
+      commitMessage: ctx.options.commitMessage,
+      files: ctx.files.map(function (file) {
+        return {
+          path: file.path,
+          format: inferFileFormat(file.path),
+        };
+      }),
+      pluginVersion: import.meta.env.PACKAGE_VERSION,
+      figmaFileUrl: buildFigmaFileUrl(ctx.figmaFileKey, ctx.figmaFileName),
+      figmaFileName: ctx.figmaFileName,
+      contractKind: ctx.contractKind,
+    });
+  }
 
   try {
     const result = await createPullRequestFromSinkContext(stored.accessToken, ctx, {

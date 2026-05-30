@@ -13,7 +13,6 @@ export type BootstrapStepId =
   | 'build-typography'
   | 'build-layout'
   | 'build-effects'
-  | 'build-overview'
   | 'audit-canvas'
   | 'complete';
 
@@ -34,7 +33,7 @@ export interface BootstrapRunMessage {
   tokens: TokensV1;
   options?: {
     skipCanvas?: boolean;
-    pages?: Array<'primitives' | 'theme' | 'typography' | 'layout' | 'effects' | 'overview'>;
+    pages?: Array<'primitives' | 'theme' | 'typography' | 'layout' | 'effects'>;
   };
 }
 
@@ -69,7 +68,6 @@ export const BOOTSTRAP_STEPS: Array<{ id: BootstrapStepId; label: string; fr: st
   { id: 'build-typography', label: 'Build Typography page', fr: 'FR-BOOT-7' },
   { id: 'build-layout', label: 'Build Layout page', fr: 'FR-BOOT-7' },
   { id: 'build-effects', label: 'Build Effects page', fr: 'FR-BOOT-7' },
-  { id: 'build-overview', label: 'Build Token Overview page', fr: 'FR-BOOT-7' },
   { id: 'audit-canvas', label: 'Audit canvas', fr: 'FR-BOOT-8' },
   { id: 'complete', label: 'Complete', fr: 'FR-BOOT-8' },
 ];
@@ -233,7 +231,6 @@ export const MAIN_BOOTSTRAP_STEP_IDS: BootstrapStepId[] = [
   'build-typography',
   'build-layout',
   'build-effects',
-  'build-overview',
   'audit-canvas',
 ];
 

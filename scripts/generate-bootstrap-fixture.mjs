@@ -22,8 +22,31 @@ const platformRows = JSON.parse(
 const layoutEffectsFixture = JSON.parse(
   readFileSync(resolve(repoRoot, 'src/core/canvas/__fixtures__/layout-effects.v1.json'), 'utf8'),
 );
+const designTokens = JSON.parse(readFileSync(resolve(repoRoot, 'design/tokens.json'), 'utf8'));
 
 const OUT = resolve(repoRoot, 'src/core/variables/__fixtures__/bootstrap-complete.v1.json');
+
+/** Map `color/{ramp}/{stop}` → hex from repo `design/tokens.json` primitives. */
+function loadRepoPrimitiveColorOverrides(doc) {
+  const overrides = new Map();
+  const color = doc?.primitives?.color;
+  if (!color || typeof color !== 'object') {
+    return overrides;
+  }
+  for (const [ramp, stops] of Object.entries(color)) {
+    if (!stops || typeof stops !== 'object') {
+      continue;
+    }
+    for (const [stop, leaf] of Object.entries(stops)) {
+      if (leaf?.$type === 'color' && typeof leaf.$value === 'string') {
+        overrides.set(`color/${ramp}/${stop}`, leaf.$value.toLowerCase());
+      }
+    }
+  }
+  return overrides;
+}
+
+const repoColorOverrides = loadRepoPrimitiveColorOverrides(designTokens);
 
 const TYPO_MODES = ['85', '100', '110', '120', '130', '150', '175', '200'];
 const COLOR_RAMPS = ['primary', 'secondary', 'neutral', 'tertiary', 'error'];
@@ -91,12 +114,14 @@ function addToken(token) {
 for (const ramp of COLOR_RAMPS) {
   for (const stop of COLOR_STOPS) {
     const name = `color/${ramp}/${stop}`;
+    const repoHex = repoColorOverrides.get(name);
     const hex =
-      ramp === 'neutral'
+      repoHex ??
+      (ramp === 'neutral'
         ? `#${String(Math.round((stop / 900) * 255))
             .padStart(2, '0')
             .repeat(3)}`
-        : hashHex(name);
+        : hashHex(name));
     addToken({
       collection: 'primitives',
       name,

@@ -1,0 +1,54 @@
+{
+  "theme": {
+    "color": {
+      "primary": {
+        "default": {
+          "$type": "color",
+          "$value": "#285ded",
+          "$extensions": {
+            "fighub": {
+              "codeSyntax": {
+                "WEB": "var(--color-primary-default)"
+              }
+            }
+          }
+        },
+        "content": {
+          "$type": "color",
+          "$value": "#ffffff",
+          "$extensions": {
+            "fighub": {
+              "codeSyntax": {
+                "WEB": "var(--color-primary-content)"
+              }
+            }
+          }
+        }
+      },
+      "muted": {
+        "default": {
+          "$type": "color",
+          "$value": "#f4f4f5",
+          "$extensions": {
+            "fighub": {
+              "codeSyntax": {
+                "WEB": "var(--color-muted-default)"
+              }
+            }
+          }
+        },
+        "content": {
+          "$type": "color",
+          "$value": "#71717a",
+          "$extensions": {
+            "fighub": {
+              "codeSyntax": {
+                "WEB": "var(--color-muted-content)"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

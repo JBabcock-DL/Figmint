@@ -30,9 +30,11 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/handoff/build.ts` — combines selection capture + components + tokens + layout into `HandoffContextV1`.
-2. Markdown rendering via WO-019: includes screenshot, frame URL, components used (table with Code Connect links), tokens-used list, auto-layout meta.
-3. Export sheet integration.
+1. `src/core/handoff/build.ts` — `buildHandoffContext()` orchestrating WO-034/035/036 into `HandoffContextV1`.
+2. Merge policy: union `tokensUsed` (sorted); aggregate `components` counts; `autoLayout` from **first** captured frame; `meta.frameUrl` from first deep link.
+3. Reuse WO-019 `format(doc, 'md'|'json')` and WO-020 **`ExportSheet` / `runExport`** — default sinks: **clipboard + markdown on**, others off.
+4. Main handler `handoff/capture` + messages in `src/io/messages/handoff.ts`; validate against `handoff-context.v1.schema.json` in tests.
+5. GitHub PR basename: `docs/fighub/handoff-{date}` (`defaultExportBasename`); warn when plugin-data export would exceed 100 kB screenshot payload.
 
 ### Visual / UX
 
@@ -100,6 +102,8 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.6 FR-HAND-5, §8.5
+- [Handoff emission + sinks research](research/handoff-context-v1-emission-to-all-sinks.md)
+- WO-019: `src/io/formats/markdown/handoffContext.ts` · WO-020: `ExportSheet`
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

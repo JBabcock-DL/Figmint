@@ -30,9 +30,11 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/codeconnect/templates/react.ts` — implements `MappingTemplate`.
-2. Output: one `.figma.tsx` per unmapped component, following the official `@figma/code-connect` package conventions.
-3. PR emission via WO-018 GitHub PR sink.
+1. **`src/core/codeconnect/templates/react.ts`** — full `MappingTemplate` (replaces WO-039 stub).
+2. **`src/core/codeconnect/detectUnmapped.ts`** — canvas/repo diff for components without `.figma.tsx`.
+3. **`src/core/codeconnect/emitCodeConnectPR.ts`** — batch stub generation + `executeGithubPRSink` (WO-018).
+4. Stub output: `@figma/code-connect` `figma.connect()` with node URL, prop metadata, placeholder `example`.
+5. Branch pattern: `fighub/code-connect-stubs-{date}`; one PR for entire batch (FR-CC-3).
 
 ### Visual / UX
 
@@ -101,6 +103,8 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.7 FR-CC-\*
+- Research: [React Code Connect stub generator](research/react-code-connect-stub-generator.md)
+- WO-039 interfaces research
 - Lift reference:
   - `c:/Users/jbabc/Documents/GitHub/DesignOps-plugin/skills/create-component/conventions/05-code-connect.md` — Code Connect conventions
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

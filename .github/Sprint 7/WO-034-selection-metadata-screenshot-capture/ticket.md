@@ -30,10 +30,12 @@ _Derived from Goal — see ticket-level scope._
 
 ### Functional
 
-1. `src/core/handoff/capture.ts` — `captureSelection(): SelectionCapture`.
-2. Uses `figma.currentPage.selection` + `node.exportAsync({ format: 'PNG' })`.
-3. Deep link constructed from current file key + node id.
-4. Multiple selection supported: returns array.
+1. `src/core/handoff/capture.ts` — async `captureSelection()` returning `CapturedFrame[]` aligned with `HandoffFrame` (contract fields only).
+2. Read `figma.currentPage.selection`; accept `FRAME`, `COMPONENT`, `INSTANCE`, `SECTION`; cap at **10** nodes with clear error beyond cap.
+3. PNG export via `exportAsync({ format: 'PNG' })` @ **1×** scale → `data:image/png;base64,...`.
+4. Deep link: `https://www.figma.com/design/{fileKey}/{fileName}?node-id={id-with-dashes}`; empty `deepLink` when `figma.fileKey` is blank (Untitled file) + warning in result.
+5. Multi-selection: one array entry per selected node; parallel `exportAsync` with `<1s` target for 1–3 typical frames.
+6. Export pure helpers `buildDeepLink()` and `pngToDataUrl()` for unit tests; barrel `src/core/handoff/index.ts`.
 
 ### Visual / UX
 
@@ -103,6 +105,8 @@ N/A — no Figma artifact (subsystem ticket)
 ## References
 
 - PRD: `Docs/PRD.md` §6.6 FR-HAND-1
+- [Selection metadata + screenshot capture research](research/selection-metadata-screenshot-capture.md)
+- Contract: `packages/contracts/src/handoffContext.v1.ts`
 - Lift reference:
   - _None — new code designed in PRD._
 - Plan source: `C:\Users\jbabc\.claude\plans\breakdown-the-plan-and-mellow-whale.md`

@@ -1,0 +1,9 @@
+{
+  "nodeId": "1:2",
+  "name": "Checkout",
+  "deepLink": "https://www.figma.com/design/abc123/My%20Design%20File?node-id=1-2",
+  "screenshot": {
+    "format": "png",
+    "dataUrl": "[PNG]"
+  }
+}

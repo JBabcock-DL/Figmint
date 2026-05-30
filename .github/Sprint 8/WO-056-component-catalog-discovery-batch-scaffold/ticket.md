@@ -32,11 +32,10 @@ WO-056 closes the product loop: **repo discovery → multiselect → queued scaf
 
 ### Functional
 
-1. **Discovery API (UI + GitHub):** Scan connected repo for component specs via GitHub Contents API / tree (configurable roots: `design/components/`, `design/component-specs/`, globs for `*.component-spec.v1.json`). Return sorted list `{ key, path, name }`.
-2. **Catalog panel (Components tab):** Replace mental-model gap left by sync-registry-only pick — new section **Browse repo components** with searchable multiselect checklist (not single `<select>`).
-3. **Batch scaffold queue:** For each selected item, resolve spec → preview optional → `scaffold/run` sequential or bounded-parallel with aggregate progress (`2/5 Button…`). Stop or continue on per-item failure (designer choice in plan).
-4. **Integration with WO-044:** React **Import from repo** (file picker) remains the deep path for un-spec'd source; catalog lists **spec files first**, import adds new specs to catalog on success.
-5. **Settings-only repo config:** Repo URL, tokens path, sync registry path stay in Settings (WO-027 UX lock); catalog reads session state only.
+1. **`src/io/github/catalogDiscovery.ts`** — Git tree walk; discover `*.component-spec.v1.json` under Settings `specsPath` + default globs.
+2. **`CatalogPanel.tsx`** — searchable multiselect on Components tab (**Browse repo components**).
+3. **`catalog/scaffold-batch`** message — sequential scaffold with `{ current, total, name, status }` progress; continue-on-error.
+4. Session refresh after WO-044 import adds new spec to catalog list.
 
 ### Visual / UX
 
@@ -82,4 +81,6 @@ WO-056 closes the product loop: **repo discovery → multiselect → queued scaf
 
 - WO-027 [registry-ux-intent](../Sprint%205/WO-027-components-tab-ui-forward-flow/research/registry-ux-intent.md)
 - [component-catalog-roadmap](../Sprint%205/research/component-catalog-roadmap.md)
+- Research: [Component catalog + batch scaffold](research/component-catalog-discovery-batch-scaffold.md)
+- [Sprint 8 research index](../research/sprint-8-research-index.md)
 - PRD §5.4 UC-4

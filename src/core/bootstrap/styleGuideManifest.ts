@@ -49,19 +49,4 @@ export const STYLE_GUIDE_PAGES: StyleGuidePageDef[] = [
     headerTitle: 'Effects',
     headerDescription: 'Shadow and elevation tokens — light and dark mode opacity variants.',
   },
-  {
-    pageSlug: 'token-overview',
-    displayTitle: '↳ Token Overview',
-    legacyNames: ['↳ Token Overview'],
-    headerTitle: 'Token Overview',
-    headerDescription: 'Architecture overview and platform codeSyntax mapping table.',
-  },
 ];
-
-export const TOKEN_OVERVIEW_ARCH_BOXES = [
-  'Primitives',
-  'Theme',
-  'Typography',
-  'Layout',
-  'Effects',
-] as const;

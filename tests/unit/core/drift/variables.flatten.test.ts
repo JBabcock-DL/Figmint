@@ -39,9 +39,9 @@ describe('flatten variable maps', () => {
     const flat = flattenRepoTokens(tokensMinimal);
     expect(flat['Primitives/color/neutral/100']).toBeDefined();
     expect(flat['Theme/color/background/default'].valuesByMode.Light).toEqual({
-      r: 0.96,
-      g: 0.96,
-      b: 0.96,
+      r: 245 / 255,
+      g: 245 / 255,
+      b: 245 / 255,
       a: 1,
     });
   });

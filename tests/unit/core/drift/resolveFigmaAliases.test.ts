@@ -102,9 +102,9 @@ describe('resolveFigmaAliases integration', () => {
     const resolved = flattenFigmaVariableSnapshots(collections, { resolveAliases: true });
     expect(resolved['Layout/space/md'].valuesByMode.Default).toBe(12);
     expect(resolved['Theme/color/background/default'].valuesByMode.Light).toEqual({
-      r: 0.08,
-      g: 0.08,
-      b: 0.08,
+      r: 20 / 255,
+      g: 20 / 255,
+      b: 20 / 255,
       a: 1,
     });
     expect(resolved['Documentation/doc/table/surface']).toBeUndefined();

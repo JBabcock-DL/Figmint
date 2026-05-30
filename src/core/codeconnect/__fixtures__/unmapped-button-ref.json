@@ -1,0 +1,21 @@
+{
+  "nodeId": "1:2",
+  "name": "Button",
+  "componentKey": "button",
+  "fileKey": "abc123",
+  "componentProperties": {
+    "Variant": {
+      "type": "VARIANT",
+      "defaultValue": "Default",
+      "variantOptions": ["Default", "Destructive"]
+    },
+    "Disabled": {
+      "type": "BOOLEAN",
+      "defaultValue": false
+    },
+    "Label": {
+      "type": "TEXT",
+      "defaultValue": "Button"
+    }
+  }
+}
