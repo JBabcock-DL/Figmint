@@ -1,4 +1,5 @@
 import { isSafeRepoPath } from '@/io/sources/github';
+import { detectContract } from '@/io/sources/detect';
 import {
   discoverCssThemePaths,
   discoverStyleDictionaryConfigPaths,
@@ -175,6 +176,21 @@ export async function detectTokenSource(
     return { source: source, classToVariable: {} };
   }
 
+  if (designTokensPath !== undefined && designTokensPath.length > 0) {
+    const fetched = await tryFetchPath(designTokensPath, fetchText);
+    if (fetched !== null) {
+      const contractKind = detectContract(fetched.text);
+      if (contractKind === 'tokens-dtcg' || contractKind === 'tokens-legacy') {
+        const source: DetectedSource = {
+          kind: 'dtcg-tokens',
+          path: designTokensPath,
+          configSha: fetched.sha,
+        };
+        return { source: source, classToVariable: {} };
+      }
+    }
+  }
+
   return null;
 }
 
@@ -193,6 +209,9 @@ export function formatDetectionLabel(source: DetectedSource | null): string {
   }
   if (source.kind === 'tokens-studio') {
     return 'Detected: Tokens Studio (' + source.path + ')';
+  }
+  if (source.kind === 'dtcg-tokens') {
+    return 'Detected: DTCG tokens (' + source.path + ') — class mapping uses defaults unless CSS/Tailwind is found';
   }
   return 'Not detected — using defaults';
 }

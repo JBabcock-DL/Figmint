@@ -1,9 +1,20 @@
-import { kebabCase } from '@/core/drift/componentKeys';
+import {
+  extractCatalogKey,
+  matchesCatalogPath,
+  normalizeSpecsPath,
+} from '@/io/github/componentSpecPaths';
 import { pluginLog } from '@/core/pluginLog';
 import { GitHubFlowError, mapGitHubHttpError } from '@/io/github/githubErrors';
 import { listAncestorDirectories } from '@/io/github/repoPathDiscovery';
 import { githubApiViaRelay, type GitHubRelayApiResponse } from '@/io/github/relayClient';
 import { parseOwnerRepo } from '@/io/github/repoUrl';
+
+export {
+  extractCatalogKey,
+  findComponentSpecPathInRepo,
+  matchesCatalogPath,
+  normalizeSpecsPath,
+} from '@/io/github/componentSpecPaths';
 
 export interface CatalogEntry {
   key: string;
@@ -32,18 +43,6 @@ export interface GitHubTreeEntry {
 }
 
 const TREE_CACHE_TTL_MS = 5 * 60 * 1000;
-const PATH_DENYLIST_SEGMENTS = ['node_modules', '.git'];
-const PATH_DENYLIST_FILES = ['package-lock.json', 'pnpm-lock.yaml', 'yarn.lock'];
-/** Broad `.v1.json` matches skip drift/registry/handoff fixtures (not component catalog). */
-const SPEC_V1_DENYLIST_SEGMENTS = [
-  '/drift/',
-  '/registry/',
-  '/handoff/',
-  '/audit/',
-  '/sinks/',
-  '/ui/export/',
-  '/io/sources/',
-];
 const CONTENTS_FALLBACK_MAX_DEPTH = 4;
 
 const treeCache = new Map<string, CatalogDiscoveryResult>();
@@ -91,17 +90,6 @@ async function githubGetWithRetry(path: string, token: string): Promise<GitHubRe
   return response;
 }
 
-export function normalizeSpecsPath(specsPath: string): string {
-  let base = specsPath;
-  if (base.length === 0) {
-    base = 'components/';
-  }
-  if (base.length > 0 && !base.endsWith('/')) {
-    base = base + '/';
-  }
-  return base;
-}
-
 function buildCacheKey(repoUrl: string, branch: string, specsPath: string): string {
   return repoUrl + '|' + branch + '|' + normalizeSpecsPath(specsPath);
 }
@@ -140,66 +128,6 @@ async function resolveBranchTreeSha(
   return readNestedStringField(commitResponse.body, 'tree', 'sha');
 }
 
-function isDeniedPath(path: string): boolean {
-  const segments = path.split('/');
-  for (let i = 0; i < segments.length; i++) {
-    for (let j = 0; j < PATH_DENYLIST_SEGMENTS.length; j++) {
-      if (segments[i] === PATH_DENYLIST_SEGMENTS[j]) {
-        return true;
-      }
-    }
-  }
-  const filename = segments[segments.length - 1];
-  for (let i = 0; i < PATH_DENYLIST_FILES.length; i++) {
-    if (filename === PATH_DENYLIST_FILES[i]) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function isUnderPrefix(path: string, prefix: string): boolean {
-  const normalized = prefix.endsWith('/') ? prefix : prefix + '/';
-  return path.startsWith(normalized);
-}
-
-function isDeniedSpecV1Path(path: string): boolean {
-  for (let i = 0; i < SPEC_V1_DENYLIST_SEGMENTS.length; i++) {
-    if (path.includes(SPEC_V1_DENYLIST_SEGMENTS[i])) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Discover component-spec JSON for all frameworks (react, vue, wc, swiftui, compose).
- * Framework is read from file content at scaffold time — never filtered here.
- */
-export function matchesCatalogPath(path: string, specsPath: string): boolean {
-  if (isDeniedPath(path)) {
-    return false;
-  }
-  if (path.endsWith('.component-spec.v1.json')) {
-    return true;
-  }
-  if (path.endsWith('.v1.json') && isUnderPrefix(path, 'design/component-specs')) {
-    return true;
-  }
-  if (
-    path.endsWith('.v1.json') &&
-    (path.includes('/component-spec/') || path.includes('/component-specs/')) &&
-    !isDeniedSpecV1Path(path)
-  ) {
-    return true;
-  }
-  const normalizedSpecs = normalizeSpecsPath(specsPath);
-  if (path.endsWith('.json') && isUnderPrefix(path, normalizedSpecs)) {
-    return true;
-  }
-  return false;
-}
-
 function extractFilenameStem(path: string): string {
   const segments = path.split('/');
   const filename = segments[segments.length - 1];
@@ -213,10 +141,6 @@ function extractFilenameStem(path: string): string {
     return filename.slice(0, -'.json'.length);
   }
   return filename;
-}
-
-export function extractCatalogKey(path: string): string {
-  return kebabCase(extractFilenameStem(path));
 }
 
 function buildCatalogEntry(path: string): CatalogEntry {

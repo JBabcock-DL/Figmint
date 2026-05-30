@@ -3,14 +3,16 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   detectTokenSource,
   formatDetectionLabel,
-} from '@/core/import';
+} from '@/core/import/shared/tokenResolver/detectSources';
 import type { TokenResolverFetchText } from '@/core/import/shared/tokenResolver/detectSources';
+import type { DetectedSource } from '@/core/import/shared/tokenResolver/types';
 import {
-  clearTokenResolverOverride,
-  loadTokenResolverOverride,
-  saveTokenResolverOverride,
-} from '@/io/github/tokenResolverStorage';
-import { postContentsFetch, postListRepoPaths } from '@/io/github/githubUiBridge';
+  postContentsFetch,
+  postListRepoPaths,
+  postTokenResolverOverrideClear,
+  postTokenResolverOverrideLoad,
+  postTokenResolverOverrideSave,
+} from '@/io/github/githubUiBridge';
 
 function fetchTextFromGitHub(repoUrl: string): TokenResolverFetchText {
   return async function (path: string) {
@@ -26,6 +28,12 @@ function fetchTextFromGitHub(repoUrl: string): TokenResolverFetchText {
   };
 }
 
+export interface TokenResolverSyncHint {
+  path: string;
+  kind: 'tokens-dtcg' | 'tokens-legacy';
+  count: number;
+}
+
 export interface UseTokenResolverSettingsResult {
   detectionLabel: string;
   overrideText: string;
@@ -36,9 +44,20 @@ export interface UseTokenResolverSettingsResult {
   refreshDetection: () => Promise<void>;
 }
 
+function detectionLabelFromSyncHint(hint: TokenResolverSyncHint): string {
+  const source: DetectedSource = {
+    kind: hint.kind === 'tokens-dtcg' ? 'dtcg-tokens' : 'tokens-studio',
+    path: hint.path,
+  };
+  const base = formatDetectionLabel(source);
+  return base + ' (' + String(hint.count) + ' tokens synced)';
+}
+
 export function useTokenResolverSettings(
   repoUrl: string,
   connected: boolean,
+  tokensPath?: string,
+  syncHint?: TokenResolverSyncHint,
 ): UseTokenResolverSettingsResult {
   const [detectionLabel, setDetectionLabel] = useState('Not detected — using defaults');
   const [overrideText, setOverrideText] = useState('{}');
@@ -52,15 +71,31 @@ export function useTokenResolverSettings(
     try {
       const fetchText = fetchTextFromGitHub(repoUrl);
       const repoPaths = await postListRepoPaths(repoUrl);
-      const detected = await detectTokenSource(repoUrl, fetchText, undefined, repoPaths);
-      setDetectionLabel(formatDetectionLabel(detected !== null ? detected.source : null));
-      console.debug('[token-resolver] detection', detected !== null ? detected.source.kind : 'none');
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const designTokensPath =
+        tokensPath !== undefined && tokensPath.length > 0 ? tokensPath : undefined;
+      const detected = await detectTokenSource(
+        repoUrl,
+        fetchText,
+        designTokensPath,
+        repoPaths,
+      );
+      if (detected !== null) {
+        setDetectionLabel(formatDetectionLabel(detected.source));
+        return;
+      }
+      if (syncHint !== undefined) {
+        setDetectionLabel(detectionLabelFromSyncHint(syncHint));
+        return;
+      }
       setDetectionLabel('Not detected — using defaults');
-      console.debug('[token-resolver] detection failed', message);
+    } catch {
+      if (syncHint !== undefined) {
+        setDetectionLabel(detectionLabelFromSyncHint(syncHint));
+        return;
+      }
+      setDetectionLabel('Not detected — using defaults');
     }
-  }, [connected, repoUrl]);
+  }, [connected, repoUrl, tokensPath, syncHint]);
 
   useEffect(
     function () {
@@ -70,16 +105,20 @@ export function useTokenResolverSettings(
         return;
       }
       void (async function () {
-        const stored = await loadTokenResolverOverride(repoUrl);
-        if (stored !== null) {
-          setOverrideText(JSON.stringify(stored.manualMap, null, 2));
-        } else {
+        try {
+          const manualMap = await postTokenResolverOverrideLoad(repoUrl);
+          if (manualMap !== null) {
+            setOverrideText(JSON.stringify(manualMap, null, 2));
+          } else {
+            setOverrideText('{}');
+          }
+        } catch {
           setOverrideText('{}');
         }
         await refreshDetection();
       })();
     },
-    [connected, repoUrl, refreshDetection],
+    [connected, repoUrl, tokensPath, syncHint, refreshDetection],
   );
 
   const saveOverride = useCallback(async function () {
@@ -99,9 +138,8 @@ export function useTokenResolverSettings(
       return;
     }
     try {
-      await saveTokenResolverOverride(repoUrl, parsed as Record<string, string>);
+      await postTokenResolverOverrideSave(repoUrl, parsed as Record<string, string>);
       setStatusMessage('Token resolver override saved.');
-      console.debug('[token-resolver] override saved', repoUrl);
       await refreshDetection();
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -113,11 +151,15 @@ export function useTokenResolverSettings(
     if (repoUrl.length === 0) {
       return;
     }
-    await clearTokenResolverOverride(repoUrl);
-    setOverrideText('{}');
-    setStatusMessage('Token resolver override cleared.');
-    console.debug('[token-resolver] override cleared', repoUrl);
-    await refreshDetection();
+    try {
+      await postTokenResolverOverrideClear(repoUrl);
+      setOverrideText('{}');
+      setStatusMessage('Token resolver override cleared.');
+      await refreshDetection();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setStatusMessage(message);
+    }
   }, [repoUrl, refreshDetection]);
 
   return {

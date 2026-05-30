@@ -124,7 +124,7 @@ export async function handleCodeConnectDetect(
     );
 
     const unmapped = detectResult.unmapped.map(mapToUiRef);
-    console.debug('[main] codeconnect/detect', { count: unmapped.length });
+    pluginLog('[main] codeconnect/detect', { count: unmapped.length });
     post({
       type: CODECONNECT_DETECT_RESULT,
       requestId: message.requestId,
@@ -228,7 +228,7 @@ export async function handleCodeConnectEmitPr(
       }
     }
 
-    console.debug('[main] codeconnect/emit-pr', {
+    pluginLog('[main] codeconnect/emit-pr', {
       stubCount: emitResult.stubs.length,
       prUrl: prUrl !== undefined ? prUrl : '',
     });

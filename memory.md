@@ -24,7 +24,7 @@ You **must** do this without the user having to ask:
 - **Project goal (one line):** **FigHub** — native Figma plugin for design system management, component architecture, and design token workflows — a **deterministic context bridge between agents** (zero LLM tokens inside the plugin)
 - **Ticket backend:** `github` — from `workflow.md` **## Ticket Backend** → Backend
 - **Default branch / PR target:** `main`
-- **Current sprint folder:** `.github/Sprint 8/` — **In Review** (WO-039..044 + WO-056). Build + automated VQA complete 2026-05-29; **938 tests pass**. User sandbox checklist: `.github/Sprint 8/research/sprint-8-user-checklist.md`. Do not mark **Completed** until designer sign-off on WO-044/WO-056 manual steps.
+- **Current sprint folder:** `.github/Sprint 8/` — **Completed** (WO-039..044 + WO-056). User sandbox VQA sign-off 2026-05-29; all Sprint 8 cards on Project #9 → **Completed**.
 - **Stack / runtimes:** Figma Plugin API, TypeScript strict, **Node 22 LTS** (`engines.node: ">=22.0.0"` — bumped from 20 during Sprint 1 research reconciliation; Node 20 EOL'd 2026-04-30; WO-003's JSON Schema generator + WO-004's ESLint 10 / typescript-eslint v8 both require ≥22), Vite (raw — locked WO-002); React 19 UI shell; planned workspace package `@detroitlabs/fighub-contracts`
 - **This repo is:** [FigHub](https://github.com/JBabcock-DL/FigHub) — native Figma plugin that supersedes the agent-driven `DesignOps-plugin` workflow
 - **Plugin display name:** **FigHub** (`manifest*.json` `name` field; Org build: `FigHub (Org)`)

@@ -1,6 +1,6 @@
 # VQA Report — WO-044
 
-**Date:** 2026-05-29 | **Recommendation:** **Ship (automated); user sandbox E2E for closure**
+**Date:** 2026-05-29 | **Recommendation:** **Ship — user sandbox sign-off 2026-05-29**
 
 ## Summary
 
@@ -8,7 +8,7 @@
 |------|------|------|---------|
 | Figma assertions (code) | 10 | 0 | — |
 | Functional (automated) | 4 | 0 | — |
-| Manual sandbox (Steps 27–28) | — | — | **User** |
+| Manual sandbox (Steps 27–28) | 2 | 0 | — |
 
 ## Figma source
 
@@ -33,8 +33,8 @@ See filled assertion table in `ticket.md`.
 
 ## Failures detail
 
-None (automated). Manual Plugin Sandbox import → scaffold → CC PR not run by agent.
+None (automated). Manual Plugin Sandbox import → scaffold → CC PR verified by user 2026-05-29.
 
 ## Recommendation
 
-**Ship** on automated evidence. **Completed** after user runs SPK-044-1/2 in [sprint-8-user-checklist.md](../../research/sprint-8-user-checklist.md).
+**Ship.** User confirmed all flows working in Plugin Sandbox; ticket moved to **Completed**.

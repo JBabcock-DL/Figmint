@@ -1,3 +1,5 @@
+import { pluginLog } from '@/core/pluginLog';
+
 import { resolveStubPath } from './resolveStubPath';
 import type { UnmappedComponentRef } from './types';
 
@@ -82,7 +84,7 @@ export async function detectUnmapped(
     unmapped.push(candidate);
   }
 
-  console.debug('[codeconnect] detectUnmapped', {
+  pluginLog('[codeconnect] detectUnmapped', {
     candidate: candidates.length,
     unmapped: unmapped.length,
     skippedMapped: skippedMapped,

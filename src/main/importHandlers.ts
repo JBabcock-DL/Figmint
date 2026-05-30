@@ -183,7 +183,7 @@ export async function handleImportListFiles(message: ImportListFilesMessage): Pr
       truncated: truncated,
       suggestedRoot: suggestedRoot,
     });
-    console.debug('[main] import/list-files', { count: files.length, truncated: truncated });
+    pluginLog('[main] import/list-files', { count: files.length, truncated: truncated });
   } catch (error) {
     post({
       type: IMPORT_LIST_FILES_RESULT,
@@ -306,7 +306,7 @@ export async function handleImportParse(message: ImportParseMessage): Promise<vo
       classToVariable: classToVariable,
       manualMap: manualMap,
     });
-    console.debug('[main] import/parse exec dispatched', { path: message.sourcePath });
+    pluginLog('[main] import/parse exec dispatched', { path: message.sourcePath });
   } catch (error) {
     post({
       type: IMPORT_PARSE_RESULT,
@@ -330,6 +330,6 @@ export function handleImportParseExecResult(message: ImportParseExecResultMessag
   };
   figma.ui.postMessage(result);
   if (message.ok && message.spec !== undefined) {
-    console.debug('[main] import/parse', { name: message.spec.name });
+    pluginLog('[main] import/parse', { name: message.spec.name });
   }
 }

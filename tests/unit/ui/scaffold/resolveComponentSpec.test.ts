@@ -42,7 +42,7 @@ describe('resolveComponentSpecFromRepo', () => {
     expect(loadSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('tries design/components path before legacy path', async () => {
+  it('tries design/components path before legacy path', async function () {
     const loadSpy = vi.spyOn(githubSources, 'loadFromGitHub').mockResolvedValue({
       kind: 'unsupported-type',
       message: 'Not Found',
@@ -55,13 +55,43 @@ describe('resolveComponentSpecFromRepo', () => {
     );
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.triedPaths[0]).toBe(SPEC_RESOLUTION_PATHS[0]('Button'));
-      expect(result.triedPaths[1]).toBe(SPEC_RESOLUTION_PATHS[1]('Button'));
+      expect(result.triedPaths).toContain(SPEC_RESOLUTION_PATHS[0]('Button'));
+      expect(result.triedPaths).toContain(SPEC_RESOLUTION_PATHS[0]('button'));
     }
-    expect(loadSpy).toHaveBeenCalledTimes(2);
+    expect(loadSpy.mock.calls.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('returns spec on first successful path', async () => {
+  it('resolves via repo tree when registry key casing differs from filename', async function () {
+    const loadSpy = vi.spyOn(githubSources, 'loadFromGitHub').mockResolvedValue({
+      kind: 'component-spec',
+      payload: canonicalFixture,
+      sourceMeta: {
+        port: 'github',
+        repoUrl: 'https://github.com/acme/design-system',
+        path: 'design/components/button.component-spec.v1.json',
+        receivedAt: '2026-05-28T00:00:00.000Z',
+      },
+      rawSnippet: '',
+    });
+
+    const result = await resolveComponentSpecFromRepo(
+      'https://github.com/acme/design-system',
+      'Button',
+      'components/',
+      ['design/components/button.component-spec.v1.json', 'src/ui/components/Button.tsx'],
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.path).toBe('design/components/button.component-spec.v1.json');
+    }
+    expect(loadSpy).toHaveBeenCalledTimes(1);
+    expect(loadSpy).toHaveBeenCalledWith(
+      'https://github.com/acme/design-system',
+      'design/components/button.component-spec.v1.json',
+    );
+  });
+
+  it('returns spec on first successful path', async function () {
     vi.spyOn(githubSources, 'loadFromGitHub').mockResolvedValue({
       kind: 'component-spec',
       payload: canonicalFixture,

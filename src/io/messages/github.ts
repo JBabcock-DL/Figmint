@@ -149,6 +149,47 @@ export interface GitHubRepoPathsListResultMessage {
   error?: string;
 }
 
+export interface GitHubTokenResolverLoadMessage {
+  type: 'github/token-resolver/load';
+  requestId: string;
+  repoUrl: string;
+}
+
+export interface GitHubTokenResolverLoadResultMessage {
+  type: 'github/token-resolver/load-result';
+  requestId: string;
+  ok: boolean;
+  manualMap?: Record<string, string>;
+  error?: string;
+}
+
+export interface GitHubTokenResolverSaveMessage {
+  type: 'github/token-resolver/save';
+  requestId: string;
+  repoUrl: string;
+  manualMap: Record<string, string>;
+}
+
+export interface GitHubTokenResolverSaveResultMessage {
+  type: 'github/token-resolver/save-result';
+  requestId: string;
+  ok: boolean;
+  error?: string;
+}
+
+export interface GitHubTokenResolverClearMessage {
+  type: 'github/token-resolver/clear';
+  requestId: string;
+  repoUrl: string;
+}
+
+export interface GitHubTokenResolverClearResultMessage {
+  type: 'github/token-resolver/clear-result';
+  requestId: string;
+  ok: boolean;
+  error?: string;
+}
+
 export interface GitHubErrorMessage {
   type: 'github/error';
   message: string;
@@ -165,7 +206,10 @@ export type GitHubMainMessage =
   | GitHubRepoFetchMessage
   | GitHubRepoPullMessage
   | GitHubRepoPushMessage
-  | GitHubRepoPathsListMessage;
+  | GitHubRepoPathsListMessage
+  | GitHubTokenResolverLoadMessage
+  | GitHubTokenResolverSaveMessage
+  | GitHubTokenResolverClearMessage;
 
 export type GitHubUiMessage =
   | GitHubOAuthDeviceCodeMessage
@@ -178,6 +222,9 @@ export type GitHubUiMessage =
   | GitHubRepoPullResultMessage
   | GitHubRepoPushResultMessage
   | GitHubRepoPathsListResultMessage
+  | GitHubTokenResolverLoadResultMessage
+  | GitHubTokenResolverSaveResultMessage
+  | GitHubTokenResolverClearResultMessage
   | GitHubErrorMessage;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -404,4 +451,71 @@ export function isGitHubRepoPathsListResultMessage(
     return false;
   }
   return message.type === 'github/repo/paths/result' && typeof message.requestId === 'string';
+}
+
+export function isGitHubTokenResolverLoadMessage(
+  message: unknown,
+): message is GitHubTokenResolverLoadMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return (
+    message.type === 'github/token-resolver/load' &&
+    typeof message.requestId === 'string' &&
+    typeof message.repoUrl === 'string'
+  );
+}
+
+export function isGitHubTokenResolverLoadResultMessage(
+  message: unknown,
+): message is GitHubTokenResolverLoadResultMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return message.type === 'github/token-resolver/load-result' && typeof message.requestId === 'string';
+}
+
+export function isGitHubTokenResolverSaveMessage(
+  message: unknown,
+): message is GitHubTokenResolverSaveMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return (
+    message.type === 'github/token-resolver/save' &&
+    typeof message.requestId === 'string' &&
+    typeof message.repoUrl === 'string' &&
+    isRecord(message.manualMap)
+  );
+}
+
+export function isGitHubTokenResolverSaveResultMessage(
+  message: unknown,
+): message is GitHubTokenResolverSaveResultMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return message.type === 'github/token-resolver/save-result' && typeof message.requestId === 'string';
+}
+
+export function isGitHubTokenResolverClearMessage(
+  message: unknown,
+): message is GitHubTokenResolverClearMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return (
+    message.type === 'github/token-resolver/clear' &&
+    typeof message.requestId === 'string' &&
+    typeof message.repoUrl === 'string'
+  );
+}
+
+export function isGitHubTokenResolverClearResultMessage(
+  message: unknown,
+): message is GitHubTokenResolverClearResultMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return message.type === 'github/token-resolver/clear-result' && typeof message.requestId === 'string';
 }

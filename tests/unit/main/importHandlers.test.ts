@@ -178,6 +178,33 @@ describe('importHandlers', () => {
     expect(posted.sourceText).toBe(buttonSource);
   });
 
+  it('does not post parse error when console.debug is unavailable on main thread', async function () {
+    const originalDebug = console.debug;
+    console.debug = undefined as unknown as typeof console.debug;
+    try {
+      await handleImportParse({
+        type: 'import/parse',
+        requestId: 'parse-no-debug',
+        repoUrl: 'https://github.com/acme/widgets',
+        sourcePath: 'components/ui/button.tsx',
+      });
+
+      const figmaGlobal = globalThis as {
+        figma: { ui: { postMessage: ReturnType<typeof vi.fn> } };
+      };
+      const calls = figmaGlobal.figma.ui.postMessage.mock.calls.map(function (call) {
+        return call[0];
+      });
+      const errorResults = calls.filter(function (msg) {
+        return msg.type === 'import/parse/result' && msg.ok === false;
+      });
+      expect(errorResults).toHaveLength(0);
+      expect(calls[0].type).toBe(IMPORT_PARSE_EXEC);
+    } finally {
+      console.debug = originalDebug;
+    }
+  });
+
   it('forwards UI parse exec result as import/parse/result', async function () {
     await handleImportParse({
       type: 'import/parse',

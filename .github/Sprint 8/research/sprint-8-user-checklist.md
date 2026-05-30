@@ -1,8 +1,6 @@
 # Sprint 8 — Figma plugin VQA checklist (Phase 4a)
 
-> **Agent status (2026-05-30):** Build + automated VQA complete. **944 tests pass** (2 skipped). CI green (`lint`, `typecheck`, `build`). Plugin load + UTF-8 fixes landed (`__HTML_B64__`, `decodeUtf8Bytes`, UI-thread import parse). Tickets on Project #9 → **In Review**.
->
-> **Your action:** Run the checklist below in Plugin Sandbox, check boxes, then move tickets to **Completed** on the board.
+> **Agent status (2026-05-29):** Build + automated VQA complete. User sandbox sign-off received — all checklist flows pass. Tickets on Project #9 → **Completed**.
 
 ## Before you start
 

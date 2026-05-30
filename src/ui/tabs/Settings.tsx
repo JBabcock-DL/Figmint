@@ -89,8 +89,6 @@ export function Settings({
   const [repoTokensWireFormat, setRepoTokensWireFormat] = useState<RepoTokensWireFormat>('dtcg');
   const [loadStatus, setLoadStatus] = useState('');
 
-  const tokenResolver = useTokenResolverSettings(repoUrl, github.connected);
-
   const sync = useRepoSync({
     repoUrl: repoUrl,
     connected: github.connected,
@@ -105,6 +103,25 @@ export function Settings({
     sync.resolvedConfig !== null && sync.resolvedConfig.tokensPath.length > 0
       ? sync.resolvedConfig.tokensPath
       : DEFAULT_TOKENS_PATH;
+
+  const tokenSyncHint =
+    repoTokens !== null
+      ? {
+          path: tokensPath,
+          kind:
+            repoTokensWireFormat === 'dtcg'
+              ? ('tokens-dtcg' as const)
+              : ('tokens-legacy' as const),
+          count: repoTokens.tokens.length,
+        }
+      : undefined;
+
+  const tokenResolver = useTokenResolverSettings(
+    repoUrl,
+    github.connected,
+    tokensPath,
+    tokenSyncHint,
+  );
 
   const applyLoadedTokens = useCallback(function (
     result: Awaited<ReturnType<typeof loadFromGitHub>>,

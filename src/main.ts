@@ -88,6 +88,9 @@ import {
   isGitHubOAuthStartMessage,
   isGitHubRepoFetchMessage,
   isGitHubRepoPathsListMessage,
+  isGitHubTokenResolverClearMessage,
+  isGitHubTokenResolverLoadMessage,
+  isGitHubTokenResolverSaveMessage,
   isGitHubRepoPullMessage,
   isGitHubRepoPushMessage,
   isGitHubTokenClearMessage,
@@ -101,6 +104,9 @@ import {
   type GitHubOAuthPollResultMessage,
   type GitHubRepoFetchResultMessage,
   type GitHubRepoPathsListResultMessage,
+  type GitHubTokenResolverClearResultMessage,
+  type GitHubTokenResolverLoadResultMessage,
+  type GitHubTokenResolverSaveResultMessage,
   type GitHubRepoPullResultMessage,
   type GitHubRepoPushResultMessage,
   type GitHubSessionLoadedMessage,
@@ -108,6 +114,11 @@ import {
 } from '@/io/messages/github';
 import { fetchRepoFileContents, GitHubAuthError, GitHubNotFoundError } from '@/io/github/contents';
 import { listRepoPathsForRepo } from '@/io/github/listRepoPaths';
+import {
+  clearTokenResolverOverride,
+  loadTokenResolverOverride,
+  saveTokenResolverOverride,
+} from '@/io/github/tokenResolverStorage';
 import { createPullRequestFlow } from '@/io/github/createPullRequestFlow';
 import { buildDefaultHeadBranch } from '@/io/github/branchName';
 import { renderDriftChangeTableMarkdown } from '@/core/drift/driftChangeSummary';
@@ -1020,6 +1031,74 @@ async function handleGitHubRepoPathsList(requestId: string, repoUrl: string): Pr
   }
 }
 
+async function handleGitHubTokenResolverLoad(requestId: string, repoUrl: string): Promise<void> {
+  try {
+    const normalized = normalizeRepoUrl(repoUrl);
+    const stored = await loadTokenResolverOverride(normalized);
+    const response: GitHubTokenResolverLoadResultMessage = {
+      type: 'github/token-resolver/load-result',
+      requestId: requestId,
+      ok: true,
+      manualMap: stored !== null ? stored.manualMap : undefined,
+    };
+    figma.ui.postMessage(response);
+  } catch (error) {
+    const errResponse: GitHubTokenResolverLoadResultMessage = {
+      type: 'github/token-resolver/load-result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+  }
+}
+
+async function handleGitHubTokenResolverSave(
+  requestId: string,
+  repoUrl: string,
+  manualMap: Record<string, string>,
+): Promise<void> {
+  try {
+    const normalized = normalizeRepoUrl(repoUrl);
+    await saveTokenResolverOverride(normalized, manualMap);
+    const response: GitHubTokenResolverSaveResultMessage = {
+      type: 'github/token-resolver/save-result',
+      requestId: requestId,
+      ok: true,
+    };
+    figma.ui.postMessage(response);
+  } catch (error) {
+    const errResponse: GitHubTokenResolverSaveResultMessage = {
+      type: 'github/token-resolver/save-result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+  }
+}
+
+async function handleGitHubTokenResolverClear(requestId: string, repoUrl: string): Promise<void> {
+  try {
+    const normalized = normalizeRepoUrl(repoUrl);
+    await clearTokenResolverOverride(normalized);
+    const response: GitHubTokenResolverClearResultMessage = {
+      type: 'github/token-resolver/clear-result',
+      requestId: requestId,
+      ok: true,
+    };
+    figma.ui.postMessage(response);
+  } catch (error) {
+    const errResponse: GitHubTokenResolverClearResultMessage = {
+      type: 'github/token-resolver/clear-result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+  }
+}
+
 async function handleGitHubContentsFetch(
   requestId: string,
   repoUrl: string,
@@ -1761,6 +1840,51 @@ figma.ui.onmessage = (message: unknown) => {
     handleGitHubRepoPathsList(message.requestId, message.repoUrl).catch(function (error: unknown) {
       const errResponse: GitHubRepoPathsListResultMessage = {
         type: 'github/repo/paths/result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
+  if (isGitHubTokenResolverLoadMessage(message)) {
+    handleGitHubTokenResolverLoad(message.requestId, message.repoUrl).catch(function (
+      error: unknown,
+    ) {
+      const errResponse: GitHubTokenResolverLoadResultMessage = {
+        type: 'github/token-resolver/load-result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
+  if (isGitHubTokenResolverSaveMessage(message)) {
+    handleGitHubTokenResolverSave(message.requestId, message.repoUrl, message.manualMap).catch(
+      function (error: unknown) {
+        const errResponse: GitHubTokenResolverSaveResultMessage = {
+          type: 'github/token-resolver/save-result',
+          requestId: message.requestId,
+          ok: false,
+          error: extractErrorMessage(error),
+        };
+        figma.ui.postMessage(errResponse);
+      },
+    );
+    return;
+  }
+
+  if (isGitHubTokenResolverClearMessage(message)) {
+    handleGitHubTokenResolverClear(message.requestId, message.repoUrl).catch(function (
+      error: unknown,
+    ) {
+      const errResponse: GitHubTokenResolverClearResultMessage = {
+        type: 'github/token-resolver/clear-result',
         requestId: message.requestId,
         ok: false,
         error: extractErrorMessage(error),

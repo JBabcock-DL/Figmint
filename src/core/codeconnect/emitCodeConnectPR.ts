@@ -1,4 +1,5 @@
 import { flags } from '@/config/flags';
+import { pluginLog } from '@/core/pluginLog';
 import { buildCodeConnectPrBody } from './prBodyCodeConnect';
 import { getMappingTemplate } from './registry';
 import { resolveStubPath } from './resolveStubPath';
@@ -86,7 +87,7 @@ export async function emitCodeConnectPR(
     stubs.push(stub);
   }
 
-  console.debug('[codeconnect] emitPR', {
+  pluginLog('[codeconnect] emitPR', {
     stubCount: stubs.length,
     truncated: truncated,
   });

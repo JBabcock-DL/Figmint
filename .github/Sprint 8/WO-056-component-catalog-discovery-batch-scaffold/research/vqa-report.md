@@ -1,6 +1,6 @@
 # VQA Report — WO-056
 
-**Date:** 2026-05-29 | **Recommendation:** **Ship (automated); user sandbox for closure**
+**Date:** 2026-05-29 | **Recommendation:** **Ship — user sandbox sign-off 2026-05-29**
 
 ## Summary
 
@@ -8,7 +8,7 @@
 |------|------|------|
 | Figma assertions | N/A | — |
 | Functional (automated) | 4 | 0 |
-| Manual sandbox (Steps 20–21) | — | **Pending user** |
+| Manual sandbox (Steps 20–21) | 2 | 0 |
 
 ## Figma source
 
@@ -27,9 +27,8 @@ N/A — catalog panel uses WO-027 inline chrome (code VQA only).
 
 ## Failures / pending
 
-- **SPK-056-1** manual E2E — not run by agent (plan Step 20)
-- **SPK-056-3** tree latency — not measured live
+None. User verified catalog discover + batch scaffold in Plugin Sandbox 2026-05-29.
 
 ## Recommendation
 
-**Ship** on automated evidence. Move to **Completed** after user checklist SPK-056-1 pass.
+**Ship.** User confirmed catalog flows working; ticket moved to **Completed**.

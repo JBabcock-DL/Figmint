@@ -6,6 +6,9 @@ import {
   isGitHubOAuthPollResultMessage,
   isGitHubRepoPathsListResultMessage,
   isGitHubSessionLoadedMessage,
+  isGitHubTokenResolverClearResultMessage,
+  isGitHubTokenResolverLoadResultMessage,
+  isGitHubTokenResolverSaveResultMessage,
   isGitHubTokenStatusMessage,
 } from '@/io/messages/github';
 import type { DeviceCodeResponse, DeviceTokenPollResult } from '@/io/github/deviceFlow';
@@ -22,6 +25,10 @@ interface PendingEntry {
   rejectContents?: (error: Error) => void;
   resolveRepoPaths?: (paths: string[]) => void;
   rejectRepoPaths?: (error: Error) => void;
+  resolveTokenResolverLoad?: (manualMap: Record<string, string> | null) => void;
+  rejectTokenResolverLoad?: (error: Error) => void;
+  resolveVoid?: () => void;
+  rejectVoid?: (error: Error) => void;
 }
 
 const pending = new Map<string, PendingEntry>();
@@ -109,6 +116,60 @@ export function registerGitHubMessageListener(): void {
       } else if (entry.rejectRepoPaths !== undefined) {
         entry.rejectRepoPaths(
           new Error(message.error !== undefined ? message.error : 'Repo path list failed'),
+        );
+      }
+      pending.delete(message.requestId);
+      return;
+    }
+
+    if (isGitHubTokenResolverLoadResultMessage(message)) {
+      const entry = pending.get(message.requestId);
+      if (entry === undefined) {
+        return;
+      }
+      if (message.ok) {
+        if (entry.resolveTokenResolverLoad !== undefined) {
+          entry.resolveTokenResolverLoad(message.manualMap !== undefined ? message.manualMap : null);
+        }
+      } else if (entry.rejectTokenResolverLoad !== undefined) {
+        entry.rejectTokenResolverLoad(
+          new Error(message.error !== undefined ? message.error : 'Token resolver load failed'),
+        );
+      }
+      pending.delete(message.requestId);
+      return;
+    }
+
+    if (isGitHubTokenResolverSaveResultMessage(message)) {
+      const entry = pending.get(message.requestId);
+      if (entry === undefined) {
+        return;
+      }
+      if (message.ok) {
+        if (entry.resolveVoid !== undefined) {
+          entry.resolveVoid();
+        }
+      } else if (entry.rejectVoid !== undefined) {
+        entry.rejectVoid(
+          new Error(message.error !== undefined ? message.error : 'Token resolver save failed'),
+        );
+      }
+      pending.delete(message.requestId);
+      return;
+    }
+
+    if (isGitHubTokenResolverClearResultMessage(message)) {
+      const entry = pending.get(message.requestId);
+      if (entry === undefined) {
+        return;
+      }
+      if (message.ok) {
+        if (entry.resolveVoid !== undefined) {
+          entry.resolveVoid();
+        }
+      } else if (entry.rejectVoid !== undefined) {
+        entry.rejectVoid(
+          new Error(message.error !== undefined ? message.error : 'Token resolver clear failed'),
         );
       }
       pending.delete(message.requestId);
@@ -311,6 +372,72 @@ export function postListRepoPaths(repoUrl: string): Promise<string[]> {
       {
         pluginMessage: {
           type: 'github/repo/paths/list',
+          requestId: requestId,
+          repoUrl: repoUrl,
+        },
+      },
+      '*',
+    );
+  });
+}
+
+export function postTokenResolverOverrideLoad(
+  repoUrl: string,
+): Promise<Record<string, string> | null> {
+  registerGitHubMessageListener();
+  const requestId = nextId('github-token-resolver-load');
+
+  return new Promise(function (resolve, reject) {
+    pending.set(requestId, {
+      resolveTokenResolverLoad: resolve,
+      rejectTokenResolverLoad: reject,
+    });
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'github/token-resolver/load',
+          requestId: requestId,
+          repoUrl: repoUrl,
+        },
+      },
+      '*',
+    );
+  });
+}
+
+export function postTokenResolverOverrideSave(
+  repoUrl: string,
+  manualMap: Record<string, string>,
+): Promise<void> {
+  registerGitHubMessageListener();
+  const requestId = nextId('github-token-resolver-save');
+
+  return new Promise(function (resolve, reject) {
+    pending.set(requestId, { resolveVoid: resolve, rejectVoid: reject });
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'github/token-resolver/save',
+          requestId: requestId,
+          repoUrl: repoUrl,
+          manualMap: manualMap,
+        },
+      },
+      '*',
+    );
+  });
+}
+
+export function postTokenResolverOverrideClear(repoUrl: string): Promise<void> {
+  registerGitHubMessageListener();
+  const requestId = nextId('github-token-resolver-clear');
+
+  return new Promise(function (resolve, reject) {
+    pending.set(requestId, { resolveVoid: resolve, rejectVoid: reject });
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'github/token-resolver/clear',
           requestId: requestId,
           repoUrl: repoUrl,
         },

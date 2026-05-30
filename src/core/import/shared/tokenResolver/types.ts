@@ -3,6 +3,7 @@ export type DetectedSourceKind =
   | 'tailwind-v4-css'
   | 'style-dictionary'
   | 'tokens-studio'
+  | 'dtcg-tokens'
   | 'none';
 
 export interface DetectedSource {

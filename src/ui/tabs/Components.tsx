@@ -15,6 +15,7 @@ import { CatalogPanel } from '@/ui/components/catalog/CatalogPanel';
 import { classifyComponentsIngest } from '@/ui/components/scaffold/ingestDocument';
 import { loadRegistryForComponentsTab } from '@/ui/components/scaffold/loadRegistryFromSnapshot';
 import { syncRegistryLoadedMessage } from '@/ui/components/scaffold/registryLoadMessages';
+import { postListRepoPaths } from '@/io/github/githubUiBridge';
 import { resolveComponentSpecFromRepo } from '@/ui/components/scaffold/resolveComponentSpec';
 import {
   countCompletedSteps,
@@ -190,7 +191,8 @@ export function Components({
         return;
       }
       setRegistryStatus('Resolving spec for ' + key + '…');
-      const resolved = await resolveComponentSpecFromRepo(repoUrl, key, specsPath);
+      const repoPaths = await postListRepoPaths(repoUrl);
+      const resolved = await resolveComponentSpecFromRepo(repoUrl, key, specsPath, repoPaths);
       if (!resolved.ok) {
         setRegistryStatus(resolved.message + ' Tried: ' + resolved.triedPaths.join(', '));
         return;
