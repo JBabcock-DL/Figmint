@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
@@ -33,15 +33,34 @@ export function ImportFromRepoSection(props: ImportFromRepoSectionProps) {
   const [selectedPath, setSelectedPath] = useState('');
   const [resolvedUnknowns, setResolvedUnknowns] = useState<Record<string, boolean>>({});
 
-  const rootPath = useMemo(
+  const defaultRootPath = useMemo(
     function () {
       return deriveComponentsRoot(props.specsPath);
     },
     [props.specsPath],
   );
-
+  const [importRootPath, setImportRootPath] = useState(defaultRootPath);
+  const [rootPathDirty, setRootPathDirty] = useState(false);
   const { state: listState, refresh: refreshFiles } = useImportListFiles(props.repoUrl);
   const { state: parseState, parse: runParse, reset: resetParse } = useImportParse();
+
+  useEffect(
+    function () {
+      if (!rootPathDirty) {
+        setImportRootPath(defaultRootPath);
+      }
+    },
+    [defaultRootPath, rootPathDirty],
+  );
+
+  useEffect(
+    function () {
+      if (!rootPathDirty && listState.suggestedRoot.length > 0) {
+        setImportRootPath(listState.suggestedRoot);
+      }
+    },
+    [listState.suggestedRoot, rootPathDirty],
+  );
 
   const handleResolveUnknown = useCallback(function (
     nodeName: string,
@@ -83,6 +102,26 @@ export function ImportFromRepoSection(props: ImportFromRepoSectionProps) {
 
       <FrameworkPicker value={framework} onChange={setFramework} />
 
+      <label style={{ display: 'block', fontSize: 10, color: '#666', marginBottom: 4 }}>
+        Source root path (auto-detected on refresh)
+        <input
+          type="text"
+          value={importRootPath}
+          onChange={function (event) {
+            setRootPathDirty(true);
+            setImportRootPath(event.target.value);
+          }}
+          style={{
+            display: 'block',
+            width: '100%',
+            boxSizing: 'border-box',
+            marginTop: 4,
+            fontSize: 11,
+            padding: '4px 6px',
+          }}
+        />
+      </label>
+
       {!props.github.connected ? (
         <div style={{ opacity: 0.6, pointerEvents: 'none' }}>
           <p style={{ color: '#666', fontSize: 11, margin: '0 0 8px' }}>
@@ -110,7 +149,7 @@ export function ImportFromRepoSection(props: ImportFromRepoSectionProps) {
             type="button"
             disabled={listState.loading}
             onClick={function () {
-              refreshFiles(rootPath, framework);
+              refreshFiles(importRootPath, framework);
             }}
             style={{
               border: '1px solid #ccc',
@@ -132,7 +171,7 @@ export function ImportFromRepoSection(props: ImportFromRepoSectionProps) {
 
           <FileBrowserList
             files={listState.files}
-            rootPath={rootPath}
+            rootPath={importRootPath}
             selectedPath={selectedPath}
             extensionLabel={extensionLabel}
             onSelect={function (path) {

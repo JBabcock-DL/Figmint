@@ -7,12 +7,14 @@ import { registerImportMessageListener } from '@/ui/import/importMessageListener
 export interface ImportListFilesState {
   loading: boolean;
   files: { path: string; name: string }[];
+  suggestedRoot: string;
   error: string;
 }
 
 const INITIAL_STATE: ImportListFilesState = {
   loading: false,
   files: [],
+  suggestedRoot: '',
   error: '',
 };
 
@@ -47,6 +49,8 @@ export function useImportListFiles(repoUrl: string): {
           setState({
             loading: false,
             files: message.files,
+            suggestedRoot:
+              message.suggestedRoot !== undefined ? message.suggestedRoot : '',
             error: '',
           });
           return;

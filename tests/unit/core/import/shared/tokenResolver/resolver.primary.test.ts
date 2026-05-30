@@ -20,6 +20,7 @@ describe('createTokenResolver primary', () => {
     const resolver = await createTokenResolverAsync({
       repoUrl: REPO,
       disableCache: true,
+      repoPaths: ['src/app/globals.css', 'design/tokens.json'],
       fetchText: async function (path: string) {
         if (path === 'src/app/globals.css') {
           return { text: v4 };

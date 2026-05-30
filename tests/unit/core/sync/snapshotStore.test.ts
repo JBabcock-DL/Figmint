@@ -118,6 +118,38 @@ describe('snapshotStore', () => {
     expect(registry.components.Button.version).toBe(2);
   });
 
+  it('reconciles repo registry fileKey with canvas fileKey before merge', () => {
+    persistSnapshot({
+      v: 1,
+      kind: 'snapshot',
+      fileKey: '',
+      updatedAt: '2026-05-28T00:00:00.000Z',
+      keys: {},
+      registry: { components: {} },
+    });
+
+    const componentSet = createMockComponentSet({ id: 'CS:1' });
+    const page = createMockPage();
+    page.name = '↳ Buttons';
+    const spec = buttonSpec as ComponentSpecV1;
+    const merged = upsertSnapshotRegistryEntry({
+      registry: {
+        v: 1,
+        kind: 'registry',
+        fileKey: 'cVdPraIafWFBRZnzMPhtrW',
+        components: {},
+      },
+      spec: spec,
+      scaffold: buildScaffoldResult(componentSet),
+      targetPage: asPageNode(page),
+      fileKey: 'cVdPraIafWFBRZnzMPhtrW',
+      now: new Date('2026-05-28T00:00:00.000Z'),
+    });
+
+    expect(merged.fileKey).toBe('cVdPraIafWFBRZnzMPhtrW');
+    expect(merged.components.Button.version).toBe(1);
+  });
+
   it('upsertSnapshotRegistryEntry persists merged registry', () => {
     const componentSet = createMockComponentSet({ id: 'CS:1' });
     const page = createMockPage();

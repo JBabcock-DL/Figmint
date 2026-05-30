@@ -44,6 +44,8 @@ export interface ImportListFilesResultMessage {
   ok: boolean;
   files: { path: string; name: string }[];
   truncated?: boolean;
+  /** Detected import root when client did not supply rootPath. */
+  suggestedRoot?: string;
   error?: string;
 }
 

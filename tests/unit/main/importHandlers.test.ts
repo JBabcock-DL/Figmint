@@ -16,6 +16,7 @@ const mockGetSyncState = vi.fn();
 const mockGithubApi = vi.fn();
 const mockFetchContents = vi.fn();
 const mockGetRegistry = vi.fn();
+const mockFetchRecursiveRepoPaths = vi.fn();
 
 vi.mock('@/io/github/storage', function () {
   return {
@@ -70,6 +71,19 @@ vi.mock('@/core/import/registry', function () {
   };
 });
 
+vi.mock('@/io/github/repoTree', function () {
+  return {
+    fetchRecursiveRepoPaths: function (
+      token: string,
+      owner: string,
+      repo: string,
+      ref: string,
+    ) {
+      return mockFetchRecursiveRepoPaths(token, owner, repo, ref);
+    },
+  };
+});
+
 vi.mock('@/core/import/shared/tokenResolver', async function (importOriginal) {
   const actual = await importOriginal<typeof import('@/core/import/shared/tokenResolver')>();
   return {
@@ -105,6 +119,7 @@ describe('importHandlers', () => {
       defaultBranch: 'main',
     });
     mockGetRegistry.mockReturnValue({ v: 1, kind: 'registry', fileKey: 'fk', components: {} });
+    mockFetchRecursiveRepoPaths.mockResolvedValue(['components/ui/button.tsx']);
     mockFetchContents.mockImplementation(async function (
       _token: string,
       _o: string,
@@ -124,23 +139,13 @@ describe('importHandlers', () => {
   });
 
   it('lists tsx files excluding test/story/figma paths', async function () {
-    mockGithubApi
-      .mockResolvedValueOnce({
-        ok: true,
-        body: { object: { sha: 'tree-sha' } },
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        body: {
-          tree: [
-            { path: 'src/components/button.tsx', type: 'blob' },
-            { path: 'src/components/button.test.tsx', type: 'blob' },
-            { path: 'src/components/button.stories.tsx', type: 'blob' },
-            { path: 'src/components/button.figma.tsx', type: 'blob' },
-            { path: 'src/components/card.tsx', type: 'blob' },
-          ],
-        },
-      });
+    mockFetchRecursiveRepoPaths.mockResolvedValue([
+      'src/components/button.tsx',
+      'src/components/button.test.tsx',
+      'src/components/button.stories.tsx',
+      'src/components/button.figma.tsx',
+      'src/components/card.tsx',
+    ]);
 
     await handleImportListFiles({
       type: 'import/list-files',

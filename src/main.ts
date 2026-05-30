@@ -87,6 +87,7 @@ import {
   isGitHubOAuthPollMessage,
   isGitHubOAuthStartMessage,
   isGitHubRepoFetchMessage,
+  isGitHubRepoPathsListMessage,
   isGitHubRepoPullMessage,
   isGitHubRepoPushMessage,
   isGitHubTokenClearMessage,
@@ -99,12 +100,14 @@ import {
   type GitHubOAuthDeviceCodeMessage,
   type GitHubOAuthPollResultMessage,
   type GitHubRepoFetchResultMessage,
+  type GitHubRepoPathsListResultMessage,
   type GitHubRepoPullResultMessage,
   type GitHubRepoPushResultMessage,
   type GitHubSessionLoadedMessage,
   type GitHubTokenStatusMessage,
 } from '@/io/messages/github';
 import { fetchRepoFileContents, GitHubAuthError, GitHubNotFoundError } from '@/io/github/contents';
+import { listRepoPathsForRepo } from '@/io/github/listRepoPaths';
 import { createPullRequestFlow } from '@/io/github/createPullRequestFlow';
 import { buildDefaultHeadBranch } from '@/io/github/branchName';
 import { renderDriftChangeTableMarkdown } from '@/core/drift/driftChangeSummary';
@@ -984,6 +987,39 @@ async function handleGitHubOAuthPoll(requestId: string, deviceCode: string): Pro
   }
 }
 
+async function handleGitHubRepoPathsList(requestId: string, repoUrl: string): Promise<void> {
+  try {
+    const normalized = normalizeRepoUrl(repoUrl);
+    const token = await getToken(normalized);
+    if (token === null) {
+      const errResponse: GitHubRepoPathsListResultMessage = {
+        type: 'github/repo/paths/result',
+        requestId: requestId,
+        ok: false,
+        error: 'GitHub is not connected for this repository.',
+      };
+      figma.ui.postMessage(errResponse);
+      return;
+    }
+    const paths = await listRepoPathsForRepo(normalized);
+    const response: GitHubRepoPathsListResultMessage = {
+      type: 'github/repo/paths/result',
+      requestId: requestId,
+      ok: true,
+      paths: [...paths],
+    };
+    figma.ui.postMessage(response);
+  } catch (error) {
+    const errResponse: GitHubRepoPathsListResultMessage = {
+      type: 'github/repo/paths/result',
+      requestId: requestId,
+      ok: false,
+      error: extractErrorMessage(error),
+    };
+    figma.ui.postMessage(errResponse);
+  }
+}
+
 async function handleGitHubContentsFetch(
   requestId: string,
   repoUrl: string,
@@ -1715,6 +1751,19 @@ figma.ui.onmessage = (message: unknown) => {
       const errResponse: GitHubErrorMessage = {
         type: 'github/error',
         message: extractErrorMessage(error),
+      };
+      figma.ui.postMessage(errResponse);
+    });
+    return;
+  }
+
+  if (isGitHubRepoPathsListMessage(message)) {
+    handleGitHubRepoPathsList(message.requestId, message.repoUrl).catch(function (error: unknown) {
+      const errResponse: GitHubRepoPathsListResultMessage = {
+        type: 'github/repo/paths/result',
+        requestId: message.requestId,
+        ok: false,
+        error: extractErrorMessage(error),
       };
       figma.ui.postMessage(errResponse);
     });

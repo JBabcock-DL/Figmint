@@ -211,4 +211,39 @@ describe('buildMatrix', () => {
     expect(priorRow).toBeDefined();
     expect(priorRow?.strokeBottomWeight ?? 0).toBe(1);
   });
+
+  it('builds a generic matrix for non-button variant axes', async () => {
+    const spec = {
+      v: 1,
+      kind: 'component-spec',
+      name: 'AlertBanner',
+      framework: 'vue',
+      archetype: 'surface-stack',
+      variantMatrix: { tone: ['info', 'warning'] },
+      props: [],
+      bindings: [],
+      layout: {
+        direction: 'vertical',
+        gap: '8',
+        padding: '16',
+        sizing: { horizontal: 'fill', vertical: 'hug' },
+      },
+    } as ComponentSpecV1;
+
+    const docRoot = createMockFrame({ name: 'doc/component/alert-banner', layoutMode: 'VERTICAL' });
+    const componentSet = createMockComponentSet();
+    const variantByKey: Record<string, ComponentNode> = {};
+    const tones = ['info', 'warning'];
+    for (let i = 0; i < tones.length; i++) {
+      const key = 'tone=' + tones[i];
+      const component = createMockComponent({ name: key });
+      component.createInstance = () => createMockInstanceWithOpacity() as unknown as InstanceNode;
+      variantByKey[key] = asComponentNode(component);
+    }
+
+    const matrixGroup = await buildMatrix(asFrameNode(docRoot), spec, componentSet, variantByKey);
+    const matrixGroupMock = matrixGroup as unknown as MockFrame;
+    const instances = matrixGroupMock.findAll((node) => node.type === 'INSTANCE');
+    expect(instances).toHaveLength(8);
+  });
 });

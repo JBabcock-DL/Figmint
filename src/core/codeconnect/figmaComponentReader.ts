@@ -71,6 +71,15 @@ function isComponentLike(node: BaseNode): node is ComponentNode | ComponentSetNo
   return node.type === 'COMPONENT' || node.type === 'COMPONENT_SET';
 }
 
+/** Variant masters inside a set cannot expose componentPropertyDefinitions — scan the set only. */
+function isScannableComponent(node: ComponentNode | ComponentSetNode): boolean {
+  if (node.type === 'COMPONENT_SET') {
+    return true;
+  }
+  const parent = node.parent;
+  return parent === null || parent.type !== 'COMPONENT_SET';
+}
+
 function walkPageComponents(page: PageNode, visit: (node: ComponentNode | ComponentSetNode) => void): void {
   function walk(node: BaseNode): void {
     if (isComponentLike(node)) {
@@ -103,6 +112,9 @@ export function collectUnmappedCandidates(
   const seenIds: Record<string, boolean> = {};
 
   function addCandidate(node: ComponentNode | ComponentSetNode): void {
+    if (!isScannableComponent(node)) {
+      return;
+    }
     if (seenIds[node.id]) {
       return;
     }

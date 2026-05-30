@@ -10,7 +10,11 @@ import {
   createDocSectionFrame,
   reassertDocSectionStretch,
 } from '@/core/components/scaffold/usageFrame';
-import { formatVariantName, sortAxisKeys } from '@/core/components/scaffold/variantMatrix';
+import {
+  expandVariantMatrix,
+  formatVariantName,
+  sortAxisKeys,
+} from '@/core/components/scaffold/variantMatrix';
 
 import { applyButtonStateOverride, type ButtonStateKey } from './applyStateOverride';
 import {
@@ -84,6 +88,165 @@ function variantLookupKey(variant: string, size: string): string {
   return formatVariantName({ variant, size });
 }
 
+function hasButtonMatrixAxes(matrix: Record<string, (string | boolean)[]>): boolean {
+  const variants = matrix.variant;
+  const sizes = matrix.size;
+  return (
+    Array.isArray(variants) &&
+    variants.length > 0 &&
+    Array.isArray(sizes) &&
+    sizes.length > 0
+  );
+}
+
+async function buildGenericMatrix(
+  docRoot: FrameNode,
+  spec: ComponentSpecV1,
+  variantByKey: Record<string, ComponentNode>,
+  docKey: string,
+): Promise<FrameNode> {
+  const expanded = expandVariantMatrix(spec.variantMatrix);
+  const matrixAxes = sortAxisKeys(spec.variantMatrix);
+  const gutter = GUTTER_W_SIZE + GUTTER_W_VARIANT;
+  const cellW = Math.floor((DOC_FRAME_WIDTH - gutter) / MATRIX_STATES.length);
+
+  const variableMap = await ensureLocalVariableMap();
+  const [docStyles, chrome] = await Promise.all([
+    resolveDocStyles(),
+    resolveDocPipelineChrome(variableMap),
+  ]);
+
+  const group = createDocSectionFrame(docMatrixGroupName(docKey), 'VERTICAL');
+  group.resize(DOC_FRAME_WIDTH, 1);
+  group.itemSpacing = 12;
+  bindDocFrameFill(group, chrome.bgDefault);
+  docRoot.appendChild(group);
+  reassertDocSectionStretch(group);
+
+  await appendDocAutoHeightText(group, {
+    name: 'title',
+    characters: SECTION_TITLE,
+    styleId: docStyles.Section,
+    width: DOC_FRAME_WIDTH,
+    fillVar: chrome.contentVar,
+  });
+  reassertDocSectionStretch(group);
+
+  const matrix = createDocSectionFrame(docMatrixRootName(docKey), 'VERTICAL');
+  matrix.resize(DOC_FRAME_WIDTH, 1);
+  matrix.cornerRadius = MATRIX_CORNER_RADIUS;
+  matrix.dashPattern = [...DASH_PATTERN];
+  matrix.fills = [];
+  applyDocStrokeSides(matrix, chrome.borderVar, { top: 1, right: 1, bottom: 1, left: 1 });
+  group.appendChild(matrix);
+  reassertDocSectionStretch(matrix);
+
+  const disabledStates = MATRIX_STATES.filter((state) => state.group === 'disabled');
+  if (disabledStates.length > 0) {
+    const hg = createFixedFrame('matrix/header-groups', 'HORIZONTAL', DOC_FRAME_WIDTH, 44);
+    hg.counterAxisAlignItems = 'CENTER';
+    applyDocStrokeSides(hg, chrome.borderVar, { bottom: 1 });
+    matrix.appendChild(hg);
+    hg.appendChild(createFixedFrame('gutter', 'HORIZONTAL', gutter, 44));
+  }
+
+  const hs = createFixedFrame('matrix/header-states', 'HORIZONTAL', DOC_FRAME_WIDTH, 40);
+  hs.counterAxisAlignItems = 'CENTER';
+  applyDocStrokeSides(hs, chrome.borderVar, { bottom: 1 });
+  matrix.appendChild(hs);
+  hs.appendChild(createFixedFrame('gutter', 'HORIZONTAL', gutter, 40));
+
+  for (let i = 0; i < MATRIX_STATES.length; i++) {
+    const state = MATRIX_STATES[i];
+    const stateCell = createFixedFrame(`cell/${state.key}`, 'HORIZONTAL', cellW, 40);
+    stateCell.primaryAxisAlignItems = 'CENTER';
+    stateCell.counterAxisAlignItems = 'CENTER';
+    hs.appendChild(stateCell);
+    await appendDocAutoHeightText(stateCell, {
+      characters: state.key,
+      styleId: docStyles.Caption,
+      width: cellW,
+      fillVar: chrome.mutedVar,
+      fillFallback: 'mutedText',
+      textAlign: 'CENTER',
+    });
+  }
+
+  const rowsStack = createStretchFrame('variant-rows', 'VERTICAL');
+  matrix.appendChild(rowsStack);
+
+  for (let vi = 0; vi < expanded.length; vi++) {
+    const entry = expanded[vi];
+    const isLastRow = vi === expanded.length - 1;
+    const row = createStretchFrame(`row/${entry.name}`, 'HORIZONTAL');
+    row.minHeight = 72;
+    row.counterAxisAlignItems = 'CENTER';
+    if (!isLastRow) {
+      applyDocStrokeSides(row, chrome.borderVar, { bottom: 1 });
+    }
+    rowsStack.appendChild(row);
+
+    const variantLabel = createFixedFrame(`row/${entry.name}/label`, 'VERTICAL', gutter, 1);
+    variantLabel.primaryAxisSizingMode = 'AUTO';
+    variantLabel.counterAxisSizingMode = 'FIXED';
+    variantLabel.minHeight = 72;
+    variantLabel.paddingLeft = 20;
+    variantLabel.paddingRight = 20;
+    variantLabel.primaryAxisAlignItems = 'CENTER';
+    variantLabel.counterAxisAlignItems = 'MIN';
+    variantLabel.layoutAlign = 'STRETCH';
+    row.appendChild(variantLabel);
+    await appendDocAutoHeightText(variantLabel, {
+      characters: entry.name,
+      styleId: docStyles.Caption,
+      width: gutter - 40,
+      fillVar: chrome.mutedVar,
+      fillFallback: 'mutedText',
+    });
+    reassertDocHugFrame(variantLabel);
+
+    for (let sti = 0; sti < MATRIX_STATES.length; sti++) {
+      const state = MATRIX_STATES[sti];
+      const cell = figma.createFrame();
+      cell.name = `cell/${entry.name}/${state.key}`;
+      cell.fills = [];
+      cell.layoutMode = 'HORIZONTAL';
+      resizeThenApplySizing(cell, cellW, 72, {
+        primaryAxisSizingMode: 'FIXED',
+        counterAxisSizingMode: 'AUTO',
+      });
+      cell.minHeight = 72;
+      cell.paddingLeft = 16;
+      cell.paddingRight = 16;
+      cell.paddingTop = 16;
+      cell.paddingBottom = 16;
+      cell.primaryAxisAlignItems = 'CENTER';
+      cell.counterAxisAlignItems = 'CENTER';
+      row.appendChild(cell);
+
+      const componentNode = variantByKey[entry.name];
+      if (componentNode !== undefined) {
+        const instance = componentNode.createInstance();
+        const props = comboToSetProperties(entry.combo, matrixAxes);
+        if (typeof instance.setProperties === 'function' && Object.keys(props).length > 0) {
+          try {
+            instance.setProperties(props);
+          } catch {
+            /* instance still uses variant master */
+          }
+        }
+        applyButtonStateOverride(instance, state.key);
+        cell.appendChild(instance);
+      }
+    }
+  }
+
+  reassertDocSectionStretch(matrix);
+  reassertDocHugFrame(matrix);
+  reassertDocSectionStretch(group);
+  return group;
+}
+
 /**
  * Section 4 — Variants × States matrix specimen. Lifted from `cc-doc-matrix-only.js` lines 1-148.
  */
@@ -94,6 +257,10 @@ export async function buildMatrix(
   variantByKey: Record<string, ComponentNode>,
 ): Promise<FrameNode> {
   const docKey = specNameToDocKey(spec.name);
+  if (!hasButtonMatrixAxes(spec.variantMatrix)) {
+    return buildGenericMatrix(docRoot, spec, variantByKey, docKey);
+  }
+
   const variants = spec.variantMatrix.variant as string[];
   const sizes = spec.variantMatrix.size as string[];
   const gutterSizeW = GUTTER_W_SIZE;

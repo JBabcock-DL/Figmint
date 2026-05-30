@@ -19,6 +19,7 @@ describe('tailwind v4 theme integration', () => {
     const resolver = await createTokenResolverAsync({
       repoUrl: REPO,
       disableCache: true,
+      repoPaths: ['src/app/globals.css'],
       fetchText: async function (path: string) {
         if (path === 'src/app/globals.css') {
           return { text: v4 };

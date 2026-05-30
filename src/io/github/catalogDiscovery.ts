@@ -1,6 +1,7 @@
 import { kebabCase } from '@/core/drift/componentKeys';
 import { pluginLog } from '@/core/pluginLog';
 import { GitHubFlowError, mapGitHubHttpError } from '@/io/github/githubErrors';
+import { listAncestorDirectories } from '@/io/github/repoPathDiscovery';
 import { githubApiViaRelay, type GitHubRelayApiResponse } from '@/io/github/relayClient';
 import { parseOwnerRepo } from '@/io/github/repoUrl';
 
@@ -372,39 +373,17 @@ async function discoverViaContentsFallback(
 ): Promise<GitHubTreeEntry[]> {
   const collected: GitHubTreeEntry[] = [];
   const specsRoot = normalizeSpecsPath(config.specsPath).replace(/\/$/, '');
-  await walkContentsPaths(repoPath, token, specsRoot, config.designSystemBranch, 0, collected);
-  await walkContentsPaths(
-    repoPath,
-    token,
-    'design/components',
-    config.designSystemBranch,
-    0,
-    collected,
-  );
-  await walkContentsPaths(
-    repoPath,
-    token,
-    'design/component-specs',
-    config.designSystemBranch,
-    0,
-    collected,
-  );
-  await walkContentsPaths(
-    repoPath,
-    token,
-    'tests/fixtures/component-spec',
-    config.designSystemBranch,
-    0,
-    collected,
-  );
-  await walkContentsPaths(
-    repoPath,
-    token,
-    'tests/fixtures/sandbox-import/design/components',
-    config.designSystemBranch,
-    0,
-    collected,
-  );
+  const walkRoots = listAncestorDirectories(specsRoot);
+  for (let i = 0; i < walkRoots.length; i++) {
+    await walkContentsPaths(
+      repoPath,
+      token,
+      walkRoots[i],
+      config.designSystemBranch,
+      0,
+      collected,
+    );
+  }
   return collected;
 }
 

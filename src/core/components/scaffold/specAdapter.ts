@@ -42,6 +42,9 @@ function findVariantAxisKey(spec: ComponentSpecV1): string | null {
   }
   for (let i = 0; i < keys.length; i++) {
     const values = spec.variantMatrix[keys[i]];
+    if (values === undefined || !Array.isArray(values)) {
+      continue;
+    }
     if (values.length > 0 && typeof values[0] === 'string') {
       return keys[i];
     }
@@ -100,6 +103,10 @@ export function buildStyleByVariantKey(
     return styleMap;
   }
   const values = spec.variantMatrix[axisKey];
+  if (values === undefined || !Array.isArray(values)) {
+    styleMap.default = { fill: ctx.fills.primary, text: ctx.fills.onPrimary };
+    return styleMap;
+  }
   for (let i = 0; i < values.length; i++) {
     const raw = values[i];
     const key = typeof raw === 'boolean' ? (raw ? 'true' : 'false') : String(raw);
@@ -121,9 +128,11 @@ export function projectBuildContext(
     options !== undefined && options.displayTitle !== undefined ? options.displayTitle : spec.name;
   const ctx = createScaffoldContext(spec, combo, variantName, options);
   ctx.displayTitle = displayTitle;
-  ctx.spacing.gap = parseNumericToken(spec.layout.gap, DEFAULT_SPACING.gap);
-  ctx.spacing.padH = parseNumericToken(spec.layout.padding, DEFAULT_SPACING.padH);
-  ctx.spacing.padV = parseNumericToken(spec.layout.padding, DEFAULT_SPACING.padV);
+  if (spec.layout !== undefined) {
+    ctx.spacing.gap = parseNumericToken(spec.layout.gap, DEFAULT_SPACING.gap);
+    ctx.spacing.padH = parseNumericToken(spec.layout.padding, DEFAULT_SPACING.padH);
+    ctx.spacing.padV = parseNumericToken(spec.layout.padding, DEFAULT_SPACING.padV);
+  }
   if (spec.iconSlots !== undefined && spec.iconSlots.size !== undefined) {
     ctx.spacing.iconSize = spec.iconSlots.size;
   }

@@ -152,26 +152,53 @@ export function persistSnapshot(snapshot: SnapshotV1): void {
 
 export function getRegistryFromSnapshot(): RegistryV1 {
   const snapshot = getSnapshot();
+  const canvasFileKey = readFileKey();
+  const fileKey =
+    canvasFileKey.length > 0
+      ? canvasFileKey
+      : snapshot.fileKey.length > 0
+        ? snapshot.fileKey
+        : '';
   return {
     v: 1,
     kind: 'registry',
-    fileKey: snapshot.fileKey,
+    fileKey: fileKey,
     components: snapshot.registry.components,
+  };
+}
+
+function reconcileRegistryToCanvasFileKey(
+  registry: RegistryV1,
+  canvasFileKey: string,
+): RegistryV1 {
+  if (canvasFileKey.length === 0 || registry.fileKey === canvasFileKey) {
+    return registry;
+  }
+  return {
+    v: registry.v,
+    kind: registry.kind,
+    fileKey: canvasFileKey,
+    components: registry.components,
   };
 }
 
 export function upsertSnapshotRegistryEntry(input: UpsertRegistryEntryInput): RegistryV1 {
   const snapshot = getSnapshot();
-  const baseRegistry = input.registry !== null ? input.registry : getRegistryFromSnapshot();
+  const canvasFileKey =
+    input.fileKey.length > 0 ? input.fileKey : snapshot.fileKey.length > 0 ? snapshot.fileKey : readFileKey();
+  const baseRegistry = reconcileRegistryToCanvasFileKey(
+    input.registry !== null ? input.registry : getRegistryFromSnapshot(),
+    canvasFileKey,
+  );
   const merged = upsertRegistryEntry({
     registry: baseRegistry,
     spec: input.spec,
     scaffold: input.scaffold,
     targetPage: input.targetPage,
-    fileKey: input.fileKey,
+    fileKey: canvasFileKey,
     now: input.now,
   });
-  const fileKey = input.fileKey.length > 0 ? input.fileKey : snapshot.fileKey;
+  const fileKey = canvasFileKey.length > 0 ? canvasFileKey : snapshot.fileKey;
   const nextSnapshot: SnapshotV1 = {
     v: 1,
     kind: 'snapshot',

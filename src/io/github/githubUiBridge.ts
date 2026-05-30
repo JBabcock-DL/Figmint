@@ -4,6 +4,7 @@ import {
   isGitHubErrorMessage,
   isGitHubOAuthDeviceCodeMessage,
   isGitHubOAuthPollResultMessage,
+  isGitHubRepoPathsListResultMessage,
   isGitHubSessionLoadedMessage,
   isGitHubTokenStatusMessage,
 } from '@/io/messages/github';
@@ -19,6 +20,8 @@ interface PendingEntry {
   resolvePoll?: (result: DeviceTokenPollResult) => void;
   resolveContents?: (result: { text: string; sha?: string }) => void;
   rejectContents?: (error: Error) => void;
+  resolveRepoPaths?: (paths: string[]) => void;
+  rejectRepoPaths?: (error: Error) => void;
 }
 
 const pending = new Map<string, PendingEntry>();
@@ -91,6 +94,24 @@ export function registerGitHubMessageListener(): void {
         entry.rejectContents(new Error(message.message));
         pending.delete(message.requestId);
       }
+      return;
+    }
+
+    if (isGitHubRepoPathsListResultMessage(message)) {
+      const entry = pending.get(message.requestId);
+      if (entry === undefined) {
+        return;
+      }
+      if (message.ok && message.paths !== undefined) {
+        if (entry.resolveRepoPaths !== undefined) {
+          entry.resolveRepoPaths(message.paths);
+        }
+      } else if (entry.rejectRepoPaths !== undefined) {
+        entry.rejectRepoPaths(
+          new Error(message.error !== undefined ? message.error : 'Repo path list failed'),
+        );
+      }
+      pending.delete(message.requestId);
     }
   });
 }
@@ -273,6 +294,25 @@ export function postContentsFetch(input: {
           repoUrl: input.repoUrl,
           path: input.path,
           ref: input.ref,
+        },
+      },
+      '*',
+    );
+  });
+}
+
+export function postListRepoPaths(repoUrl: string): Promise<string[]> {
+  registerGitHubMessageListener();
+  const requestId = nextId('github-repo-paths');
+
+  return new Promise(function (resolve, reject) {
+    pending.set(requestId, { resolveRepoPaths: resolve, rejectRepoPaths: reject });
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'github/repo/paths/list',
+          requestId: requestId,
+          repoUrl: repoUrl,
         },
       },
       '*',

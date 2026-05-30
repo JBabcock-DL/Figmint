@@ -8,7 +8,6 @@ import { buildTokenResolverClassMap } from '@/core/import/shared/tokenResolver';
 import { pluginLog } from '@/core/pluginLog';
 import { getRegistryFromSnapshot } from '@/core/sync/snapshotStore';
 import { fetchRepoFileContents, GitHubNotFoundError } from '@/io/github/contents';
-import { githubApiViaRelay } from '@/io/github/relayClient';
 import { validateGitHubRepoUrl } from '@/io/github/githubUiBridge';
 import { normalizeRepoUrl, parseOwnerRepo } from '@/io/github/repoUrl';
 import { loadTokenResolverOverride } from '@/io/github/tokenResolverStorage';
@@ -38,8 +37,11 @@ function extractErrorMessage(error: unknown): string {
   return String(error);
 }
 
-import { deriveComponentsRoot } from '@/core/import/shared/deriveComponentsRoot';
+import { discoverImportSourceRoot } from '@/io/github/repoPathDiscovery';
+import { fetchRecursiveRepoPaths } from '@/io/github/repoTree';
 import { getSyncState, getToken } from '@/io/github/storage';
+
+export { fetchRecursiveRepoPaths } from '@/io/github/repoTree';
 
 function basename(path: string): string {
   const parts = path.split('/');
@@ -59,112 +61,6 @@ function normalizeRootPrefix(rootPath: string): string {
     normalized = normalized + '/';
   }
   return normalized;
-}
-
-function readDefaultBranch(body: unknown): string {
-  if (!isRecord(body)) {
-    return 'main';
-  }
-  const branch = body.default_branch;
-  if (typeof branch === 'string' && branch.length > 0) {
-    return branch;
-  }
-  return 'main';
-}
-
-function readRefTreeSha(body: unknown): string | null {
-  if (!isRecord(body)) {
-    return null;
-  }
-  const object = body.object;
-  if (isRecord(object) && typeof object.sha === 'string' && object.sha.length > 0) {
-    return object.sha;
-  }
-  return readTreeSha(body);
-}
-
-function readTreeSha(body: unknown): string | null {
-  if (!isRecord(body)) {
-    return null;
-  }
-  const commit = body.commit;
-  if (!isRecord(commit)) {
-    return null;
-  }
-  const tree = commit.tree;
-  if (!isRecord(tree)) {
-    return null;
-  }
-  if (typeof tree.sha === 'string' && tree.sha.length > 0) {
-    return tree.sha;
-  }
-  return null;
-}
-
-interface GitHubTreeEntry {
-  path?: string;
-  type?: string;
-}
-
-export async function fetchRecursiveRepoPaths(
-  token: string,
-  owner: string,
-  repo: string,
-  ref: string,
-): Promise<string[]> {
-  const repoPath = '/repos/' + owner + '/' + repo;
-  const refResponse = await githubApiViaRelay(
-    'GET',
-    repoPath + '/git/ref/heads/' + encodeURIComponent(ref),
-    token,
-  );
-  let treeSha: string | null = null;
-  if (refResponse.ok && refResponse.body !== undefined) {
-    treeSha = readRefTreeSha(refResponse.body);
-  }
-
-  if (treeSha === null) {
-    const repoResponse = await githubApiViaRelay('GET', repoPath, token);
-    const defaultBranch =
-      repoResponse.ok && repoResponse.body !== undefined
-        ? readDefaultBranch(repoResponse.body)
-        : ref;
-    const branchRef = await githubApiViaRelay(
-      'GET',
-      repoPath + '/git/ref/heads/' + encodeURIComponent(defaultBranch),
-      token,
-    );
-    if (branchRef.ok && branchRef.body !== undefined) {
-      treeSha = readRefTreeSha(branchRef.body);
-    }
-  }
-
-  if (treeSha === null) {
-    throw new Error('Could not resolve Git tree for repository.');
-  }
-
-  const treeResponse = await githubApiViaRelay(
-    'GET',
-    repoPath + '/git/trees/' + treeSha + '?recursive=1',
-    token,
-  );
-  if (!treeResponse.ok || !isRecord(treeResponse.body)) {
-    throw new Error('GitHub tree request failed.');
-  }
-
-  const treeEntries = treeResponse.body.tree;
-  if (!Array.isArray(treeEntries)) {
-    return [];
-  }
-
-  const paths: string[] = [];
-  for (let i = 0; i < treeEntries.length; i++) {
-    const entry = treeEntries[i] as GitHubTreeEntry;
-    if (entry.type === 'blob' && typeof entry.path === 'string') {
-      paths.push(entry.path);
-    }
-  }
-  return paths;
 }
 
 function deriveFigmaMappingPath(sourcePath: string): string {
@@ -233,12 +129,6 @@ export async function handleImportListFiles(message: ImportListFilesMessage): Pr
       syncState.resolvedConfig.specsPath.length > 0
         ? syncState.resolvedConfig.specsPath
         : undefined;
-    const rootPath = normalizeRootPrefix(
-      message.rootPath !== undefined && message.rootPath.length > 0
-        ? message.rootPath
-        : deriveComponentsRoot(specsPath),
-    );
-
     const ownerRepo = parseOwnerRepo(normalized);
     const ref =
       syncState !== null && syncState.defaultBranch.length > 0
@@ -252,8 +142,15 @@ export async function handleImportListFiles(message: ImportListFilesMessage): Pr
       ref,
     );
 
-    const matched: { path: string; name: string }[] = [];
     const framework = resolveImportFramework(message);
+    const suggestedRoot = discoverImportSourceRoot(allPaths, framework, specsPath);
+    const rootPath = normalizeRootPrefix(
+      message.rootPath !== undefined && message.rootPath.length > 0
+        ? message.rootPath
+        : suggestedRoot,
+    );
+
+    const matched: { path: string; name: string }[] = [];
     for (let i = 0; i < allPaths.length; i++) {
       const path = allPaths[i];
       if (!path.startsWith(rootPath)) {
@@ -284,6 +181,7 @@ export async function handleImportListFiles(message: ImportListFilesMessage): Pr
       ok: true,
       files: files,
       truncated: truncated,
+      suggestedRoot: suggestedRoot,
     });
     console.debug('[main] import/list-files', { count: files.length, truncated: truncated });
   } catch (error) {
@@ -375,6 +273,18 @@ export async function handleImportParse(message: ImportParseMessage): Promise<vo
       }
     };
 
+    const syncState = await getSyncState(normalized);
+    const ref =
+      syncState !== null && syncState.defaultBranch.length > 0
+        ? syncState.defaultBranch
+        : 'main';
+    const repoPaths = await fetchRecursiveRepoPaths(
+      token.accessToken,
+      ownerRepo.owner,
+      ownerRepo.repo,
+      ref,
+    );
+
     const tokenResolverOverride = await loadTokenResolverOverride(normalized);
     const manualMap =
       tokenResolverOverride !== null ? tokenResolverOverride.manualMap : undefined;
@@ -383,6 +293,7 @@ export async function handleImportParse(message: ImportParseMessage): Promise<vo
       repoUrl: normalized,
       manualMap: manualMap,
       fetchText: fetchText,
+      repoPaths: repoPaths,
     });
 
     figma.ui.postMessage({

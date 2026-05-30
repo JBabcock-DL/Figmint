@@ -1,4 +1,10 @@
 import { isSafeRepoPath } from '@/io/sources/github';
+import {
+  discoverCssThemePaths,
+  discoverStyleDictionaryConfigPaths,
+  discoverTailwindConfigPaths,
+  discoverTokensJsonPaths,
+} from '@/io/github/repoPathDiscovery';
 
 import { readCssThemeSource } from './cssThemeReader';
 import { readStyleDictionarySource } from './styleDictionaryReader';
@@ -14,27 +20,6 @@ import type { DetectedSource, DetectedSourceKind } from './types';
 export type TokenResolverFetchText = (
   path: string,
 ) => Promise<{ text: string; sha?: string } | null>;
-
-const TAILWIND_CONFIG_PATHS = [
-  'tailwind.config.js',
-  'tailwind.config.ts',
-  'tailwind.config.mjs',
-  'tailwind.config.cjs',
-];
-
-const CSS_THEME_PATHS = [
-  'src/app/globals.css',
-  'app/globals.css',
-  'src/styles/globals.css',
-  'tokens.css',
-  'design/tokens.css',
-];
-
-const STYLE_DICTIONARY_PATHS = ['style-dictionary.config.js', 'style-dictionary.config.json'];
-
-const TOKENS_STUDIO_PATHS = ['tokens.json', 'design/tokens.json'];
-
-const DESIGN_TOKENS_PATHS = ['design/tokens.json'];
 
 export interface DetectTokenSourceResult {
   source: DetectedSource;
@@ -55,13 +40,14 @@ async function tryFetchPath(
 }
 
 function kindForPath(path: string): DetectedSourceKind {
-  if (path.startsWith('tailwind.config')) {
+  const base = path.split('/').pop() ?? path;
+  if (base.startsWith('tailwind.config')) {
     return 'tailwind-v3-config';
   }
-  if (path.startsWith('style-dictionary')) {
+  if (base.startsWith('style-dictionary.config')) {
     return 'style-dictionary';
   }
-  if (path === 'tokens.json' || path === 'design/tokens.json') {
+  if (base === 'tokens.json') {
     return 'tokens-studio';
   }
   return 'tailwind-v4-css';
@@ -70,12 +56,21 @@ function kindForPath(path: string): DetectedSourceKind {
 async function loadDesignTokenMap(
   fetchText: TokenResolverFetchText | undefined,
   designTokensPath: string | undefined,
+  repoPaths: readonly string[] | undefined,
 ): Promise<Record<string, string>> {
   const map = buildDefaultCanonicalMap();
-  const paths =
-    designTokensPath !== undefined && designTokensPath.length > 0
-      ? [designTokensPath]
-      : DESIGN_TOKENS_PATHS;
+  const paths: string[] = [];
+  if (designTokensPath !== undefined && designTokensPath.length > 0) {
+    paths.push(designTokensPath);
+  }
+  if (repoPaths !== undefined) {
+    const discovered = discoverTokensJsonPaths(repoPaths);
+    for (let i = 0; i < discovered.length; i++) {
+      if (paths.indexOf(discovered[i]) < 0) {
+        paths.push(discovered[i]);
+      }
+    }
+  }
   for (let i = 0; i < paths.length; i++) {
     const path = paths[i];
     const fetched = await tryFetchPath(path, fetchText);
@@ -101,11 +96,14 @@ export async function detectTokenSource(
   _repoUrl: string,
   fetchText: TokenResolverFetchText | undefined,
   designTokensPath?: string,
+  repoPaths?: readonly string[],
 ): Promise<DetectTokenSourceResult | null> {
-  const designTokenMap = await loadDesignTokenMap(fetchText, designTokensPath);
+  const designTokenMap = await loadDesignTokenMap(fetchText, designTokensPath, repoPaths);
+  const paths = repoPaths !== undefined ? repoPaths : [];
 
-  for (let i = 0; i < TAILWIND_CONFIG_PATHS.length; i++) {
-    const path = TAILWIND_CONFIG_PATHS[i];
+  const tailwindCandidates = discoverTailwindConfigPaths(paths);
+  for (let i = 0; i < tailwindCandidates.length; i++) {
+    const path = tailwindCandidates[i];
     const fetched = await tryFetchPath(path, fetchText);
     if (fetched === null) {
       continue;
@@ -125,8 +123,9 @@ export async function detectTokenSource(
     };
   }
 
-  for (let c = 0; c < CSS_THEME_PATHS.length; c++) {
-    const path = CSS_THEME_PATHS[c];
+  const cssCandidates = discoverCssThemePaths(paths);
+  for (let c = 0; c < cssCandidates.length; c++) {
+    const path = cssCandidates[c];
     const fetched = await tryFetchPath(path, fetchText);
     if (fetched === null) {
       continue;
@@ -146,8 +145,9 @@ export async function detectTokenSource(
     };
   }
 
-  for (let s = 0; s < STYLE_DICTIONARY_PATHS.length; s++) {
-    const path = STYLE_DICTIONARY_PATHS[s];
+  const styleDictionaryCandidates = discoverStyleDictionaryConfigPaths(paths);
+  for (let s = 0; s < styleDictionaryCandidates.length; s++) {
+    const path = styleDictionaryCandidates[s];
     const fetched = await tryFetchPath(path, fetchText);
     if (fetched === null) {
       continue;
@@ -160,8 +160,9 @@ export async function detectTokenSource(
     return { source: source, classToVariable: {} };
   }
 
-  for (let t = 0; t < TOKENS_STUDIO_PATHS.length; t++) {
-    const path = TOKENS_STUDIO_PATHS[t];
+  const tokensStudioCandidates = discoverTokensJsonPaths(paths);
+  for (let t = 0; t < tokensStudioCandidates.length; t++) {
+    const path = tokensStudioCandidates[t];
     const fetched = await tryFetchPath(path, fetchText);
     if (fetched === null) {
       continue;

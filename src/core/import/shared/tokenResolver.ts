@@ -14,6 +14,8 @@ export interface TokenResolverOptions {
   repoUrl: string;
   manualMap?: Record<string, string>;
   designTokensPath?: string;
+  /** Repo-relative blob paths from Git tree — drives auto-detection. */
+  repoPaths?: readonly string[];
   /** Injected fetch for tests and UI detection refresh. */
   fetchText?: TokenResolverFetchText;
   /** Pre-built auto-detect map (skips detection when provided). */
@@ -66,6 +68,7 @@ export async function buildTokenResolverClassMap(
     options.repoUrl,
     options.fetchText,
     options.designTokensPath,
+    options.repoPaths,
   );
   if (detected === null) {
     return options.classToVariable !== undefined ? options.classToVariable : {};

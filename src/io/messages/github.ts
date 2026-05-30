@@ -135,6 +135,20 @@ export interface GitHubContentsErrorMessage {
   message: string;
 }
 
+export interface GitHubRepoPathsListMessage {
+  type: 'github/repo/paths/list';
+  requestId: string;
+  repoUrl: string;
+}
+
+export interface GitHubRepoPathsListResultMessage {
+  type: 'github/repo/paths/result';
+  requestId: string;
+  ok: boolean;
+  paths?: string[];
+  error?: string;
+}
+
 export interface GitHubErrorMessage {
   type: 'github/error';
   message: string;
@@ -150,7 +164,8 @@ export type GitHubMainMessage =
   | GitHubContentsFetchMessage
   | GitHubRepoFetchMessage
   | GitHubRepoPullMessage
-  | GitHubRepoPushMessage;
+  | GitHubRepoPushMessage
+  | GitHubRepoPathsListMessage;
 
 export type GitHubUiMessage =
   | GitHubOAuthDeviceCodeMessage
@@ -162,6 +177,7 @@ export type GitHubUiMessage =
   | GitHubRepoFetchResultMessage
   | GitHubRepoPullResultMessage
   | GitHubRepoPushResultMessage
+  | GitHubRepoPathsListResultMessage
   | GitHubErrorMessage;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -366,4 +382,26 @@ export function isGitHubErrorMessage(message: unknown): message is GitHubErrorMe
     return false;
   }
   return message.type === 'github/error' && typeof message.message === 'string';
+}
+
+export function isGitHubRepoPathsListMessage(
+  message: unknown,
+): message is GitHubRepoPathsListMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return (
+    message.type === 'github/repo/paths/list' &&
+    typeof message.requestId === 'string' &&
+    typeof message.repoUrl === 'string'
+  );
+}
+
+export function isGitHubRepoPathsListResultMessage(
+  message: unknown,
+): message is GitHubRepoPathsListResultMessage {
+  if (!isRecord(message)) {
+    return false;
+  }
+  return message.type === 'github/repo/paths/result' && typeof message.requestId === 'string';
 }

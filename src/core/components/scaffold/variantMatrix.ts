@@ -49,6 +49,9 @@ export function expandVariantMatrix(
     }
     const axisKey = keys[index];
     const values = matrix[axisKey];
+    if (values === undefined || !Array.isArray(values)) {
+      return;
+    }
     for (let v = 0; v < values.length; v++) {
       combo[axisKey] = values[v];
       recurse(index + 1, combo);
@@ -112,6 +115,9 @@ export function expectedVariantCount(matrix: Record<string, (string | boolean)[]
   let count = 1;
   for (let i = 0; i < keys.length; i++) {
     const values = matrix[keys[i]];
+    if (values === undefined || !Array.isArray(values) || values.length === 0) {
+      return 0;
+    }
     count *= values.length;
   }
   return count;

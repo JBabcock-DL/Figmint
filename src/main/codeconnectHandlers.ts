@@ -20,7 +20,7 @@ import {
   CODECONNECT_EMIT_PR_RESULT,
   CODECONNECT_EMIT_PR_UI_RESULT,
 } from '@/io/messages/codeconnect';
-import { fetchRecursiveRepoPaths } from '@/main/importHandlers';
+import { listRepoPathsForRepo } from '@/io/github/listRepoPaths';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -42,22 +42,7 @@ function mapToUiRef(ref: CoreUnmappedRef): UnmappedComponentRef {
 }
 
 export async function listRepoPathsForDetect(repoUrl: string): Promise<readonly string[]> {
-  try {
-    const normalized = normalizeRepoUrl(repoUrl);
-    const token = await getToken(normalized);
-    if (token === null) {
-      return [];
-    }
-    const ownerRepo = parseOwnerRepo(normalized);
-    const syncState = await getSyncState(normalized);
-    const ref =
-      syncState !== null && syncState.defaultBranch.length > 0
-        ? syncState.defaultBranch
-        : 'main';
-    return fetchRecursiveRepoPaths(token.accessToken, ownerRepo.owner, ownerRepo.repo, ref);
-  } catch {
-    return [];
-  }
+  return listRepoPathsForRepo(repoUrl);
 }
 
 async function resolveRepoContext(repoUrl: string): Promise<{

@@ -39,7 +39,7 @@ describe('FileBrowserList', () => {
 
     await user.type(screen.getByRole('searchbox'), 'missing');
     await waitFor(function () {
-      expect(screen.getByText(/No \.tsx files found under src\//)).toBeTruthy();
+      expect(screen.getByText(/No matching files found under src\//)).toBeTruthy();
     });
   });
 });

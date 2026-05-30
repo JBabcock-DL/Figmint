@@ -10,7 +10,7 @@ import {
   loadTokenResolverOverride,
   saveTokenResolverOverride,
 } from '@/io/github/tokenResolverStorage';
-import { postContentsFetch } from '@/io/github/githubUiBridge';
+import { postContentsFetch, postListRepoPaths } from '@/io/github/githubUiBridge';
 
 function fetchTextFromGitHub(repoUrl: string): TokenResolverFetchText {
   return async function (path: string) {
@@ -51,7 +51,8 @@ export function useTokenResolverSettings(
     }
     try {
       const fetchText = fetchTextFromGitHub(repoUrl);
-      const detected = await detectTokenSource(repoUrl, fetchText);
+      const repoPaths = await postListRepoPaths(repoUrl);
+      const detected = await detectTokenSource(repoUrl, fetchText, undefined, repoPaths);
       setDetectionLabel(formatDetectionLabel(detected !== null ? detected.source : null));
       console.debug('[token-resolver] detection', detected !== null ? detected.source.kind : 'none');
     } catch (error) {
