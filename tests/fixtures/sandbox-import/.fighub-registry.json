@@ -1,0 +1,21 @@
+{
+  "v": 1,
+  "kind": "registry",
+  "fileKey": "cVdPraIafWFBRZnzMPhtrW",
+  "components": {
+    "button": {
+      "nodeId": "sandbox:button",
+      "key": "sandbox-button",
+      "pageName": "↳ Components",
+      "publishedAt": "2026-05-30T00:00:00.000Z",
+      "version": 1
+    },
+    "icon": {
+      "nodeId": "sandbox:icon",
+      "key": "sandbox-icon",
+      "pageName": "↳ Components",
+      "publishedAt": "2026-05-30T00:00:00.000Z",
+      "version": 1
+    }
+  }
+}

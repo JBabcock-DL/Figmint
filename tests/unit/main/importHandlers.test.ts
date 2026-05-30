@@ -3,9 +3,13 @@ import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ReactImportTemplate } from '@/core/import';
-import { IMPORT_LIST_FILES_RESULT } from '@/io/messages/import';
-import { handleImportListFiles, handleImportParse } from '@/main/importHandlers';
-import { createCanonicalButtonTokenResolver } from '../../mocks/tokenResolverCanonical';
+import { IMPORT_LIST_FILES_RESULT, IMPORT_PARSE_EXEC } from '@/io/messages/import';
+import {
+  handleImportListFiles,
+  handleImportParse,
+  handleImportParseExecResult,
+} from '@/main/importHandlers';
+import { runImportParseExec } from '@/ui/import/runImportParseExec';
 
 const mockGetToken = vi.fn();
 const mockGetSyncState = vi.fn();
@@ -66,10 +70,20 @@ vi.mock('@/core/import/registry', function () {
   };
 });
 
-vi.mock('@/core/import/shared/tokenResolver', function () {
+vi.mock('@/core/import/shared/tokenResolver', async function (importOriginal) {
+  const actual = await importOriginal<typeof import('@/core/import/shared/tokenResolver')>();
   return {
-    createTokenResolverForSession: async function () {
-      return createCanonicalButtonTokenResolver();
+    ...actual,
+    buildTokenResolverClassMap: async function () {
+      return {};
+    },
+  };
+});
+
+vi.mock('@/io/github/tokenResolverStorage', function () {
+  return {
+    loadTokenResolverOverride: async function () {
+      return null;
     },
   };
 });
@@ -144,7 +158,7 @@ describe('importHandlers', () => {
     expect(posted.files[1].name).toBe('card.tsx');
   });
 
-  it('parses button fixture to ComponentSpec name Button', async function () {
+  it('dispatches import/parse/exec to UI after loading source', async function () {
     await handleImportParse({
       type: 'import/parse',
       requestId: 'parse-1',
@@ -153,6 +167,27 @@ describe('importHandlers', () => {
     });
 
     const figmaGlobal = globalThis as { figma: { ui: { postMessage: ReturnType<typeof vi.fn> } } };
+    const posted = figmaGlobal.figma.ui.postMessage.mock.calls[0][0];
+    expect(posted.type).toBe(IMPORT_PARSE_EXEC);
+    expect(posted.requestId).toBe('parse-1');
+    expect(posted.sourceText).toBe(buttonSource);
+  });
+
+  it('forwards UI parse exec result as import/parse/result', async function () {
+    await handleImportParse({
+      type: 'import/parse',
+      requestId: 'parse-2',
+      repoUrl: 'https://github.com/acme/widgets',
+      sourcePath: 'components/ui/button.tsx',
+    });
+
+    const figmaGlobal = globalThis as { figma: { ui: { postMessage: ReturnType<typeof vi.fn> } } };
+    const execMsg = figmaGlobal.figma.ui.postMessage.mock.calls[0][0];
+    const execResult = runImportParseExec(execMsg);
+
+    figmaGlobal.figma.ui.postMessage.mockClear();
+    handleImportParseExecResult(execResult);
+
     const posted = figmaGlobal.figma.ui.postMessage.mock.calls[0][0];
     if (!posted.ok) {
       throw new Error(posted.error !== undefined ? posted.error : 'parse failed');

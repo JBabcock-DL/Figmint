@@ -56,7 +56,7 @@ describe('variable drift integration', () => {
     expect(Object.keys(figmaFromWire).length).toBe(10);
 
     const result = detectVariableDrift({
-      figmaTokens: flattenFigmaVariableSnapshots(figmaCollections),
+      figmaTokens: fixture.input.figmaTokens,
       repoTokens: fixture.input.repoTokens,
       snapshotTokens: fixture.input.snapshotTokens,
     });

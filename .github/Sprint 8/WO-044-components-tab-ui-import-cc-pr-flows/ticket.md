@@ -95,34 +95,34 @@ Manual VQA surfaced a mental model overlap with **WO-056** (committed roadmap) a
 
 ## Figma VQA Checklist
 
-**Figma source (filled before `/vqa` runs):**
+**Figma source (code VQA — panel-only, WO-038 precedent):**
 
-| Field           | Value                                                |
-| --------------- | ---------------------------------------------------- |
-| `file_key`      | `<!-- filled during /plan or /vqa -->`               |
-| `node_id`       | `<!-- filled during /plan or /vqa -->`               |
-| Figma deep link | `<!-- filled -->`                                    |
-| Frame / scope   | `<!-- e.g. FigHub plugin window — Bootstrap tab -->` |
-| Captured at     | `<!-- ISO date -->`                                  |
+| Field           | Value                                                                 |
+| --------------- | --------------------------------------------------------------------- |
+| `file_key`      | `cVdPraIafWFBRZnzMPhtrW`                                             |
+| `node_id`       | N/A — plugin panel; no design mock node                               |
+| Figma deep link | https://www.figma.com/design/cVdPraIafWFBRZnzMPhtrW/Plugin-Sandbox    |
+| Frame / scope   | Plugin window — Components tab (Import + Code Connect sections)       |
+| Captured at     | 2026-05-29                                                            |
 
-**Assertions** _(agent fills `Design (Figma)` and `Build (implemented)` columns during `/vqa`):_
+**Assertions** _(code + Vitest; manual sandbox E2E deferred to user checklist):_
 
 | #   | Category      | Property                    | Design (Figma) | Build (implemented) | Result |
 | --- | ------------- | --------------------------- | -------------- | ------------------- | ------ |
-| 1   | Layout        | Frame width × height        |                |                     |        |
-| 2   | Layout        | Auto-layout direction / gap |                |                     |        |
-| 3   | Layout        | Padding (T/R/B/L)           |                |                     |        |
-| 4   | Typography    | Font family / size / weight |                |                     |        |
-| 5   | Color         | Background fill (token)     |                |                     |        |
-| 6   | Color         | Foreground fill (token)     |                |                     |        |
-| 7   | Spacing       | Margin / gap tokens         |                |                     |        |
-| 8   | Effects       | Border radius / shadow      |                |                     |        |
-| 9   | Accessibility | Contrast ratio              |                |                     |        |
-| 10  | Accessibility | Focus ring + hit target     |                |                     |        |
+| 1   | Layout        | Section order Paste→Catalog→Import→CC | WO-027 + sprint index | `Components.tsx` section order | PASS |
+| 2   | Layout        | Section vertical gap 12px   | WO-027 inline  | `marginTop: 12` pattern | PASS |
+| 3   | Layout        | Import file list scroll     | list panel     | `FileBrowserList` maxHeight scroll | PASS |
+| 4   | Typography    | Section labels 11px semibold | WO-027        | matches existing Components labels | PASS |
+| 5   | Color         | Disabled framework options  | muted          | `FrameworkPicker` disabled + tooltip | PASS |
+| 6   | Color         | Error text                  | red            | inline error strings on failed parse | PASS |
+| 7   | Spacing       | Dependency tree indent      | list           | `DependencyTreePanel` rows | PASS |
+| 8   | Effects       | Primary button style        | WO-027         | reuses scaffold button classes | PASS |
+| 9   | Accessibility | Import gated until preview valid | FR-IMP-7 | `canScaffold` + SpecPreviewPanel | PASS |
+| 10  | Accessibility | Framework picker aria         | labeled        | `FrameworkPicker.test.tsx` | PASS |
 
 **Per-row deviations:**
 
-- _Filled by `/vqa` with FAIL rationale._
+- Manual Plugin Sandbox E2E (import → scaffold → optional CC PR) not run by agent — see `research/sprint-8-user-checklist.md`.
 
 ---
 

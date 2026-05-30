@@ -58,4 +58,12 @@ runVite('main');
 
 copyFileSync(resolve(rootDir, 'manifest.json'), resolve(rootDir, 'dist/manifest.json'));
 patchDistManifest();
+
+const codePath = resolve(distDir, 'code.js');
+const codeText = readFileSync(codePath, 'utf8');
+if (/[^a-zA-Z]import\s*\(/.test(codeText)) {
+  console.error('✗ dist/code.js contains dynamic import() — Figma QuickJS will reject the plugin.');
+  process.exit(1);
+}
+
 console.log('✓ build complete → dist/');

@@ -370,7 +370,7 @@ export function useImportListFiles(repoUrl: string): {
 
   **Done when:** `tests/unit/ui/hooks/useImportListFiles.test.ts` happy + timeout error paths.
 
-- [ ] **Step 9** — Create `src/ui/hooks/useImportParse.ts`:
+- [x] **Step 9** — Create `src/ui/hooks/useImportParse.ts`:
 
 ```typescript
 export interface ImportParseState {
@@ -390,7 +390,7 @@ export function useImportParse(): {
 
   **Done when:** hook test completes parse + resets state.
 
-- [ ] **Step 10** — Create `src/ui/hooks/useCodeConnectDetect.ts`:
+- [x] **Step 10** — Create `src/ui/hooks/useCodeConnectDetect.ts`:
 
 ```typescript
 export interface CodeConnectDetectState {
@@ -407,7 +407,7 @@ export function useCodeConnectDetect(): {
 
   **Done when:** hook test populates 3 unmapped entries.
 
-- [ ] **Step 11** — Create `src/ui/hooks/useCodeConnectEmitPr.ts`:
+- [x] **Step 11** — Create `src/ui/hooks/useCodeConnectEmitPr.ts`:
 
 ```typescript
 export interface CodeConnectEmitPrState {
@@ -428,7 +428,7 @@ export function useCodeConnectEmitPr(): {
 
 ### Phase 4 — UI components
 
-- [ ] **Step 12** — Create `src/ui/components/import/DependencyTreePanel.tsx`:
+- [x] **Step 12** — Create `src/ui/components/import/DependencyTreePanel.tsx`:
 
 ```typescript
 export interface DependencyTreePanelProps {
@@ -450,7 +450,7 @@ export interface DependencyTreePanelProps {
 
   **Done when:** `tests/unit/ui/import/DependencyTreePanel.test.tsx` — registered/unknown/circular cases.
 
-- [ ] **Step 13** — Create `src/ui/components/codeconnect/FrameworkPicker.tsx`:
+- [x] **Step 13** — Create `src/ui/components/codeconnect/FrameworkPicker.tsx`:
 
 ```typescript
 export type ImportFramework = 'react' | 'vue' | 'wc' | 'swiftui' | 'compose';
@@ -469,7 +469,7 @@ const PHASE_4A_ENABLED: ImportFramework[] = ['react'];
 
   **Done when:** `FrameworkPicker.test.tsx` — Vue option disabled; React selectable.
 
-- [ ] **Step 14** — Create `src/ui/components/import/FileBrowserList.tsx`:
+- [x] **Step 14** — Create `src/ui/components/import/FileBrowserList.tsx`:
 
   - Scrollable list (`maxHeight: 160px`, `overflow: auto`)
   - Filter input (client-side substring on `name`)
@@ -479,7 +479,7 @@ const PHASE_4A_ENABLED: ImportFramework[] = ['react'];
 
   **Done when:** component test selects file + filter works.
 
-- [ ] **Step 15** — Create `src/ui/components/import/ImportFromRepoSection.tsx`:
+- [x] **Step 15** — Create `src/ui/components/import/ImportFromRepoSection.tsx`:
 
 ```typescript
 export interface ImportFromRepoSectionProps {
@@ -510,7 +510,7 @@ export interface ImportFromRepoSectionProps {
 
   **Done when:** `ImportFromRepoSection.test.tsx` — disconnected, list, parse, blocked unknown, preview handoff.
 
-- [ ] **Step 16** — Create `src/ui/components/codeconnect/CodeConnectSection.tsx`:
+- [x] **Step 16** — Create `src/ui/components/codeconnect/CodeConnectSection.tsx`:
 
 ```typescript
 export interface CodeConnectSectionProps {
@@ -678,7 +678,7 @@ npm run test -- tests/unit/ui/tabs/Components
 
   **Done when:** recorded in VQA report.
 
-- [ ] **Step 29** — Update `ticket.md` Figma VQA Checklist source fields:
+- [x] **Step 29** — Update `ticket.md` Figma VQA Checklist source fields:
 
   | Field | Value |
   | ----- | ----- |
@@ -690,7 +690,7 @@ npm run test -- tests/unit/ui/tabs/Components
 
   **Done when:** ticket table no longer has placeholder comments.
 
-- [ ] **Step 30** — Fill Figma VQA assertion table (Design column = WO-027 inline tokens; Build = measured during `/vqa`):
+- [x] **Step 30** — Fill Figma VQA assertion table (Design column = WO-027 inline tokens; Build = measured during `/vqa`):
 
 | # | Category | Property | Design (Figma) | Build (implemented) | Result |
 | - | -------- | ---------- | -------------- | ------------------- | ------ |

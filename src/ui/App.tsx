@@ -5,6 +5,7 @@ import { TabPanel } from '@/ui/components/TabPanel';
 import { registerExportMessageListener } from '@/ui/export/exportMessageListener';
 import { registerFigmaFileKeyMessageListener } from '@/ui/figma/figmaFileKeyMessageListener';
 import { registerHandoffMessageListener } from '@/ui/handoff/handoffMessageListener';
+import { registerImportParseExecListener } from '@/ui/import/importParseExecListener';
 import { useGitHubConnect } from '@/ui/github/useGitHubConnect';
 import { useGitHubSession } from '@/ui/github/useGitHubSession';
 import { Bootstrap } from '@/ui/tabs/Bootstrap';
@@ -36,6 +37,7 @@ export function App() {
     registerExportMessageListener();
     registerHandoffMessageListener();
     registerFigmaFileKeyMessageListener();
+    registerImportParseExecListener();
   }, []);
 
   return (

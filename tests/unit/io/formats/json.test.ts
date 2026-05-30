@@ -23,7 +23,9 @@ describe('stableStringify', () => {
 
   it('matches committed key-order-expected.json', () => {
     const input = loadJson('key-order-a.json');
-    const expected = readFileSync(join(fixturesDir, 'key-order-expected.json'), 'utf8').trimEnd();
+    const expected = readFileSync(join(fixturesDir, 'key-order-expected.json'), 'utf8')
+      .trimEnd()
+      .replace(/\r\n/g, '\n');
     expect(stableStringify(input)).toBe(expected);
   });
 });

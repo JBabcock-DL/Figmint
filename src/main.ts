@@ -1,7 +1,8 @@
 // Figma plugin main-thread entry. ES2017 target (Figma's QuickJS sandbox rejects
 // ES2020+ syntax — optional chaining, nullish coalescing, replaceAll). The UI HTML
-// is injected at build time via Vite's `define.__html__`, which reads the finalized
-// `dist/ui.html` produced by the UI build pass — see vite.config.ts.
+// is injected at build time via Vite's `define.__HTML_B64__` (base64 of finalized
+// `dist/ui.html`) — see vite.config.ts. Raw HTML is not embedded: QuickJS rejects
+// `import(` anywhere in code.js, including inside a showUI HTML string.
 
 import { runBootstrap } from '@/core/bootstrap/runBootstrap';
 import { runScaffoldComponent } from '@/core/components/scaffold/runScaffold';
@@ -37,7 +38,7 @@ import {
 } from '@/main/handoffHandlers';
 import { handleCodeConnectDetect, handleCodeConnectEmitPR, handleCodeConnectEmitPr } from '@/main/codeconnectHandlers';
 import { handleCatalogDiscover, handleCatalogScaffoldBatch } from '@/main/catalogHandlers';
-import { handleImportListFiles, handleImportParse } from '@/main/importHandlers';
+import { handleImportListFiles, handleImportParse, handleImportParseExecResult } from '@/main/importHandlers';
 import {
   handleFigmaFileKeyClear,
   handleFigmaFileKeyLoad,
@@ -143,7 +144,7 @@ import {
   isCodeConnectEmitPRRequest,
   isCodeConnectEmitPrMessage,
 } from '@/io/messages/codeconnect';
-import { isImportListFilesMessage, isImportParseMessage } from '@/io/messages/import';
+import { isImportListFilesMessage, isImportParseExecResultMessage, isImportParseMessage } from '@/io/messages/import';
 import {
   isFigmaFileKeyClearMessage,
   isFigmaFileKeyLoadMessage,
@@ -167,8 +168,9 @@ import type {
   SinkId,
   SinkResult,
 } from '@/io/sinks/types';
+import { decodeBase64Utf8 } from '@/main/decodeUiHtml';
 
-figma.showUI(__html__, { width: 420, height: 520 });
+figma.showUI(decodeBase64Utf8(__HTML_B64__), { width: 420, height: 520 });
 
 broadcastHandoffSelection();
 figma.on('selectionchange', broadcastHandoffSelection);
@@ -1472,6 +1474,11 @@ figma.ui.onmessage = (message: unknown) => {
         error: extractErrorMessage(error),
       });
     });
+    return;
+  }
+
+  if (isImportParseExecResultMessage(message)) {
+    handleImportParseExecResult(message);
     return;
   }
 

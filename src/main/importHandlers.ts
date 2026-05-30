@@ -1,23 +1,24 @@
 import type { RegistryV1 } from '@detroitlabs/fighub-contracts';
 
 import { collectRegistryKeys } from '@/core/import/shared/collectRegistryKeys';
-import { getImportTemplate } from '@/core/import/registry';
-import { createTokenResolverForSession } from '@/core/import/shared/tokenResolver';
+import { buildTokenResolverClassMap } from '@/core/import/shared/tokenResolver';
 import { pluginLog } from '@/core/pluginLog';
 import { getRegistryFromSnapshot } from '@/core/sync/snapshotStore';
 import { fetchRepoFileContents, GitHubNotFoundError } from '@/io/github/contents';
 import { githubApiViaRelay } from '@/io/github/relayClient';
 import { validateGitHubRepoUrl } from '@/io/github/githubUiBridge';
 import { normalizeRepoUrl, parseOwnerRepo } from '@/io/github/repoUrl';
-import { getSyncState, getToken } from '@/io/github/storage';
+import { loadTokenResolverOverride } from '@/io/github/tokenResolverStorage';
 import type {
   ImportListFilesMessage,
   ImportListFilesResultMessage,
+  ImportParseExecResultMessage,
   ImportParseMessage,
   ImportParseResultMessage,
 } from '@/io/messages/import';
 import {
   IMPORT_LIST_FILES_RESULT,
+  IMPORT_PARSE_EXEC,
   IMPORT_PARSE_RESULT,
 } from '@/io/messages/import';
 
@@ -37,6 +38,7 @@ function extractErrorMessage(error: unknown): string {
 }
 
 import { deriveComponentsRoot } from '@/core/import/shared/deriveComponentsRoot';
+import { getSyncState, getToken } from '@/io/github/storage';
 
 function basename(path: string): string {
   const parts = path.split('/');
@@ -375,42 +377,27 @@ export async function handleImportParse(message: ImportParseMessage): Promise<vo
       }
     };
 
-    const tokenResolver = await createTokenResolverForSession(normalized, fetchText);
-    const template = getImportTemplate('react');
-    if (template === null) {
-      post({
-        type: IMPORT_PARSE_RESULT,
-        requestId: message.requestId,
-        ok: false,
-        error: 'React import template is unavailable.',
-      });
-      return;
-    }
+    const tokenResolverOverride = await loadTokenResolverOverride(normalized);
+    const manualMap =
+      tokenResolverOverride !== null ? tokenResolverOverride.manualMap : undefined;
 
-    const parseResult = template.parse({
+    const classToVariable = await buildTokenResolverClassMap({
+      repoUrl: normalized,
+      manualMap: manualMap,
+      fetchText: fetchText,
+    });
+
+    figma.ui.postMessage({
+      type: IMPORT_PARSE_EXEC,
+      requestId: message.requestId,
       sourcePath: message.sourcePath,
       sourceText: sourceContents.text,
       figmaMappingText: mappingText,
-      tokenResolver: tokenResolver,
       registryKeys: registryKeys,
+      classToVariable: classToVariable,
+      manualMap: manualMap,
     });
-
-    const issues = parseResult.issues.map(function (issue) {
-      return {
-        code: issue.code,
-        message: issue.message,
-      };
-    });
-
-    post({
-      type: IMPORT_PARSE_RESULT,
-      requestId: message.requestId,
-      ok: true,
-      spec: parseResult.spec,
-      dependencyTree: parseResult.dependencyTree,
-      issues: issues,
-    });
-    console.debug('[main] import/parse', { name: parseResult.spec.name });
+    console.debug('[main] import/parse exec dispatched', { path: message.sourcePath });
   } catch (error) {
     post({
       type: IMPORT_PARSE_RESULT,
@@ -418,5 +405,22 @@ export async function handleImportParse(message: ImportParseMessage): Promise<vo
       ok: false,
       error: extractErrorMessage(error),
     });
+  }
+}
+
+/** UI thread ran TypeScript parse — forward result to import UI listeners. */
+export function handleImportParseExecResult(message: ImportParseExecResultMessage): void {
+  const result: ImportParseResultMessage = {
+    type: IMPORT_PARSE_RESULT,
+    requestId: message.requestId,
+    ok: message.ok,
+    spec: message.spec,
+    dependencyTree: message.dependencyTree,
+    issues: message.issues,
+    error: message.error,
+  };
+  figma.ui.postMessage(result);
+  if (message.ok && message.spec !== undefined) {
+    console.debug('[main] import/parse', { name: message.spec.name });
   }
 }

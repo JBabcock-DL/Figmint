@@ -35,15 +35,16 @@ const sharedDefine = {
 };
 
 /**
- * Reads the finalized `dist/ui.html` (built and post-processed during the UI thread pass)
- * and returns it as a JSON-stringified literal for Vite `define` substitution.
+ * Reads the finalized `dist/ui.html` and returns base64 for Vite `define` substitution.
+ * Base64 avoids literal `import(` in `code.js` (Figma QuickJS rejects that substring).
  */
-function loadUiHtmlForDefine(): string {
+function loadUiHtmlBase64ForDefine(): string {
   const distUi = resolve(rootDir, 'dist/ui.html');
   if (!existsSync(distUi)) {
     return JSON.stringify('');
   }
-  return JSON.stringify(readFileSync(distUi, 'utf8'));
+  const base64 = Buffer.from(readFileSync(distUi, 'utf8'), 'utf8').toString('base64');
+  return JSON.stringify(base64);
 }
 
 export default defineConfig(() => {
@@ -53,7 +54,7 @@ export default defineConfig(() => {
       resolve: sharedResolve,
       define: {
         ...sharedDefine,
-        __html__: loadUiHtmlForDefine(),
+        __HTML_B64__: loadUiHtmlBase64ForDefine(),
       },
       build: {
         emptyOutDir: false,

@@ -6,6 +6,10 @@ export const IMPORT_LIST_FILES = 'import/list-files' as const;
 export const IMPORT_LIST_FILES_RESULT = 'import/list-files/result' as const;
 export const IMPORT_PARSE = 'import/parse' as const;
 export const IMPORT_PARSE_RESULT = 'import/parse/result' as const;
+/** Main → UI: run TS parser in UI iframe (typescript must not load in code.js). */
+export const IMPORT_PARSE_EXEC = 'import/parse/exec' as const;
+/** UI → main: parser output forwarded as import/parse/result. */
+export const IMPORT_PARSE_EXEC_RESULT = 'import/parse/exec-result' as const;
 
 export interface ImportListFilesMessage {
   type: typeof IMPORT_LIST_FILES;
@@ -41,6 +45,28 @@ export interface ImportListFilesResultMessage {
 
 export interface ImportParseResultMessage {
   type: typeof IMPORT_PARSE_RESULT;
+  requestId: string;
+  ok: boolean;
+  spec?: ComponentSpecV1;
+  dependencyTree?: DependencyTree;
+  issues?: ImportParseIssue[];
+  error?: string;
+}
+
+/** Serializable parse context — token maps only (no TokenResolver object). */
+export interface ImportParseExecMessage {
+  type: typeof IMPORT_PARSE_EXEC;
+  requestId: string;
+  sourcePath: string;
+  sourceText: string;
+  figmaMappingText?: string;
+  registryKeys: readonly string[];
+  classToVariable: Record<string, string>;
+  manualMap?: Record<string, string>;
+}
+
+export interface ImportParseExecResultMessage {
+  type: typeof IMPORT_PARSE_EXEC_RESULT;
   requestId: string;
   ok: boolean;
   spec?: ComponentSpecV1;
@@ -133,6 +159,52 @@ export function isImportParseResultMessage(msg: unknown): msg is ImportParseResu
     return false;
   }
   if (msg.type !== IMPORT_PARSE_RESULT) {
+    return false;
+  }
+  if (typeof msg.requestId !== 'string' || typeof msg.ok !== 'boolean') {
+    return false;
+  }
+  if (msg.error !== undefined && typeof msg.error !== 'string') {
+    return false;
+  }
+  return true;
+}
+
+export function isImportParseExecMessage(msg: unknown): msg is ImportParseExecMessage {
+  if (!isRecord(msg)) {
+    return false;
+  }
+  if (msg.type !== IMPORT_PARSE_EXEC) {
+    return false;
+  }
+  if (typeof msg.requestId !== 'string' || typeof msg.sourcePath !== 'string') {
+    return false;
+  }
+  if (typeof msg.sourceText !== 'string') {
+    return false;
+  }
+  if (msg.figmaMappingText !== undefined && typeof msg.figmaMappingText !== 'string') {
+    return false;
+  }
+  if (!Array.isArray(msg.registryKeys)) {
+    return false;
+  }
+  if (!isRecord(msg.classToVariable)) {
+    return false;
+  }
+  if (msg.manualMap !== undefined && !isRecord(msg.manualMap)) {
+    return false;
+  }
+  return true;
+}
+
+export function isImportParseExecResultMessage(
+  msg: unknown,
+): msg is ImportParseExecResultMessage {
+  if (!isRecord(msg)) {
+    return false;
+  }
+  if (msg.type !== IMPORT_PARSE_EXEC_RESULT) {
     return false;
   }
   if (typeof msg.requestId !== 'string' || typeof msg.ok !== 'boolean') {
