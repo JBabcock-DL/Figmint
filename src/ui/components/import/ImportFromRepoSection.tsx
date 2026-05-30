@@ -4,6 +4,7 @@ import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
 import { flags } from '@/config/flags';
 import { deriveComponentsRoot } from '@/core/import/shared/deriveComponentsRoot';
+import { importSourceExtensionsLabel } from '@/core/import/shared/importSourceExtensions';
 import {
   DependencyTreePanel,
   treeHasBlockingUnknowns,
@@ -65,6 +66,9 @@ export function ImportFromRepoSection(props: ImportFromRepoSectionProps) {
   const canUsePreview =
     parseState.spec !== null && !parseState.parsing && !blockingUnknowns && !parseState.error;
 
+  const extensionLabel = importSourceExtensionsLabel(framework);
+  const parseSupported = framework === 'react';
+
   if (!flags.componentImport) {
     return null;
   }
@@ -73,7 +77,8 @@ export function ImportFromRepoSection(props: ImportFromRepoSectionProps) {
     <section style={props.sectionBorder} aria-label="Import from repo">
       <h2 style={props.sectionHeading}>Import from repo</h2>
       <p style={{ color: '#666', fontSize: 10, lineHeight: 1.45, margin: '0 0 8px' }}>
-        Pick a React `.tsx` file from your connected repo. Edit the preview before scaffolding.
+        Pick a source file ({extensionLabel}) from your connected repo. Parsing and scaffold are
+        React-only in Phase 4a; other frameworks can browse files ahead of later sprints.
       </p>
 
       <FrameworkPicker value={framework} onChange={setFramework} />
@@ -103,9 +108,9 @@ export function ImportFromRepoSection(props: ImportFromRepoSectionProps) {
         <>
           <button
             type="button"
-            disabled={listState.loading || framework !== 'react'}
+            disabled={listState.loading}
             onClick={function () {
-              refreshFiles(rootPath);
+              refreshFiles(rootPath, framework);
             }}
             style={{
               border: '1px solid #ccc',
@@ -129,6 +134,7 @@ export function ImportFromRepoSection(props: ImportFromRepoSectionProps) {
             files={listState.files}
             rootPath={rootPath}
             selectedPath={selectedPath}
+            extensionLabel={extensionLabel}
             onSelect={function (path) {
               setSelectedPath(path);
               resetParse();
@@ -138,8 +144,9 @@ export function ImportFromRepoSection(props: ImportFromRepoSectionProps) {
 
           <button
             type="button"
-            disabled={selectedPath.length === 0 || parseState.parsing || framework !== 'react'}
+            disabled={selectedPath.length === 0 || parseState.parsing || !parseSupported}
             aria-busy={parseState.parsing}
+            title={parseSupported ? undefined : 'Parse is available for React only in Phase 4a'}
             onClick={function () {
               runParse({ repoUrl: props.repoUrl, sourcePath: selectedPath });
               setResolvedUnknowns({});

@@ -2,12 +2,24 @@
 
 Copy this folder into a **connected GitHub repo** (or point the plugin at the **FigHub** repo and use these paths as-is).
 
+## Browse repo vs Import from repo
+
+| Components tab section | Looks for | Sandbox paths |
+|------------------------|-----------|---------------|
+| **Browse repo components** | `*.component-spec.v1.json` (anywhere), `*/component-spec/*.v1.json`, or `*.json` under specs path — **all frameworks** in JSON | `design/components/button.component-spec.v1.json`, `alert-banner.component-spec.v1.json` (vue), `tests/fixtures/component-spec/*.v1.json` |
+| **Import from repo** | Framework-specific sources (`.tsx`, `.vue`, `.swift`, …) | `components/ui/button.tsx`, … |
+
+If Browse shows “No component-spec JSON on GitHub”, commit and push the `design/components/*.component-spec.v1.json` files below — uncommitted local files are invisible to the plugin.
+
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `components/ui/button.tsx` | **Primary import target** — shadcn-style CVA Button (6×4 variants). Golden spec: `tests/fixtures/component-spec-button-canonical.json` |
+| `design/components/button.component-spec.v1.json` | **Browse repo** — batch scaffold Button from JSON |
+| `design/components/icon.component-spec.v1.json` | **Browse repo** — second catalog entry |
+| `components/ui/button.tsx` | **Import from repo** — shadcn CVA Button (6×4 variants) |
 | `components/ui/icon.tsx` | Registered sub-component (`icon` in registry) |
+| `design/components/alert-banner.component-spec.v1.json` | **Browse repo** — Vue framework spec |
 | `components/ui/badge.tsx` | **Not** in registry — triggers unknown dependency |
 | `components/ui/alert.tsx` | Composed sample — Icon ✓, Button ✓, Badge ⚠ unknown |
 | `app/globals.css` | Tailwind v4 `@theme` for token resolver auto-detect |
@@ -24,9 +36,10 @@ Copy this folder into a **connected GitHub repo** (or point the plugin at the **
 ```bash
 # From repo root — copy fixtures into your design-system repo
 cp -r tests/fixtures/sandbox-import/components ./components   # merge ui/ subtree
+cp -r tests/fixtures/sandbox-import/design ./design
 cp tests/fixtures/sandbox-import/app/globals.css ./app/globals.css
 cp tests/fixtures/sandbox-import/.fighub-registry.json ./.fighub-registry.json
-git add components/ui app/globals.css .fighub-registry.json
+git add components/ui design/components app/globals.css .fighub-registry.json
 git commit -m "Add FigHub sandbox import fixtures"
 git push
 ```

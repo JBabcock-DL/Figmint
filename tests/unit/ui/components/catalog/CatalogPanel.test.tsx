@@ -49,7 +49,8 @@ describe('CatalogPanel', () => {
     );
 
     await waitFor(function () {
-      expect(screen.getByText(/No specs found/i)).toBeInTheDocument();
+      expect(screen.getByText(/No component-spec JSON on GitHub/i)).toBeInTheDocument();
+      expect(screen.getByText(/all frameworks/i)).toBeInTheDocument();
     });
   });
 

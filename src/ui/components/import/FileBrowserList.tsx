@@ -4,6 +4,7 @@ export interface FileBrowserListProps {
   files: { path: string; name: string }[];
   rootPath: string;
   selectedPath: string;
+  extensionLabel?: string;
   onSelect: (path: string) => void;
 }
 
@@ -55,7 +56,8 @@ export function FileBrowserList(props: FileBrowserListProps) {
       >
         {filtered.length === 0 ? (
           <p style={{ color: '#666', fontSize: 10, margin: 8 }}>
-            No .tsx files found under {props.rootPath}.
+            No {props.extensionLabel !== undefined ? props.extensionLabel : 'matching'} files found
+            under {props.rootPath}.
           </p>
         ) : (
           filtered.map(function (file) {

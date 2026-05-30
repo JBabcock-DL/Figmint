@@ -1,6 +1,9 @@
 import type { ComponentSpecV1 } from '@detroitlabs/fighub-contracts';
 
+import type { ComponentFramework } from '@detroitlabs/fighub-contracts';
+
 import type { DependencyTree } from '@/core/import/shared/types';
+import { isComponentFramework } from '@/core/import/shared/importSourceExtensions';
 
 export const IMPORT_LIST_FILES = 'import/list-files' as const;
 export const IMPORT_LIST_FILES_RESULT = 'import/list-files/result' as const;
@@ -17,7 +20,8 @@ export interface ImportListFilesMessage {
   repoUrl: string;
   /** default: parent of specsPath or 'components/' */
   rootPath?: string;
-  extension?: '.tsx';
+  /** Source framework — controls which extensions are listed (default react). */
+  framework?: ComponentFramework;
 }
 
 export interface ImportParseMessage {
@@ -99,7 +103,7 @@ export function isImportListFilesMessage(msg: unknown): msg is ImportListFilesMe
   if (msg.rootPath !== undefined && typeof msg.rootPath !== 'string') {
     return false;
   }
-  if (msg.extension !== undefined && msg.extension !== '.tsx') {
+  if (msg.framework !== undefined && !isComponentFramework(msg.framework)) {
     return false;
   }
   return true;

@@ -1,6 +1,9 @@
 import type { RegistryV1 } from '@detroitlabs/fighub-contracts';
 
+import type { ComponentFramework } from '@detroitlabs/fighub-contracts';
+
 import { collectRegistryKeys } from '@/core/import/shared/collectRegistryKeys';
+import { shouldIncludeImportSourcePath } from '@/core/import/shared/importSourceExtensions';
 import { buildTokenResolverClassMap } from '@/core/import/shared/tokenResolver';
 import { pluginLog } from '@/core/pluginLog';
 import { getRegistryFromSnapshot } from '@/core/sync/snapshotStore';
@@ -24,8 +27,6 @@ import {
 
 const FILE_LIST_CAP = 500;
 
-const EXCLUDED_SUFFIXES = ['.test.tsx', '.stories.tsx', '.figma.tsx'];
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -44,16 +45,12 @@ function basename(path: string): string {
   const parts = path.split('/');
   return parts[parts.length - 1];
 }
-function shouldIncludeTsxPath(path: string): boolean {
-  if (!path.endsWith('.tsx')) {
-    return false;
+
+function resolveImportFramework(message: ImportListFilesMessage): ComponentFramework {
+  if (message.framework !== undefined) {
+    return message.framework;
   }
-  for (let i = 0; i < EXCLUDED_SUFFIXES.length; i++) {
-    if (path.endsWith(EXCLUDED_SUFFIXES[i])) {
-      return false;
-    }
-  }
-  return true;
+  return 'react';
 }
 
 function normalizeRootPrefix(rootPath: string): string {
@@ -256,12 +253,13 @@ export async function handleImportListFiles(message: ImportListFilesMessage): Pr
     );
 
     const matched: { path: string; name: string }[] = [];
+    const framework = resolveImportFramework(message);
     for (let i = 0; i < allPaths.length; i++) {
       const path = allPaths[i];
       if (!path.startsWith(rootPath)) {
         continue;
       }
-      if (!shouldIncludeTsxPath(path)) {
+      if (!shouldIncludeImportSourcePath(path, framework)) {
         continue;
       }
       matched.push({ path: path, name: basename(path) });

@@ -185,8 +185,12 @@ export function CatalogPanel({
 
           {!discovery.loading && discovery.entries.length === 0 && discovery.error.length === 0 ? (
             <p style={{ color: '#666', fontSize: 10, lineHeight: 1.45, margin: 0 }}>
-              No specs found. Try Import from repo or paste JSON. The sync registry below only
-              lists components already linked on the canvas.
+              No component-spec JSON on GitHub yet. Browse lists specs for all frameworks (React,
+              Vue, WC, SwiftUI, Compose) matching{' '}
+              <code style={{ fontSize: 10 }}>*.component-spec.v1.json</code>,{' '}
+              <code style={{ fontSize: 10 }}>*/component-spec/*.v1.json</code>, or{' '}
+              <code style={{ fontSize: 10 }}>*.json</code> under your specs path. For source files
+              use <strong>Import from repo</strong> below.
             </p>
           ) : null}
 

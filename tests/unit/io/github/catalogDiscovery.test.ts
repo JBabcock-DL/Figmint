@@ -45,6 +45,31 @@ describe('catalogDiscovery', () => {
     expect(paths).toContain('design/components/input.component-spec.v1.json');
   });
 
+  it('filterTreePaths includes component-spec folder v1.json for all frameworks', function () {
+    const entries = filterTreePaths(
+      [
+        {
+          path: 'tests/fixtures/component-spec/chip-button-minimal.v1.json',
+          mode: '100644',
+          type: 'blob',
+          sha: 'x',
+        },
+        {
+          path: 'tests/fixtures/drift/component-button-conflict.v1.json',
+          mode: '100644',
+          type: 'blob',
+          sha: 'y',
+        },
+      ],
+      'components/',
+    );
+    const paths = entries.map(function (entry) {
+      return entry.path;
+    });
+    expect(paths).toContain('tests/fixtures/component-spec/chip-button-minimal.v1.json');
+    expect(paths).not.toContain('tests/fixtures/drift/component-button-conflict.v1.json');
+  });
+
   it('dedupeCatalogEntries prefers shortest path for duplicate keys', function () {
     const deduped = dedupeCatalogEntries([
       {
@@ -175,6 +200,16 @@ describe('catalogDiscovery', () => {
             type: 'file',
           },
         ],
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: [],
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: [],
       })
       .mockResolvedValueOnce({
         ok: true,

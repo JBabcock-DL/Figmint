@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { IMPORT_LIST_FILES } from '@/io/messages/import';
+import type { ImportFramework } from '@/ui/components/codeconnect/FrameworkPicker';
 import { registerImportMessageListener } from '@/ui/import/importMessageListener';
 
 export interface ImportListFilesState {
@@ -29,7 +30,7 @@ export function resetImportListFilesStateForTests(): void {
 
 export function useImportListFiles(repoUrl: string): {
   state: ImportListFilesState;
-  refresh: (rootPath?: string) => void;
+  refresh: (rootPath?: string, framework?: ImportFramework) => void;
 } {
   const [state, setState] = useState<ImportListFilesState>(INITIAL_STATE);
   const pendingRequestIdRef = useRef<string | null>(null);
@@ -63,7 +64,7 @@ export function useImportListFiles(repoUrl: string): {
   }, []);
 
   const refresh = useCallback(
-    function (rootPath?: string) {
+    function (rootPath?: string, framework?: ImportFramework) {
       if (repoUrl.length === 0 || pendingRequestIdRef.current !== null) {
         return;
       }
@@ -81,6 +82,7 @@ export function useImportListFiles(repoUrl: string): {
             requestId: requestId,
             repoUrl: repoUrl,
             rootPath: rootPath,
+            framework: framework !== undefined ? framework : 'react',
           },
         },
         '*',

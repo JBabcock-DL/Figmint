@@ -33,6 +33,16 @@ export interface GitHubTreeEntry {
 const TREE_CACHE_TTL_MS = 5 * 60 * 1000;
 const PATH_DENYLIST_SEGMENTS = ['node_modules', '.git'];
 const PATH_DENYLIST_FILES = ['package-lock.json', 'pnpm-lock.yaml', 'yarn.lock'];
+/** Broad `.v1.json` matches skip drift/registry/handoff fixtures (not component catalog). */
+const SPEC_V1_DENYLIST_SEGMENTS = [
+  '/drift/',
+  '/registry/',
+  '/handoff/',
+  '/audit/',
+  '/sinks/',
+  '/ui/export/',
+  '/io/sources/',
+];
 const CONTENTS_FALLBACK_MAX_DEPTH = 4;
 
 const treeCache = new Map<string, CatalogDiscoveryResult>();
@@ -152,7 +162,20 @@ function isUnderPrefix(path: string, prefix: string): boolean {
   return path.startsWith(normalized);
 }
 
-function matchesCatalogPath(path: string, specsPath: string): boolean {
+function isDeniedSpecV1Path(path: string): boolean {
+  for (let i = 0; i < SPEC_V1_DENYLIST_SEGMENTS.length; i++) {
+    if (path.includes(SPEC_V1_DENYLIST_SEGMENTS[i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Discover component-spec JSON for all frameworks (react, vue, wc, swiftui, compose).
+ * Framework is read from file content at scaffold time — never filtered here.
+ */
+export function matchesCatalogPath(path: string, specsPath: string): boolean {
   if (isDeniedPath(path)) {
     return false;
   }
@@ -160,6 +183,13 @@ function matchesCatalogPath(path: string, specsPath: string): boolean {
     return true;
   }
   if (path.endsWith('.v1.json') && isUnderPrefix(path, 'design/component-specs')) {
+    return true;
+  }
+  if (
+    path.endsWith('.v1.json') &&
+    (path.includes('/component-spec/') || path.includes('/component-specs/')) &&
+    !isDeniedSpecV1Path(path)
+  ) {
     return true;
   }
   const normalizedSpecs = normalizeSpecsPath(specsPath);
@@ -355,6 +385,22 @@ async function discoverViaContentsFallback(
     repoPath,
     token,
     'design/component-specs',
+    config.designSystemBranch,
+    0,
+    collected,
+  );
+  await walkContentsPaths(
+    repoPath,
+    token,
+    'tests/fixtures/component-spec',
+    config.designSystemBranch,
+    0,
+    collected,
+  );
+  await walkContentsPaths(
+    repoPath,
+    token,
+    'tests/fixtures/sandbox-import/design/components',
     config.designSystemBranch,
     0,
     collected,

@@ -1,0 +1,31 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "AlertBanner",
+  "framework": "vue",
+  "archetype": "surface-stack",
+  "variantMatrix": {
+    "tone": ["info", "warning"]
+  },
+  "props": [
+    {
+      "name": "tone",
+      "type": "enum",
+      "default": "info",
+      "enum": ["info", "warning"]
+    },
+    { "name": "title", "type": "string", "default": "" }
+  ],
+  "bindings": [
+    { "selector": "root.fill", "variable": "color/primary/subtle" }
+  ],
+  "layout": {
+    "direction": "vertical",
+    "gap": "8",
+    "padding": "16",
+    "sizing": {
+      "horizontal": "fill",
+      "vertical": "hug"
+    }
+  }
+}

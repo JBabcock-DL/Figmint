@@ -1,0 +1,56 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Button",
+  "framework": "react",
+  "archetype": "chip",
+  "variantMatrix": {
+    "variant": ["default", "destructive", "outline", "secondary", "ghost", "link"],
+    "size": ["sm", "default", "lg", "icon"]
+  },
+  "props": [
+    {
+      "name": "variant",
+      "type": "enum",
+      "default": "default",
+      "enum": ["default", "destructive", "outline", "secondary", "ghost", "link"]
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "default": "default",
+      "enum": ["sm", "default", "lg", "icon"]
+    },
+    { "name": "disabled", "type": "boolean", "default": false },
+    { "name": "asChild", "type": "boolean", "default": false },
+    {
+      "name": "type",
+      "type": "enum",
+      "default": "button",
+      "enum": ["button", "submit", "reset"]
+    },
+    { "name": "className", "type": "string", "default": "" },
+    { "name": "loading", "type": "boolean", "default": false }
+  ],
+  "componentProps": { "label": true, "leadingIcon": true, "trailingIcon": true },
+  "iconSlots": { "leading": true, "trailing": true },
+  "bindings": [
+    { "selector": "root.fill", "variable": "color/primary/default" },
+    { "selector": "root.radius", "variable": "radius/md" },
+    { "selector": "root.padding", "variable": "space/md" },
+    { "selector": "root.gap", "variable": "space/sm" },
+    { "selector": "text/label.fill", "variable": "color/primary/content" },
+    { "selector": "icon-slot/leading.fill", "variable": "color/primary/content" },
+    { "selector": "state-layer/hover.fill", "variable": "color/primary/subtle" },
+    { "selector": "focus-ring.stroke", "variable": "color/neutral/500" }
+  ],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "8",
+    "padding": "16",
+    "sizing": {
+      "horizontal": "hug",
+      "vertical": "hug"
+    }
+  }
+}

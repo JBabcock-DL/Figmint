@@ -1,0 +1,31 @@
+{
+  "v": 1,
+  "kind": "component-spec",
+  "name": "Icon",
+  "framework": "react",
+  "archetype": "tiny",
+  "variantMatrix": {
+    "name": ["check", "alert"]
+  },
+  "props": [
+    {
+      "name": "name",
+      "type": "enum",
+      "default": "check",
+      "enum": ["check", "alert"]
+    },
+    { "name": "className", "type": "string", "default": "" }
+  ],
+  "bindings": [
+    { "selector": "root.fill", "variable": "color/primary/content" }
+  ],
+  "layout": {
+    "direction": "horizontal",
+    "gap": "0",
+    "padding": "0",
+    "sizing": {
+      "horizontal": "hug",
+      "vertical": "hug"
+    }
+  }
+}
